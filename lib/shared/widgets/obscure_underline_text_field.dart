@@ -3,13 +3,15 @@ import 'package:flutter/material.dart';
 import '../../core/theme/app_pallete.dart';
 
 class ObscureUnderlineTextField extends StatefulWidget {
-  final TextEditingController controller;
+  final TextEditingController? controller;
   final Icon? prefixIcon;
   final String? hintText;
+  final String? initialValue;
   final int? maxLength;
   final String? Function(String?)? validator;
+  final void Function(String?)? onSaved;
 
-  const ObscureUnderlineTextField({super.key, required this.controller, this.prefixIcon, this.hintText, this.validator, this.maxLength});
+  const ObscureUnderlineTextField({super.key, this.controller, this.prefixIcon, this.hintText, this.validator, this.maxLength, this.onSaved, this.initialValue});
 
   @override
   State<ObscureUnderlineTextField> createState() => _ObscureUnderlineTextFieldState();
@@ -22,9 +24,12 @@ class _ObscureUnderlineTextFieldState extends State<ObscureUnderlineTextField> {
   @override
   Widget build(BuildContext context) {
     return TextFormField(
+      controller: widget.controller,
       validator: widget.validator,
       maxLength: widget.maxLength,
+      initialValue: widget.initialValue,
       style: Theme.of(context).textTheme.titleLarge,
+      obscureText: isObscure,
       decoration: InputDecoration(
         contentPadding: const EdgeInsets.symmetric(vertical: 0.0, horizontal: 0),
         hintText: widget.hintText,
@@ -46,6 +51,7 @@ class _ObscureUnderlineTextFieldState extends State<ObscureUnderlineTextField> {
         prefixIconConstraints: const BoxConstraints(minWidth: 60),
         suffixIconConstraints: const BoxConstraints(minWidth: 60),
       ),
+      onSaved: widget.onSaved,
     );
   }
 }

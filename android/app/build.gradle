@@ -5,18 +5,22 @@ plugins {
     id "dev.flutter.flutter-gradle-plugin"
 }
 
+Properties properties = new Properties()
+properties.load(project.rootProject.file('local.properties').newDataInputStream())
+def segmentGoogleApiKey = properties.getProperty('segment.googleApiKey') // Notice we get the property we the exact same name we wrote in the local.properties file
+
 android {
     namespace = "com.socieaty.socieaty"
     compileSdk = flutter.compileSdkVersion
     ndkVersion = flutter.ndkVersion
 
     compileOptions {
-        sourceCompatibility = JavaVersion.VERSION_1_8
-        targetCompatibility = JavaVersion.VERSION_1_8
+        sourceCompatibility = JavaVersion.VERSION_17
+        targetCompatibility = JavaVersion.VERSION_17
     }
 
     kotlinOptions {
-        jvmTarget = JavaVersion.VERSION_1_8
+        jvmTarget = JavaVersion.VERSION_17.toString()
     }
 
     defaultConfig {
@@ -28,6 +32,8 @@ android {
         targetSdk = flutter.targetSdkVersion
         versionCode = flutter.versionCode
         versionName = flutter.versionName
+
+        manifestPlaceholders += [segmentGoogleApiKey: segmentGoogleApiKey]
     }
 
     buildTypes {
