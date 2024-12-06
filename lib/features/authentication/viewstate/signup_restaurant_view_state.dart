@@ -8,7 +8,7 @@ part 'signup_restaurant_view_state.g.dart';
 class SignupRestaurantViewState with _$SignupRestaurantViewState {
   const factory SignupRestaurantViewState({
     required bool isSignupLoading,
-    required SignupRestaurantResponse data,
+    required SignupRestaurantResponse? data,
     required bool isSignupError,
     required String signupErrorMessage,
   }) = _SignupRestaurantViewState;

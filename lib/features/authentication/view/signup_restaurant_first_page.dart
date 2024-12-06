@@ -1,7 +1,7 @@
 import 'package:email_validator/email_validator.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
-import 'package:socieaty/features/authentication/model/signup_restaurant_form_state.dart';
+import 'package:socieaty/features/authentication/viewstate/signup_restaurant_form_state.dart';
 
 import '../../../core/theme/app_pallete.dart';
 import '../../../shared/widgets/custom_underline_text_field.dart';

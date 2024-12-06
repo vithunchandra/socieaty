@@ -5,9 +5,10 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:socieaty/core/utils/image_picker_utils.dart';
-import 'package:socieaty/features/authentication/model/signup_restaurant_form_state.dart';
 import 'package:socieaty/features/authentication/viewmodel/signup_restaurant_viewmodel.dart';
+import 'package:socieaty/features/authentication/viewstate/signup_restaurant_form_state.dart';
 import 'package:socieaty/features/map/model/MyLocationData.dart';
+import 'package:socieaty/shared/widgets/loading_indicator.dart';
 
 import '../../../core/theme/app_pallete.dart';
 import '../../../shared/widgets/custom_underline_text_field.dart';
@@ -32,6 +33,13 @@ class _SignupRestaurantFinalPageState extends ConsumerState<SignupRestaurantFina
   Widget build(BuildContext context) {
     final double screenWidth = MediaQuery.of(context).size.width;
     final double screenHeight = MediaQuery.of(context).size.height;
+    final isSignupLoading = ref.watch(signupRestaurantViewModelProvider).isSignupLoading;
+
+    ref.listen(signupRestaurantViewModelProvider, (_, next) {
+      if (next.data != null) {
+        context.replace('/signin');
+      }
+    });
 
     return Scaffold(
       backgroundColor: AppPallete.neutralColor.shade50,
@@ -247,18 +255,20 @@ class _SignupRestaurantFinalPageState extends ConsumerState<SignupRestaurantFina
                 decoration: BoxDecoration(
                   color: AppPallete.neutralColor.shade50,
                 ),
-                child: FilledButton(
-                  onPressed: () async {
-                    if (_formKey.currentState != null && _formKey.currentState!.validate() && _selectedImage != null) {
-                      _formKey.currentState?.save();
-                      ref.read(signupRestaurantViewModelProvider.notifier).signupRestaurant(
-                            _formData,
-                            _selectedImage!,
-                          );
-                    }
-                  },
-                  child: const Text("Daftar"),
-                ),
+                child: !isSignupLoading
+                    ? FilledButton(
+                        onPressed: () async {
+                          if (_formKey.currentState != null && _formKey.currentState!.validate() && _selectedImage != null) {
+                            _formKey.currentState?.save();
+                            ref.read(signupRestaurantViewModelProvider.notifier).signupRestaurant(
+                                  _formData,
+                                  _selectedImage!,
+                                );
+                          }
+                        },
+                        child: const Text("Daftar"),
+                      )
+                    : LoadingIndicator(),
               )
             ],
           ),

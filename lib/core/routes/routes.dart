@@ -1,11 +1,11 @@
 import 'package:go_router/go_router.dart';
-import 'package:socieaty/features/authentication/model/signup_restaurant_form_state.dart';
 import 'package:socieaty/features/authentication/view/landing_page.dart';
 import 'package:socieaty/features/authentication/view/signin_page.dart';
 import 'package:socieaty/features/authentication/view/signup_customer_page.dart';
 import 'package:socieaty/features/authentication/view/signup_page.dart';
 import 'package:socieaty/features/authentication/view/signup_restaurant_final_page.dart';
 import 'package:socieaty/features/authentication/view/signup_restaurant_first_page.dart';
+import 'package:socieaty/features/authentication/viewstate/signup_restaurant_form_state.dart';
 import 'package:socieaty/features/map/view/select_location.dart';
 
 final router = GoRouter(

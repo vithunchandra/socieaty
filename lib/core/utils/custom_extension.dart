@@ -1,3 +1,5 @@
+import 'package:dio/dio.dart';
+
 extension StringCasingExtension on String {
   String toCapitalized() {
     if (isEmpty) {
@@ -13,5 +15,16 @@ extension StringCasingExtension on String {
 
   String toTitleCase() {
     return replaceAll(RegExp(' +'), ' ').split(' ').map((str) => str.toCapitalized).join(' ');
+  }
+}
+
+extension DioExceptionExtension on DioException {
+  String extractMesage() {
+    final response = this.response;
+    if (response != null) {
+      return response.data['message'].toString();
+    } else {
+      return message.toString();
+    }
   }
 }

@@ -1,21 +1,49 @@
 import 'package:email_validator/email_validator.dart';
 import 'package:flutter/material.dart';
-import 'package:socieaty/features/authentication/model/signup_customer_form_state.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
+import 'package:socieaty/core/utils/show_snackbar.dart';
+import 'package:socieaty/features/authentication/model/signup_customer_response.dart';
+import 'package:socieaty/features/authentication/viewmodel/signup_customer_viewmodel.dart';
+import 'package:socieaty/features/authentication/viewstate/signup_customer_form_state.dart';
+import 'package:socieaty/shared/view_state.dart';
 import 'package:socieaty/shared/widgets/custom_underline_text_field.dart';
+import 'package:socieaty/shared/widgets/loading_indicator.dart';
 import 'package:socieaty/shared/widgets/obscure_underline_text_field.dart';
 
 import '../../../core/theme/app_pallete.dart';
 
-class SignupCustomerPage extends StatelessWidget {
-  SignupCustomerPage({super.key});
+class SignupCustomerPage extends ConsumerStatefulWidget {
+  const SignupCustomerPage({super.key});
+
+  @override
+  ConsumerState<SignupCustomerPage> createState() => _SignupCustomerPageState();
+}
+
+class _SignupCustomerPageState extends ConsumerState<SignupCustomerPage> {
   final _formKey = GlobalKey<FormState>();
-  final _formData = SignupCustomerFormState();
+  SignupCustomerFormState _formData = SignupCustomerFormState();
   final _passwordController = TextEditingController();
+  bool isLoading = false;
 
   @override
   Widget build(BuildContext context) {
     final double screenWidth = MediaQuery.of(context).size.width;
     final double screenHeight = MediaQuery.of(context).size.height;
+
+    ref.listen(signupCustomerViewmodelProvider, (_, next) {
+      switch (next.signupState) {
+        case LoadingState():
+          isLoading = true;
+          setState(() {});
+        case SuccessState<SignupCustomerResponse>():
+          context.replace('/signin');
+        case ErrorState(message: final message):
+          showSnackbar(context, message);
+        case IdleState():
+          {}
+      }
+    });
 
     return Scaffold(
       backgroundColor: AppPallete.neutralColor.shade50,
@@ -90,7 +118,7 @@ class SignupCustomerPage extends StatelessWidget {
                                   return null;
                                 },
                                 onSaved: (value) {
-                                  _formData.name = value;
+                                  _formData = _formData.copyWith(name: value);
                                 },
                               ),
                               const SizedBox(height: 8.0),
@@ -117,6 +145,9 @@ class SignupCustomerPage extends StatelessWidget {
                                   }
                                   return null;
                                 },
+                                onSaved: (value) {
+                                  _formData = _formData.copyWith(email: value);
+                                },
                               ),
                               const SizedBox(height: 32.0),
                               Text(
@@ -132,6 +163,9 @@ class SignupCustomerPage extends StatelessWidget {
                                     return "Password tidak boleh kosong";
                                   }
                                   return null;
+                                },
+                                onSaved: (value) {
+                                  _formData = _formData.copyWith(password: value);
                                 },
                               ),
                               const SizedBox(height: 32.0),
@@ -151,6 +185,9 @@ class SignupCustomerPage extends StatelessWidget {
                                   }
                                   return null;
                                 },
+                                onSaved: (value) {
+                                  _formData = _formData.copyWith(confirmPassword: value);
+                                },
                               ),
                               const SizedBox(height: 32.0),
                               Text(
@@ -165,6 +202,9 @@ class SignupCustomerPage extends StatelessWidget {
                                     return "Nomor handphone tidak boleh kosong";
                                   }
                                   return null;
+                                },
+                                onSaved: (value) {
+                                  _formData = _formData.copyWith(phoneNumber: value);
                                 },
                               ),
                             ],
@@ -185,12 +225,11 @@ class SignupCustomerPage extends StatelessWidget {
                   onPressed: () {
                     debugPrint("Hallo 1");
                     if (_formKey.currentState != null && _formKey.currentState!.validate()) {
-                      debugPrint("Hallo 2");
                       _formKey.currentState!.save();
-                      debugPrint(_formData.name);
+                      ref.read(signupCustomerViewmodelProvider.notifier).signupCustomer(_formData);
                     }
                   },
-                  child: const Text("Sign Up"),
+                  child: isLoading ? LoadingIndicator() : const Text("Sign Up"),
                 ),
               )
             ],
