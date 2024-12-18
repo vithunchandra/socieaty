@@ -1,5 +1,5 @@
 import 'package:freezed_annotation/freezed_annotation.dart';
-import 'package:socieaty/features/restaurant/model/restaurant.dart';
+import 'package:socieaty/features/user/model/socieaty_user.dart';
 
 part 'signup_restaurant_response.freezed.dart';
 part 'signup_restaurant_response.g.dart';
@@ -8,8 +8,8 @@ part 'signup_restaurant_response.g.dart';
 class SignupRestaurantResponse with _$SignupRestaurantResponse {
   const factory SignupRestaurantResponse({
     required String token,
-    required Restaurant restaurant,
+    required SocieatyUser user,
   }) = _SignupRestaurantResponse;
 
-  factory SignupRestaurantResponse.fromJson(Map<String, Object?> json) => _$SignupRestaurantResponseFromJson(json);
+  factory SignupRestaurantResponse.fromJson(Map<String, dynamic> json) => _$SignupRestaurantResponseFromJson(json);
 }

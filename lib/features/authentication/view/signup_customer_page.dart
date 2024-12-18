@@ -3,9 +3,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:socieaty/core/utils/show_snackbar.dart';
-import 'package:socieaty/features/authentication/model/signup_customer_response.dart';
 import 'package:socieaty/features/authentication/viewmodel/signup_customer_viewmodel.dart';
 import 'package:socieaty/features/authentication/viewstate/signup_customer_form_state.dart';
+import 'package:socieaty/features/user/model/socieaty_user.dart';
 import 'package:socieaty/shared/view_state.dart';
 import 'package:socieaty/shared/widgets/custom_underline_text_field.dart';
 import 'package:socieaty/shared/widgets/loading_indicator.dart';
@@ -36,7 +36,7 @@ class _SignupCustomerPageState extends ConsumerState<SignupCustomerPage> {
         case LoadingState():
           isLoading = true;
           setState(() {});
-        case SuccessState<SignupCustomerResponse>():
+        case SuccessState<SocieatyUser>():
           context.replace('/signin');
         case ErrorState(message: final message):
           showSnackbar(context, message);

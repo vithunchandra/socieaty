@@ -1,5 +1,6 @@
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 import 'package:socieaty/features/authentication/model/signup_customer_response.dart';
+import 'package:socieaty/features/authentication/repository/auth_local_repository.dart';
 import 'package:socieaty/features/authentication/viewstate/signup_customer_form_state.dart';
 import 'package:socieaty/features/authentication/viewstate/signup_customer_view_state.dart';
 import 'package:socieaty/shared/view_state.dart';
@@ -12,10 +13,12 @@ part 'signup_customer_viewmodel.g.dart';
 @riverpod
 class SignupCustomerViewmodel extends _$SignupCustomerViewmodel {
   late final AuthRemoteRepository _authRemoteRepository;
+  late final AuthLocalRepository _authLocalRepository;
 
   @override
   SignupCustomerViewState build() {
     _authRemoteRepository = ref.watch(authRemoteRepositoryProvider);
+    _authLocalRepository = ref.watch(authLocalRepositoryProvider);
     return SignupCustomerViewState(
       signupState: IdleState(),
     );
@@ -26,7 +29,8 @@ class SignupCustomerViewmodel extends _$SignupCustomerViewmodel {
     final response = await _authRemoteRepository.signupCustomer(data);
     switch (response) {
       case Success<SignupCustomerResponse>(data: final result):
-        state = state.copyWith(signupState: SuccessState(data: result));
+        _authLocalRepository.setToken(result.token);
+        state = state.copyWith(signupState: SuccessState(data: result.user));
       case Error(message: final message):
         state = state.copyWith(signupState: ErrorState(message: message));
     }

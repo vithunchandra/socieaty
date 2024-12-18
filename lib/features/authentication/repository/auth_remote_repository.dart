@@ -1,7 +1,7 @@
 import 'dart:io';
 
 import 'package:dio/dio.dart';
-import 'package:flutter/material.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 import 'package:socieaty/core/constants.dart';
@@ -15,6 +15,7 @@ import 'package:socieaty/features/authentication/model/signup_restaurant_respons
 import 'package:socieaty/features/authentication/viewstate/signin_form_state.dart';
 import 'package:socieaty/features/authentication/viewstate/signup_customer_form_state.dart';
 import 'package:socieaty/features/authentication/viewstate/signup_restaurant_form_state.dart';
+import 'package:socieaty/features/user/model/socieaty_user.dart';
 
 part 'auth_remote_repository.g.dart';
 
@@ -42,17 +43,20 @@ class AuthRemoteRepository {
       return Success(data: SignupRestaurantResponse.fromJson(response.data));
     } on DioException catch (error) {
       return Error(message: error.extractMesage());
+    } on Exception catch (error) {
+      return Error(message: error.toString());
     }
   }
 
   Future<ApiResult<SignupCustomerResponse>> signupCustomer(SignupCustomerFormState data) async {
     try {
       final payload = {...data.toJson(), 'role': UserRole.customer.name.toCapitalized()};
-      debugPrint(payload.toString());
       final response = await dio.post("auth/signup/customer", data: payload);
       return Success(data: SignupCustomerResponse.fromJson(response.data));
     } on DioException catch (error) {
       return Error(message: error.extractMesage());
+    } on Exception catch (error) {
+      return Error(message: error.toString());
     }
   }
 
@@ -62,6 +66,27 @@ class AuthRemoteRepository {
       return Success(data: SigninResponse.fromJson(response.data));
     } on DioException catch (error) {
       return Error(message: error.extractMesage());
+    } on Exception catch (error) {
+      return Error(message: error.toString());
+    }
+  }
+
+  Future<ApiResult<SocieatyUser>> getSessionData(String token) async {
+    debugPrint("fetching");
+    try {
+      final response = await dio.get(
+        'auth/session/data',
+        options: Options(
+          headers: {'Authorization': "Bearer $token"},
+        ),
+      );
+      return Success(data: SocieatyUser.fromJson(response.data));
+    } on DioException catch (error) {
+      debugPrint(error.extractMesage());
+      return Error(message: error.extractMesage());
+    } on Exception catch (error) {
+      debugPrint(error.toString());
+      return Error(message: error.toString());
     }
   }
 }

@@ -1,17 +1,12 @@
 import 'package:freezed_annotation/freezed_annotation.dart';
-import 'package:socieaty/features/authentication/model/signup_restaurant_response.dart';
+import 'package:socieaty/features/user/model/socieaty_user.dart';
+import 'package:socieaty/shared/view_state.dart';
 
 part 'signup_restaurant_view_state.freezed.dart';
-part 'signup_restaurant_view_state.g.dart';
 
 @freezed
 class SignupRestaurantViewState with _$SignupRestaurantViewState {
   const factory SignupRestaurantViewState({
-    required bool isSignupLoading,
-    required SignupRestaurantResponse? data,
-    required bool isSignupError,
-    required String signupErrorMessage,
+    required ViewState<SocieatyUser> signupRestaurantState,
   }) = _SignupRestaurantViewState;
-
-  factory SignupRestaurantViewState.fromJson(Map<String, Object?> json) => _$SignupRestaurantViewStateFromJson(json);
 }

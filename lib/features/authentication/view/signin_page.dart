@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
+import 'package:socieaty/core/enums/user_role.enum.dart';
 import 'package:socieaty/core/theme/app_pallete.dart';
 import 'package:socieaty/core/utils/show_snackbar.dart';
 import 'package:socieaty/features/authentication/viewmodel/signin_viewmodel.dart';
@@ -30,8 +31,12 @@ class _SignInPageState extends ConsumerState<SignInPage> {
 
     ref.listen(signinViewmodelProvider, (_, nextState) {
       switch (nextState.signinState) {
-        case SuccessState(data: final message):
-          showSnackbar(context, message);
+        case SuccessState(data: final user):
+          if (user.role == UserRole.customer) {
+            context.push('/customer/home');
+          } else {
+            showSnackbar(context, "Hello, ${user.name}");
+          }
         case ErrorState(message: final message):
           showSnackbar(context, message);
         case LoadingState():
@@ -87,6 +92,7 @@ class _SignInPageState extends ConsumerState<SignInPage> {
                           if (value == null || value.trim().isEmpty) {
                             return "Email tidak boleh kosong";
                           }
+                          return null;
                         },
                         onSaved: (value) {
                           _formData = _formData.copyWith(email: value);
@@ -108,6 +114,7 @@ class _SignInPageState extends ConsumerState<SignInPage> {
                           if (value == null || value.trim().isEmpty) {
                             return "Password tidak boleh kosong";
                           }
+                          return null;
                         },
                         onSaved: (value) {
                           _formData = _formData.copyWith(password: value);

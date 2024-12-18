@@ -5,9 +5,12 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:socieaty/core/utils/image_picker_utils.dart';
+import 'package:socieaty/core/utils/show_snackbar.dart';
 import 'package:socieaty/features/authentication/viewmodel/signup_restaurant_viewmodel.dart';
 import 'package:socieaty/features/authentication/viewstate/signup_restaurant_form_state.dart';
 import 'package:socieaty/features/map/model/MyLocationData.dart';
+import 'package:socieaty/features/user/model/socieaty_user.dart';
+import 'package:socieaty/shared/view_state.dart';
 import 'package:socieaty/shared/widgets/loading_indicator.dart';
 
 import '../../../core/theme/app_pallete.dart';
@@ -33,11 +36,16 @@ class _SignupRestaurantFinalPageState extends ConsumerState<SignupRestaurantFina
   Widget build(BuildContext context) {
     final double screenWidth = MediaQuery.of(context).size.width;
     final double screenHeight = MediaQuery.of(context).size.height;
-    final isSignupLoading = ref.watch(signupRestaurantViewModelProvider).isSignupLoading;
+    final isSignupLoading = ref.watch(signupRestaurantViewModelProvider).signupRestaurantState is LoadingState;
 
     ref.listen(signupRestaurantViewModelProvider, (_, next) {
-      if (next.data != null) {
-        context.replace('/signin');
+      switch (next.signupRestaurantState) {
+        case SuccessState<SocieatyUser>(data: final user):
+          context.replace('/signin');
+        case ErrorState(message: final message):
+          showSnackbar(context, message);
+        case LoadingState():
+        case IdleState():
       }
     });
 
