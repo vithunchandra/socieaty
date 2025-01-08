@@ -206,14 +206,18 @@ class _SignupRestaurantFirstPageState extends State<SignupRestaurantFirstPage> {
                 decoration: BoxDecoration(
                   color: AppPallete.neutralColor.shade50,
                 ),
-                child: FilledButton(
-                  onPressed: () {
-                    if (_formKey.currentState != null && _formKey.currentState!.validate()) {
-                      _formKey.currentState?.save();
-                      context.push('/signup/restaurant/final', extra: _formData);
-                    }
-                  },
-                  child: const Text("Selanjutnya"),
+                child: SizedBox(
+                  width: double.infinity,
+                  height: 45,
+                  child: FilledButton(
+                    onPressed: () {
+                      if (_formKey.currentState != null && _formKey.currentState!.validate()) {
+                        _formKey.currentState?.save();
+                        context.push('/signup/restaurant/final', extra: _formData);
+                      }
+                    },
+                    child: const Text("Selanjutnya"),
+                  ),
                 ),
               )
             ],

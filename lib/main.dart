@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:socieaty/app_theme.dart';
 import 'package:socieaty/core/routes/routes.dart';
 import 'package:socieaty/core/theme/theme.dart';
 import 'package:socieaty/features/authentication/repository/auth_local_repository.dart';
@@ -16,14 +18,48 @@ void main() async {
   );
 }
 
-class App extends StatelessWidget {
+class App extends ConsumerStatefulWidget {
   const App({super.key});
 
   @override
+  ConsumerState<App> createState() => _AppState();
+}
+
+class _AppState extends ConsumerState<App> {
+  void _updateSystemChrome(ThemeData themeData) {
+    // Set SystemChrome settings
+    SystemChrome.setSystemUIOverlayStyle(
+      SystemUiOverlayStyle(
+        statusBarColor: Colors.transparent,
+        statusBarIconBrightness: themeData == SocieatyAppTheme.lightTheme ? Brightness.dark : Brightness.light,
+        systemNavigationBarColor: themeData.scaffoldBackgroundColor,
+        systemNavigationBarIconBrightness: themeData == SocieatyAppTheme.lightTheme ? Brightness.dark : Brightness.light,
+      ),
+    );
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    SystemChrome.setSystemUIOverlayStyle(
+      SystemUiOverlayStyle(
+        statusBarColor: Colors.transparent,
+        statusBarIconBrightness: Brightness.dark,
+        systemNavigationBarColor: SocieatyAppTheme.lightTheme.scaffoldBackgroundColor,
+        systemNavigationBarIconBrightness: Brightness.dark,
+      ),
+    );
+  }
+
+  @override
   Widget build(BuildContext context) {
+    ref.listen(appThemeProvider, (_, next) {
+      _updateSystemChrome(next);
+    });
+
     return MaterialApp.router(
-      theme: SocieatyAppTheme.lightTheme,
-      routerConfig: router,
+      theme: ref.watch(appThemeProvider),
+      routerConfig: ref.watch(routerProvider),
     );
   }
 }

@@ -1,9 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
-import 'package:socieaty/core/enums/user_role.enum.dart';
 import 'package:socieaty/core/theme/app_pallete.dart';
-import 'package:socieaty/core/utils/show_snackbar.dart';
 import 'package:socieaty/features/authentication/provider/session_provider.dart';
 import 'package:socieaty/shared/widgets/loading_indicator.dart';
 
@@ -14,20 +12,6 @@ class LandingPage extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     double screenWidth = MediaQuery.of(context).size.width;
     double screenHeight = MediaQuery.of(context).size.height;
-
-    ref.listen(
-      getSessionDataProvider,
-      (previous, next) {
-        if (next.hasValue) {
-          final data = next.value!;
-          if (data.role == UserRole.customer) {
-            context.push("/customer_profile");
-          } else {
-            showSnackbar(context, "Hai ${data.name}");
-          }
-        }
-      },
-    );
 
     return Scaffold(
       backgroundColor: AppPallete.primaryColor.shade100,
@@ -59,6 +43,7 @@ class LandingPage extends ConsumerWidget {
                         children: [
                           SizedBox(
                             width: double.infinity,
+                            height: 45,
                             child: FilledButton(
                               onPressed: () {
                                 context.push('/signin');
@@ -92,6 +77,7 @@ class LandingPage extends ConsumerWidget {
                           ),
                           SizedBox(
                             width: double.infinity,
+                            height: 45,
                             child: OutlinedButton(
                               onPressed: () {
                                 context.push('/signup');

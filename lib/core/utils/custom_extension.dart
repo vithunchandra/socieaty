@@ -16,6 +16,18 @@ extension StringCasingExtension on String {
   String toTitleCase() {
     return replaceAll(RegExp(' +'), ' ').split(' ').map((str) => str.toCapitalized).join(' ');
   }
+
+  List<String> extractHashtags() {
+    return replaceAll(' ', '').split('#').where((element) => element.isNotEmpty).toList();
+  }
+}
+
+extension ListStringExtension on List<String> {
+  String toHashtags() {
+    return where((hashtag) => hashtag.isNotEmpty) // Exclude empty strings
+        .map((hashtag) => "#$hashtag") // Prepend #
+        .join(" "); // Join with space
+  }
 }
 
 extension DioExceptionExtension on DioException {

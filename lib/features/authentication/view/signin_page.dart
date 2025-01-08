@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
+import 'package:socieaty/app_theme.dart';
 import 'package:socieaty/core/enums/user_role.enum.dart';
 import 'package:socieaty/core/theme/app_pallete.dart';
+import 'package:socieaty/core/theme/theme.dart';
 import 'package:socieaty/core/utils/show_snackbar.dart';
 import 'package:socieaty/features/authentication/viewmodel/signin_viewmodel.dart';
 import 'package:socieaty/features/authentication/viewstate/signin_form_state.dart';
@@ -33,7 +35,8 @@ class _SignInPageState extends ConsumerState<SignInPage> {
       switch (nextState.signinState) {
         case SuccessState(data: final user):
           if (user.role == UserRole.customer) {
-            context.push('/customer/home');
+            ref.read(appThemeProvider.notifier).setTheme(SocieatyAppTheme.darkTheme);
+            context.replace('/customer/home');
           } else {
             showSnackbar(context, "Hello, ${user.name}");
           }
@@ -123,11 +126,12 @@ class _SignInPageState extends ConsumerState<SignInPage> {
                       const SizedBox(height: 36),
                       SizedBox(
                         width: double.infinity,
+                        height: 45,
                         child: FilledButton(
                           onPressed: () {
                             if (_formKey.currentState != null && _formKey.currentState!.validate()) {
                               _formKey.currentState!.save();
-                              ref.watch(signinViewmodelProvider.notifier).signin(_formData);
+                              ref.read(signinViewmodelProvider.notifier).signin(_formData);
                             }
                           },
                           child: isLoading ? const LoadingIndicator() : const Text("Sign in"),

@@ -221,15 +221,19 @@ class _SignupCustomerPageState extends ConsumerState<SignupCustomerPage> {
                 decoration: BoxDecoration(
                   color: AppPallete.neutralColor.shade50,
                 ),
-                child: FilledButton(
-                  onPressed: () {
-                    debugPrint("Hallo 1");
-                    if (_formKey.currentState != null && _formKey.currentState!.validate()) {
-                      _formKey.currentState!.save();
-                      ref.read(signupCustomerViewmodelProvider.notifier).signupCustomer(_formData);
-                    }
-                  },
-                  child: isLoading ? LoadingIndicator() : const Text("Sign Up"),
+                child: SizedBox(
+                  width: double.infinity,
+                  height: 45,
+                  child: FilledButton(
+                    onPressed: () {
+                      debugPrint("Hallo 1");
+                      if (_formKey.currentState != null && _formKey.currentState!.validate()) {
+                        _formKey.currentState!.save();
+                        ref.read(signupCustomerViewmodelProvider.notifier).signupCustomer(_formData);
+                      }
+                    },
+                    child: isLoading ? LoadingIndicator() : const Text("Sign Up"),
+                  ),
                 ),
               )
             ],

@@ -9,8 +9,19 @@ class AppColorScheme {
     onSecondary: AppPallete.neutralColor.shade50,
     error: AppPallete.errorColor,
     onError: AppPallete.neutralColor.shade50,
-    surface: AppPallete.primaryColor.shade300,
+    surface: AppPallete.primaryColor.shade50,
     onSurface: AppPallete.primaryColor.shade800,
     brightness: Brightness.light,
+  );
+  static final ColorScheme darkColorScheme = ColorScheme(
+    primary: AppPallete.primaryColor,
+    onPrimary: AppPallete.neutralColor.shade50,
+    secondary: AppPallete.primaryColor.shade600,
+    onSecondary: AppPallete.neutralColor.shade50,
+    error: AppPallete.errorColor,
+    onError: AppPallete.neutralColor.shade50,
+    surface: AppPallete.neutralColor.shade800,
+    onSurface: AppPallete.primaryColor.shade50,
+    brightness: Brightness.dark,
   );
 }

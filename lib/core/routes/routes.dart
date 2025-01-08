@@ -1,5 +1,9 @@
-import 'package:flutter/cupertino.dart';
+import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
+import 'package:image_picker/image_picker.dart';
+import 'package:riverpod_annotation/riverpod_annotation.dart';
+import 'package:socieaty/features/account/customer/view/account_view.dart';
 import 'package:socieaty/features/authentication/view/landing_page.dart';
 import 'package:socieaty/features/authentication/view/signin_page.dart';
 import 'package:socieaty/features/authentication/view/signup_customer_page.dart';
@@ -8,87 +12,142 @@ import 'package:socieaty/features/authentication/view/signup_restaurant_final_pa
 import 'package:socieaty/features/authentication/view/signup_restaurant_first_page.dart';
 import 'package:socieaty/features/authentication/view/splash_screen.dart';
 import 'package:socieaty/features/authentication/viewstate/signup_restaurant_form_state.dart';
-import 'package:socieaty/features/customer/view/customer_profile.dart';
-import 'package:socieaty/features/customer_features/account/view/account_view.dart';
-import 'package:socieaty/features/customer_features/home/view/home_view.dart';
-import 'package:socieaty/features/customer_features/livestream/view/livestream_view.dart';
-import 'package:socieaty/features/customer_features/post/view/post_view.dart';
-import 'package:socieaty/features/customer_features/shop/view/shop_view.dart';
+import 'package:socieaty/features/camera/view/camera_screen.dart';
+import 'package:socieaty/features/camera/view/image_confirmation_screen.dart';
+import 'package:socieaty/features/home/customer/view/home_screen.dart';
+import 'package:socieaty/features/livestream/view/livestream_view.dart';
 import 'package:socieaty/features/map/view/select_location.dart';
+import 'package:socieaty/features/post/post/view/create_post_screen.dart';
+import 'package:socieaty/features/search/view/search_view.dart';
+import 'package:socieaty/features/shop/customer/view/shop_view.dart';
 import 'package:socieaty/shared/widgets/scaffold_with_navbar.dart';
 
-final _rootNavigatorKey = GlobalKey<NavigatorState>();
+part 'routes.g.dart';
 
-final router = GoRouter(
-  initialLocation: '/',
-  navigatorKey: _rootNavigatorKey,
-  debugLogDiagnostics: true,
-  routes: [
-    GoRoute(path: '/', builder: (context, state) => const SplashScreen()),
-    GoRoute(path: '/landing', builder: (context, state) => const LandingPage()),
-    GoRoute(path: '/signin', builder: (context, state) => SignInPage()),
-    GoRoute(path: '/signup', builder: (context, state) => const SignUpPage(), routes: [
-      GoRoute(path: 'customer', builder: (context, state) => SignupCustomerPage()),
-      GoRoute(path: 'restaurant/first', builder: (context, state) => SignupRestaurantFirstPage()),
+@riverpod
+GoRouter router(Ref ref) {
+  final rootNavigatorKey = GlobalKey<NavigatorState>();
+
+  return GoRouter(
+    initialLocation: '/',
+    navigatorKey: rootNavigatorKey,
+    debugLogDiagnostics: true,
+    routes: [
+      GoRoute(path: '/', builder: (context, state) => const SplashScreen()),
+      GoRoute(path: '/landing', builder: (context, state) => const LandingPage()),
+      GoRoute(path: '/signin', builder: (context, state) => SignInPage()),
+      GoRoute(path: '/signup', builder: (context, state) => const SignUpPage(), routes: [
+        GoRoute(path: 'customer', builder: (context, state) => SignupCustomerPage()),
+        GoRoute(path: 'restaurant/first', builder: (context, state) => SignupRestaurantFirstPage()),
+        GoRoute(
+            path: 'restaurant/final',
+            builder: (context, state) {
+              SignupRestaurantFormState data = state.extra as SignupRestaurantFormState;
+              return SignupRestaurantFinalPage(data);
+            }),
+      ]),
+      GoRoute(path: '/select_location', builder: (context, state) => const SelectLocation()),
       GoRoute(
-          path: 'restaurant/final',
-          builder: (context, state) {
-            SignupRestaurantFormState data = state.extra as SignupRestaurantFormState;
-            return SignupRestaurantFinalPage(data);
-          }),
-    ]),
-    GoRoute(path: '/select_location', builder: (context, state) => const SelectLocation()),
-    StatefulShellRoute.indexedStack(
-      builder: (context, state, navigationShell) {
-        return ScaffoldWithNavbar(navigationShell: navigationShell);
-      },
-      branches: [
-        StatefulShellBranch(
-          routes: [
-            GoRoute(
-              path: '/customer/home',
-              pageBuilder: (context, state) => const NoTransitionPage(
-                child: HomeView(),
-              ),
-              routes: [
-                GoRoute(
-                  path: '/customer/livestream',
-                  pageBuilder: (context, state) => const NoTransitionPage(
-                    child: LivestreamView(),
-                  ),
+        path: '/camera',
+        builder: (context, state) => const CameraScreen(),
+        routes: [
+          GoRoute(
+            path: 'image/confirmation',
+            builder: (context, state) {
+              final xFile = state.extra as XFile;
+              return ImageConfirmationScreen(imageFile: xFile);
+            },
+          ),
+          GoRoute(
+            path: 'video/confirmation',
+            builder: (context, state) {
+              final xFile = state.extra as XFile;
+              return ImageConfirmationScreen(imageFile: xFile);
+            },
+          )
+        ],
+      ),
+      GoRoute(
+        path: '/create_post',
+        pageBuilder: (context, state) => const NoTransitionPage(
+          child: CreatePostScreen(),
+        ),
+      ),
+      GoRoute(
+        path: '/livestream',
+        pageBuilder: (context, state) => const NoTransitionPage(
+          child: LivestreamView(),
+        ),
+      ),
+      StatefulShellRoute.indexedStack(
+        builder: (context, state, navigationShell) {
+          debugPrint(state.fullPath);
+          final showNavbar = state.fullPath != '/customer/create_post';
+          return ScaffoldWithNavbar(
+            navigationShell: navigationShell,
+            showNavbar: showNavbar,
+          );
+        },
+        branches: [
+          StatefulShellBranch(
+            routes: [
+              GoRoute(
+                path: '/customer/home',
+                pageBuilder: (context, state) => const NoTransitionPage(
+                  child: HomeScreen(),
                 ),
-                GoRoute(
-                  path: '/customer/post',
-                  pageBuilder: (context, state) => const NoTransitionPage(
-                    child: PostView(),
-                  ),
+              )
+            ],
+          ),
+          StatefulShellBranch(
+            routes: [
+              GoRoute(
+                path: '/customer/search',
+                pageBuilder: (context, state) => const NoTransitionPage(
+                  child: SearchView(),
                 ),
-              ],
-            ),
-          ],
-        ),
-        StatefulShellBranch(
-          routes: [
-            GoRoute(
-              path: '/customer/shop',
-              pageBuilder: (context, state) => const NoTransitionPage(
-                child: ShopView(),
+                routes: [
+                  GoRoute(
+                    parentNavigatorKey: rootNavigatorKey,
+                    path: 'result',
+                    pageBuilder: (context, state) => const NoTransitionPage(
+                      child: LivestreamView(),
+                    ),
+                  ),
+                ],
               ),
-            ),
-          ],
-        ),
-        StatefulShellBranch(
-          routes: [
-            GoRoute(
-              path: '/customer/account',
-              pageBuilder: (context, state) => const NoTransitionPage(
-                child: AccountView(),
+            ],
+          ),
+          StatefulShellBranch(
+            routes: [
+              GoRoute(
+                path: '/customer/create_post',
+                pageBuilder: (context, state) => const NoTransitionPage(child: Scaffold()),
               ),
-            ),
-          ],
-        ),
-      ],
-    ),
-    GoRoute(path: '/customer_profile', builder: (context, state) => CustomerProfile()),
-  ],
-);
+            ],
+          ),
+          StatefulShellBranch(
+            routes: [
+              GoRoute(
+                path: '/customer/shop',
+                pageBuilder: (context, state) => const NoTransitionPage(
+                  child: ShopView(),
+                ),
+              ),
+            ],
+          ),
+          StatefulShellBranch(
+            routes: [
+              GoRoute(
+                path: '/customer/profile',
+                pageBuilder: (context, state) => const NoTransitionPage(
+                  child: AccountView(),
+                ),
+              ),
+            ],
+          ),
+        ],
+      ),
+    ],
+  );
+}

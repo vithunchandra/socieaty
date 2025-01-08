@@ -4,7 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
-import 'package:socieaty/core/utils/image_picker_utils.dart';
+import 'package:socieaty/core/utils/show_image_picker_modal.dart';
 import 'package:socieaty/core/utils/show_snackbar.dart';
 import 'package:socieaty/features/authentication/viewmodel/signup_restaurant_viewmodel.dart';
 import 'package:socieaty/features/authentication/viewstate/signup_restaurant_form_state.dart';
@@ -176,42 +176,11 @@ class _SignupRestaurantFinalPageState extends ConsumerState<SignupRestaurantFina
                                     color: Colors.transparent,
                                     child: InkWell(
                                       onTap: () {
-                                        showModalBottomSheet(
-                                          backgroundColor: AppPallete.primaryColor.shade100,
-                                          context: context,
-                                          builder: (context) {
-                                            return Padding(
-                                              padding: const EdgeInsets.symmetric(vertical: 16.0),
-                                              child: Column(
-                                                mainAxisSize: MainAxisSize.min,
-                                                children: [
-                                                  ListTile(
-                                                    leading: const Icon(Icons.photo_outlined),
-                                                    title: const Text('Gallery'),
-                                                    onTap: () {
-                                                      pickImageFromGallery((image) {
-                                                        setState(() {
-                                                          _selectedImage = image;
-                                                        });
-                                                      });
-                                                    },
-                                                  ),
-                                                  ListTile(
-                                                    leading: const Icon(Icons.camera_alt_outlined),
-                                                    title: const Text('Music'),
-                                                    onTap: () {
-                                                      pickImageFromCamera((image) {
-                                                        setState(() {
-                                                          _selectedImage = image;
-                                                        });
-                                                      });
-                                                    },
-                                                  ),
-                                                ],
-                                              ),
-                                            );
-                                          },
-                                        );
+                                        showImagePickerModal(context, (image) {
+                                          setState(() {
+                                            _selectedImage = image;
+                                          });
+                                        });
                                       },
                                       splashColor: AppPallete.neutralColor.shade50,
                                       child: Container(
@@ -263,20 +232,22 @@ class _SignupRestaurantFinalPageState extends ConsumerState<SignupRestaurantFina
                 decoration: BoxDecoration(
                   color: AppPallete.neutralColor.shade50,
                 ),
-                child: !isSignupLoading
-                    ? FilledButton(
-                        onPressed: () async {
-                          if (_formKey.currentState != null && _formKey.currentState!.validate() && _selectedImage != null) {
-                            _formKey.currentState?.save();
-                            ref.read(signupRestaurantViewModelProvider.notifier).signupRestaurant(
-                                  _formData,
-                                  _selectedImage!,
-                                );
-                          }
-                        },
-                        child: const Text("Daftar"),
-                      )
-                    : LoadingIndicator(),
+                child: SizedBox(
+                  width: double.infinity,
+                  height: 45,
+                  child: FilledButton(
+                    onPressed: () async {
+                      if (_formKey.currentState != null && _formKey.currentState!.validate() && _selectedImage != null) {
+                        _formKey.currentState?.save();
+                        ref.read(signupRestaurantViewModelProvider.notifier).signupRestaurant(
+                              _formData,
+                              _selectedImage!,
+                            );
+                      }
+                    },
+                    child: !isSignupLoading ? const Text("Daftar") : LoadingIndicator(),
+                  ),
+                ),
               )
             ],
           ),

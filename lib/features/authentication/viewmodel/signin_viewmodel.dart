@@ -1,5 +1,6 @@
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 import 'package:socieaty/core/network/api_result.dart';
+import 'package:socieaty/features/authentication/provider/session_provider.dart';
 import 'package:socieaty/features/authentication/repository/auth_local_repository.dart';
 import 'package:socieaty/features/authentication/repository/auth_remote_repository.dart';
 import 'package:socieaty/features/authentication/viewstate/signin_form_state.dart';
@@ -29,6 +30,9 @@ class SigninViewmodel extends _$SigninViewmodel {
     switch (response) {
       case Success(data: final result):
         await _authLocalRepository.setToken(result.token);
+        ref.watch(getSessionDataProvider).whenData((data) async {
+          await _authLocalRepository.setUserData(data);
+        });
         state = state.copyWith(signinState: SuccessState(data: result.user));
       case Error(message: final message):
         state = state.copyWith(signinState: ErrorState(message: message));

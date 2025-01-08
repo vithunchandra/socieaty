@@ -3,6 +3,7 @@ import 'dart:io';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 import 'package:socieaty/core/network/api_result.dart';
 import 'package:socieaty/features/authentication/model/signup_restaurant_response.dart';
+import 'package:socieaty/features/authentication/provider/session_provider.dart';
 import 'package:socieaty/features/authentication/repository/auth_local_repository.dart';
 import 'package:socieaty/features/authentication/repository/auth_remote_repository.dart';
 import 'package:socieaty/features/authentication/viewstate/signup_restaurant_form_state.dart';
@@ -28,7 +29,10 @@ class SignupRestaurantViewModel extends _$SignupRestaurantViewModel {
     final response = await _authRemoteRepository.signupRestaurant(data, selectedImage);
     switch (response) {
       case Success<SignupRestaurantResponse>(data: final result):
-        _authLocalRepository.setToken(result.token);
+        await _authLocalRepository.setToken(result.token);
+        ref.watch(getSessionDataProvider).whenData((data) async {
+          await _authLocalRepository.setUserData(data);
+        });
         state = state.copyWith(signupRestaurantState: SuccessState(data: result.user));
       case Error(message: final message):
         state = state.copyWith(signupRestaurantState: ErrorState(message: message));

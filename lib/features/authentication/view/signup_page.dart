@@ -46,6 +46,7 @@ class SignUpPage extends StatelessWidget {
                       const SizedBox(height: 24),
                       SizedBox(
                         width: double.infinity,
+                        height: 45,
                         child: FilledButton(
                           onPressed: () {
                             context.push('/signup/customer');
@@ -79,6 +80,7 @@ class SignUpPage extends StatelessWidget {
                       ),
                       SizedBox(
                         width: double.infinity,
+                        height: 45,
                         child: FilledButton(
                           onPressed: () {
                             context.push('/signup/restaurant/first');
