@@ -8,8 +8,10 @@ import 'package:socieaty/core/constants.dart';
 import 'package:socieaty/core/network/api_client.dart';
 import 'package:socieaty/core/network/api_result.dart';
 import 'package:socieaty/core/utils/custom_extension.dart';
+import 'package:socieaty/core/utils/execute_request.dart';
 import 'package:socieaty/features/authentication/repository/auth_local_repository.dart';
 import 'package:socieaty/features/post/post/model/create_post_response.dart';
+import 'package:socieaty/features/post/post/model/get_post_response.dart';
 import 'package:socieaty/features/post/post/model/like_post_response.dart';
 import 'package:socieaty/features/post/post/viewstate/create_post_form_state.dart';
 
@@ -32,12 +34,17 @@ class PostRepository {
 
   Future<ApiResult<CreatePostResponse>> createPost(CreatePostFormState data, List<File> medias) async {
     try {
-      FormData formData = FormData.fromMap(data.toJson());
+      debugPrint("${data.toJson()}");
+      FormData formData = FormData.fromMap({
+        ...data.toJson(),
+        'hashtags[]': data.hashtags.isEmpty ? [''] : data.hashtags,
+      });
       for (File media in medias) {
         formData.files.addAll([
           MapEntry("medias", await MultipartFile.fromFile(media.path)),
         ]);
       }
+      debugPrint("${formData.fields}");
       final response = await _dio.post('post/', data: formData);
       debugPrint(response.data.toString());
       return Success(data: CreatePostResponse.fromJson(response.data));
@@ -48,14 +55,17 @@ class PostRepository {
     }
   }
 
-  Future<ApiResult<LikePostResponse>> likePost(String postId) async {
-    try {
-      final response = await _dio.put('post/$postId/like}');
-      return Success(data: LikePostResponse.fromJson(response.data));
-    } on DioException catch (error) {
-      return Error(message: error.extractMesage());
-    } on Exception catch (error) {
-      return Error(message: error.toString());
-    }
+  Future<ApiResult<GetPostResponse>> getPost(String postId) async {
+    return executeRequest(
+      requestFunction: () async => await _dio.get('post/$postId'),
+      successParser: (data) => GetPostResponse.fromJson(data),
+    );
+  }
+
+  Future<ApiResult<LikePostResponse>> likePost(String postId, bool isLiked) async {
+    return executeRequest(
+      requestFunction: () async => await _dio.put('post/$postId/like', data: {'isLiked': isLiked}),
+      successParser: (data) => LikePostResponse.fromJson(data),
+    );
   }
 }

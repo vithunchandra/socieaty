@@ -12,8 +12,8 @@ part 'signin_viewmodel.g.dart';
 
 @riverpod
 class SigninViewmodel extends _$SigninViewmodel {
-  late final AuthRemoteRepository _authRemoteRepository;
-  late final AuthLocalRepository _authLocalRepository;
+  late AuthRemoteRepository _authRemoteRepository;
+  late AuthLocalRepository _authLocalRepository;
 
   @override
   SigninViewState build() {
@@ -30,9 +30,7 @@ class SigninViewmodel extends _$SigninViewmodel {
     switch (response) {
       case Success(data: final result):
         await _authLocalRepository.setToken(result.token);
-        ref.watch(getSessionDataProvider).whenData((data) async {
-          await _authLocalRepository.setUserData(data);
-        });
+        await _authLocalRepository.setUserData(result.user);
         state = state.copyWith(signinState: SuccessState(data: result.user));
       case Error(message: final message):
         state = state.copyWith(signinState: ErrorState(message: message));

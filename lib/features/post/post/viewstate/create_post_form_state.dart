@@ -11,7 +11,7 @@ class CreatePostFormState with _$CreatePostFormState {
     @Default(null) String? title,
     @Default(null) String? caption,
     @Default([]) List<String> hashtags,
-    @LatLngConverter() @Default(null) LatLng? location,
+    @LatLngConverter() @Default(LatLng(0, 0)) LatLng? location,
   }) = _CreatePostFormState;
 
   factory CreatePostFormState.fromJson(Map<String, Object?> json) => _$CreatePostFormStateFromJson(json);

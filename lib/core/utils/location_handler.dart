@@ -76,14 +76,12 @@ abstract class LocationHandler {
     if (response.statusCode != 200) {
       throw Exception("Something went wrong");
     }
-    debugPrint("${location.latitude}%2C${location.longitude}");
-    debugPrint(response.data.toString());
     final data = response.data['results'][0];
     return data;
   }
 
   static Future<geocoding.Placemark?> getAddressFromLatLng(LatLng location) async {
-    var rawAddress = (await geocoding.GeocodingPlatform.instance?.placemarkFromCoordinates(location.latitude, location.longitude));
+    var rawAddress = await geocoding.GeocodingPlatform.instance?.placemarkFromCoordinates(location.latitude, location.longitude);
     return rawAddress?[0];
   }
 

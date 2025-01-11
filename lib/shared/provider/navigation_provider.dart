@@ -5,11 +5,15 @@ part 'navigation_provider.g.dart';
 @riverpod
 class NavigationIndex extends _$NavigationIndex {
   @override
-  int build() {
-    return 0;
+  List<int> build() {
+    return [0];
   }
 
-  void changeNavigationIndex(int index) {
-    state = index;
+  void addIndex(int index) {
+    state = [...state, index];
+  }
+
+  void removeLastIndex() {
+    state = state.sublist(0, state.length - 1);
   }
 }

@@ -3,9 +3,7 @@ import 'package:riverpod_annotation/riverpod_annotation.dart';
 import 'package:socieaty/core/network/api_result.dart';
 import 'package:socieaty/features/authentication/repository/auth_local_repository.dart';
 import 'package:socieaty/features/customer/repository/customer_profile_remote_repository.dart';
-import 'package:socieaty/features/customer/viewstate/customer_profile_viewstate.dart';
 import 'package:socieaty/features/user/model/socieaty_user.dart';
-import 'package:socieaty/shared/view_state.dart';
 
 part 'customer_profile_viewmodel.g.dart';
 

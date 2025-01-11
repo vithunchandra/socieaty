@@ -1,5 +1,4 @@
 import 'package:freezed_annotation/freezed_annotation.dart';
-import 'package:socieaty/features/customer/model/customer.dart';
 import 'package:socieaty/features/user/model/socieaty_user.dart';
 
 part 'signup_customer_response.freezed.dart';

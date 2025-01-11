@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:go_router/go_router.dart';
 import 'package:socieaty/core/theme/app_pallete.dart';
 
 class Navbar extends ConsumerWidget {
@@ -39,23 +38,18 @@ class Navbar extends ConsumerWidget {
             selectedIcon: Icon(Icons.search),
           ),
           NavigationDestination(
-            icon: GestureDetector(
-              onTap: () {
-                context.push('/create_post');
-              },
-              child: Padding(
-                padding: const EdgeInsets.only(top: 24.0),
-                child: SizedBox(
-                  width: 55,
-                  height: 45,
-                  child: Card(
-                    color: AppPallete.primaryColor,
-                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-                    elevation: 2.0,
-                    child: Icon(
-                      Icons.add,
-                      color: AppPallete.neutralColor.shade50,
-                    ),
+            icon: Padding(
+              padding: const EdgeInsets.only(top: 24.0),
+              child: SizedBox(
+                width: 55,
+                height: 45,
+                child: Card(
+                  color: AppPallete.primaryColor,
+                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                  elevation: 2.0,
+                  child: Icon(
+                    Icons.add,
+                    color: AppPallete.neutralColor.shade50,
                   ),
                 ),
               ),

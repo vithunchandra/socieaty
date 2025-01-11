@@ -38,6 +38,7 @@ class _SelectLocationState extends State<SelectLocation> {
 
   @override
   void dispose() {
+    _mapController?.dispose();
     _searchController.dispose();
     super.dispose();
   }
@@ -45,7 +46,7 @@ class _SelectLocationState extends State<SelectLocation> {
   _handlePosition() async {
     LocationData? locationData = await LocationHandler.getCurrentPosition();
 
-    if (locationData != null) {
+    if (locationData != null && mounted) {
       setState(() {
         myCurrentLocation = LatLng(locationData.latitude!, locationData.longitude!);
         _mapController?.animateCamera(
@@ -74,9 +75,11 @@ class _SelectLocationState extends State<SelectLocation> {
         children: [
           GoogleMap(
             onMapCreated: (controller) {
-              setState(() {
-                _mapController = controller;
-              });
+              if (mounted) {
+                setState(() {
+                  _mapController = controller;
+                });
+              }
             },
             onCameraIdle: () async {
               LatLng? newLocation = await _mapController?.getLatLng(
@@ -87,16 +90,18 @@ class _SelectLocationState extends State<SelectLocation> {
               );
               if (newLocation == null) return;
               var preciseLocation = await LocationHandler.getAddressFromLatLng(newLocation);
-              if (preciseLocation == null) return;
+              if (preciseLocation == null || !mounted) return;
               debugPrint(preciseLocation.toString());
               String preciseLocationAddress =
                   "${preciseLocation.street}, ${preciseLocation.subLocality} ${preciseLocation.locality}, ${preciseLocation.administrativeArea}, ${preciseLocation.postalCode}, ${preciseLocation.country}";
               String preciseLocationName = "${preciseLocation.street}";
-              setState(() {
-                myCurrentLocation = newLocation;
-                myCurrentLocationName = preciseLocationName;
-                myCurrentLocationAddress = preciseLocationAddress;
-              });
+              if (mounted) {
+                setState(() {
+                  myCurrentLocation = newLocation;
+                  myCurrentLocationName = preciseLocationName;
+                  myCurrentLocationAddress = preciseLocationAddress;
+                });
+              }
             },
             mapType: MapType.normal,
             myLocationEnabled: true,

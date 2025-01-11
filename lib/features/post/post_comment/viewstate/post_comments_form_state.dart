@@ -5,7 +5,7 @@ part 'post_comments_form_state.g.dart';
 
 @freezed
 class PostCommentsFormState with _$PostCommentsFormState {
-  const factory PostCommentsFormState({required String text}) = _PostCommentsFormState;
+  const factory PostCommentsFormState({String? text}) = _PostCommentsFormState;
 
   factory PostCommentsFormState.fromJson(Map<String, dynamic> json) => _$PostCommentsFormStateFromJson(json);
 }

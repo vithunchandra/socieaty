@@ -14,8 +14,8 @@ part 'signup_restaurant_viewmodel.g.dart';
 
 @riverpod
 class SignupRestaurantViewModel extends _$SignupRestaurantViewModel {
-  late final AuthRemoteRepository _authRemoteRepository;
-  late final AuthLocalRepository _authLocalRepository;
+  late AuthRemoteRepository _authRemoteRepository;
+  late AuthLocalRepository _authLocalRepository;
 
   @override
   SignupRestaurantViewState build() {

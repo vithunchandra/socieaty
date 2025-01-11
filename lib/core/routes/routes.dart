@@ -122,7 +122,9 @@ GoRouter router(Ref ref) {
             routes: [
               GoRoute(
                 path: '/customer/create_post',
-                pageBuilder: (context, state) => const NoTransitionPage(child: Scaffold()),
+                pageBuilder: (context, state) => const NoTransitionPage(
+                  child: CreatePostScreen(),
+                ),
               ),
             ],
           ),

@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:socieaty/app_theme.dart';
 import 'package:socieaty/core/theme/theme.dart';
+import 'package:socieaty/shared/provider/navigation_provider.dart';
 import 'package:socieaty/shared/widgets/navbar.dart';
 
 class ScaffoldWithNavbar extends ConsumerStatefulWidget {
@@ -19,12 +20,8 @@ class ScaffoldWithNavbar extends ConsumerStatefulWidget {
 }
 
 class _ScaffoldWithNavbarState extends ConsumerState<ScaffoldWithNavbar> {
-  final List<int> indexHistory = [0];
-
   void _pushNewBranch(int index) {
-    setState(() {
-      indexHistory.add(index);
-    });
+    ref.read(navigationIndexProvider.notifier).addIndex(index);
 
     _goBranch(index);
   }
@@ -35,23 +32,27 @@ class _ScaffoldWithNavbarState extends ConsumerState<ScaffoldWithNavbar> {
     } else {
       ref.read(appThemeProvider.notifier).setTheme(SocieatyAppTheme.lightTheme);
     }
-
-    widget.navigationShell.goBranch(
-      index,
-      initialLocation: index == widget.navigationShell.currentIndex,
-    );
+    debugPrint("index: $index");
+    if (index == 2) {
+      context.push('/create_post');
+    } else {
+      widget.navigationShell.goBranch(
+        index,
+        initialLocation: index == widget.navigationShell.currentIndex,
+      );
+    }
   }
 
   @override
   Widget build(BuildContext context) {
     return PopScope(
-      canPop: indexHistory.length < 2,
+      canPop: ref.watch(navigationIndexProvider).length < 2,
       onPopInvokedWithResult: (didPop, object) {
         if (didPop) return;
 
-        if (indexHistory.length > 1) {
-          indexHistory.removeLast();
-          final previousIndex = indexHistory.last;
+        if (ref.watch(navigationIndexProvider).length > 1) {
+          ref.read(navigationIndexProvider.notifier).removeLastIndex();
+          final previousIndex = ref.watch(navigationIndexProvider).last;
           return _goBranch(previousIndex);
         }
       },

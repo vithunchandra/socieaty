@@ -1,17 +1,33 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:socieaty/core/theme/app_pallete.dart';
+import 'package:socieaty/features/authentication/repository/auth_local_repository.dart';
 import 'package:socieaty/features/post/post_comment/view/post_comment_detail_view.dart';
+import 'package:socieaty/features/post/post_comment/viewmodel/post_comments_view_model.dart';
+import 'package:socieaty/features/post/post_comment/viewstate/post_comments_form_state.dart';
 import 'package:socieaty/shared/widgets/custom_circle_avatar.dart';
+import 'package:socieaty/shared/widgets/loading_indicator.dart';
 
-class PostCommentsView extends StatelessWidget {
-  const PostCommentsView({super.key});
+class PostCommentsView extends ConsumerStatefulWidget {
+  final String postId;
+  const PostCommentsView({super.key, required this.postId});
+
+  @override
+  ConsumerState<PostCommentsView> createState() => _PostCommentsViewState();
+}
+
+class _PostCommentsViewState extends ConsumerState<PostCommentsView> {
+  final _formKey = GlobalKey<FormState>();
 
   @override
   Widget build(BuildContext context) {
     final screenWidth = MediaQuery.of(context).size.width;
-    // final screenHeight = MediaQuery.of(context).size.height;
+    PostCommentsFormState postCommentsFormState = PostCommentsFormState(text: "");
+
+    var postComments = ref.watch(postCommentsProvider(widget.postId));
+
     return Padding(
-      padding: const EdgeInsets.all(8.0),
+      padding: const EdgeInsets.symmetric(vertical: 8.0, horizontal: 12.0),
       child: SizedBox(
         width: double.infinity,
         height: double.infinity,
@@ -45,7 +61,17 @@ class PostCommentsView extends StatelessWidget {
                           endIndent: screenWidth * 0.4,
                           thickness: 2,
                         ),
-                        const Text("32 Comments"),
+                        postComments.when(
+                          data: (data) {
+                            return Text("${data.length} Comments");
+                          },
+                          error: (object, stacktrace) {
+                            return const Text("Comments");
+                          },
+                          loading: () {
+                            return const Text("Comments");
+                          },
+                        ),
                       ],
                     ),
                   ),
@@ -53,41 +79,72 @@ class PostCommentsView extends StatelessWidget {
               ],
             ),
             Expanded(
-              child: ListView.builder(
-                itemCount: 10,
-                itemBuilder: (context, index) {
-                  return Padding(padding: const EdgeInsets.symmetric(vertical: 8.0), child: const PostCommentDetailView());
+              child: postComments.when(
+                data: (data) {
+                  return ListView.builder(
+                    itemCount: data.length,
+                    itemBuilder: (context, index) {
+                      var comment = data[index];
+                      return Padding(
+                        padding: const EdgeInsets.symmetric(vertical: 14.0),
+                        child: PostCommentDetailView(
+                            postComment: comment, postId: widget.postId, userId: ref.read(authLocalRepositoryProvider).getUserData()!.id),
+                      );
+                    },
+                  );
+                },
+                error: (object, stacktrace) {
+                  return Text("${object.toString()} \n ${stacktrace.toString()}");
+                },
+                loading: () {
+                  return const LoadingIndicator();
                 },
               ),
             ),
             SizedBox(
               width: double.infinity,
-              child: Row(
-                children: [
-                  CustomCircleAvatar(radius: 20, imageUrl: "assets/images/person_dummy.jpg"),
-                  SizedBox(width: 12),
-                  Expanded(
-                    child: Padding(
-                      padding: const EdgeInsets.all(8.0),
-                      child: TextFormField(
-                        validator: (value) {
-                          if (value == null || value.isEmpty) {
-                            return "Caption post harus diisi";
-                          }
-                          return null;
-                        },
-                        onSaved: (value) {},
-                        decoration: InputDecoration.collapsed(
-                          hintText: "Your caption here. Create a wonderful caption for your post",
-                          hintStyle: Theme.of(context).textTheme.bodyMedium?.copyWith(color: AppPallete.neutralColor.shade400),
-                          hintFadeDuration: Duration(milliseconds: 250),
-                          border: InputBorder.none,
+              child: Form(
+                key: _formKey,
+                child: Row(
+                  children: [
+                    CustomCircleAvatar(radius: 20, imageUrl: "assets/images/person_dummy.jpg"),
+                    SizedBox(width: 12),
+                    Expanded(
+                      child: Padding(
+                        padding: const EdgeInsets.all(8.0),
+                        child: TextFormField(
+                          validator: (value) {
+                            if (value == null || value.isEmpty) {
+                              return "Caption post harus diisi";
+                            }
+                            return null;
+                          },
+                          onSaved: (value) {
+                            postCommentsFormState = postCommentsFormState.copyWith(text: value);
+                          },
+                          decoration: InputDecoration.collapsed(
+                            hintText: "Your caption here. Create a wonderful caption for your post",
+                            hintStyle: Theme.of(context).textTheme.bodyMedium?.copyWith(color: AppPallete.neutralColor.shade400),
+                            hintFadeDuration: Duration(milliseconds: 250),
+                            border: InputBorder.none,
+                          ),
                         ),
                       ),
                     ),
-                  ),
-                  IconButton(onPressed: () {}, icon: Icon(Icons.arrow_upward))
-                ],
+                    IconButton(
+                      onPressed: () {
+                        if (_formKey.currentState != null && _formKey.currentState!.validate()) {
+                          _formKey.currentState?.save();
+                          ref.read(postCommentsViewModelProvider.notifier).createPostComment(postCommentsFormState, widget.postId).then((_) {
+                            postComments = ref.refresh(postCommentsProvider(widget.postId));
+                          });
+                          _formKey.currentState?.reset();
+                        }
+                      },
+                      icon: Icon(Icons.arrow_upward),
+                    )
+                  ],
+                ),
               ),
             ),
           ],

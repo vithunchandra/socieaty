@@ -3,7 +3,6 @@ import 'dart:io';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 import 'package:socieaty/core/network/api_result.dart';
 import 'package:socieaty/features/post/post/model/create_post_response.dart';
-import 'package:socieaty/features/post/post/model/post.dart';
 import 'package:socieaty/features/post/post/repository/post_repository.dart';
 import 'package:socieaty/features/post/post/viewstate/create_post_form_state.dart';
 import 'package:socieaty/features/post/post/viewstate/create_post_view_state.dart';
@@ -13,7 +12,7 @@ part 'create_post_view_model.g.dart';
 
 @riverpod
 class CreatePostViewModel extends _$CreatePostViewModel {
-  late final PostRepository _postRepository;
+  late PostRepository _postRepository;
   @override
   CreatePostViewState build() {
     _postRepository = ref.watch(postRepositoryProvider);

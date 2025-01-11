@@ -6,7 +6,7 @@ part 'get_post_comments_response.g.dart';
 
 @freezed
 class GetPostCommentsResponse with _$GetPostCommentsResponse {
-  factory GetPostCommentsResponse({required PostComment comment}) = _GetPostCommentsResponse;
+  factory GetPostCommentsResponse({required List<PostComment> comments}) = _GetPostCommentsResponse;
 
   factory GetPostCommentsResponse.fromJson(Map<String, dynamic> json) => _$GetPostCommentsResponseFromJson(json);
 }

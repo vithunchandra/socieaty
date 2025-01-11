@@ -29,7 +29,7 @@ class _SignInPageState extends ConsumerState<SignInPage> {
   Widget build(BuildContext context) {
     double screenWidth = MediaQuery.of(context).size.width;
     double screenHeight = MediaQuery.of(context).size.height;
-    bool isLoading = ref.watch(signinViewmodelProvider).signinState is LoadingState ? true : false;
+    bool isLoading = false;
 
     ref.listen(signinViewmodelProvider, (_, nextState) {
       switch (nextState.signinState) {
@@ -40,10 +40,14 @@ class _SignInPageState extends ConsumerState<SignInPage> {
           } else {
             showSnackbar(context, "Hello, ${user.name}");
           }
+          isLoading = false;
         case ErrorState(message: final message):
           showSnackbar(context, message);
+          isLoading = false;
         case LoadingState():
+          isLoading = true;
         case IdleState():
+          isLoading = false;
       }
     });
 

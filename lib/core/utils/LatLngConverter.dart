@@ -7,8 +7,8 @@ class LatLngConverter implements JsonConverter<LatLng, Map<String, dynamic>> {
   @override
   LatLng fromJson(Map<String, dynamic> json) {
     return LatLng(
-      double.parse(json['latitude']),
-      double.parse(json['longitude']),
+      double.parse(json['latitude'].toString()),
+      double.parse(json['longitude'].toString()),
     );
   }
 

@@ -59,6 +59,7 @@ class _AppState extends ConsumerState<App> {
 
     return MaterialApp.router(
       theme: ref.watch(appThemeProvider),
+      themeAnimationDuration: const Duration(milliseconds: 0),
       routerConfig: ref.watch(routerProvider),
     );
   }

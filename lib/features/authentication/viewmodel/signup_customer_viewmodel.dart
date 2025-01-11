@@ -13,8 +13,8 @@ part 'signup_customer_viewmodel.g.dart';
 
 @riverpod
 class SignupCustomerViewmodel extends _$SignupCustomerViewmodel {
-  late final AuthRemoteRepository _authRemoteRepository;
-  late final AuthLocalRepository _authLocalRepository;
+  late AuthRemoteRepository _authRemoteRepository;
+  late AuthLocalRepository _authLocalRepository;
 
   @override
   SignupCustomerViewState build() {

@@ -1,5 +1,4 @@
 import 'package:freezed_annotation/freezed_annotation.dart';
-import 'package:socieaty/features/user/model/socieaty_user.dart';
 
 import '../../../core/enums/user_role.enum.dart';
 import '../../../core/utils/user_role_converter.dart';
