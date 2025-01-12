@@ -9,6 +9,7 @@ class PostMedia with _$PostMedia {
     required String url,
     required String type,
     required String postId,
+    required String extension,
   }) = _PostMedia;
 
   factory PostMedia.fromJson(Map<String, Object?> json) => _$PostMediaFromJson(json);

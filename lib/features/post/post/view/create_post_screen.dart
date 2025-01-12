@@ -22,6 +22,7 @@ import 'package:socieaty/shared/widgets/form_item.dart';
 import 'package:socieaty/shared/widgets/image_card.dart';
 import 'package:socieaty/shared/widgets/loading_indicator.dart';
 import 'package:socieaty/shared/widgets/profile_card.dart';
+import 'package:socieaty/shared/widgets/video_thumbail_widget.dart';
 
 class CreatePostScreen extends ConsumerStatefulWidget {
   const CreatePostScreen({super.key});
@@ -130,10 +131,20 @@ class _CreatePostScreenState extends ConsumerState<CreatePostScreen> {
                                   ),
                                 );
                               }
-                              return ImageCard(
-                                file: files[index],
-                                size: Size(100, 100),
-                              );
+                              final file = files[index];
+                              final extension = file.path.substring(file.path.lastIndexOf('.'));
+                              debugPrint("Extension: $extension");
+                              if (RegExp(r'\.(mp4|mov|avi|wmv|flv|mkv|webm)$', caseSensitive: false).hasMatch(file.path)) {
+                                return VideoThumbailWidget(
+                                  size: Size(100, 100),
+                                  videoPath: file.path,
+                                );
+                              } else {
+                                return ImageCard(
+                                  file: files[index],
+                                  size: Size(100, 100),
+                                );
+                              }
                             },
                           ),
                         ),

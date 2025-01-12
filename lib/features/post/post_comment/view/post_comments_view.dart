@@ -136,7 +136,7 @@ class _PostCommentsViewState extends ConsumerState<PostCommentsView> {
                         if (_formKey.currentState != null && _formKey.currentState!.validate()) {
                           _formKey.currentState?.save();
                           ref.read(postCommentsViewModelProvider.notifier).createPostComment(postCommentsFormState, widget.postId).then((_) {
-                            postComments = ref.refresh(postCommentsProvider(widget.postId));
+                            ref.invalidate(postCommentsProvider);
                           });
                           _formKey.currentState?.reset();
                         }

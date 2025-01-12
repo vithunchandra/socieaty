@@ -10,6 +10,7 @@ import 'package:socieaty/features/post/post/model/like_post_response.dart';
 import 'package:socieaty/features/post/post/model/post.dart';
 import 'package:socieaty/features/post/post/viewmodel/post_view_model.dart';
 import 'package:socieaty/features/post/post_comment/view/post_comments_view.dart';
+import 'package:socieaty/features/post/post_media/model/post_media.dart';
 import 'package:socieaty/shared/view_state.dart';
 import 'package:socieaty/shared/widgets/video_player_widget.dart';
 
@@ -28,6 +29,7 @@ class _PostViewState extends ConsumerState<PostView> with AutomaticKeepAliveClie
   bool isLiked = false;
   int likes = 0;
   int comments = 0;
+  List<PostMedia> postMedia = [];
   Timer? _debounce;
   final Duration _debounceDuration = Duration(milliseconds: 500);
 
@@ -41,6 +43,8 @@ class _PostViewState extends ConsumerState<PostView> with AutomaticKeepAliveClie
     isLiked = widget.post.likes.any((like) => like.id == widget.userId);
     likes = widget.post.likes.length;
     hashtags = widget.post.hashtags.map((hashtag) => hashtag.tag).toList().toHashtags();
+    postMedia = widget.post.medias;
+    debugPrint("postMedia: $postMedia");
   }
 
   @override
@@ -62,7 +66,9 @@ class _PostViewState extends ConsumerState<PostView> with AutomaticKeepAliveClie
   void getLocationName() async {
     var location = await LocationHandler.getAddressFromLatLng(widget.post.location!);
     locationName = "${location?.street}, ${location?.locality}, ${location?.country}";
-    setState(() {});
+    if (mounted) {
+      setState(() {});
+    }
   }
 
   @override
@@ -98,14 +104,22 @@ class _PostViewState extends ConsumerState<PostView> with AutomaticKeepAliveClie
             child: PageView(
               controller: _pageController,
               children: [
-                Align(
-                  alignment: Alignment.topCenter,
-                  child: Image.asset(
-                    'assets/images/person_dummy.jpg',
-                    fit: BoxFit.contain,
-                  ),
+                ...postMedia.map(
+                  (media) => media.type == "image"
+                      ? Align(
+                          alignment: Alignment.topCenter,
+                          child: Image.network(
+                            media.url,
+                            fit: BoxFit.contain,
+                          ),
+                        )
+                      : Center(
+                          child: VideoPlayerWidget(
+                            videoUrl: media.url,
+                            postId: widget.post.id,
+                          ),
+                        ),
                 ),
-                Center(child: VideoPlayerWidget(videoUrl: 'assets/videos/test_2.mp4', postId: widget.post.id,))
               ],
             ),
           ),

@@ -29,7 +29,6 @@ class HomeRepository {
   Future<ApiResult<GetAllPostResponse>> getAllPost() async {
     try {
       final response = await _dio.get("post/");
-      debugPrint(response.data.toString());
       return Success(data: GetAllPostResponse.fromJson(response.data));
     } on DioException catch (error) {
       return Error(message: error.extractMesage());

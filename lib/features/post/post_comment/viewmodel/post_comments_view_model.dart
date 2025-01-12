@@ -16,12 +16,10 @@ part 'post_comments_view_model.g.dart';
 @riverpod
 Future<List<PostComment>> postComments(Ref ref, String postId) async {
   final postCommentRepository = ref.watch(postCommentRepositoryProvider);
-
   final result = await postCommentRepository.getPostComments(postId);
   switch (result) {
     case Success<GetPostCommentsResponse>(data: final data):
       ref.read(postViewModelProvider(postId: postId).notifier).setComments(data.comments.length);
-
       return data.comments;
     case Error(message: final message):
       throw Exception(message);

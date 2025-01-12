@@ -27,7 +27,7 @@ class _VideoPlayerWidgetState extends ConsumerState<VideoPlayerWidget> {
 
   Future<void> _initializeVideo() async {
     try {
-      _videoController = VideoPlayerController.asset(widget.videoUrl);
+      _videoController = VideoPlayerController.networkUrl(Uri.parse(widget.videoUrl));
       await _videoController.initialize();
       setState(() {
         _isInitialized = true;
@@ -54,11 +54,14 @@ class _VideoPlayerWidgetState extends ConsumerState<VideoPlayerWidget> {
       if (next[next.length - 1] != 0) {
         _videoController.pause();
       } else {
-        _videoController.play();
+        if (ref.watch(homeScreenViewModelProvider).currentPostId == widget.postId) {
+          _videoController.play();
+        }
       }
     });
 
     ref.listen(homeScreenViewModelProvider, (_, next) {
+      debugPrint("next: ${next.currentPostId}");
       if (next.currentPostId != widget.postId) {
         _videoController.pause();
       } else {

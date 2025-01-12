@@ -5,6 +5,7 @@ import 'package:socieaty/features/authentication/repository/auth_local_repositor
 import 'package:socieaty/features/home/customer/provider/all_post_provider.dart';
 import 'package:socieaty/features/home/customer/viewmodel/home_screen_view_model.dart';
 import 'package:socieaty/features/post/post/view/post_view.dart';
+import 'package:socieaty/shared/widgets/custom_scroll_physics.dart';
 import 'package:socieaty/shared/widgets/loading_indicator.dart';
 
 class HomeScreen extends ConsumerStatefulWidget {
@@ -44,6 +45,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen>{
               children: [
                 PageView(
                   controller: _pageController,
+                  physics: const CustomPageViewScrollPhysics(),
                   scrollDirection: Axis.vertical,
                   onPageChanged: (index){
                     ref.read(homeScreenViewModelProvider.notifier).setCurrentPostId(posts[index].id);

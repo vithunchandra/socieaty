@@ -1,3 +1,4 @@
+import 'package:flutter/material.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 import 'package:socieaty/core/network/api_result.dart';
 import 'package:socieaty/features/authentication/provider/session_provider.dart';
@@ -29,8 +30,10 @@ class SigninViewmodel extends _$SigninViewmodel {
     final response = await _authRemoteRepository.signinCustomer(data);
     switch (response) {
       case Success(data: final result):
+        debugPrint("Token: ${result.token}");
         await _authLocalRepository.setToken(result.token);
         await _authLocalRepository.setUserData(result.user);
+        ref.invalidate(getSessionDataProvider);
         state = state.copyWith(signinState: SuccessState(data: result.user));
       case Error(message: final message):
         state = state.copyWith(signinState: ErrorState(message: message));

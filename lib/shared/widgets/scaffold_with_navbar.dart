@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:socieaty/app_theme.dart';
 import 'package:socieaty/core/theme/theme.dart';
+import 'package:socieaty/features/home/customer/provider/all_post_provider.dart';
 import 'package:socieaty/shared/provider/navigation_provider.dart';
 import 'package:socieaty/shared/widgets/navbar.dart';
 
@@ -36,6 +37,9 @@ class _ScaffoldWithNavbarState extends ConsumerState<ScaffoldWithNavbar> {
     if (index == 2) {
       context.push('/create_post');
     } else {
+      if (index == 1 && widget.navigationShell.currentIndex == 1) {
+        ref.invalidate(allPostProvider);
+      }
       widget.navigationShell.goBranch(
         index,
         initialLocation: index == widget.navigationShell.currentIndex,
