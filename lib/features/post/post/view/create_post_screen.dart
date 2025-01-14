@@ -11,6 +11,7 @@ import 'package:socieaty/core/utils/custom_extension.dart';
 import 'package:socieaty/core/utils/show_image_picker_modal.dart';
 import 'package:socieaty/core/utils/show_snackbar.dart';
 import 'package:socieaty/features/authentication/repository/auth_local_repository.dart';
+import 'package:socieaty/features/home/customer/provider/all_post_provider.dart';
 import 'package:socieaty/features/map/model/MyLocationData.dart';
 import 'package:socieaty/features/post/post/model/post.dart';
 import 'package:socieaty/features/post/post/viewmodel/create_post_view_model.dart';
@@ -46,6 +47,8 @@ class _CreatePostScreenState extends ConsumerState<CreatePostScreen> {
     ref.listen(createPostViewModelProvider, (_, next) {
       switch (next.createPostState) {
         case SuccessState<Post>():
+          debugPrint("Invalidate create");
+          ref.invalidate(allPostProvider);
           if (user?.role == UserRole.customer) {
             context.pop();
           } else {

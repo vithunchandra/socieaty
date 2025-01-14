@@ -36,10 +36,8 @@ class _InitPageState extends ConsumerState<SplashScreen> {
   Widget build(BuildContext context) {
     ref.listen(getSessionDataProvider, (_, next) {
       next.when(
-        data: (user) {
-          ref.watch(getSessionDataProvider).whenData((data) async {
-            await ref.watch(authLocalRepositoryProvider).setUserData(data);
-          });
+        data: (user) async {
+          await ref.watch(authLocalRepositoryProvider).setUserData(user);
 
           if (user.role == UserRole.customer) {
             Future.delayed(Duration(seconds: 3), () {
@@ -72,7 +70,8 @@ class _InitPageState extends ConsumerState<SplashScreen> {
         width: double.infinity,
         height: double.infinity,
         decoration: BoxDecoration(
-          gradient: LinearGradient(colors: [AppPallete.primaryColor.shade200, AppPallete.primaryColor.shade600], begin: Alignment.topLeft, end: Alignment.topRight),
+          gradient: LinearGradient(
+              colors: [AppPallete.primaryColor.shade200, AppPallete.primaryColor.shade600], begin: Alignment.topLeft, end: Alignment.topRight),
         ),
         child: Center(
           child: Text(

@@ -15,9 +15,9 @@ class HomeScreen extends ConsumerStatefulWidget {
   ConsumerState<HomeScreen> createState() => _HomeScreenState();
 }
 
-class _HomeScreenState extends ConsumerState<HomeScreen>{
+class _HomeScreenState extends ConsumerState<HomeScreen> {
   late PageController _pageController;
-  
+
   @override
   void initState() {
     super.initState();
@@ -47,12 +47,10 @@ class _HomeScreenState extends ConsumerState<HomeScreen>{
                   controller: _pageController,
                   physics: const CustomPageViewScrollPhysics(),
                   scrollDirection: Axis.vertical,
-                  onPageChanged: (index){
+                  onPageChanged: (index) {
                     ref.read(homeScreenViewModelProvider.notifier).setCurrentPostId(posts[index].id);
                   },
-                  children: [
-                    ...posts.map((post) => PostView(post: post, userId: ref.watch(authLocalRepositoryProvider).getUserData()!.id))
-                  ],
+                  children: [...posts.map((post) => PostView(post: post, userId: ref.watch(authLocalRepositoryProvider).getUserData()!.id))],
                 ),
                 Padding(
                   padding: const EdgeInsets.all(8.0),
@@ -64,7 +62,12 @@ class _HomeScreenState extends ConsumerState<HomeScreen>{
                         TextButton(onPressed: () {}, child: Text("Customer")),
                         TextButton(onPressed: () {}, child: Text("Restaurant")),
                         Expanded(child: SizedBox()),
-                        IconButton(onPressed: () {}, icon: Icon(Icons.live_tv))
+                        IconButton(
+                          onPressed: () {
+                            ref.invalidate(allPostProvider);
+                          },
+                          icon: Icon(Icons.live_tv),
+                        )
                       ],
                     ),
                   ),
@@ -79,6 +82,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen>{
         return SafeArea(child: Center(child: Text(error.toString())));
       },
       loading: () {
+        debugPrint("Loading");
         return SafeArea(
           child: LoadingIndicator(),
         );

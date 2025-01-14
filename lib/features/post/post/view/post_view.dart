@@ -48,6 +48,24 @@ class _PostViewState extends ConsumerState<PostView> with AutomaticKeepAliveClie
   }
 
   @override
+  void didUpdateWidget(covariant PostView oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    ref.invalidate(postViewModelProvider(postId: oldWidget.post.id));
+    _pageController = PageController();
+    if (widget.post.location != null) {
+      getLocationName();
+    }
+    if (oldWidget.post.likes.any((like) => like.id == widget.userId) != widget.post.likes.any((like) => like.id == widget.userId)) {
+      isLiked = widget.post.likes.any((like) => like.id == widget.userId);
+    }
+    if (oldWidget.post.likes.length != widget.post.likes.length) {
+      likes = widget.post.likes.length;
+    }
+    hashtags = widget.post.hashtags.map((hashtag) => hashtag.tag).toList().toHashtags();
+    postMedia = widget.post.medias;
+  }
+
+  @override
   void dispose() {
     _pageController.dispose();
     super.dispose();
@@ -58,7 +76,6 @@ class _PostViewState extends ConsumerState<PostView> with AutomaticKeepAliveClie
       _debounce?.cancel();
     }
     _debounce = Timer(_debounceDuration, () {
-      debugPrint("isLiked: $isLiked");
       ref.read(postViewModelProvider(postId: widget.post.id).notifier).likePost(isLiked);
     });
   }
@@ -82,6 +99,7 @@ class _PostViewState extends ConsumerState<PostView> with AutomaticKeepAliveClie
       switch (next.likeState) {
         case SuccessState<LikePostResponse>(data: final data):
           setState(() {
+            debugPrint("SuccessState");
             isLiked = data.isLiked;
             likes = data.likes;
           });
@@ -107,7 +125,7 @@ class _PostViewState extends ConsumerState<PostView> with AutomaticKeepAliveClie
                 ...postMedia.map(
                   (media) => media.type == "image"
                       ? Align(
-                          alignment: Alignment.topCenter,
+                          alignment: Alignment.center,
                           child: Image.network(
                             media.url,
                             fit: BoxFit.contain,

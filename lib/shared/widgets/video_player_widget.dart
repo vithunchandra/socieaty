@@ -33,12 +33,22 @@ class _VideoPlayerWidgetState extends ConsumerState<VideoPlayerWidget> {
         _isInitialized = true;
         _videoController.play();
         _videoController.setLooping(true);
-        debugPrint(_videoController.value.aspectRatio.toString());
       });
     } catch (e) {
       setState(() {
         _errorMessage = 'Error loading video: $e';
       });
+    }
+  }
+
+  @override
+  void didUpdateWidget(covariant VideoPlayerWidget oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    if (oldWidget.postId != widget.postId) {
+      _isInitialized = false;
+      _videoController.pause();
+      setState(() {});
+      _initializeVideo();
     }
   }
 
