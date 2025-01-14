@@ -4,6 +4,7 @@ import 'package:socieaty/features/authentication/provider/session_provider.dart'
 import 'package:socieaty/features/authentication/repository/auth_local_repository.dart';
 import 'package:socieaty/features/authentication/viewstate/signup_customer_form_state.dart';
 import 'package:socieaty/features/authentication/viewstate/signup_customer_view_state.dart';
+import 'package:socieaty/features/user/model/socieaty_user.dart';
 import 'package:socieaty/shared/view_state.dart';
 
 import '../../../core/network/api_result.dart';
@@ -32,7 +33,11 @@ class SignupCustomerViewmodel extends _$SignupCustomerViewmodel {
       case Success<SignupCustomerResponse>(data: final result):
         await _authLocalRepository.setToken(result.token);
         ref.watch(getSessionDataProvider).whenData((data) async {
-          await _authLocalRepository.setUserData(data);
+          if(data is Success<SocieatyUser>){
+            await _authLocalRepository.setUserData(data.data);
+          }else{
+            throw Exception("Session not found");
+          }
         });
         state = state.copyWith(signupState: SuccessState(data: result.user));
       case Error(message: final message):

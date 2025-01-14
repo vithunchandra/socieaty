@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:socieaty/core/network/api_result.dart';
 import 'package:socieaty/features/authentication/provider/session_provider.dart';
+import 'package:socieaty/features/user/model/socieaty_user.dart';
 import 'package:socieaty/shared/widgets/custom_circle_avatar.dart';
 import 'package:socieaty/shared/widgets/loading_indicator.dart';
 
@@ -16,9 +18,11 @@ class _ProfileCardState extends ConsumerState<ProfileCard> {
   Widget build(BuildContext context) {
     return ref.watch(getSessionDataProvider).when(
       data: (user) {
-        return Row(
-          mainAxisAlignment: MainAxisAlignment.start,
-          children: [
+        switch (user) {
+          case Success<SocieatyUser>(data: final user):
+            return Row(
+              mainAxisAlignment: MainAxisAlignment.start,
+              children: [
             CustomCircleAvatar(radius: 22.5, imageUrl: "assets/images/person_dummy.jpg"),
             SizedBox(width: 12),
             Column(
@@ -35,8 +39,11 @@ class _ProfileCardState extends ConsumerState<ProfileCard> {
                 )
               ],
             )
-          ],
-        );
+              ],
+            );
+          case Error(message: final message):
+            return Text(message);
+        }
       },
       error: (error, stack) {
         return Text(error.toString());

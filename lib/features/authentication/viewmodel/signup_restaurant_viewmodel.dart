@@ -8,6 +8,7 @@ import 'package:socieaty/features/authentication/repository/auth_local_repositor
 import 'package:socieaty/features/authentication/repository/auth_remote_repository.dart';
 import 'package:socieaty/features/authentication/viewstate/signup_restaurant_form_state.dart';
 import 'package:socieaty/features/authentication/viewstate/signup_restaurant_view_state.dart';
+import 'package:socieaty/features/user/model/socieaty_user.dart';
 import 'package:socieaty/shared/view_state.dart';
 
 part 'signup_restaurant_viewmodel.g.dart';
@@ -31,7 +32,11 @@ class SignupRestaurantViewModel extends _$SignupRestaurantViewModel {
       case Success<SignupRestaurantResponse>(data: final result):
         await _authLocalRepository.setToken(result.token);
         ref.watch(getSessionDataProvider).whenData((data) async {
-          await _authLocalRepository.setUserData(data);
+          if(data is Success<SocieatyUser>){
+            await _authLocalRepository.setUserData(data.data);
+          }else{
+            throw Exception("Session not found");
+          }
         });
         state = state.copyWith(signupRestaurantState: SuccessState(data: result.user));
       case Error(message: final message):

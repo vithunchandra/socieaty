@@ -48,26 +48,6 @@ GoRouter router(Ref ref) {
       ]),
       GoRoute(path: '/select_location', builder: (context, state) => const SelectLocation()),
       GoRoute(
-        path: '/camera',
-        builder: (context, state) => const CameraScreen(),
-        routes: [
-          GoRoute(
-            path: 'image/confirmation',
-            builder: (context, state) {
-              final xFile = state.extra as XFile;
-              return ImageConfirmationScreen(imageFile: xFile);
-            },
-          ),
-          GoRoute(
-            path: 'video/confirmation',
-            builder: (context, state) {
-              final xFile = state.extra as XFile;
-              return ImageConfirmationScreen(imageFile: xFile);
-            },
-          )
-        ],
-      ),
-      GoRoute(
         path: '/create_post',
         pageBuilder: (context, state) => const NoTransitionPage(
           child: CreatePostScreen(),

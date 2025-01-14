@@ -9,17 +9,17 @@ import 'package:socieaty/features/user/model/socieaty_user.dart';
 part 'session_provider.g.dart';
 
 @riverpod
-Future<SocieatyUser> getSessionData(Ref ref) async {
+Future<ApiResult<SocieatyUser>> getSessionData(Ref ref) async {
   final token = ref.watch(authLocalRepositoryProvider).getToken();
   debugPrint("Token: $token");
   if (token == null) {
-    throw "Session not found";
+      return Error(message: "Session not found");
   }
   final result = await ref.watch(authRemoteRepositoryProvider).getSessionData(token);
   switch (result) {
     case Success(data: final user):
-      return user;
+      return Success(data: user);
     case Error(message: final message):
-      throw message;
+      return Error(message: message);
   }
 }
