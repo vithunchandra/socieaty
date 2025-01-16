@@ -35,12 +35,11 @@ class _SignupRestaurantFinalPageState extends ConsumerState<SignupRestaurantFina
   @override
   Widget build(BuildContext context) {
     final double screenWidth = MediaQuery.of(context).size.width;
-    final double screenHeight = MediaQuery.of(context).size.height;
     final isSignupLoading = ref.watch(signupRestaurantViewModelProvider).signupRestaurantState is LoadingState;
 
     ref.listen(signupRestaurantViewModelProvider, (_, next) {
       switch (next.signupRestaurantState) {
-        case SuccessState<SocieatyUser>(data: final user):
+        case SuccessState<SocieatyUser>():
           context.replace('/signin');
         case ErrorState(message: final message):
           showSnackbar(context, message);

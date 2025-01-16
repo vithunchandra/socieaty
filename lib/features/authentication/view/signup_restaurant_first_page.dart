@@ -23,7 +23,6 @@ class _SignupRestaurantFirstPageState extends State<SignupRestaurantFirstPage> {
   Widget build(BuildContext context) {
     _passwordController.text = "vithun11";
     final double screenWidth = MediaQuery.of(context).size.width;
-    final double screenHeight = MediaQuery.of(context).size.height;
 
     return Scaffold(
       backgroundColor: AppPallete.neutralColor.shade50,

@@ -29,7 +29,6 @@ class _SignupCustomerPageState extends ConsumerState<SignupCustomerPage> {
   @override
   Widget build(BuildContext context) {
     final double screenWidth = MediaQuery.of(context).size.width;
-    final double screenHeight = MediaQuery.of(context).size.height;
 
     ref.listen(signupCustomerViewmodelProvider, (_, next) {
       switch (next.signupState) {
