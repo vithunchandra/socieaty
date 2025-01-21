@@ -7,7 +7,7 @@ part 'account_view_model.g.dart';
 
 @riverpod
 class AccountViewModel extends _$AccountViewModel {
-  late final AuthLocalRepository _authLocalRepository;
+  late AuthLocalRepository _authLocalRepository;
 
   @override
   AccountViewState build() {

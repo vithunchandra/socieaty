@@ -87,6 +87,9 @@ class AuthRemoteRepository {
     } on Exception catch (error) {
       debugPrint(error.toString());
       return Error(message: error.toString());
+    } catch (error) {
+      debugPrint(error.toString());
+      return Error(message: error.toString());
     }
   }
 }

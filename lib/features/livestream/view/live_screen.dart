@@ -1,12 +1,18 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:livekit_client/livekit_client.dart';
 import 'package:socieaty/shared/widgets/custom_circle_avatar.dart';
 
-class LiveScreen extends StatelessWidget {
+class LiveScreen extends ConsumerStatefulWidget {
   final Room room;
   const LiveScreen({super.key, required this.room});
 
+  @override
+  ConsumerState<LiveScreen> createState() => _LiveScreenState();
+}
+
+class _LiveScreenState extends ConsumerState<LiveScreen> {
   @override
   Widget build(BuildContext context) {
     final screenHeight = MediaQuery.of(context).size.height;

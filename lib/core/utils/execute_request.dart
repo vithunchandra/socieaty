@@ -13,5 +13,7 @@ Future<ApiResult<T>> executeRequest<T>({
     return Error(message: error.extractMesage());
   } on Exception catch (error) {
     return Error(message: error.toString());
+  } catch (error) {
+    return Error(message: error.toString());
   }
 }
