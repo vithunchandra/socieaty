@@ -61,249 +61,234 @@ class _CreatePostScreenState extends ConsumerState<CreatePostScreen> {
       }
     });
 
-    return PopScope(
-      onPopInvokedWithResult: (bool value, Object? result) {
-        if (ref.watch(navigationIndexProvider).length > 1) {
-          ref.read(navigationIndexProvider.notifier).removeLastIndex();
-          final previousIndex = ref.watch(navigationIndexProvider).last;
-          debugPrint("${ref.watch(navigationIndexProvider)}");
-          if (previousIndex == 0) {
-            debugPrint("dark theme");
-            ref.read(appThemeProvider.notifier).setTheme(SocieatyAppTheme.darkTheme);
-          }
-        }
-      },
-      child: Scaffold(
-        appBar: AppBar(
-          leading: IconButton(
-            onPressed: () {
-              // ref.read(appThemeProvider.notifier).setTheme(SocieatyAppTheme.darkTheme);
-              // context.go("/customer/home");
-              context.pop();
-            },
-            icon: Icon(Icons.chevron_left),
-            iconSize: 30,
-          ),
-          backgroundColor: AppPallete.neutralColor.shade50,
-          title: Text("Create Post"),
-          titleTextStyle: Theme.of(context).textTheme.titleMedium,
+    return Scaffold(
+      appBar: AppBar(
+        leading: IconButton(
+          onPressed: () {
+            context.pop();
+          },
+          icon: Icon(Icons.chevron_left),
+          iconSize: 30,
         ),
-        body: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 16.0),
-          child: Column(
-            children: [
-              Expanded(
-                child: Form(
-                  key: _formKey,
-                  child: SingleChildScrollView(
-                    scrollDirection: Axis.vertical,
-                    child: Column(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        ProfileCard(),
-                        SizedBox(height: 20),
-                        SizedBox(
-                          height: 100,
-                          child: ListView.builder(
-                            scrollDirection: Axis.horizontal,
-                            itemCount: files.length + 1,
-                            itemBuilder: (context, index) {
-                              if (index == files.length) {
-                                return GestureDetector(
-                                  onTap: () {
-                                    showImagePickerModal(context, (image) {
-                                      setState(() {
-                                        files.add(image);
-                                      });
+        backgroundColor: AppPallete.neutralColor.shade50,
+        title: Text("Create Post"),
+        titleTextStyle: Theme.of(context).textTheme.titleMedium,
+      ),
+      body: Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 16.0),
+        child: Column(
+          children: [
+            Expanded(
+              child: Form(
+                key: _formKey,
+                child: SingleChildScrollView(
+                  scrollDirection: Axis.vertical,
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      ProfileCard(),
+                      SizedBox(height: 20),
+                      SizedBox(
+                        height: 100,
+                        child: ListView.builder(
+                          scrollDirection: Axis.horizontal,
+                          itemCount: files.length + 1,
+                          itemBuilder: (context, index) {
+                            if (index == files.length) {
+                              return GestureDetector(
+                                onTap: () {
+                                  showImagePickerModal(context, (image) {
+                                    setState(() {
+                                      files.add(image);
                                     });
-                                  },
-                                  child: Card(
-                                    clipBehavior: Clip.antiAlias,
-                                    child: Container(
-                                      width: 100,
-                                      height: 100,
-                                      decoration: BoxDecoration(
-                                        borderRadius: BorderRadius.circular(12),
-                                        color: Colors.grey[200],
-                                      ),
-                                      child: Center(
-                                        child: Icon(Icons.add, size: 50, color: AppPallete.neutralColor.shade400),
-                                      ),
+                                  });
+                                },
+                                child: Card(
+                                  clipBehavior: Clip.antiAlias,
+                                  child: Container(
+                                    width: 100,
+                                    height: 100,
+                                    decoration: BoxDecoration(
+                                      borderRadius: BorderRadius.circular(12),
+                                      color: Colors.grey[200],
+                                    ),
+                                    child: Center(
+                                      child: Icon(Icons.add, size: 50, color: AppPallete.neutralColor.shade400),
                                     ),
                                   ),
-                                );
-                              }
-                              final file = files[index];
-                              final extension = file.path.substring(file.path.lastIndexOf('.'));
-                              debugPrint("Extension: $extension");
-                              if (RegExp(r'\.(mp4|mov|avi|wmv|flv|mkv|webm)$', caseSensitive: false).hasMatch(file.path)) {
-                                return VideoThumbailWidget(
-                                  size: Size(100, 100),
-                                  videoPath: file.path,
-                                );
-                              } else {
-                                return ImageCard(
-                                  file: files[index],
-                                  size: Size(100, 100),
-                                );
-                              }
-                            },
-                          ),
+                                ),
+                              );
+                            }
+                            final file = files[index];
+                            final extension = file.path.substring(file.path.lastIndexOf('.'));
+                            debugPrint("Extension: $extension");
+                            if (RegExp(r'\.(mp4|mov|avi|wmv|flv|mkv|webm)$', caseSensitive: false).hasMatch(file.path)) {
+                              return VideoThumbailWidget(
+                                size: Size(100, 100),
+                                videoPath: file.path,
+                              );
+                            } else {
+                              return ImageCard(
+                                file: files[index],
+                                size: Size(100, 100),
+                              );
+                            }
+                          },
                         ),
-                        SizedBox(height: 20),
-                        Container(
-                          constraints: BoxConstraints(
-                            maxHeight: 300,
-                          ),
-                          child: Column(
-                            mainAxisAlignment: MainAxisAlignment.start,
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            mainAxisSize: MainAxisSize.min,
-                            children: [
-                              Padding(
-                                padding: const EdgeInsets.only(left: 8.0, right: 8.0, top: 12.0),
-                                child: TextFormField(
-                                  validator: (value) {
-                                    if (value == null || value.isEmpty) {
-                                      return "Judul post harus diisi";
-                                    }
-                                    return null;
-                                  },
-                                  onSaved: (value) {
-                                    formData = formData.copyWith(title: value);
-                                  },
-                                  style: Theme.of(context).textTheme.titleLarge,
-                                  decoration: InputDecoration.collapsed(
-                                    hintText: "Your title here",
-                                    hintStyle: Theme.of(context).textTheme.titleLarge?.copyWith(color: AppPallete.neutralColor.shade400),
-                                    hintFadeDuration: Duration(milliseconds: 250),
-                                    border: InputBorder.none,
-                                  ),
+                      ),
+                      SizedBox(height: 20),
+                      Container(
+                        constraints: BoxConstraints(
+                          maxHeight: 300,
+                        ),
+                        child: Column(
+                          mainAxisAlignment: MainAxisAlignment.start,
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            Padding(
+                              padding: const EdgeInsets.only(left: 8.0, right: 8.0, top: 12.0),
+                              child: TextFormField(
+                                validator: (value) {
+                                  if (value == null || value.isEmpty) {
+                                    return "Judul post harus diisi";
+                                  }
+                                  return null;
+                                },
+                                onSaved: (value) {
+                                  formData = formData.copyWith(title: value);
+                                },
+                                style: Theme.of(context).textTheme.titleLarge,
+                                decoration: InputDecoration.collapsed(
+                                  hintText: "Your title here",
+                                  hintStyle: Theme.of(context).textTheme.titleLarge?.copyWith(color: AppPallete.neutralColor.shade400),
+                                  hintFadeDuration: Duration(milliseconds: 250),
+                                  border: InputBorder.none,
                                 ),
                               ),
-                              Divider(),
-                              Padding(
-                                padding: const EdgeInsets.only(left: 8.0, right: 8.0, bottom: 12.0),
-                                child: TextFormField(
-                                  validator: (value) {
-                                    if (value == null || value.isEmpty) {
-                                      return "Caption post harus diisi";
-                                    }
-                                    return null;
-                                  },
-                                  onSaved: (value) {
-                                    formData = formData.copyWith(caption: value);
-                                  },
-                                  style: Theme.of(context).textTheme.bodyMedium,
-                                  decoration: InputDecoration.collapsed(
-                                    hintText: "Your caption here. Create a wonderful caption for your post",
-                                    hintStyle: Theme.of(context).textTheme.bodyMedium?.copyWith(color: AppPallete.neutralColor.shade400),
-                                    hintFadeDuration: Duration(milliseconds: 250),
-                                    border: InputBorder.none,
-                                  ),
-                                  minLines: 5,
-                                  maxLines: 10,
+                            ),
+                            Divider(),
+                            Padding(
+                              padding: const EdgeInsets.only(left: 8.0, right: 8.0, bottom: 12.0),
+                              child: TextFormField(
+                                validator: (value) {
+                                  if (value == null || value.isEmpty) {
+                                    return "Caption post harus diisi";
+                                  }
+                                  return null;
+                                },
+                                onSaved: (value) {
+                                  formData = formData.copyWith(caption: value);
+                                },
+                                style: Theme.of(context).textTheme.bodyMedium,
+                                decoration: InputDecoration.collapsed(
+                                  hintText: "Your caption here. Create a wonderful caption for your post",
+                                  hintStyle: Theme.of(context).textTheme.bodyMedium?.copyWith(color: AppPallete.neutralColor.shade400),
+                                  hintFadeDuration: Duration(milliseconds: 250),
+                                  border: InputBorder.none,
                                 ),
+                                minLines: 5,
+                                maxLines: 10,
                               ),
-                            ],
-                          ),
+                            ),
+                          ],
                         ),
-                        SizedBox(height: 20),
-                        GestureDetector(
-                          onTap: () {
-                            showDialog(
-                                context: context,
-                                builder: (_) {
-                                  final hashtagsController = TextEditingController();
-                                  hashtagsController.text = formData.hashtags.toHashtags();
-                                  return AlertDialog(
-                                    elevation: 2.0,
-                                    content: SizedBox(
-                                      child: Column(
-                                        mainAxisSize: MainAxisSize.min,
-                                        mainAxisAlignment: MainAxisAlignment.center,
-                                        crossAxisAlignment: CrossAxisAlignment.start,
-                                        children: [
-                                          Text("Hashtags", style: Theme.of(context).textTheme.titleLarge),
-                                          SizedBox(height: 16),
-                                          CustomTextField(
-                                            controller: hashtagsController,
-                                            hintText: "#hashtag1 #hashtag2...",
-                                          ),
-                                        ],
-                                      ),
+                      ),
+                      SizedBox(height: 20),
+                      GestureDetector(
+                        onTap: () {
+                          showDialog(
+                              context: context,
+                              builder: (_) {
+                                final hashtagsController = TextEditingController();
+                                hashtagsController.text = formData.hashtags.toHashtags();
+                                return AlertDialog(
+                                  elevation: 2.0,
+                                  content: SizedBox(
+                                    child: Column(
+                                      mainAxisSize: MainAxisSize.min,
+                                      mainAxisAlignment: MainAxisAlignment.center,
+                                      crossAxisAlignment: CrossAxisAlignment.start,
+                                      children: [
+                                        Text("Hashtags", style: Theme.of(context).textTheme.titleLarge),
+                                        SizedBox(height: 16),
+                                        CustomTextField(
+                                          controller: hashtagsController,
+                                          hintText: "#hashtag1 #hashtag2...",
+                                        ),
+                                      ],
                                     ),
-                                    actions: [
-                                      TextButton(
-                                        onPressed: () {
-                                          Navigator.pop(context);
-                                        },
-                                        child: Text("Discard"),
-                                      ),
-                                      TextButton(
-                                        onPressed: () {
-                                          final text = hashtagsController.text;
-                                          if (text.isNotEmpty) {
-                                            final hashtags = text.extractHashtags();
-                                            formData = formData.copyWith(
-                                              hashtags: hashtags,
-                                            );
+                                  ),
+                                  actions: [
+                                    TextButton(
+                                      onPressed: () {
+                                        Navigator.pop(context);
+                                      },
+                                      child: Text("Discard"),
+                                    ),
+                                    TextButton(
+                                      onPressed: () {
+                                        final text = hashtagsController.text;
+                                        if (text.isNotEmpty) {
+                                          final hashtags = text.extractHashtags();
+                                          formData = formData.copyWith(
+                                            hashtags: hashtags,
+                                          );
 
-                                            setState(() {
-                                              hashtagsText = hashtags.toHashtags();
-                                            });
-                                          }
+                                          setState(() {
+                                            hashtagsText = hashtags.toHashtags();
+                                          });
+                                        }
 
-                                          Navigator.pop(context);
-                                        },
-                                        child: Text("Save"),
-                                      )
-                                    ],
-                                  );
-                                });
-                          },
-                          child: FormItem(itemIcon: Icons.tag, itemTitle: hashtagsText.isEmpty ? "Hashtags" : hashtagsText),
+                                        Navigator.pop(context);
+                                      },
+                                      child: Text("Save"),
+                                    )
+                                  ],
+                                );
+                              });
+                        },
+                        child: FormItem(itemIcon: Icons.tag, itemTitle: hashtagsText.isEmpty ? "Hashtags" : hashtagsText),
+                      ),
+                      GestureDetector(
+                        onTap: () {
+                          context.push<MyLocationData>('/select_location').then((locationData) {
+                            if (locationData != null) {
+                              debugPrint("${locationData.address} halooo");
+                              locationAddress = locationData.address;
+                              formData = formData.copyWith(location: locationData.latlng);
+                              setState(() {});
+                            }
+                          });
+                        },
+                        child: FormItem(
+                          itemIcon: Icons.location_on_outlined,
+                          itemTitle: locationAddress.isEmpty ? "Location" : locationAddress,
                         ),
-                        GestureDetector(
-                          onTap: () {
-                            context.push<MyLocationData>('/select_location').then((locationData) {
-                              if (locationData != null) {
-                                debugPrint("${locationData.address} halooo");
-                                locationAddress = locationData.address;
-                                formData = formData.copyWith(location: locationData.latlng);
-                                setState(() {});
-                              }
-                            });
-                          },
-                          child: FormItem(
-                            itemIcon: Icons.location_on_outlined,
-                            itemTitle: locationAddress.isEmpty ? "Location" : locationAddress,
-                          ),
-                        ),
-                      ],
-                    ),
+                      ),
+                    ],
                   ),
                 ),
               ),
-              Padding(
-                padding: const EdgeInsets.symmetric(vertical: 8.0),
-                child: SizedBox(
-                  width: double.infinity,
-                  height: 45,
-                  child: FilledButton(
-                    onPressed: () {
-                      if (_formKey.currentState != null && _formKey.currentState!.validate()) {
-                        _formKey.currentState?.save();
-                        ref.read(createPostViewModelProvider.notifier).createPost(formData, files);
-                      }
-                    },
-                    child: isLoading ? LoadingIndicator() : Text("Post"),
-                  ),
+            ),
+            Padding(
+              padding: const EdgeInsets.symmetric(vertical: 8.0),
+              child: SizedBox(
+                width: double.infinity,
+                height: 45,
+                child: FilledButton(
+                  onPressed: () {
+                    if (_formKey.currentState != null && _formKey.currentState!.validate()) {
+                      _formKey.currentState?.save();
+                      ref.read(createPostViewModelProvider.notifier).createPost(formData, files);
+                    }
+                  },
+                  child: isLoading ? LoadingIndicator() : Text("Post"),
                 ),
-              )
-            ],
-          ),
+              ),
+            )
+          ],
         ),
       ),
     );

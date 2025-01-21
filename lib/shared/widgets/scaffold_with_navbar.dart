@@ -28,7 +28,7 @@ class _ScaffoldWithNavbarState extends ConsumerState<ScaffoldWithNavbar> {
   }
 
   void _goBranch(int index) {
-    if (index == 0) {
+    if (index == 0 || index == 1) {
       ref.read(appThemeProvider.notifier).setTheme(SocieatyAppTheme.darkTheme);
     } else {
       ref.read(appThemeProvider.notifier).setTheme(SocieatyAppTheme.lightTheme);
@@ -36,8 +36,10 @@ class _ScaffoldWithNavbarState extends ConsumerState<ScaffoldWithNavbar> {
     debugPrint("index: $index");
     if (index == 2) {
       context.push('/create_post');
+    } else if (index == 1) {
+      context.push('/livestream');
     } else {
-      if (index == 1 && widget.navigationShell.currentIndex == 1) {
+      if (index == 0 && widget.navigationShell.currentIndex == 0) {
         ref.invalidate(allPostProvider);
       }
       widget.navigationShell.goBranch(

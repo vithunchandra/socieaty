@@ -18,7 +18,7 @@ class Navbar extends ConsumerWidget {
     return Container(
       decoration: BoxDecoration(
         boxShadow: [
-          BoxShadow(color: AppPallete.neutralColor.withValues(alpha: 0.5), blurRadius: 4),
+          BoxShadow(color: AppPallete.neutralColor.withAlpha(128), blurRadius: 4),
         ],
       ),
       child: NavigationBar(
@@ -33,9 +33,9 @@ class Navbar extends ConsumerWidget {
             selectedIcon: Icon(Icons.home),
           ),
           NavigationDestination(
-            label: 'Search',
-            icon: Icon(Icons.search),
-            selectedIcon: Icon(Icons.search),
+            label: 'Live',
+            icon: Icon(Icons.live_tv_outlined),
+            selectedIcon: Icon(Icons.live_tv),
           ),
           NavigationDestination(
             icon: Padding(
