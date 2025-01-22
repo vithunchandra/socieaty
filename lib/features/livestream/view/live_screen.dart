@@ -1,18 +1,152 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:flutter_webrtc/flutter_webrtc.dart';
 import 'package:go_router/go_router.dart';
 import 'package:livekit_client/livekit_client.dart';
+import 'package:socieaty/core/constants.dart';
+import 'package:socieaty/core/utils/show_snackbar.dart';
 import 'package:socieaty/shared/widgets/custom_circle_avatar.dart';
+import 'package:socieaty/shared/widgets/loading_indicator.dart';
+
+class LiveScreenArgs {
+  final String accessToken;
+  final CameraPosition cameraPosition;
+  const LiveScreenArgs({
+    required this.accessToken,
+    required this.cameraPosition,
+  });
+}
 
 class LiveScreen extends ConsumerStatefulWidget {
-  final Room room;
-  const LiveScreen({super.key, required this.room});
+  final LiveScreenArgs args;
+  const LiveScreen({
+    super.key,
+    required this.args,
+  });
 
   @override
   ConsumerState<LiveScreen> createState() => _LiveScreenState();
 }
 
 class _LiveScreenState extends ConsumerState<LiveScreen> {
+  late EventsListener _roomListener;
+  LocalVideoTrack? _localVideoTrack;
+  LocalAudioTrack? _localAudioTrack;
+  bool _isVideoTrackLoading = false;
+  CameraPosition? _cameraPosition;
+  Room? _room;
+
+  @override
+  void initState() {
+    super.initState();
+    setState(() {
+      _isVideoTrackLoading = true;
+    });
+
+    _cameraPosition = widget.args.cameraPosition;
+    _createRoom();
+  }
+
+  @override
+  void dispose() {
+    _roomListener.dispose();
+    _room?.dispose();
+    super.dispose();
+  }
+
+  _createRoom() async {
+    _room = Room();
+    final url = AppConstants.livestreamServerUrl;
+    await _room!.connect(
+      url,
+      widget.args.accessToken,
+    );
+    _setupListener();
+    _publishMedia();
+  }
+
+  _setupListener() {
+    _roomListener = _room!.createListener();
+
+    _roomListener.on<RoomDisconnectedEvent>((event) async {
+      if (event.reason != null) {
+        showSnackbar(context, "Room disconected because of ${event.reason}");
+      }
+    });
+  }
+
+  _publishMedia() async {
+    _publishCamera();
+    try {
+      await _room!.localParticipant?.setMicrophoneEnabled(true);
+      _localAudioTrack = _room!.localParticipant?.audioTrackPublications.firstOrNull?.track;
+    } catch (error) {
+      if (mounted) {
+        showSnackbar(context, "error: $error");
+      }
+    }
+    setState(() {});
+  }
+
+  _publishCamera() async {
+    setState(() {
+      _isVideoTrackLoading = true;
+    });
+    try {
+      await _room!.localParticipant?.setCameraEnabled(true);
+      _localVideoTrack = _room!.localParticipant?.videoTrackPublications.firstOrNull?.track;
+      debugPrint("_localVideoTrack: ${_localVideoTrack == null}");
+      await _localVideoTrack?.setCameraPosition(_cameraPosition!);
+    } catch (error) {
+      if (mounted) {
+        showSnackbar(context, "error: $error");
+      }
+    } finally {
+      _isVideoTrackLoading = false;
+      setState(() {});
+    }
+  }
+
+  _unpublishCamera() async {
+    setState(() {
+      _isVideoTrackLoading = true;
+    });
+    try {
+      await _room!.localParticipant?.setCameraEnabled(false);
+      _localVideoTrack = null;
+    } catch (error) {
+      if (mounted) {
+        showSnackbar(context, "error: $error");
+      }
+    } finally {
+      _isVideoTrackLoading = false;
+      setState(() {});
+    }
+  }
+
+  _toggleCameraEnabledState() async {
+    if (_localVideoTrack != null) {
+      await _unpublishCamera();
+    } else {
+      await _publishCamera();
+    }
+  }
+
+  _toggleCameraPosition() async {
+    _cameraPosition = _cameraPosition == CameraPosition.front ? CameraPosition.back : CameraPosition.front;
+    await _localVideoTrack?.setCameraPosition(_cameraPosition!);
+    setState(() {});
+  }
+
+  _toggleMic() async {
+    if (_localAudioTrack!.muted) {
+      await _localAudioTrack?.unmute();
+    } else {
+      await _localAudioTrack?.mute();
+    }
+    setState(() {});
+  }
+
   @override
   Widget build(BuildContext context) {
     final screenHeight = MediaQuery.of(context).size.height;
@@ -23,10 +157,25 @@ class _LiveScreenState extends ConsumerState<LiveScreen> {
           SizedBox(
             width: double.infinity,
             height: double.infinity,
-            child: FittedBox(
-              fit: BoxFit.cover,
-              child: Image.asset("assets/images/person_dummy.jpg"),
-            ),
+            child: _isVideoTrackLoading
+                ? LoadingIndicator()
+                : _localVideoTrack == null
+                    ? Center(
+                        child: Column(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            Icon(Icons.videocam_off_outlined, size: 48, color: Colors.white),
+                            Text(
+                              'Camera is disabled',
+                              style: Theme.of(context).textTheme.bodyMedium,
+                            ),
+                          ],
+                        ),
+                      )
+                    : VideoTrackRenderer(
+                        _localVideoTrack!,
+                        fit: RTCVideoViewObjectFit.RTCVideoViewObjectFitCover,
+                      ),
           ),
           Positioned(
             top: 0,
@@ -89,23 +238,29 @@ class _LiveScreenState extends ConsumerState<LiveScreen> {
                   crossAxisAlignment: CrossAxisAlignment.end,
                   children: [
                     IconButton(
-                      onPressed: () {},
+                      onPressed: () {
+                        _toggleCameraEnabledState();
+                      },
+                      icon: Icon(
+                        _localVideoTrack != null && !_isVideoTrackLoading ? Icons.videocam_off_outlined : Icons.videocam,
+                        color: Colors.white,
+                      ),
+                    ),
+                    IconButton(
+                      onPressed: () {
+                        _toggleCameraPosition();
+                      },
                       icon: Icon(
                         Icons.flip_camera_android,
                         color: Colors.white,
                       ),
                     ),
                     IconButton(
-                      onPressed: () {},
+                      onPressed: () {
+                        _toggleMic();
+                      },
                       icon: Icon(
-                        Icons.mic,
-                        color: Colors.white,
-                      ),
-                    ),
-                    IconButton(
-                      onPressed: () {},
-                      icon: Icon(
-                        Icons.comment,
+                        _localAudioTrack?.muted == true ? Icons.mic_off : Icons.mic,
                         color: Colors.white,
                       ),
                     ),

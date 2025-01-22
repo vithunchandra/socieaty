@@ -6,6 +6,7 @@ import 'package:socieaty/core/constants.dart';
 import 'package:socieaty/core/theme/app_pallete.dart';
 import 'package:flutter_webrtc/flutter_webrtc.dart';
 import 'package:socieaty/core/utils/show_snackbar.dart';
+import 'package:socieaty/features/livestream/view/live_screen.dart';
 import 'package:socieaty/features/livestream/viewmodel/live_screen_view_model.dart';
 import 'package:socieaty/features/livestream/viewmodel/setup_livestream_view_model.dart';
 import 'package:socieaty/features/livestream/viewstate/setup_livestream_form_state.dart';
@@ -31,6 +32,9 @@ class _SetupLiveStreamViewState extends ConsumerState<SetupLiveStreamScreen> {
   @override
   void initState() {
     super.initState();
+    setState(() {
+      _isLoading = true;
+    });
     _checkPremissions();
     _initializeCamera();
     _initializeAudio();
@@ -38,10 +42,6 @@ class _SetupLiveStreamViewState extends ConsumerState<SetupLiveStreamScreen> {
 
   @override
   void dispose() {
-    _localVideoTrack?.stop();
-    _localVideoTrack?.dispose();
-    _localAudioTrack?.stop();
-    _localAudioTrack?.dispose();
     super.dispose();
   }
 
@@ -95,31 +95,36 @@ class _SetupLiveStreamViewState extends ConsumerState<SetupLiveStreamScreen> {
 
   _startLiveStream(String accessToken) async {
     try {
-      _isLoading = true;
-      setState(() {});
-      final room = Room();
-      final listener = room.createListener();
-      final url = AppConstants.livestreamServerUrl;
-      debugPrint("url: $url");
-      await room.connect(
-        url,
-        accessToken,
-        connectOptions: ConnectOptions(),
-        fastConnectOptions: FastConnectOptions(
-          camera: TrackOption(track: _localVideoTrack),
-          microphone: TrackOption(track: _localAudioTrack),
-        ),
-      );
-      ref.read(liveScreenViewModelProvider.notifier).setRoom(room);
+      // final room = Room();
+      // final url = AppConstants.livestreamServerUrl;
+      // debugPrint("url: $url");
+      // await room.connect(
+      //   url,
+      //   accessToken,
+      //   fastConnectOptions: FastConnectOptions(
+      //     camera: TrackOption(track: _localVideoTrack),
+      //     microphone: TrackOption(track: _localAudioTrack),
+      //   ),
+      // );
+      // ref.read(liveScreenViewModelProvider.notifier).setRoom(room);
+      _localAudioTrack?.dispose();
+      _localVideoTrack?.dispose();
       if (mounted) {
-        context.push('/customer/livestream/live');
+        await context.push(
+          '/customer/livestream/live',
+          extra: LiveScreenArgs(accessToken: accessToken, cameraPosition: _cameraPosition),
+        );
+        _initializeCamera();
+        _initializeAudio();
       }
     } catch (error) {
       if (mounted) {
+        debugPrint("error: $error");
         showSnackbar(context, error.toString());
-        _isLoading = false;
-        setState(() {});
       }
+    } finally {
+      _isLoading = false;
+      setState(() {});
     }
   }
 
@@ -176,83 +181,87 @@ class _SetupLiveStreamViewState extends ConsumerState<SetupLiveStreamScreen> {
               bottom: 0,
               left: 0,
               right: 0,
-              child: Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 12.0, vertical: 16.0),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.center,
-                  children: [
-                    Container(
-                      padding: const EdgeInsets.all(12.0),
-                      decoration: BoxDecoration(
-                        color: AppPallete.neutralColor.shade700.withAlpha(128),
-                        borderRadius: BorderRadius.circular(12),
-                      ),
-                      child: Row(
-                        crossAxisAlignment: CrossAxisAlignment.center,
-                        children: [
-                          CircleAvatar(
-                            radius: 22.5,
-                            backgroundImage: AssetImage("assets/images/person_dummy.jpg"),
-                          ),
-                          SizedBox(
-                            width: 12,
-                          ),
-                          Expanded(
-                            child: TextFormField(
-                              style: Theme.of(context).textTheme.bodyMedium,
-                              decoration: InputDecoration.collapsed(
-                                hintText: "Your title here...",
-                                hintStyle: Theme.of(context).textTheme.bodyMedium?.copyWith(color: AppPallete.neutralColor.shade400),
-                                border: InputBorder.none,
+              child: SafeArea(
+                child: Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 12.0, vertical: 16.0),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    children: [
+                      Container(
+                        padding: const EdgeInsets.all(12.0),
+                        decoration: BoxDecoration(
+                          color: AppPallete.neutralColor.shade700.withAlpha(128),
+                          borderRadius: BorderRadius.circular(12),
+                        ),
+                        child: Row(
+                          crossAxisAlignment: CrossAxisAlignment.center,
+                          children: [
+                            CircleAvatar(
+                              radius: 22.5,
+                              backgroundImage: AssetImage("assets/images/person_dummy.jpg"),
+                            ),
+                            SizedBox(
+                              width: 12,
+                            ),
+                            Expanded(
+                              child: TextFormField(
+                                style: Theme.of(context).textTheme.bodyMedium,
+                                decoration: InputDecoration.collapsed(
+                                  hintText: "Your title here...",
+                                  hintStyle: Theme.of(context).textTheme.bodyMedium?.copyWith(color: AppPallete.neutralColor.shade400),
+                                  border: InputBorder.none,
+                                ),
+                                validator: (value) {
+                                  if (value == null || value.trim().isEmpty) {
+                                    return "Title is required";
+                                  }
+                                  return null;
+                                },
+                                onSaved: (value) {
+                                  formState = formState.copyWith(roomTitle: value ?? "");
+                                },
                               ),
-                              validator: (value) {
-                                if (value == null || value.trim().isEmpty) {
-                                  return "Title is required";
-                                }
-                                return null;
-                              },
-                              onSaved: (value) {
-                                formState = formState.copyWith(roomTitle: value ?? "");
-                              },
                             ),
-                          ),
-                          SizedBox(
-                            width: 12,
-                          ),
-                          IconButton(
-                            onPressed: () {
-                              _toggleCameraPosition();
-                            },
-                            padding: EdgeInsets.zero,
-                            icon: Icon(
-                              Icons.cameraswitch_outlined,
-                              color: AppPallete.neutralColor.shade50,
+                            SizedBox(
+                              width: 12,
                             ),
-                          ),
-                        ],
+                            IconButton(
+                              onPressed: () {
+                                _toggleCameraPosition();
+                              },
+                              padding: EdgeInsets.zero,
+                              icon: Icon(
+                                Icons.cameraswitch_outlined,
+                                color: AppPallete.neutralColor.shade50,
+                              ),
+                            ),
+                          ],
+                        ),
                       ),
-                    ),
-                    SizedBox(
-                      height: 24.0,
-                    ),
-                    SizedBox(
-                      width: screenWidth * 0.3,
-                      height: 45,
-                      child: FilledButton(
-                        onPressed: () {
-                          if (_formKey.currentState != null && _formKey.currentState!.validate()) {
-                            _formKey.currentState!.save();
-                            ref.read(setupLivestreamViewModelProvider.notifier).startLivestream(formState);
-                          }
-                        },
-                        child: _isLoading ? LoadingIndicator() : Text("Go Live"),
+                      SizedBox(
+                        height: 24.0,
                       ),
-                    ),
-                  ],
+                      SizedBox(
+                        width: screenWidth * 0.3,
+                        height: 45,
+                        child: FilledButton(
+                          onPressed: () {
+                            if (_formKey.currentState != null && _formKey.currentState!.validate()) {
+                              _formKey.currentState!.save();
+                              _isLoading = true;
+                              setState(() {});
+                              ref.read(setupLivestreamViewModelProvider.notifier).startLivestream(formState);
+                            }
+                          },
+                          child: _isLoading ? LoadingIndicator() : Text("Go Live"),
+                        ),
+                      ),
+                    ],
+                  ),
                 ),
               ),
             ),
-          )
+          ),
         ],
       ),
     );

@@ -69,8 +69,7 @@ GoRouter router(Ref ref) {
             parentNavigatorKey: rootNavigatorKey,
             path: 'live',
             builder: (context, state) {
-              final data = ref.read(liveScreenViewModelProvider.notifier).getRoom();
-              return LiveScreen(room: data!);
+              return LiveScreen(args: state.extra as LiveScreenArgs,);
             },
           ),
         ],
@@ -112,8 +111,7 @@ GoRouter router(Ref ref) {
                     parentNavigatorKey: rootNavigatorKey,
                     path: 'live',
                     builder: (context, state) {
-                      final data = ref.read(liveScreenViewModelProvider.notifier).getRoom();
-                      return LiveScreen(room: data!);
+                      return LiveScreen(args: state.extra as LiveScreenArgs,);
                     },
                   ),
                 ],

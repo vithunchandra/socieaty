@@ -269,19 +269,21 @@ class _CreatePostScreenState extends ConsumerState<CreatePostScreen> {
                 ),
               ),
             ),
-            Padding(
-              padding: const EdgeInsets.symmetric(vertical: 8.0),
-              child: SizedBox(
-                width: double.infinity,
-                height: 45,
-                child: FilledButton(
-                  onPressed: () {
-                    if (_formKey.currentState != null && _formKey.currentState!.validate()) {
-                      _formKey.currentState?.save();
-                      ref.read(createPostViewModelProvider.notifier).createPost(formData, files);
-                    }
-                  },
-                  child: isLoading ? LoadingIndicator() : Text("Post"),
+            SafeArea(
+              child: Padding(
+                padding: const EdgeInsets.symmetric(vertical: 8.0),
+                child: SizedBox(
+                  width: double.infinity,
+                  height: 45,
+                  child: FilledButton(
+                    onPressed: () {
+                      if (_formKey.currentState != null && _formKey.currentState!.validate()) {
+                        _formKey.currentState?.save();
+                        ref.read(createPostViewModelProvider.notifier).createPost(formData, files);
+                      }
+                    },
+                    child: isLoading ? LoadingIndicator() : Text("Post"),
+                  ),
                 ),
               ),
             )

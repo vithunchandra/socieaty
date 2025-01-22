@@ -177,114 +177,116 @@ class _LivestreamViewState extends ConsumerState<LivestreamView> {
               bottom: 0,
               left: 0,
               right: 0,
-              child: AnimatedOpacity(
-                opacity: _showComments ? 1.0 : 0.0,
-                duration: const Duration(milliseconds: 300),
-                child: IgnorePointer(
-                  ignoring: !_showComments,
-                  child: Column(
-                    children: [
-                      SizedBox(
-                        height: screenHeight * 0.3,
-                        child: ShaderMask(
-                          shaderCallback: (Rect rect) {
-                            return LinearGradient(
-                              begin: Alignment.topCenter,
-                              end: Alignment.bottomCenter,
-                              colors: [Colors.transparent, Colors.white, Colors.white, Colors.transparent],
-                              stops: const [0.0, 0.1, 0.9, 1.0],
-                            ).createShader(rect);
-                          },
-                          blendMode: BlendMode.dstIn,
-                          child: Padding(
-                            padding: const EdgeInsets.symmetric(vertical: 1.0),
-                            child: ListView.builder(
-                              controller: _scrollController,
-                              padding: EdgeInsets.symmetric(vertical: 12),
-                              itemCount: 20, // Replace with actual message count
-                              itemBuilder: (context, index) {
-                                return Padding(
-                                  padding: const EdgeInsets.all(8.0),
-                                  child: Row(
-                                    crossAxisAlignment: CrossAxisAlignment.start,
-                                    children: [
-                                      CustomCircleAvatar(radius: 20, imageUrl: 'assets/images/person_dummy.jpg'),
-                                      Expanded(
-                                        child: Padding(
-                                          padding: const EdgeInsets.symmetric(horizontal: 12.0),
-                                          child: Column(
-                                            crossAxisAlignment: CrossAxisAlignment.start,
-                                            mainAxisAlignment: MainAxisAlignment.start,
-                                            children: [
-                                              Text(
-                                                "Vithunchan",
-                                                // widget.postComment.userName,
-                                                style: Theme.of(context).textTheme.bodyMedium,
-                                              ),
-                                              SizedBox(height: 2),
-                                              Text(
-                                                "Hallo test comment hehehehhehehe",
-                                                // widget.postComment.text,
-                                                style: Theme.of(context).textTheme.bodyMedium,
-                                              ),
-                                            ],
+              child: SafeArea(
+                child: AnimatedOpacity(
+                  opacity: _showComments ? 1.0 : 0.0,
+                  duration: const Duration(milliseconds: 300),
+                  child: IgnorePointer(
+                    ignoring: !_showComments,
+                    child: Column(
+                      children: [
+                        SizedBox(
+                          height: screenHeight * 0.3,
+                          child: ShaderMask(
+                            shaderCallback: (Rect rect) {
+                              return LinearGradient(
+                                begin: Alignment.topCenter,
+                                end: Alignment.bottomCenter,
+                                colors: [Colors.transparent, Colors.white, Colors.white, Colors.transparent],
+                                stops: const [0.0, 0.1, 0.9, 1.0],
+                              ).createShader(rect);
+                            },
+                            blendMode: BlendMode.dstIn,
+                            child: Padding(
+                              padding: const EdgeInsets.symmetric(vertical: 1.0),
+                              child: ListView.builder(
+                                controller: _scrollController,
+                                padding: EdgeInsets.symmetric(vertical: 12),
+                                itemCount: 20, // Replace with actual message count
+                                itemBuilder: (context, index) {
+                                  return Padding(
+                                    padding: const EdgeInsets.all(8.0),
+                                    child: Row(
+                                      crossAxisAlignment: CrossAxisAlignment.start,
+                                      children: [
+                                        CustomCircleAvatar(radius: 20, imageUrl: 'assets/images/person_dummy.jpg'),
+                                        Expanded(
+                                          child: Padding(
+                                            padding: const EdgeInsets.symmetric(horizontal: 12.0),
+                                            child: Column(
+                                              crossAxisAlignment: CrossAxisAlignment.start,
+                                              mainAxisAlignment: MainAxisAlignment.start,
+                                              children: [
+                                                Text(
+                                                  "Vithunchan",
+                                                  // widget.postComment.userName,
+                                                  style: Theme.of(context).textTheme.bodyMedium,
+                                                ),
+                                                SizedBox(height: 2),
+                                                Text(
+                                                  "Hallo test comment hehehehhehehe",
+                                                  // widget.postComment.text,
+                                                  style: Theme.of(context).textTheme.bodyMedium,
+                                                ),
+                                              ],
+                                            ),
                                           ),
                                         ),
-                                      ),
-                                    ],
-                                  ),
-                                );
-                              },
+                                      ],
+                                    ),
+                                  );
+                                },
+                              ),
                             ),
                           ),
                         ),
-                      ),
-                      Padding(
-                        padding: const EdgeInsets.all(8.0),
-                        child: Container(
-                          padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-                          decoration: BoxDecoration(
-                            borderRadius: BorderRadius.circular(12),
-                            color: Colors.black.withAlpha(128),
-                          ),
-                          child: SafeArea(
-                            top: false,
-                            child: Row(
-                              children: [
-                                Expanded(
-                                  child: Padding(
-                                    padding: const EdgeInsets.symmetric(horizontal: 8.0),
-                                    child: TextField(
-                                      controller: _commentController,
-                                      style: Theme.of(context).textTheme.bodyLarge,
-                                      decoration: InputDecoration.collapsed(
-                                        hintText: 'Add a comment...',
-                                        hintFadeDuration: const Duration(milliseconds: 200),
-                                        border: InputBorder.none,
+                        Padding(
+                          padding: const EdgeInsets.all(8.0),
+                          child: Container(
+                            padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                            decoration: BoxDecoration(
+                              borderRadius: BorderRadius.circular(12),
+                              color: Colors.black.withAlpha(128),
+                            ),
+                            child: SafeArea(
+                              top: false,
+                              child: Row(
+                                children: [
+                                  Expanded(
+                                    child: Padding(
+                                      padding: const EdgeInsets.symmetric(horizontal: 8.0),
+                                      child: TextField(
+                                        controller: _commentController,
+                                        style: Theme.of(context).textTheme.bodyLarge,
+                                        decoration: InputDecoration.collapsed(
+                                          hintText: 'Add a comment...',
+                                          hintFadeDuration: const Duration(milliseconds: 200),
+                                          border: InputBorder.none,
+                                        ),
                                       ),
                                     ),
                                   ),
-                                ),
-                                IconButton(
-                                  padding: EdgeInsets.zero,
-                                  icon: const Icon(Icons.send, color: Colors.white),
-                                  onPressed: () {
-                                    if (_commentController.text.isNotEmpty) {
-                                      _commentController.clear();
-                                    }
-                                  },
-                                ),
-                                IconButton(
-                                  padding: EdgeInsets.zero,
-                                  icon: const Icon(Icons.favorite_border, color: Colors.white),
-                                  onPressed: () {},
-                                ),
-                              ],
+                                  IconButton(
+                                    padding: EdgeInsets.zero,
+                                    icon: const Icon(Icons.send, color: Colors.white),
+                                    onPressed: () {
+                                      if (_commentController.text.isNotEmpty) {
+                                        _commentController.clear();
+                                      }
+                                    },
+                                  ),
+                                  IconButton(
+                                    padding: EdgeInsets.zero,
+                                    icon: const Icon(Icons.favorite_border, color: Colors.white),
+                                    onPressed: () {},
+                                  ),
+                                ],
+                              ),
                             ),
                           ),
                         ),
-                      ),
-                    ],
+                      ],
+                    ),
                   ),
                 ),
               ),
