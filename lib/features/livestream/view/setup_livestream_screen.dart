@@ -2,12 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:livekit_client/livekit_client.dart';
-import 'package:socieaty/core/constants.dart';
 import 'package:socieaty/core/theme/app_pallete.dart';
 import 'package:flutter_webrtc/flutter_webrtc.dart';
 import 'package:socieaty/core/utils/show_snackbar.dart';
 import 'package:socieaty/features/livestream/view/live_screen.dart';
-import 'package:socieaty/features/livestream/viewmodel/live_screen_view_model.dart';
 import 'package:socieaty/features/livestream/viewmodel/setup_livestream_view_model.dart';
 import 'package:socieaty/features/livestream/viewstate/setup_livestream_form_state.dart';
 import 'package:socieaty/shared/view_state.dart';
@@ -61,7 +59,9 @@ class _SetupLiveStreamViewState extends ConsumerState<SetupLiveStreamScreen> {
       ),
     );
     await _localVideoTrack?.start();
-    setState(() {});
+    if (mounted) {
+      setState(() {});
+    }
   }
 
   Future<void> _initializeAudio() async {
@@ -111,7 +111,7 @@ class _SetupLiveStreamViewState extends ConsumerState<SetupLiveStreamScreen> {
       _localVideoTrack?.dispose();
       if (mounted) {
         await context.push(
-          '/customer/livestream/live',
+          '/livestream/live',
           extra: LiveScreenArgs(accessToken: accessToken, cameraPosition: _cameraPosition),
         );
         _initializeCamera();

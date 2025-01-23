@@ -1,6 +1,6 @@
 import 'package:freezed_annotation/freezed_annotation.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
-import 'package:socieaty/core/utils/LatLngConverter.dart';
+import 'package:socieaty/core/utils/converter.dart';
 import 'package:socieaty/features/post/post_hashtag/model/post_hashtag.dart';
 import 'package:socieaty/features/post/post_media/model/post_media.dart';
 import 'package:socieaty/features/user/model/socieaty_user.dart';

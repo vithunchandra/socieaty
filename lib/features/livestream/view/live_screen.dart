@@ -49,18 +49,30 @@ class _LiveScreenState extends ConsumerState<LiveScreen> {
 
   @override
   void dispose() {
-    _roomListener.dispose();
-    _room?.dispose();
+    (() async {
+      await _roomListener.dispose();
+      await _room?.disconnect();
+      await _room?.dispose();
+    })();
     super.dispose();
   }
 
   _createRoom() async {
-    _room = Room();
+    _room = Room(
+      roomOptions: RoomOptions(
+        dynacast: true,
+        adaptiveStream: true,
+      ),
+    );
     final url = AppConstants.livestreamServerUrl;
     await _room!.connect(
       url,
       widget.args.accessToken,
     );
+    // if (mounted) {
+    //   showSnackbar(context, "${_room!.metadata}");
+    //   debugPrint("metadata: ${_room!.metadata}");
+    // }
     _setupListener();
     _publishMedia();
   }
@@ -70,6 +82,7 @@ class _LiveScreenState extends ConsumerState<LiveScreen> {
 
     _roomListener.on<RoomDisconnectedEvent>((event) async {
       if (event.reason != null) {
+        context.pop();
         showSnackbar(context, "Room disconected because of ${event.reason}");
       }
     });

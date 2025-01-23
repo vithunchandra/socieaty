@@ -1,6 +1,6 @@
 import 'package:freezed_annotation/freezed_annotation.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
-import 'package:socieaty/core/utils/LatLngConverter.dart';
+import 'package:socieaty/core/utils/converter.dart';
 
 part 'restaurant_data.freezed.dart';
 part 'restaurant_data.g.dart';

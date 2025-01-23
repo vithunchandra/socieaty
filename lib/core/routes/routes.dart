@@ -14,11 +14,8 @@ import 'package:socieaty/features/authentication/viewstate/signup_restaurant_for
 import 'package:socieaty/features/home/customer/view/home_screen.dart';
 import 'package:socieaty/features/livestream/view/live_screen.dart';
 import 'package:socieaty/features/livestream/view/livestream_home_screen.dart';
-import 'package:socieaty/features/livestream/view/livestream_view.dart';
 import 'package:socieaty/features/livestream/view/setup_livestream_screen.dart';
-import 'package:socieaty/features/livestream/viewmodel/live_screen_view_model.dart';
 import 'package:socieaty/features/map/view/select_location.dart';
-import 'package:socieaty/features/post/post/view/create_post_screen.dart';
 import 'package:socieaty/features/shop/customer/view/shop_view.dart';
 import 'package:socieaty/shared/widgets/create_screen.dart';
 import 'package:socieaty/shared/widgets/scaffold_with_navbar.dart';
@@ -69,7 +66,9 @@ GoRouter router(Ref ref) {
             parentNavigatorKey: rootNavigatorKey,
             path: 'live',
             builder: (context, state) {
-              return LiveScreen(args: state.extra as LiveScreenArgs,);
+              return LiveScreen(
+                args: state.extra as LiveScreenArgs,
+              );
             },
           ),
         ],
@@ -98,23 +97,7 @@ GoRouter router(Ref ref) {
             routes: [
               GoRoute(
                 path: '/customer/livestream',
-                pageBuilder: (context, state) => const NoTransitionPage(
-                  child: LivestreamView(),
-                ),
-                routes: [
-                  GoRoute(
-                    parentNavigatorKey: rootNavigatorKey,
-                    path: 'setup',
-                    builder: (context, state) => const SetupLiveStreamScreen(),
-                  ),
-                  GoRoute(
-                    parentNavigatorKey: rootNavigatorKey,
-                    path: 'live',
-                    builder: (context, state) {
-                      return LiveScreen(args: state.extra as LiveScreenArgs,);
-                    },
-                  ),
-                ],
+                pageBuilder: (context, state) => const NoTransitionPage(child: Scaffold()),
               ),
             ],
           ),
@@ -122,9 +105,7 @@ GoRouter router(Ref ref) {
             routes: [
               GoRoute(
                 path: '/customer/create_post',
-                pageBuilder: (context, state) => const NoTransitionPage(
-                  child: CreatePostScreen(),
-                ),
+                pageBuilder: (context, state) =>const NoTransitionPage(child: Scaffold()),
               ),
             ],
           ),

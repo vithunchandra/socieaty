@@ -1,7 +1,7 @@
 import 'package:freezed_annotation/freezed_annotation.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:socieaty/core/enums/user_role.enum.dart';
-import 'package:socieaty/core/utils/LatLngConverter.dart';
+import 'package:socieaty/core/utils/converter.dart';
 import 'package:socieaty/core/utils/user_role_converter.dart';
 
 part 'restaurant.freezed.dart';
