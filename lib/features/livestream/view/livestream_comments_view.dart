@@ -9,6 +9,18 @@ class LivestreamCommentsView extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final screenHeight = MediaQuery.of(context).size.height;
+    final controller = ScrollController();
+
+    // Scroll to top since list is reversed
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (controller.hasClients) {
+        controller.animateTo(
+          0,
+          duration: const Duration(milliseconds: 300),
+          curve: Curves.easeOut,
+        );
+      }
+    });
 
     return SizedBox(
       height: screenHeight * 0.3,
@@ -25,45 +37,126 @@ class LivestreamCommentsView extends StatelessWidget {
         child: Padding(
           padding: const EdgeInsets.symmetric(vertical: 1.0),
           child: ListView.builder(
+            controller: controller,
             scrollDirection: Axis.vertical,
-            padding: EdgeInsets.symmetric(vertical: 12),
-            itemCount: comments.length, // Replace with actual message count
+            reverse: true,
+            padding: const EdgeInsets.symmetric(vertical: 12),
+            itemCount: comments.length,
             itemBuilder: (context, index) {
               final comment = comments[index];
-
-              return Padding(
-                padding: const EdgeInsets.all(8.0),
-                child: Row(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    CustomCircleAvatar(radius: 20, imageUrl: 'assets/images/person_dummy.jpg'),
-                    Expanded(
-                      child: Padding(
-                        padding: const EdgeInsets.symmetric(horizontal: 12.0),
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          mainAxisAlignment: MainAxisAlignment.start,
-                          children: [
-                            Text(
-                              comment.user.name,
-                              // widget.postComment.userName,
-                              style: Theme.of(context).textTheme.bodyMedium,
-                            ),
-                            SizedBox(height: 2),
-                            Text(
-                              comment.text,
-                              // widget.postComment.text,
-                              style: Theme.of(context).textTheme.bodyMedium,
-                            ),
-                          ],
-                        ),
-                      ),
-                    ),
-                  ],
-                ),
+              return AnimatedCommentItem(
+                key: ValueKey(comment.id), // Add key back to force widget recreation
+                comment: comment,
+                index: index,
+                totalComments: comments.length,
               );
             },
           ),
+        ),
+      ),
+    );
+  }
+}
+
+class AnimatedCommentItem extends StatefulWidget {
+  final LivestreamComment comment;
+  final int index;
+  final int totalComments;
+
+  const AnimatedCommentItem({
+    super.key,
+    required this.comment,
+    required this.index,
+    required this.totalComments,
+  });
+
+  @override
+  State<AnimatedCommentItem> createState() => _AnimatedCommentItemState();
+}
+
+class _AnimatedCommentItemState extends State<AnimatedCommentItem> with SingleTickerProviderStateMixin {
+  late final AnimationController _controller;
+  late final Animation<double> _slideAnimation;
+  late final Animation<double> _fadeAnimation;
+
+  @override
+  void initState() {
+    super.initState();
+    _controller = AnimationController(
+      duration: const Duration(milliseconds: 500),
+      vsync: this,
+    );
+
+    _slideAnimation = Tween<double>(
+      begin: 50.0,
+      end: 0.0,
+    ).animate(CurvedAnimation(
+      parent: _controller,
+      curve: Curves.easeOutQuad,
+    ));
+
+    _fadeAnimation = Tween<double>(
+      begin: 0.0,
+      end: 1.0,
+    ).animate(CurvedAnimation(
+      parent: _controller,
+      curve: Curves.easeOut,
+    ));
+
+    // Only animate if this is the newest comment (index 0)
+    if (widget.index == 0) {
+      _controller.forward();
+    } else {
+      _controller.value = 1.0;
+    }
+  }
+
+  @override
+  void dispose() {
+    _controller.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return AnimatedBuilder(
+      animation: _controller,
+      builder: (context, child) {
+        return Transform.translate(
+          offset: Offset(0, _slideAnimation.value),
+          child: Opacity(
+            opacity: _fadeAnimation.value,
+            child: child,
+          ),
+        );
+      },
+      child: Padding(
+        padding: const EdgeInsets.all(8.0),
+        child: Row(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            CustomCircleAvatar(radius: 20, imageUrl: 'assets/images/person_dummy.jpg'),
+            Expanded(
+              child: Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 12.0),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  mainAxisAlignment: MainAxisAlignment.start,
+                  children: [
+                    Text(
+                      widget.comment.user.name,
+                      style: Theme.of(context).textTheme.bodyMedium,
+                    ),
+                    const SizedBox(height: 4),
+                    Text(
+                      widget.comment.text,
+                      style: Theme.of(context).textTheme.bodySmall,
+                    ),
+                  ],
+                ),
+              ),
+            ),
+          ],
         ),
       ),
     );

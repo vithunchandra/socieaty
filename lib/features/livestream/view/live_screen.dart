@@ -3,9 +3,10 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_webrtc/flutter_webrtc.dart';
-import 'package:go_router/go_router.dart';
+import 'package:livekit_client/livekit_client.dart' as livekit;
 import 'package:livekit_client/livekit_client.dart';
 import 'package:socieaty/core/constants.dart';
+import 'package:socieaty/core/utils/custom_extension.dart';
 import 'package:socieaty/core/utils/show_snackbar.dart';
 import 'package:socieaty/features/livestream/model/livestream_comment.dart';
 import 'package:socieaty/features/livestream/model/livestream_likes.dart';
@@ -51,6 +52,7 @@ class _LiveScreenState extends ConsumerState<LiveScreen> {
   bool _isDisconnected = false;
   bool _isRoomClosed = false;
   bool _isFinished = false;
+  bool _isResourceCleared = false;
 
   @override
   void initState() {
@@ -68,7 +70,15 @@ class _LiveScreenState extends ConsumerState<LiveScreen> {
   void dispose() {
     (() async {
       await _roomListener.dispose();
-      await _room?.disconnect();
+      try {
+        if (_room?.connectionState == livekit.ConnectionState.connected) {
+          await _room?.disconnect();
+        }
+      } catch (error) {
+        if (mounted) {
+          showSnackbar(context, error.toString(), isError: true);
+        }
+      }
       await _room?.dispose();
     })();
     super.dispose();
@@ -97,6 +107,7 @@ class _LiveScreenState extends ConsumerState<LiveScreen> {
 
     _roomListener
       ..on<RoomDisconnectedEvent>((event) {
+        debugPrint("disconnected");
         if (!_isFinished) {
           if (event.reason != null) {
             _isDisconnected = false;
@@ -120,7 +131,7 @@ class _LiveScreenState extends ConsumerState<LiveScreen> {
           _roomLikes = LivestreamLikes.fromJson(dataJson);
         } else if (event.topic == 'comment') {
           final comment = LivestreamComment.fromJson(dataJson);
-          _comments.add(comment);
+          _comments.insert(0, comment);
         }
         if (mounted) {
           setState(() {});
@@ -211,12 +222,20 @@ class _LiveScreenState extends ConsumerState<LiveScreen> {
     setState(() {});
   }
 
+  void _finishLivestream() {
+    setState(() {
+      _isFinished = true;
+      _isResourceCleared = true;
+    });
+    ref.read(liveScreenViewModelProvider.notifier).deleteLivestreamRoom(_room!.name!);
+  }
+
   @override
   Widget build(BuildContext context) {
     ref.listen(liveScreenViewModelProvider, (_, next) {
       switch (next.isDeleted) {
-        case SuccessState():
-          context.pop(); // Pop back when deletion is successful
+        case SuccessState<bool>():
+          context.popUntilPath('/create_screen');
         case ErrorState(message: final message):
           showSnackbar(context, "error: $message");
         case LoadingState():
@@ -245,136 +264,143 @@ class _LiveScreenState extends ConsumerState<LiveScreen> {
       return const LiveEndedView();
     }
 
-    return Scaffold(
-      body: Stack(
-        children: [
-          SizedBox(
-            width: double.infinity,
-            height: double.infinity,
-            child: _isVideoTrackLoading
-                ? LoadingIndicator()
-                : _localVideoTrack == null
-                    ? Center(
-                        child: Column(
-                          mainAxisSize: MainAxisSize.min,
+    return PopScope(
+      canPop: _isResourceCleared,
+      onPopInvokedWithResult: (didPop, result) {
+        if(didPop){
+          return;
+        }else{
+          _finishLivestream();
+        }
+      },
+      child: Scaffold(
+        body: Stack(
+          children: [
+            SizedBox(
+              width: double.infinity,
+              height: double.infinity,
+              child: _isVideoTrackLoading
+                  ? LoadingIndicator()
+                  : _localVideoTrack == null
+                      ? Center(
+                          child: Column(
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              Icon(Icons.videocam_off_outlined, size: 48, color: Colors.white),
+                              Text(
+                                'Camera is disabled',
+                                style: Theme.of(context).textTheme.bodyMedium,
+                              ),
+                            ],
+                          ),
+                        )
+                      : VideoTrackRenderer(
+                          _localVideoTrack!,
+                          fit: RTCVideoViewObjectFit.RTCVideoViewObjectFitCover,
+                        ),
+            ),
+            Positioned(
+              top: 0,
+              left: 0,
+              right: 0,
+              child: SafeArea(
+                child: Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: Stack(
+                    children: [
+                      IconButton.filled(
+                        onPressed: () {
+                          _finishLivestream();
+                        },
+                        icon: Icon(Icons.close),
+                        color: Colors.black.withAlpha(128),
+                      ),
+                      Positioned(
+                        top: 0,
+                        left: 0,
+                        right: 0,
+                        bottom: 0,
+                        child: Row(
+                          crossAxisAlignment: CrossAxisAlignment.center,
+                          mainAxisAlignment: MainAxisAlignment.center,
                           children: [
-                            Icon(Icons.videocam_off_outlined, size: 48, color: Colors.white),
                             Text(
-                              'Camera is disabled',
-                              style: Theme.of(context).textTheme.bodyMedium,
+                              "Live",
+                              style: Theme.of(context).textTheme.bodyMedium?.copyWith(color: Colors.red),
                             ),
+                            SizedBox(width: 2),
+                            Icon(Icons.podcasts, color: Colors.red),
+                            SizedBox(width: 4),
+                            Icon(Icons.person, color: Colors.white),
+                            SizedBox(width: 2),
+                            Text("$_totalParticipants", style: Theme.of(context).textTheme.bodyMedium),
+                            SizedBox(width: 4),
+                            Icon(Icons.favorite, color: Colors.white),
+                            SizedBox(width: 2),
+                            Text("${_roomLikes.likes}", style: Theme.of(context).textTheme.bodyMedium),
                           ],
                         ),
                       )
-                    : VideoTrackRenderer(
-                        _localVideoTrack!,
-                        fit: RTCVideoViewObjectFit.RTCVideoViewObjectFitCover,
-                      ),
-          ),
-          Positioned(
-            top: 0,
-            left: 0,
-            right: 0,
-            child: SafeArea(
+                    ],
+                  ),
+                ),
+              ),
+            ),
+            Align(
+              alignment: Alignment.centerRight,
               child: Padding(
-                padding: const EdgeInsets.all(8.0),
-                child: Stack(
-                  children: [
-                    IconButton.filled(
-                      onPressed: () {
-                        setState(() {
-                          _isFinished = true;
-                        });
-                        ref.read(liveScreenViewModelProvider.notifier).deleteLivestreamRoom(_room!.name!);
-                      },
-                      icon: Icon(Icons.close),
-                      color: Colors.black.withAlpha(128),
-                    ),
-                    Positioned(
-                      top: 0,
-                      left: 0,
-                      right: 0,
-                      bottom: 0,
-                      child: Row(
-                        crossAxisAlignment: CrossAxisAlignment.center,
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          Text(
-                            "Live",
-                            style: Theme.of(context).textTheme.bodyMedium?.copyWith(color: Colors.red),
-                          ),
-                          SizedBox(width: 2),
-                          Icon(Icons.podcasts, color: Colors.red),
-                          SizedBox(width: 4),
-                          Icon(Icons.person, color: Colors.white),
-                          SizedBox(width: 2),
-                          Text("$_totalParticipants", style: Theme.of(context).textTheme.bodyMedium),
-                          SizedBox(width: 4),
-                          Icon(Icons.favorite, color: Colors.white),
-                          SizedBox(width: 2),
-                          Text("${_roomLikes.likes}", style: Theme.of(context).textTheme.bodyMedium),
-                        ],
+                padding: const EdgeInsets.symmetric(horizontal: 8.0),
+                child: Container(
+                  decoration: BoxDecoration(
+                    color: Colors.black.withAlpha(100),
+                    borderRadius: BorderRadius.circular(50),
+                  ),
+                  child: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    crossAxisAlignment: CrossAxisAlignment.end,
+                    children: [
+                      IconButton(
+                        onPressed: () {
+                          _toggleCameraEnabledState();
+                        },
+                        icon: Icon(
+                          _localVideoTrack != null && !_isVideoTrackLoading ? Icons.videocam_off_outlined : Icons.videocam,
+                          color: Colors.white,
+                        ),
                       ),
-                    )
-                  ],
+                      IconButton(
+                        onPressed: () {
+                          _toggleCameraPosition();
+                        },
+                        icon: Icon(
+                          Icons.flip_camera_android,
+                          color: Colors.white,
+                        ),
+                      ),
+                      IconButton(
+                        onPressed: () {
+                          _toggleMic();
+                        },
+                        icon: Icon(
+                          _localAudioTrack?.muted == true ? Icons.mic_off : Icons.mic,
+                          color: Colors.white,
+                        ),
+                      ),
+                    ],
+                  ),
                 ),
               ),
             ),
-          ),
-          Align(
-            alignment: Alignment.centerRight,
-            child: Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 8.0),
-              child: Container(
-                decoration: BoxDecoration(
-                  color: Colors.black.withAlpha(100),
-                  borderRadius: BorderRadius.circular(50),
-                ),
-                child: Column(
-                  mainAxisSize: MainAxisSize.min,
-                  crossAxisAlignment: CrossAxisAlignment.end,
-                  children: [
-                    IconButton(
-                      onPressed: () {
-                        _toggleCameraEnabledState();
-                      },
-                      icon: Icon(
-                        _localVideoTrack != null && !_isVideoTrackLoading ? Icons.videocam_off_outlined : Icons.videocam,
-                        color: Colors.white,
-                      ),
-                    ),
-                    IconButton(
-                      onPressed: () {
-                        _toggleCameraPosition();
-                      },
-                      icon: Icon(
-                        Icons.flip_camera_android,
-                        color: Colors.white,
-                      ),
-                    ),
-                    IconButton(
-                      onPressed: () {
-                        _toggleMic();
-                      },
-                      icon: Icon(
-                        _localAudioTrack?.muted == true ? Icons.mic_off : Icons.mic,
-                        color: Colors.white,
-                      ),
-                    ),
-                  ],
-                ),
+            Positioned(
+              left: 0,
+              right: 0,
+              bottom: 0,
+              child: LivestreamCommentsView(
+                comments: _comments,
               ),
-            ),
-          ),
-          Positioned(
-            left: 0,
-            right: 0,
-            bottom: 0,
-            child: LivestreamCommentsView(
-              comments: _comments,
-            ),
-          )
-        ],
+            )
+          ],
+        ),
       ),
     );
   }

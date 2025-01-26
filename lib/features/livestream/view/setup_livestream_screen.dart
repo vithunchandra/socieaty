@@ -114,7 +114,7 @@ class _SetupLiveStreamViewState extends ConsumerState<SetupLiveStreamScreen> {
       _localVideoTrack?.dispose();
       if (mounted) {
         await context.push(
-          '/livestream/live',
+          '/create_content/live',
           extra: LiveScreenArgs(accessToken: accessToken, cameraPosition: _cameraPosition),
         );
         _initializeCamera();

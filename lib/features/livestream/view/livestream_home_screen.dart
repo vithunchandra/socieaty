@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
 import 'package:socieaty/app_theme.dart';
 import 'package:socieaty/core/theme/theme.dart';
 import 'package:socieaty/core/utils/show_snackbar.dart';
@@ -63,17 +64,30 @@ class _LivestreamHomeScreenState extends ConsumerState<LivestreamHomeScreen> {
                         const Icon(Icons.cancel, size: 64, color: Colors.grey),
                         const SizedBox(height: 16),
                         Text(
-                          'No Livestreams Available',
+                          'Tidak Ada Livestream',
                           style: Theme.of(context).textTheme.titleLarge?.copyWith(
                                 color: Colors.grey,
                               ),
                         ),
                         const SizedBox(height: 8),
                         Text(
-                          'Check back later for live content',
+                          'Periksa Kembali Setelah Beberapa Saat',
                           style: Theme.of(context).textTheme.bodyMedium?.copyWith(
                                 color: Colors.grey,
                               ),
+                        ),
+                        const SizedBox(height: 40),
+                        SizedBox(
+                          width: 200,
+                          child: FilledButton(
+                            onPressed: () => context.pop(),
+                            child: Text(
+                              'Kembali',
+                              style: Theme.of(context).textTheme.bodyLarge?.copyWith(
+                                    fontWeight: FontWeight.bold,
+                                  ),
+                            ),
+                          ),
                         ),
                       ],
                     ),
@@ -93,7 +107,10 @@ class _LivestreamHomeScreenState extends ConsumerState<LivestreamHomeScreen> {
                         },
                         itemBuilder: (context, index) {
                           final liveRoom = _rooms[index];
-                          return LivestreamView(liveRoom);
+                          return LivestreamView(
+                            liveRoom,
+                            key: UniqueKey(),
+                          );
                         },
                       ),
                     ],

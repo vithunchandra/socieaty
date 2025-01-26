@@ -20,6 +20,7 @@ import 'package:socieaty/features/livestream/view/live_ended_view.dart';
 import 'package:socieaty/features/livestream/view/livestream_comments_view.dart';
 import 'package:socieaty/features/livestream/viewmodel/livestream_view_model.dart';
 import 'package:socieaty/shared/view_state.dart';
+import 'package:socieaty/shared/widgets/error_screen.dart';
 import 'package:socieaty/shared/widgets/loading_indicator.dart';
 
 class LivestreamView extends ConsumerStatefulWidget {
@@ -63,6 +64,21 @@ class _LivestreamViewState extends ConsumerState<LivestreamView> {
   }
 
   @override
+  void didUpdateWidget(covariant LivestreamView oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    if (_room.isDisposed || _room.connectionState != livekit.ConnectionState.disconnected) {
+      _room = Room(
+        roomOptions: RoomOptions(
+          dynacast: true,
+          adaptiveStream: true,
+        ),
+      );
+      _roomListener = _room.createListener();
+      _roomLikes = LivestreamLikes(roomName: '', likes: 0);
+    }
+  }
+
+  @override
   void dispose() {
     (() async {
       _debounce?.cancel();
@@ -70,7 +86,15 @@ class _LivestreamViewState extends ConsumerState<LivestreamView> {
       _streamer?.removeListener(_onStreamerChange);
       _room.removeListener(_onRoomChange);
       await _roomListener.dispose();
-      await _room.disconnect();
+      try {
+        if (_room.connectionState == livekit.ConnectionState.connected) {
+          await _room.disconnect();
+        }
+      } catch (error) {
+        if (mounted) {
+          showSnackbar(context, error.toString(), isError: true);
+        }
+      }
       await _room.dispose();
     })();
     super.dispose();
@@ -85,6 +109,7 @@ class _LivestreamViewState extends ConsumerState<LivestreamView> {
     try {
       _roomListener = _room.createListener();
       await _room.connect(AppConstants.livestreamServerUrl, token);
+      debugPrint(_room.connectionState.toString());
       _room.addListener(_onRoomChange);
       _setupListener();
       await _subscribeMedia();
@@ -131,6 +156,8 @@ class _LivestreamViewState extends ConsumerState<LivestreamView> {
             _isDisconnected = true;
           } else if (event.reason == DisconnectReason.roomDeleted) {
             _isRoomClosed = true;
+          } else {
+            _isDisconnected = true;
           }
         }
       })
@@ -138,11 +165,13 @@ class _LivestreamViewState extends ConsumerState<LivestreamView> {
         debugPrint("Test Comment");
         final decodedData = utf8.decode(event.data);
         final Map<String, dynamic> dataJson = jsonDecode(decodedData);
+        debugPrint("topic: ${event.topic}");
         if (event.topic == 'like') {
+          debugPrint("like data: $dataJson");
           _roomLikes = LivestreamLikes.fromJson(dataJson);
         } else if (event.topic == 'comment') {
           final comment = LivestreamComment.fromJson(dataJson);
-          _comments.add(comment);
+          _comments.insert(0, comment);
         }
         if (mounted) {
           setState(() {});
@@ -181,17 +210,18 @@ class _LivestreamViewState extends ConsumerState<LivestreamView> {
       return const LiveEndedView();
     }
 
-    final viewState = ref.watch(livestreamViewModelProvider(roomName: widget.roomData.roomName));
-
-    switch (viewState.likes) {
-      case SuccessState<SendLivestreamLikeResponse>(data: final data):
-        _isLiked = data.isLiked;
-        setState(() {});
-      case ErrorState(message: final message):
-        showSnackbar(context, message, isError: true);
-      case LoadingState():
-      case IdleState():
-    }
+    ref.listen(livestreamViewModelProvider(roomName: widget.roomData.roomName), (_, next) {
+      switch (next.likes) {
+        case SuccessState<SendLivestreamLikeResponse>(data: final data):
+          debugPrint("isLiked: ${data.isLiked}");
+          _isLiked = data.isLiked;
+          setState(() {});
+        case ErrorState(message: final message):
+          showSnackbar(context, message, isError: true);
+        case LoadingState():
+        case IdleState():
+      }
+    });
 
     return ref.watch(joinLivestreamProvider(widget.roomData.roomName)).when(
       data: (data) {
@@ -433,6 +463,7 @@ class _LivestreamViewState extends ConsumerState<LivestreamView> {
                                                   : Icon(Icons.favorite_border, color: Colors.white),
                                               onPressed: () {
                                                 _isLiked = !_isLiked;
+                                                // debugPrint("isLiked: $_isLiked");
                                                 _onLiked();
                                                 setState(() {});
                                               },
@@ -454,36 +485,7 @@ class _LivestreamViewState extends ConsumerState<LivestreamView> {
         );
       },
       error: (error, stacktrace) {
-        return Center(
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              const Icon(
-                Icons.error_outline,
-                size: 64,
-                color: Colors.red,
-              ),
-              const SizedBox(height: 16),
-              Text(
-                'Error Occurred',
-                style: Theme.of(context).textTheme.titleLarge?.copyWith(
-                      color: Colors.red,
-                    ),
-              ),
-              const SizedBox(height: 8),
-              Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 32),
-                child: Text(
-                  error.toString(),
-                  textAlign: TextAlign.center,
-                  style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                        color: Colors.grey,
-                      ),
-                ),
-              ),
-            ],
-          ),
-        );
+        return ErrorScreen(message: error.toString());
       },
       loading: () {
         return LoadingIndicator();

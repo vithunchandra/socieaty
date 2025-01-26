@@ -35,7 +35,7 @@ class _ScaffoldWithNavbarState extends ConsumerState<ScaffoldWithNavbar> {
     }
     debugPrint("index: $index");
     if (index == 2) {
-      context.push('/create_post');
+      context.push('/create_content');
     } else if (index == 1) {
       context.push('/livestream');
     } else {

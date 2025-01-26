@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
-class LiveDisconnectedView extends StatelessWidget {
-  const LiveDisconnectedView({super.key});
+class ErrorScreen extends StatelessWidget {
+  final String message;
+  const ErrorScreen({super.key, required this.message});
 
   @override
   Widget build(BuildContext context) {
@@ -30,14 +31,14 @@ class LiveDisconnectedView extends StatelessWidget {
                   shape: BoxShape.circle,
                 ),
                 child: Icon(
-                  Icons.signal_wifi_off_rounded,
+                  Icons.error,
                   size: 64,
                   color: Colors.red[400],
                 ),
               ),
               const SizedBox(height: 32),
               Text(
-                'Koneksi Terputus',
+                'Terjadi Error',
                 style: Theme.of(context).textTheme.headlineSmall?.copyWith(
                       fontWeight: FontWeight.bold,
                       color: Colors.white,
@@ -47,7 +48,7 @@ class LiveDisconnectedView extends StatelessWidget {
               Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 40),
                 child: Text(
-                  'Maaf, koneksi kamu ke livestream ini telah terputus. Silakan coba kembali nanti.',
+                  message,
                   textAlign: TextAlign.center,
                   style: Theme.of(context).textTheme.bodyMedium?.copyWith(
                         color: Colors.grey[400],

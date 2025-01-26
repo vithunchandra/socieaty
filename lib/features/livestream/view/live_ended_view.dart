@@ -58,23 +58,13 @@ class LiveEndedView extends StatelessWidget {
                 const SizedBox(height: 40),
                 SizedBox(
                   width: 200,
-                  child: ElevatedButton(
+                  child: FilledButton(
                     onPressed: () => context.pop(),
-                    style: ElevatedButton.styleFrom(
-                      foregroundColor: Colors.black,
-                      backgroundColor: Colors.white,
-                      padding: const EdgeInsets.symmetric(vertical: 16),
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(30),
-                      ),
-                      elevation: 0,
-                    ),
-                    child: const Text(
+                    child: Text(
                       'Kembali',
-                      style: TextStyle(
-                        fontSize: 16,
-                        fontWeight: FontWeight.bold,
-                      ),
+                      style: Theme.of(context).textTheme.bodyLarge?.copyWith(
+                          fontWeight: FontWeight.bold,
+                        ),
                     ),
                   ),
                 ),

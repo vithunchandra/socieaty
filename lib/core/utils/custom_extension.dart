@@ -1,4 +1,6 @@
 import 'package:dio/dio.dart';
+import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 
 extension StringCasingExtension on String {
   String toCapitalized() {
@@ -34,9 +36,25 @@ extension DioExceptionExtension on DioException {
   String extractMesage() {
     final response = this.response;
     if (response != null) {
-      return response.data['message'].toString();
+      if (response.data is Map<String, dynamic>) {
+        return response.data['message']?.toString() ?? '';
+      } else {
+        return response.data;
+      }
     } else {
       return message.toString();
+    }
+  }
+}
+
+extension BuildContextExtension on BuildContext {
+  void popUntilPath(String routePath) {
+    final router = GoRouter.of(this);
+    while (router.routerDelegate.currentConfiguration.matches.last.matchedLocation != routePath) {
+      if (!router.canPop()) {
+        return;
+      }
+      router.pop();
     }
   }
 }
