@@ -7,7 +7,7 @@ class ShopView extends StatelessWidget {
   Widget build(BuildContext context) {
     return const Scaffold(
       body: Center(
-        child: Text("Shop View"),
+        child: Text("Toko"),
       ),
     );
   }

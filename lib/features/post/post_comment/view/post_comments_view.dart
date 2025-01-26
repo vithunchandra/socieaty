@@ -63,13 +63,13 @@ class _PostCommentsViewState extends ConsumerState<PostCommentsView> {
                         ),
                         postComments.when(
                           data: (data) {
-                            return Text("${data.length} Comments");
+                            return Text("${data.length} Komentar");
                           },
                           error: (object, stacktrace) {
-                            return const Text("Comments");
+                            return const Text("Komentar");
                           },
                           loading: () {
-                            return const Text("Comments");
+                            return const Text("Komentar");
                           },
                         ),
                       ],
@@ -115,7 +115,7 @@ class _PostCommentsViewState extends ConsumerState<PostCommentsView> {
                         child: TextFormField(
                           validator: (value) {
                             if (value == null || value.isEmpty) {
-                              return "Caption post harus diisi";
+                              return "Komentar tidak boleh kosong";
                             }
                             return null;
                           },
@@ -123,7 +123,7 @@ class _PostCommentsViewState extends ConsumerState<PostCommentsView> {
                             postCommentsFormState = postCommentsFormState.copyWith(text: value);
                           },
                           decoration: InputDecoration.collapsed(
-                            hintText: "Your caption here. Create a wonderful caption for your post",
+                            hintText: "Tulis komentar kamu disini...",
                             hintStyle: Theme.of(context).textTheme.bodyMedium?.copyWith(color: AppPallete.neutralColor.shade400),
                             hintFadeDuration: Duration(milliseconds: 250),
                             border: InputBorder.none,

@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_webrtc/flutter_webrtc.dart';
@@ -5,7 +7,13 @@ import 'package:go_router/go_router.dart';
 import 'package:livekit_client/livekit_client.dart';
 import 'package:socieaty/core/constants.dart';
 import 'package:socieaty/core/utils/show_snackbar.dart';
-import 'package:socieaty/shared/widgets/custom_circle_avatar.dart';
+import 'package:socieaty/features/livestream/model/livestream_comment.dart';
+import 'package:socieaty/features/livestream/model/livestream_likes.dart';
+import 'package:socieaty/features/livestream/view/live_disconnected_view.dart';
+import 'package:socieaty/features/livestream/view/live_ended_view.dart';
+import 'package:socieaty/features/livestream/view/livestream_comments_view.dart';
+import 'package:socieaty/features/livestream/viewmodel/live_screen_view_model.dart';
+import 'package:socieaty/shared/view_state.dart';
 import 'package:socieaty/shared/widgets/loading_indicator.dart';
 
 class LiveScreenArgs {
@@ -36,6 +44,14 @@ class _LiveScreenState extends ConsumerState<LiveScreen> {
   CameraPosition? _cameraPosition;
   Room? _room;
 
+  final List<LivestreamComment> _comments = [];
+  int _totalParticipants = 0;
+  late LivestreamLikes _roomLikes;
+
+  bool _isDisconnected = false;
+  bool _isRoomClosed = false;
+  bool _isFinished = false;
+
   @override
   void initState() {
     super.initState();
@@ -45,6 +61,7 @@ class _LiveScreenState extends ConsumerState<LiveScreen> {
 
     _cameraPosition = widget.args.cameraPosition;
     _createRoom();
+    _roomLikes = LivestreamLikes(roomName: '', likes: 0);
   }
 
   @override
@@ -69,23 +86,55 @@ class _LiveScreenState extends ConsumerState<LiveScreen> {
       url,
       widget.args.accessToken,
     );
-    // if (mounted) {
-    //   showSnackbar(context, "${_room!.metadata}");
-    //   debugPrint("metadata: ${_room!.metadata}");
-    // }
+    _room?.addListener(_onChange);
     _setupListener();
     _publishMedia();
+    _roomLikes = LivestreamLikes(roomName: _room!.name!, likes: 0);
   }
 
   _setupListener() {
     _roomListener = _room!.createListener();
 
-    _roomListener.on<RoomDisconnectedEvent>((event) async {
-      if (event.reason != null) {
-        context.pop();
-        showSnackbar(context, "Room disconected because of ${event.reason}");
+    _roomListener
+      ..on<RoomDisconnectedEvent>((event) {
+        if (!_isFinished) {
+          if (event.reason != null) {
+            _isDisconnected = false;
+            _isRoomClosed = false;
+
+            if (event.reason == DisconnectReason.disconnected) {
+              _isDisconnected = true;
+            } else if (event.reason == DisconnectReason.roomDeleted) {
+              _isRoomClosed = true;
+            }
+          }
+          if (mounted) {
+            setState(() {});
+          }
+        }
+      })
+      ..on<DataReceivedEvent>((event) {
+        final decodedData = utf8.decode(event.data);
+        final Map<String, dynamic> dataJson = jsonDecode(decodedData);
+        if (event.topic == 'like') {
+          _roomLikes = LivestreamLikes.fromJson(dataJson);
+        } else if (event.topic == 'comment') {
+          final comment = LivestreamComment.fromJson(dataJson);
+          _comments.add(comment);
+        }
+        if (mounted) {
+          setState(() {});
+        }
+      });
+  }
+
+  _onChange() {
+    if (_room != null) {
+      if (mounted) {
+        _totalParticipants = _room!.remoteParticipants.length;
+        setState(() {});
       }
-    });
+    }
   }
 
   _publishMedia() async {
@@ -98,7 +147,9 @@ class _LiveScreenState extends ConsumerState<LiveScreen> {
         showSnackbar(context, "error: $error");
       }
     }
-    setState(() {});
+    if (mounted) {
+      setState(() {});
+    }
   }
 
   _publishCamera() async {
@@ -162,7 +213,37 @@ class _LiveScreenState extends ConsumerState<LiveScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final screenHeight = MediaQuery.of(context).size.height;
+    ref.listen(liveScreenViewModelProvider, (_, next) {
+      switch (next.isDeleted) {
+        case SuccessState():
+          context.pop(); // Pop back when deletion is successful
+        case ErrorState(message: final message):
+          showSnackbar(context, "error: $message");
+        case LoadingState():
+          if (mounted) {
+            showDialog(
+              context: context,
+              barrierDismissible: false,
+              builder: (context) => const AlertDialog(
+                content: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    CircularProgressIndicator(),
+                    SizedBox(height: 16),
+                    Text('Closing livestream room...'),
+                  ],
+                ),
+              ),
+            );
+          }
+        case IdleState():
+      }
+    });
+    if (_isDisconnected) {
+      return const LiveDisconnectedView();
+    } else if (_isRoomClosed) {
+      return const LiveEndedView();
+    }
 
     return Scaffold(
       body: Stack(
@@ -201,7 +282,10 @@ class _LiveScreenState extends ConsumerState<LiveScreen> {
                   children: [
                     IconButton.filled(
                       onPressed: () {
-                        context.pop();
+                        setState(() {
+                          _isFinished = true;
+                        });
+                        ref.read(liveScreenViewModelProvider.notifier).deleteLivestreamRoom(_room!.name!);
                       },
                       icon: Icon(Icons.close),
                       color: Colors.black.withAlpha(128),
@@ -224,11 +308,11 @@ class _LiveScreenState extends ConsumerState<LiveScreen> {
                           SizedBox(width: 4),
                           Icon(Icons.person, color: Colors.white),
                           SizedBox(width: 2),
-                          Text("0", style: Theme.of(context).textTheme.bodyMedium),
+                          Text("$_totalParticipants", style: Theme.of(context).textTheme.bodyMedium),
                           SizedBox(width: 4),
                           Icon(Icons.favorite, color: Colors.white),
                           SizedBox(width: 2),
-                          Text("0", style: Theme.of(context).textTheme.bodyMedium),
+                          Text("${_roomLikes.likes}", style: Theme.of(context).textTheme.bodyMedium),
                         ],
                       ),
                     )
@@ -286,74 +370,8 @@ class _LiveScreenState extends ConsumerState<LiveScreen> {
             left: 0,
             right: 0,
             bottom: 0,
-            child: Container(
-              height: screenHeight * 0.3,
-              decoration: BoxDecoration(
-                gradient: LinearGradient(
-                  begin: Alignment.topCenter,
-                  end: Alignment.bottomCenter,
-                  colors: [
-                    Colors.black.withAlpha(8),
-                    Colors.black.withAlpha(255),
-                  ],
-                ),
-              ),
-              child: ShaderMask(
-                shaderCallback: (Rect rect) {
-                  return LinearGradient(
-                    begin: Alignment.topCenter,
-                    end: Alignment.bottomCenter,
-                    colors: [
-                      Colors.transparent,
-                      Colors.white,
-                      Colors.white,
-                      Colors.transparent,
-                    ],
-                    stops: const [0.0, 0.2, 0.8, 1.0],
-                  ).createShader(rect);
-                },
-                blendMode: BlendMode.dstIn,
-                child: Padding(
-                  padding: const EdgeInsets.symmetric(vertical: 1.0),
-                  child: ListView.builder(
-                    itemCount: 10,
-                    padding: EdgeInsets.symmetric(vertical: 16.0),
-                    itemBuilder: (context, index) {
-                      return Padding(
-                        padding: const EdgeInsets.all(8.0),
-                        child: Row(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            CustomCircleAvatar(radius: 20, imageUrl: 'assets/images/person_dummy.jpg'),
-                            Expanded(
-                              child: Padding(
-                                padding: const EdgeInsets.symmetric(horizontal: 12.0),
-                                child: Column(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  mainAxisAlignment: MainAxisAlignment.start,
-                                  children: [
-                                    Text(
-                                      "Vithunchan",
-                                      // widget.postComment.userName,
-                                      style: Theme.of(context).textTheme.bodyMedium,
-                                    ),
-                                    SizedBox(height: 2),
-                                    Text(
-                                      "Hallo test comment hehehehhehehe",
-                                      // widget.postComment.text,
-                                      style: Theme.of(context).textTheme.bodyMedium,
-                                    ),
-                                  ],
-                                ),
-                              ),
-                            ),
-                          ],
-                        ),
-                      );
-                    },
-                  ),
-                ),
-              ),
+            child: LivestreamCommentsView(
+              comments: _comments,
             ),
           )
         ],

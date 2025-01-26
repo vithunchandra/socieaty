@@ -12,7 +12,7 @@ class SearchView extends StatelessWidget {
           onPressed: () {
             context.go('/customer/search/result');
           },
-          child: const Text("search"),
+          child: const Text("Cari"),
         ),
       ),
     );

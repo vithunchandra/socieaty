@@ -29,38 +29,30 @@ class PostCommentRepository {
     _dio = dio;
   }
 
-  Future<ApiResult<CreatePostCommentResponse>> createPostComment(PostCommentsFormState data, String postId) async {
-    return await executeRequest<CreatePostCommentResponse>(
-      requestFunction: () async {
-        return await _dio.post('post/$postId/comment', data: data.toJson());
-      },
+  Future<ApiResult<CreatePostCommentResponse>> createPostComment(PostCommentsFormState data, String postId) {
+    return executeRequest<CreatePostCommentResponse>(
+      requestFunction: () => _dio.post('post/$postId/comment', data: data.toJson()),
       successParser: (data) => CreatePostCommentResponse.fromJson(data),
     );
   }
 
-  Future<ApiResult<GetPostCommentsResponse>> getPostComments(String postId) async {
-    return await executeRequest<GetPostCommentsResponse>(
-      requestFunction: () async {
-        return await _dio.get('post/$postId/comment');
-      },
+  Future<ApiResult<GetPostCommentsResponse>> getPostComments(String postId) {
+    return executeRequest<GetPostCommentsResponse>(
+      requestFunction: () => _dio.get('post/$postId/comment'),
       successParser: (data) => GetPostCommentsResponse.fromJson(data),
     );
   }
 
-  Future<ApiResult<LikePostCommentResponse>> likePostComment(String postId, String commentId, bool isLiked) async {
-    return await executeRequest<LikePostCommentResponse>(
-      requestFunction: () async {
-        return await _dio.put('post/$postId/comment/$commentId/like', data: {'isLiked': isLiked});
-      },
+  Future<ApiResult<LikePostCommentResponse>> likePostComment(String postId, String commentId, bool isLiked) {
+    return executeRequest<LikePostCommentResponse>(
+      requestFunction: () => _dio.put('post/$postId/comment/$commentId/like', data: {'isLiked': isLiked}),
       successParser: (data) => LikePostCommentResponse.fromJson(data),
     );
   }
 
-  Future<ApiResult<GetIsLikedResponse>> getIsLiked(String postId, String commentId) async {
-    return await executeRequest<GetIsLikedResponse>(
-      requestFunction: () async {
-        return await _dio.get('post/$postId/comment/$commentId/is-liked');
-      },
+  Future<ApiResult<GetIsLikedResponse>> getIsLiked(String postId, String commentId) {
+    return executeRequest<GetIsLikedResponse>(
+      requestFunction: () => _dio.get('post/$postId/comment/$commentId/is-liked'),
       successParser: (data) => GetIsLikedResponse.fromJson(data),
     );
   }

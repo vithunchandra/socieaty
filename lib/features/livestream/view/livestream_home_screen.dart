@@ -35,10 +35,10 @@ class _LivestreamHomeScreenState extends ConsumerState<LivestreamHomeScreen> {
     ref.listen(getLivestreamRoomsProvider, (previous, next) {
       switch (next) {
         case AsyncData(value: final value):
-          _rooms = value.rooms;
+          _rooms = value;
           debugPrint('rooms: $_rooms');
         case AsyncError(error: final error):
-          showSnackbar(context, error.toString());
+          showSnackbar(context, error.toString(), isError: true);
       }
     });
 

@@ -38,11 +38,11 @@ class _SignInPageState extends ConsumerState<SignInPage> {
             ref.read(appThemeProvider.notifier).setTheme(SocieatyAppTheme.darkTheme);
             context.replace('/customer/home');
           } else {
-            showSnackbar(context, "Hello, ${user.name}");
+            showSnackbar(context, "Hello, ${user.name}", isError: false);
           }
           isLoading = false;
         case ErrorState(message: final message):
-          showSnackbar(context, message);
+          showSnackbar(context, message, isError: true);
           isLoading = false;
         case LoadingState():
           isLoading = true;

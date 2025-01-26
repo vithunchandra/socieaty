@@ -9,6 +9,7 @@ import 'package:socieaty/core/enums/user_role.enum.dart';
 import 'package:socieaty/core/network/api_client.dart';
 import 'package:socieaty/core/network/api_result.dart';
 import 'package:socieaty/core/utils/custom_extension.dart';
+import 'package:socieaty/core/utils/execute_request.dart';
 import 'package:socieaty/features/authentication/model/signin_response.dart';
 import 'package:socieaty/features/authentication/model/signup_customer_response.dart';
 import 'package:socieaty/features/authentication/model/signup_restaurant_response.dart';
@@ -32,64 +33,53 @@ class AuthRemoteRepository {
   AuthRemoteRepository({required this.dio});
 
   Future<ApiResult<SignupRestaurantResponse>> signupRestaurant(SignupRestaurantFormState data, File image) async {
-    try {
-      String extension = image.path.split('.').last;
-      FormData formData = FormData.fromMap({
-        ...data.toJson(),
-        'role': "Restaurant",
-        'image': await MultipartFile.fromFile(image.path, filename: "${data.restaurantName}.$extension"),
-      });
-      final response = await dio.post("auth/signup/restaurant", data: formData);
-      return Success(data: SignupRestaurantResponse.fromJson(response.data));
-    } on DioException catch (error) {
-      return Error(message: error.extractMesage());
-    } on Exception catch (error) {
-      return Error(message: error.toString());
-    }
+    String extension = image.path.split('.').last;
+    FormData formData = FormData.fromMap({
+      ...data.toJson(),
+      'role': "Restaurant",
+      'image': await MultipartFile.fromFile(image.path, filename: "${data.restaurantName}.$extension"),
+    });
+    
+    return executeRequest<SignupRestaurantResponse>(
+      requestFunction: () => dio.post("auth/signup/restaurant", data: formData),
+      successParser: (data) => SignupRestaurantResponse.fromJson(data),
+    );
   }
 
   Future<ApiResult<SignupCustomerResponse>> signupCustomer(SignupCustomerFormState data) async {
-    try {
-      final payload = {...data.toJson(), 'role': UserRole.customer.name.toCapitalized()};
-      final response = await dio.post("auth/signup/customer", data: payload);
-      return Success(data: SignupCustomerResponse.fromJson(response.data));
-    } on DioException catch (error) {
-      return Error(message: error.extractMesage());
-    } on Exception catch (error) {
-      return Error(message: error.toString());
-    }
+    final payload = {...data.toJson(), 'role': UserRole.customer.name.toCapitalized()};
+    
+    return executeRequest<SignupCustomerResponse>(
+      requestFunction: () => dio.post("auth/signup/customer", data: payload),
+      successParser: (data) => SignupCustomerResponse.fromJson(data),
+    );
   }
 
-  Future<ApiResult<SigninResponse>> signinCustomer(SigninFormState data) async {
-    try {
-      final response = await dio.post('auth/signin', data: data.toJson());
-      return Success(data: SigninResponse.fromJson(response.data));
-    } on DioException catch (error) {
-      return Error(message: error.extractMesage());
-    } on Exception catch (error) {
-      return Error(message: error.toString());
-    }
+  Future<ApiResult<SigninResponse>> signinCustomer(SigninFormState data) {
+    return executeRequest<SigninResponse>(
+      requestFunction: () => dio.post('auth/signin', data: data.toJson()),
+      successParser: (data) => SigninResponse.fromJson(data),
+    );
   }
 
-  Future<ApiResult<SocieatyUser>> getSessionData(String token) async {
-    debugPrint("fetching");
-    try {
-      final response = await dio.get(
+  Future<ApiResult<SocieatyUser>> getSessionData(String token) {
+    return executeRequest<SocieatyUser>(
+      requestFunction: () => dio.get(
         'auth/session/data',
         options: Options(
           headers: {'Authorization': "Bearer $token"},
         ),
-      );
-      return Success(data: SocieatyUser.fromJson(response.data));
-    } on DioException catch (error) {
-      debugPrint(error.extractMesage());
-      return Error(message: error.extractMesage());
-    } on Exception catch (error) {
-      debugPrint(error.toString());
-      return Error(message: error.toString());
-    } catch (error) {
-      debugPrint(error.toString());
-      return Error(message: error.toString());
-    }
+      ),
+      successParser: (data) => SocieatyUser.fromJson(data),
+    );
+  }
+
+  Future<ApiResult<SocieatyUser>> getUserData(String id) {
+    return executeRequest<SocieatyUser>(
+      requestFunction: () => dio.get(
+        'auth/user/$id',
+      ),
+      successParser: (data) => SocieatyUser.fromJson(data),
+    );
   }
 }

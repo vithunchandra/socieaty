@@ -5,6 +5,7 @@ import 'package:socieaty/core/constants.dart';
 import 'package:socieaty/core/network/api_client.dart';
 import 'package:socieaty/core/network/api_result.dart';
 import 'package:socieaty/core/utils/custom_extension.dart';
+import 'package:socieaty/core/utils/execute_request.dart';
 import 'package:socieaty/features/authentication/repository/auth_local_repository.dart';
 import 'package:socieaty/features/user/model/socieaty_user.dart';
 
@@ -25,14 +26,10 @@ class CustomerProfileRemoteRepository {
     _dio = dio;
   }
 
-  Future<ApiResult<SocieatyUser>> getProfile() async {
-    try {
-      final response = await _dio.get('customer/profile');
-      return Success(data: SocieatyUser.fromJson(response.data));
-    } on DioException catch (error) {
-      return Error(message: error.extractMesage());
-    } on Exception catch (error) {
-      return Error(message: error.toString());
-    }
+  Future<ApiResult<SocieatyUser>> getProfile() {
+    return executeRequest<SocieatyUser>(
+      requestFunction: () => _dio.get('customer/profile'),
+      successParser: (data) => SocieatyUser.fromJson(data),
+    );
   }
 }

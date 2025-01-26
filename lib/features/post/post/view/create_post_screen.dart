@@ -52,7 +52,7 @@ class _CreatePostScreenState extends ConsumerState<CreatePostScreen> {
             context.pop();
           }
         case ErrorState(message: final message):
-          showSnackbar(context, message);
+          showSnackbar(context, message, isError: true);
         case LoadingState():
         case IdleState():
       }
@@ -68,7 +68,7 @@ class _CreatePostScreenState extends ConsumerState<CreatePostScreen> {
           iconSize: 30,
         ),
         backgroundColor: AppPallete.neutralColor.shade50,
-        title: Text("Create Post"),
+        title: Text("Buat Post"),
         titleTextStyle: Theme.of(context).textTheme.titleMedium,
       ),
       body: Padding(
@@ -118,8 +118,7 @@ class _CreatePostScreenState extends ConsumerState<CreatePostScreen> {
                               );
                             }
                             final file = files[index];
-                            final extension = file.path.substring(file.path.lastIndexOf('.'));
-                            debugPrint("Extension: $extension");
+                            // final extension = file.path.substring(file.path.lastIndexOf('.'));
                             if (RegExp(r'\.(mp4|mov|avi|wmv|flv|mkv|webm)$', caseSensitive: false).hasMatch(file.path)) {
                               return VideoThumbailWidget(
                                 size: Size(100, 100),
@@ -158,7 +157,7 @@ class _CreatePostScreenState extends ConsumerState<CreatePostScreen> {
                                 },
                                 style: Theme.of(context).textTheme.titleLarge,
                                 decoration: InputDecoration.collapsed(
-                                  hintText: "Your title here",
+                                  hintText: "Judul post kamu...",
                                   hintStyle: Theme.of(context).textTheme.titleLarge?.copyWith(color: AppPallete.neutralColor.shade400),
                                   hintFadeDuration: Duration(milliseconds: 250),
                                   border: InputBorder.none,
@@ -180,7 +179,7 @@ class _CreatePostScreenState extends ConsumerState<CreatePostScreen> {
                                 },
                                 style: Theme.of(context).textTheme.bodyMedium,
                                 decoration: InputDecoration.collapsed(
-                                  hintText: "Your caption here. Create a wonderful caption for your post",
+                                  hintText: "Tulis caption kamu disini. Buat caption yang menarik untuk post kamu",
                                   hintStyle: Theme.of(context).textTheme.bodyMedium?.copyWith(color: AppPallete.neutralColor.shade400),
                                   hintFadeDuration: Duration(milliseconds: 250),
                                   border: InputBorder.none,
@@ -222,7 +221,7 @@ class _CreatePostScreenState extends ConsumerState<CreatePostScreen> {
                                       onPressed: () {
                                         Navigator.pop(context);
                                       },
-                                      child: Text("Discard"),
+                                      child: Text("Batal"),
                                     ),
                                     TextButton(
                                       onPressed: () {
@@ -240,7 +239,7 @@ class _CreatePostScreenState extends ConsumerState<CreatePostScreen> {
 
                                         Navigator.pop(context);
                                       },
-                                      child: Text("Save"),
+                                      child: Text("Simpan"),
                                     )
                                   ],
                                 );
@@ -261,7 +260,7 @@ class _CreatePostScreenState extends ConsumerState<CreatePostScreen> {
                         },
                         child: FormItem(
                           itemIcon: Icons.location_on_outlined,
-                          itemTitle: locationAddress.isEmpty ? "Location" : locationAddress,
+                          itemTitle: locationAddress.isEmpty ? "Lokasi" : locationAddress,
                         ),
                       ),
                     ],
@@ -282,7 +281,7 @@ class _CreatePostScreenState extends ConsumerState<CreatePostScreen> {
                         ref.read(createPostViewModelProvider.notifier).createPost(formData, files);
                       }
                     },
-                    child: isLoading ? LoadingIndicator() : Text("Post"),
+                    child: isLoading ? LoadingIndicator() : Text("Unggah"),
                   ),
                 ),
               ),

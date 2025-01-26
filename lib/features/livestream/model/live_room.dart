@@ -1,4 +1,5 @@
 import 'package:freezed_annotation/freezed_annotation.dart';
+import 'package:socieaty/features/user/model/socieaty_user.dart';
 
 part 'live_room.freezed.dart';
 part 'live_room.g.dart';
@@ -8,6 +9,7 @@ class LiveRoom with _$LiveRoom {
   const factory LiveRoom({
     required String roomName,
     required LiveRoomMetadata metadata,
+    required SocieatyUser owner,
     required DateTime createdAt,
   }) = _LiveRoom;
 

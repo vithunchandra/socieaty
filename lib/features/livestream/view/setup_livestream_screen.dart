@@ -69,8 +69,11 @@ class _SetupLiveStreamViewState extends ConsumerState<SetupLiveStreamScreen> {
       noiseSuppression: true,
       echoCancellation: true,
     ));
+
     await _localAudioTrack?.start();
-    setState(() {});
+    if (mounted) {
+      setState(() {});
+    }
   }
 
   Future<void> _checkPremissions() async {

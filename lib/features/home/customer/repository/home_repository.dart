@@ -4,7 +4,7 @@ import 'package:riverpod_annotation/riverpod_annotation.dart';
 import 'package:socieaty/core/constants.dart';
 import 'package:socieaty/core/network/api_client.dart';
 import 'package:socieaty/core/network/api_result.dart';
-import 'package:socieaty/core/utils/custom_extension.dart';
+import 'package:socieaty/core/utils/execute_request.dart';
 import 'package:socieaty/features/authentication/repository/auth_local_repository.dart';
 import 'package:socieaty/features/home/customer/model/get_all_post_response.dart';
 
@@ -25,14 +25,10 @@ class HomeRepository {
     _dio = dio;
   }
 
-  Future<ApiResult<GetAllPostResponse>> getAllPost() async {
-    try {
-      final response = await _dio.get("post/");
-      return Success(data: GetAllPostResponse.fromJson(response.data));
-    } on DioException catch (error) {
-      return Error(message: error.extractMesage());
-    } on Exception catch (error) {
-      return Error(message: error.toString());
-    }
+  Future<ApiResult<GetAllPostResponse>> getAllPost() {
+    return executeRequest<GetAllPostResponse>(
+      requestFunction: () => _dio.get("post/"),
+      successParser: (data) => GetAllPostResponse.fromJson(data),
+    );
   }
 }
