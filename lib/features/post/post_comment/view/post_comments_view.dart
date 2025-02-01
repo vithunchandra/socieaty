@@ -63,7 +63,10 @@ class _PostCommentsViewState extends ConsumerState<PostCommentsView> {
                         ),
                         postComments.when(
                           data: (data) {
-                            return Text("${data.length} Komentar");
+                            return Text(
+                              "${data.length} Komentar",
+                              style: Theme.of(context).textTheme.titleSmall,
+                            );
                           },
                           error: (object, stacktrace) {
                             return const Text("Komentar");

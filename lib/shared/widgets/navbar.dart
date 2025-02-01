@@ -22,49 +22,60 @@ class Navbar extends ConsumerWidget {
         ],
       ),
       child: NavigationBar(
-        height: screenHeight * 0.09,
+        height: screenHeight * 0.075,
         selectedIndex: selectedIndex,
-        labelBehavior: NavigationDestinationLabelBehavior.alwaysShow,
+        labelBehavior: NavigationDestinationLabelBehavior.alwaysHide,
+        indicatorColor: Colors.transparent,
+        overlayColor: WidgetStateProperty.resolveWith<Color?>(
+          (Set<WidgetState> states) {
+            // Set overlayColor to transparent for all states
+            return Colors.transparent;
+          },
+        ),
         elevation: 3,
         destinations: [
           NavigationDestination(
             label: 'Home',
             icon: Icon(Icons.home_outlined),
-            selectedIcon: Icon(Icons.home),
+            selectedIcon: Icon(
+              Icons.home,
+              color: AppPallete.primaryColor,
+            ),
           ),
           NavigationDestination(
             label: 'Live',
             icon: Icon(Icons.live_tv_outlined),
-            selectedIcon: Icon(Icons.live_tv),
+            selectedIcon: Icon(
+              Icons.live_tv,
+              color: AppPallete.primaryColor,
+            ),
           ),
-          NavigationDestination(
-            icon: Padding(
-              padding: const EdgeInsets.only(top: 24.0),
-              child: SizedBox(
-                width: 55,
-                height: 45,
-                child: Card(
-                  color: AppPallete.primaryColor,
-                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-                  elevation: 2.0,
-                  child: Icon(
-                    Icons.add,
-                    color: AppPallete.neutralColor.shade50,
-                  ),
-                ),
+          Center(
+            child: IconButton.filled(
+              onPressed: () {
+                onDestinationSelected(2);
+              },
+              icon: Icon(
+                Icons.add,
+                color: AppPallete.neutralColor.shade50,
               ),
             ),
-            label: "",
           ),
           NavigationDestination(
             label: 'Shop',
             icon: Icon(Icons.shop_outlined),
-            selectedIcon: Icon(Icons.shop),
+            selectedIcon: Icon(
+              Icons.shop,
+              color: AppPallete.primaryColor,
+            ),
           ),
           NavigationDestination(
             label: 'Account',
             icon: Icon(Icons.account_circle_outlined),
-            selectedIcon: Icon(Icons.account_circle),
+            selectedIcon: Icon(
+              Icons.account_circle,
+              color: AppPallete.primaryColor,
+            ),
           )
         ],
         onDestinationSelected: onDestinationSelected,

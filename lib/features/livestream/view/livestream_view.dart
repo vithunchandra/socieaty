@@ -17,6 +17,7 @@ import 'package:socieaty/features/livestream/model/send_livestream_like_response
 import 'package:socieaty/features/livestream/provider/join_livestream_provider.dart';
 import 'package:socieaty/features/livestream/view/live_disconnected_view.dart';
 import 'package:socieaty/features/livestream/view/live_ended_view.dart';
+import 'package:socieaty/features/livestream/view/live_join_failed.dart';
 import 'package:socieaty/features/livestream/view/livestream_comments_view.dart';
 import 'package:socieaty/features/livestream/viewmodel/livestream_view_model.dart';
 import 'package:socieaty/shared/view_state.dart';
@@ -42,6 +43,7 @@ class _LivestreamViewState extends ConsumerState<LivestreamView> {
   bool _isLoading = false;
   bool _isRoomClosed = false;
   bool _isDisconnected = false;
+  bool _isJoinFailure = false;
 
   final List<LivestreamComment> _comments = [];
   int _totalParticipants = 0;
@@ -151,9 +153,10 @@ class _LivestreamViewState extends ConsumerState<LivestreamView> {
         if (event.reason != null) {
           _isDisconnected = false;
           _isRoomClosed = false;
+          _isJoinFailure = false;
 
-          if (event.reason == DisconnectReason.disconnected) {
-            _isDisconnected = true;
+          if (event.reason == DisconnectReason.joinFailure) {
+            _isJoinFailure = true;
           } else if (event.reason == DisconnectReason.roomDeleted) {
             _isRoomClosed = true;
           } else {
@@ -208,6 +211,8 @@ class _LivestreamViewState extends ConsumerState<LivestreamView> {
       return const LiveDisconnectedView();
     } else if (_isRoomClosed) {
       return const LiveEndedView();
+    }else if(_isJoinFailure){
+      return const LiveJoinFailed();
     }
 
     ref.listen(livestreamViewModelProvider(roomName: widget.roomData.roomName), (_, next) {

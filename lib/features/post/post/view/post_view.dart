@@ -160,7 +160,7 @@ class _PostViewState extends ConsumerState<PostView> with AutomaticKeepAliveClie
                         SizedBox(height: 12.0),
                         Text(
                           widget.post.title,
-                          style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                          style: Theme.of(context).textTheme.titleSmall?.copyWith(
                             shadows: <Shadow>[
                               Shadow(
                                 offset: Offset(0, 1),
@@ -221,6 +221,7 @@ class _PostViewState extends ConsumerState<PostView> with AutomaticKeepAliveClie
                           });
                           _onLiked();
                         },
+                        iconSize: 28,
                         icon: isLiked
                             ? Icon(
                                 Icons.favorite,
@@ -246,6 +247,7 @@ class _PostViewState extends ConsumerState<PostView> with AutomaticKeepAliveClie
                             },
                           );
                         },
+                        iconSize: 28,
                         icon: Icon(Icons.comment_outlined),
                       ),
                       Text(comments.toString()),

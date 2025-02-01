@@ -12,7 +12,6 @@ class SocieatyAppTheme {
   static ThemeData lightTheme = ThemeData(
     useMaterial3: true,
     colorScheme: AppColorScheme.lightColorScheme,
-    fontFamily: 'Poppins',
     brightness: Brightness.light,
     scaffoldBackgroundColor: AppPallete.neutralColor[50],
     textTheme: CustomTextTheme.lightTextTheme,
@@ -26,7 +25,6 @@ class SocieatyAppTheme {
   static ThemeData darkTheme = ThemeData(
     useMaterial3: true,
     colorScheme: AppColorScheme.darkColorScheme,
-    fontFamily: 'Poppins',
     brightness: Brightness.dark,
     scaffoldBackgroundColor: Colors.black,
     textTheme: CustomTextTheme.darkTextTheme,
