@@ -20,8 +20,13 @@ class _SignupRestaurantFirstPageState extends State<SignupRestaurantFirstPage> {
   final TextEditingController _passwordController = TextEditingController();
 
   @override
-  Widget build(BuildContext context) {
+  initState() {
+    super.initState();
     _passwordController.text = "vithun11";
+  }
+
+  @override
+  Widget build(BuildContext context) {
     final double screenWidth = MediaQuery.of(context).size.width;
 
     return Scaffold(
@@ -58,7 +63,7 @@ class _SignupRestaurantFirstPageState extends State<SignupRestaurantFirstPage> {
                                 const SizedBox(width: 8.0),
                                 Expanded(
                                   child: Text(
-                                    "Isi data diri",
+                                    "Isi data user",
                                     style: Theme.of(context).textTheme.headlineSmall?.copyWith(color: AppPallete.darkColorOnSurface),
                                   ),
                                 ),
@@ -66,7 +71,7 @@ class _SignupRestaurantFirstPageState extends State<SignupRestaurantFirstPage> {
                             ),
                             const SizedBox(height: 16.0),
                             Text(
-                              "Silahkan masukan data-data diperlukan untuk lanjut ke proses selanjutnya",
+                              "Silahkan masukan data-data user yang diperlukan untuk lanjut ke proses selanjutnya",
                               style: Theme.of(context).textTheme.bodyLarge?.copyWith(color: AppPallete.darkColorOnSurface),
                             ),
                           ],
@@ -85,32 +90,6 @@ class _SignupRestaurantFirstPageState extends State<SignupRestaurantFirstPage> {
                               mainAxisAlignment: MainAxisAlignment.start,
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
-                                Text(
-                                  "Nama user",
-                                  style: Theme.of(context).textTheme.labelLarge,
-                                ),
-                                CustomUnderlineTextField(
-                                  maxLength: 24,
-                                  hintText: "Masukan nama user",
-                                  initialValue: "Vithun",
-                                  validator: (value) {
-                                    if (value == null || value.trim().isEmpty) {
-                                      return "Nama tidak boleh kosong";
-                                    }
-                                    return null;
-                                  },
-                                  onSaved: (value) {
-                                    _formData = _formData.copyWith(name: value);
-                                  },
-                                ),
-                                const SizedBox(height: 8.0),
-                                Text(
-                                  "Nama akan ditampilkan sebagai nama pengenal user",
-                                  style: Theme.of(context).textTheme.bodySmall,
-                                ),
-                                const SizedBox(
-                                  height: 32.0,
-                                ),
                                 Text(
                                   "Email user",
                                   style: Theme.of(context).textTheme.labelLarge,

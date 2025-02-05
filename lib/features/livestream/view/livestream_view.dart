@@ -22,7 +22,7 @@ import 'package:socieaty/features/livestream/view/livestream_comments_view.dart'
 import 'package:socieaty/features/livestream/viewmodel/livestream_view_model.dart';
 import 'package:socieaty/shared/view_state.dart';
 import 'package:socieaty/shared/widgets/error_screen.dart';
-import 'package:socieaty/shared/widgets/loading_indicator.dart';
+import 'package:socieaty/shared/widgets/loading_indicator_widget.dart';
 
 class LivestreamView extends ConsumerStatefulWidget {
   final LiveRoom roomData;
@@ -211,7 +211,7 @@ class _LivestreamViewState extends ConsumerState<LivestreamView> {
       return const LiveDisconnectedView();
     } else if (_isRoomClosed) {
       return const LiveEndedView();
-    }else if(_isJoinFailure){
+    } else if (_isJoinFailure) {
       return const LiveJoinFailed();
     }
 
@@ -246,7 +246,7 @@ class _LivestreamViewState extends ConsumerState<LivestreamView> {
             }
           },
           child: _isLoading
-              ? LoadingIndicator()
+              ? LoadingIndicatorWidget()
               : Scaffold(
                   body: Stack(
                     children: [
@@ -493,7 +493,7 @@ class _LivestreamViewState extends ConsumerState<LivestreamView> {
         return ErrorScreen(message: error.toString());
       },
       loading: () {
-        return LoadingIndicator();
+        return LoadingIndicatorWidget();
       },
     );
   }

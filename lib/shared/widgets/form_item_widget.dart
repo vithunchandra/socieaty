@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:socieaty/core/theme/app_pallete.dart';
 
-class FormItem extends StatelessWidget {
+class FormItemWidget extends StatelessWidget {
   final IconData itemIcon;
   final String itemTitle;
-  const FormItem({super.key, required this.itemIcon, required this.itemTitle});
+  const FormItemWidget({super.key, required this.itemIcon, required this.itemTitle});
 
   @override
   Widget build(BuildContext context) {

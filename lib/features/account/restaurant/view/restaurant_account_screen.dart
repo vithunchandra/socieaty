@@ -6,11 +6,16 @@ import 'package:socieaty/features/authentication/provider/session_provider.dart'
 import 'package:socieaty/shared/view_state.dart';
 import 'package:socieaty/shared/widgets/loading_indicator_widget.dart';
 
-class AccountView extends ConsumerWidget {
-  const AccountView({super.key});
+class RestaurantAccountScreen extends ConsumerStatefulWidget {
+  const RestaurantAccountScreen({super.key});
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
+  ConsumerState<RestaurantAccountScreen> createState() => _RestaurantAccountScreenState();
+}
+
+class _RestaurantAccountScreenState extends ConsumerState<RestaurantAccountScreen> {
+  @override
+  Widget build(BuildContext context) {
     bool isLoading = ref.watch(accountViewModelProvider).isSignedOut is LoadingState ? true : false;
 
     ref.listen(accountViewModelProvider, (_, next) {
@@ -27,8 +32,11 @@ class AccountView extends ConsumerWidget {
     });
 
     return Scaffold(
+      appBar: AppBar(
+        title: const Text('Restaurant Account'),
+      ),
       body: isLoading
-          ? const LoadingIndicatorWidget()
+          ? LoadingIndicatorWidget()
           : Center(
               child: FilledButton(
                 onPressed: () {

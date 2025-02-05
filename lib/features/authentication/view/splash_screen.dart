@@ -53,7 +53,7 @@ class _InitPageState extends ConsumerState<SplashScreen> {
               } else {
                 Future.delayed(Duration(seconds: 3), () {
                   if (context.mounted) {
-                    context.pushReplacement("/restaurant");
+                    context.pushReplacement("/restaurant/dashboard");
                   }
                 });
               }
@@ -75,7 +75,6 @@ class _InitPageState extends ConsumerState<SplashScreen> {
         loading: () {},
         skipError: false,
       );
-
     });
 
     return Scaffold(

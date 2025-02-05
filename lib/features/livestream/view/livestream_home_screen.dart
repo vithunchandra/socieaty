@@ -9,7 +9,7 @@ import 'package:socieaty/features/livestream/provider/livestream_room_provider.d
 import 'package:socieaty/shared/provider/navigation_provider.dart';
 import 'package:socieaty/features/livestream/view/livestream_view.dart';
 import 'package:socieaty/shared/widgets/custom_scroll_physics.dart';
-import 'package:socieaty/shared/widgets/loading_indicator.dart';
+import 'package:socieaty/shared/widgets/loading_indicator_widget.dart';
 
 class LivestreamHomeScreen extends ConsumerStatefulWidget {
   const LivestreamHomeScreen({super.key});
@@ -55,7 +55,7 @@ class _LivestreamHomeScreenState extends ConsumerState<LivestreamHomeScreen> {
       },
       child: Scaffold(
         body: _isLoading
-            ? const LoadingIndicator()
+            ? const LoadingIndicatorWidget()
             : _rooms.isEmpty
                 ? Center(
                     child: Column(

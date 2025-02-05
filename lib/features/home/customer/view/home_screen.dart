@@ -7,7 +7,7 @@ import 'package:socieaty/features/home/customer/viewmodel/home_screen_view_model
 import 'package:socieaty/features/post/post/model/post.dart';
 import 'package:socieaty/features/post/post/view/post_view.dart';
 import 'package:socieaty/shared/widgets/custom_scroll_physics.dart';
-import 'package:socieaty/shared/widgets/loading_indicator.dart';
+import 'package:socieaty/shared/widgets/loading_indicator_widget.dart';
 
 class HomeScreen extends ConsumerStatefulWidget {
   const HomeScreen({super.key});
@@ -66,7 +66,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                     ],
                   ),
                 ),
-              _ => const LoadingIndicator(),
+              _ => const LoadingIndicatorWidget(),
             },
             Padding(
               padding: const EdgeInsets.all(8.0),

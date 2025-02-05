@@ -3,7 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:socieaty/core/theme/app_pallete.dart';
 import 'package:socieaty/features/authentication/provider/session_provider.dart';
-import 'package:socieaty/shared/widgets/loading_indicator.dart';
+import 'package:socieaty/shared/widgets/loading_indicator_widget.dart';
 
 class LandingPage extends ConsumerWidget {
   const LandingPage({super.key});
@@ -15,13 +15,13 @@ class LandingPage extends ConsumerWidget {
     return Scaffold(
       backgroundColor: AppPallete.primaryColor.shade100,
       body: ref.watch(getSessionDataProvider).isLoading
-          ? LoadingIndicator()
+          ? LoadingIndicatorWidget()
           : SafeArea(
               child: SizedBox(
                 width: double.infinity,
                 height: screenHeight,
                 child: Padding(
-                  padding: const EdgeInsets.all(24.0),
+                  padding: const EdgeInsets.symmetric(vertical: 32.0, horizontal: 24.0),
                   child: Column(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
@@ -30,7 +30,7 @@ class LandingPage extends ConsumerWidget {
                         height: 24.0,
                       ),
                       Text(
-                        "Explore the beautiful world of food with Socieaty",
+                        "Jelajahi Dunia Makanan \nDengan Socieaty",
                         style: Theme.of(context).textTheme.displaySmall,
                       ),
                       const SizedBox(

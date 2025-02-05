@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
-import 'package:socieaty/shared/widgets/banner_image.dart';
+import 'package:socieaty/shared/widgets/banner_image_widget.dart';
 
 import '../../../core/theme/app_pallete.dart';
 
@@ -19,31 +19,25 @@ class SignUpPage extends StatelessWidget {
           width: screenWidth,
           child: Column(
             children: [
-              const Expanded(child: BannerImage(image: "assets/images/login_background_alternative.png")),
+              const Expanded(child: BannerImageWidget(image: "assets/images/login_background_alternative.png")),
               SafeArea(
+                top: false,
                 child: Padding(
-                  padding: const EdgeInsets.symmetric(vertical: 32.0, horizontal: 16.0),
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 16.0,
+                    vertical: 32.0,
+                  ),
                   child: Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
+                    mainAxisAlignment: MainAxisAlignment.start,
                     children: [
                       Align(
                         alignment: Alignment.centerLeft,
                         child: Text(
-                          "Join to food society",
+                          "Daftar \nFood Socieaty",
                           style: Theme.of(context).textTheme.displaySmall,
                         ),
                       ),
-                      const SizedBox(
-                        height: 4,
-                      ),
-                      Align(
-                        alignment: Alignment.centerLeft,
-                        child: Text(
-                          "Sign up now to explore the world of food",
-                          style: Theme.of(context).textTheme.titleLarge?.copyWith(color: AppPallete.neutralColor),
-                        ),
-                      ),
-                      const SizedBox(height: 24),
+                      const SizedBox(height: 40),
                       SizedBox(
                         width: double.infinity,
                         height: 45,
@@ -51,7 +45,7 @@ class SignUpPage extends StatelessWidget {
                           onPressed: () {
                             context.push('/signup/customer');
                           },
-                          child: const Text("Sign up as customer"),
+                          child: const Text("Daftar sebagai customer"),
                         ),
                       ),
                       const SizedBox(
@@ -66,7 +60,7 @@ class SignUpPage extends StatelessWidget {
                               child: Divider(color: AppPallete.neutralColor),
                             ),
                           ),
-                          Text("or"),
+                          Text("Atau"),
                           Expanded(
                             child: Padding(
                               padding: EdgeInsets.symmetric(horizontal: 8),
@@ -85,7 +79,7 @@ class SignUpPage extends StatelessWidget {
                           onPressed: () {
                             context.push('/signup/restaurant/first');
                           },
-                          child: const Text("Sign up as restaurant"),
+                          child: const Text("Daftar sebagai restaurant"),
                         ),
                       ),
                       const SizedBox(
@@ -95,7 +89,7 @@ class SignUpPage extends StatelessWidget {
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
                           Text(
-                            "have an account? ",
+                            "Sudah punya akun? ",
                             style: Theme.of(context).textTheme.bodyMedium,
                           ),
                           GestureDetector(

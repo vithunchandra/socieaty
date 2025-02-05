@@ -2,11 +2,11 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:socieaty/core/theme/app_pallete.dart';
 
-class Navbar extends ConsumerWidget {
+class CustomerNavbar extends ConsumerWidget {
   final int selectedIndex;
   final ValueChanged<int> onDestinationSelected;
 
-  const Navbar({
+  const CustomerNavbar({
     super.key,
     required this.selectedIndex,
     required this.onDestinationSelected,
@@ -24,7 +24,7 @@ class Navbar extends ConsumerWidget {
       child: NavigationBar(
         height: screenHeight * 0.075,
         selectedIndex: selectedIndex,
-        labelBehavior: NavigationDestinationLabelBehavior.alwaysHide,
+        labelBehavior: NavigationDestinationLabelBehavior.alwaysShow,
         indicatorColor: Colors.transparent,
         overlayColor: WidgetStateProperty.resolveWith<Color?>(
           (Set<WidgetState> states) {

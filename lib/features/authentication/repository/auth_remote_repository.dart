@@ -32,14 +32,21 @@ class AuthRemoteRepository {
 
   AuthRemoteRepository({required this.dio});
 
-  Future<ApiResult<SignupRestaurantResponse>> signupRestaurant(SignupRestaurantFormState data, File image) async {
-    String extension = image.path.split('.').last;
+  Future<ApiResult<SignupRestaurantResponse>> signupRestaurant(
+    SignupRestaurantFormState data,
+    File profilePicture,
+    File restaurantBanner,
+  ) async {
+    String profilePictureExtension = profilePicture.path.split('.').last;
+    String restaurantBannerExtension = restaurantBanner.path.split('.').last;
     FormData formData = FormData.fromMap({
       ...data.toJson(),
+      'themes[]': List.generate(data.themes.length, (index) => data.themes[index]),
       'role': "Restaurant",
-      'image': await MultipartFile.fromFile(image.path, filename: "${data.restaurantName}.$extension"),
+      'profilePicture': await MultipartFile.fromFile(profilePicture.path, filename: "${data.name}.$profilePictureExtension"),
+      'restaurantBanner': await MultipartFile.fromFile(restaurantBanner.path, filename: "${data.name}.$restaurantBannerExtension"),
     });
-    
+    debugPrint(formData.fields.toString());
     return executeRequest<SignupRestaurantResponse>(
       requestFunction: () => dio.post("auth/signup/restaurant", data: formData),
       successParser: (data) => SignupRestaurantResponse.fromJson(data),
@@ -48,7 +55,7 @@ class AuthRemoteRepository {
 
   Future<ApiResult<SignupCustomerResponse>> signupCustomer(SignupCustomerFormState data) async {
     final payload = {...data.toJson(), 'role': UserRole.customer.name.toCapitalized()};
-    
+
     return executeRequest<SignupCustomerResponse>(
       requestFunction: () => dio.post("auth/signup/customer", data: payload),
       successParser: (data) => SignupCustomerResponse.fromJson(data),

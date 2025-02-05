@@ -5,7 +5,7 @@ import 'package:socieaty/features/post/post_comment/model/like_post_comment_resp
 import 'package:socieaty/features/post/post_comment/model/post_comment.dart';
 import 'package:socieaty/features/post/post_comment/viewmodel/post_comment_detail_view_model.dart';
 import 'package:socieaty/shared/view_state.dart';
-import 'package:socieaty/shared/widgets/custom_circle_avatar.dart';
+import 'package:socieaty/shared/widgets/custom_circle_avatar_widget.dart';
 
 class PostCommentDetailView extends ConsumerStatefulWidget {
   final PostComment postComment;
@@ -67,7 +67,7 @@ class _PostCommentDetailViewState extends ConsumerState<PostCommentDetailView> {
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          CustomCircleAvatar(radius: 20, imageUrl: 'assets/images/person_dummy.jpg'),
+          CustomCircleAvatarWidget(radius: 20, imageUrl: 'assets/images/person_dummy.jpg'),
           Expanded(
             child: Padding(
               padding: const EdgeInsets.symmetric(horizontal: 12.0),

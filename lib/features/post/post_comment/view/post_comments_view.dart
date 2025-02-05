@@ -5,8 +5,8 @@ import 'package:socieaty/features/authentication/repository/auth_local_repositor
 import 'package:socieaty/features/post/post_comment/view/post_comment_detail_view.dart';
 import 'package:socieaty/features/post/post_comment/viewmodel/post_comments_view_model.dart';
 import 'package:socieaty/features/post/post_comment/viewstate/post_comments_form_state.dart';
-import 'package:socieaty/shared/widgets/custom_circle_avatar.dart';
-import 'package:socieaty/shared/widgets/loading_indicator.dart';
+import 'package:socieaty/shared/widgets/custom_circle_avatar_widget.dart';
+import 'package:socieaty/shared/widgets/loading_indicator_widget.dart';
 
 class PostCommentsView extends ConsumerStatefulWidget {
   final String postId;
@@ -100,7 +100,7 @@ class _PostCommentsViewState extends ConsumerState<PostCommentsView> {
                   return Text("${object.toString()} \n ${stacktrace.toString()}");
                 },
                 loading: () {
-                  return const LoadingIndicator();
+                  return const LoadingIndicatorWidget();
                 },
               ),
             ),
@@ -110,7 +110,7 @@ class _PostCommentsViewState extends ConsumerState<PostCommentsView> {
                 key: _formKey,
                 child: Row(
                   children: [
-                    CustomCircleAvatar(radius: 20, imageUrl: "assets/images/person_dummy.jpg"),
+                    CustomCircleAvatarWidget(radius: 20, imageUrl: "assets/images/person_dummy.jpg"),
                     SizedBox(width: 12),
                     Expanded(
                       child: Padding(

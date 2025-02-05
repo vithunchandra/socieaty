@@ -15,7 +15,7 @@ import 'package:socieaty/features/livestream/view/live_ended_view.dart';
 import 'package:socieaty/features/livestream/view/livestream_comments_view.dart';
 import 'package:socieaty/features/livestream/viewmodel/live_screen_view_model.dart';
 import 'package:socieaty/shared/view_state.dart';
-import 'package:socieaty/shared/widgets/loading_indicator.dart';
+import 'package:socieaty/shared/widgets/loading_indicator_widget.dart';
 
 class LiveScreenArgs {
   final String accessToken;
@@ -267,9 +267,9 @@ class _LiveScreenState extends ConsumerState<LiveScreen> {
     return PopScope(
       canPop: _isResourceCleared,
       onPopInvokedWithResult: (didPop, result) {
-        if(didPop){
+        if (didPop) {
           return;
-        }else{
+        } else {
           _finishLivestream();
         }
       },
@@ -280,7 +280,7 @@ class _LiveScreenState extends ConsumerState<LiveScreen> {
               width: double.infinity,
               height: double.infinity,
               child: _isVideoTrackLoading
-                  ? LoadingIndicator()
+                  ? LoadingIndicatorWidget()
                   : _localVideoTrack == null
                       ? Center(
                           child: Column(

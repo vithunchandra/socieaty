@@ -6,7 +6,6 @@ part 'customer_data.g.dart';
 @freezed
 class CustomerData with _$CustomerData {
   const factory CustomerData({
-    @Default(null) String? photoProfileUrl,
     @Default(null) String? bio,
     required int wallet,
   }) = _CustomerData;

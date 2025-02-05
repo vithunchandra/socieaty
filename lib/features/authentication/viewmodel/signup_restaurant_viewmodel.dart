@@ -19,9 +19,9 @@ class SignupRestaurantViewModel extends _$SignupRestaurantViewModel {
     return SignupRestaurantViewState(signupRestaurantState: IdleState());
   }
 
-  Future<void> signupRestaurant(SignupRestaurantFormState data, File selectedImage) async {
+  Future<void> signupRestaurant(SignupRestaurantFormState data, File profilePicture, File restaurantBanner) async {
     state = state.copyWith(signupRestaurantState: IdleState());
-    final response = await _authRemoteRepository.signupRestaurant(data, selectedImage);
+    final response = await _authRemoteRepository.signupRestaurant(data, profilePicture, restaurantBanner);
     switch (response) {
       case Success<SignupRestaurantResponse>(data: final result):
         state = state.copyWith(signupRestaurantState: SuccessState(data: result.user));

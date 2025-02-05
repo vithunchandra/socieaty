@@ -2,10 +2,10 @@ import 'dart:io';
 
 import 'package:flutter/material.dart';
 
-class ImageCard extends StatelessWidget {
+class ImageCardWidget extends StatelessWidget {
   final File file;
   final Size size;
-  const ImageCard({super.key, required this.file, required this.size});
+  const ImageCardWidget({super.key, required this.file, required this.size});
 
   @override
   Widget build(BuildContext context) {

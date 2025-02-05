@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:socieaty/features/home/customer/viewmodel/home_screen_view_model.dart';
 import 'package:socieaty/shared/provider/navigation_provider.dart';
-import 'package:socieaty/shared/widgets/loading_indicator.dart';
+import 'package:socieaty/shared/widgets/loading_indicator_widget.dart';
 import 'package:video_player/video_player.dart';
 
 class VideoPlayerWidget extends ConsumerStatefulWidget {
@@ -84,7 +84,7 @@ class _VideoPlayerWidgetState extends ConsumerState<VideoPlayerWidget> {
     }
 
     if (!_isInitialized) {
-      return const Center(child: LoadingIndicator());
+      return const Center(child: LoadingIndicatorWidget());
     }
 
     return GestureDetector(

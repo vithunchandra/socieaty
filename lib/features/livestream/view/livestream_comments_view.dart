@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:socieaty/features/livestream/model/livestream_comment.dart';
-import 'package:socieaty/shared/widgets/custom_circle_avatar.dart';
+import 'package:socieaty/shared/widgets/custom_circle_avatar_widget.dart';
 
 class LivestreamCommentsView extends StatelessWidget {
   final List<LivestreamComment> comments;
@@ -135,7 +135,7 @@ class _AnimatedCommentItemState extends State<AnimatedCommentItem> with SingleTi
         child: Row(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            CustomCircleAvatar(radius: 20, imageUrl: 'assets/images/person_dummy.jpg'),
+            CustomCircleAvatarWidget(radius: 20, imageUrl: 'assets/images/person_dummy.jpg'),
             Expanded(
               child: Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 12.0),

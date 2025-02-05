@@ -16,7 +16,6 @@ Future<ApiResult<SocieatyUser>> getSessionData(Ref ref) async {
       return Error(message: "Session not found");
   }
   final result = await ref.watch(authRemoteRepositoryProvider).getSessionData(token);
-  debugPrint("HELLOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOO");
 
   switch (result) {
     case Success(data: final user):

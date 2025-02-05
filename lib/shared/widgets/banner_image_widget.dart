@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 
-class BannerImage extends StatelessWidget {
+class BannerImageWidget extends StatelessWidget {
   final String image;
-  const BannerImage({super.key, required this.image});
+  const BannerImageWidget({super.key, required this.image});
 
   @override
   Widget build(BuildContext context) {

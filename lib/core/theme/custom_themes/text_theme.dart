@@ -7,42 +7,42 @@ class CustomTextTheme {
 
   static final TextTheme lightTextTheme = TextTheme(
     // Large titles for welcome screens and major headers
-    displayLarge: GoogleFonts.montserrat(
+    displayLarge: GoogleFonts.inter(
       fontSize: 57,
       color: AppPallete.lightColorOnSurface,
       fontWeight: FontWeight.bold,
       letterSpacing: -0.5,
     ),
     // Section headers and feature titles
-    displayMedium: GoogleFonts.montserrat(
+    displayMedium: GoogleFonts.inter(
       fontSize: 45,
       color: AppPallete.lightColorOnSurface,
       fontWeight: FontWeight.bold,
       letterSpacing: -0.5,
     ),
     // Post titles and major content headers
-    displaySmall: GoogleFonts.montserrat(
+    displaySmall: GoogleFonts.inter(
       fontSize: 36,
       color: AppPallete.lightColorOnSurface,
       fontWeight: FontWeight.bold,
       letterSpacing: -0.25,
     ),
     // Livestream titles and important notifications
-    headlineLarge: GoogleFonts.montserrat(
+    headlineLarge: GoogleFonts.inter(
       fontSize: 32,
       color: AppPallete.lightColorOnSurface,
       fontWeight: FontWeight.w600,
       letterSpacing: -0.25,
     ),
     // Food titles and category headers
-    headlineMedium: GoogleFonts.montserrat(
+    headlineMedium: GoogleFonts.inter(
       fontSize: 28,
       color: AppPallete.lightColorOnSurface,
       fontWeight: FontWeight.w600,
       letterSpacing: 0,
     ),
     // Sub-section headers
-    headlineSmall: GoogleFonts.montserrat(
+    headlineSmall: GoogleFonts.inter(
       fontSize: 24,
       color: AppPallete.lightColorOnSurface,
       fontWeight: FontWeight.w600,
@@ -114,37 +114,37 @@ class CustomTextTheme {
   );
 
   static final TextTheme darkTextTheme = TextTheme(
-    displayLarge: GoogleFonts.montserrat(
+    displayLarge: GoogleFonts.inter(
       fontSize: 57,
       color: AppPallete.darkColorOnSurface,
       fontWeight: FontWeight.bold,
       letterSpacing: -0.5,
     ),
-    displayMedium: GoogleFonts.montserrat(
+    displayMedium: GoogleFonts.inter(
       fontSize: 45,
       color: AppPallete.darkColorOnSurface,
       fontWeight: FontWeight.bold,
       letterSpacing: -0.5,
     ),
-    displaySmall: GoogleFonts.montserrat(
+    displaySmall: GoogleFonts.inter(
       fontSize: 36,
       color: AppPallete.darkColorOnSurface,
       fontWeight: FontWeight.bold,
       letterSpacing: -0.25,
     ),
-    headlineLarge: GoogleFonts.montserrat(
+    headlineLarge: GoogleFonts.inter(
       fontSize: 32,
       color: AppPallete.darkColorOnSurface,
       fontWeight: FontWeight.w600,
       letterSpacing: -0.25,
     ),
-    headlineMedium: GoogleFonts.montserrat(
+    headlineMedium: GoogleFonts.inter(
       fontSize: 28,
       color: AppPallete.darkColorOnSurface,
       fontWeight: FontWeight.w600,
       letterSpacing: 0,
     ),
-    headlineSmall: GoogleFonts.montserrat(
+    headlineSmall: GoogleFonts.inter(
       fontSize: 24,
       color: AppPallete.darkColorOnSurface,
       fontWeight: FontWeight.w600,

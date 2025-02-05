@@ -8,7 +8,11 @@ class CustomUnderlineTextField extends StatefulWidget {
   final Icon? suffixIcon;
   final String? hintText;
   final String? initialValue;
+  final bool? autoFocus;
   final int? maxLength;
+  final TextStyle? hintStyle;
+  final TextStyle? textStyle;
+  final void Function()? onTap;
   final void Function()? suffixIconAction;
   final String? Function(String?)? validator;
   final void Function(String?)? onSaved;
@@ -20,10 +24,14 @@ class CustomUnderlineTextField extends StatefulWidget {
     this.hintText,
     this.validator,
     this.maxLength,
+    this.autoFocus,
+    this.onTap,
     this.suffixIcon,
     this.suffixIconAction,
     this.onSaved,
     this.initialValue,
+    this.hintStyle,
+    this.textStyle,
   });
 
   @override
@@ -38,11 +46,13 @@ class _CustomUnderlineTextFieldState extends State<CustomUnderlineTextField> {
       validator: widget.validator,
       maxLength: widget.maxLength,
       initialValue: widget.initialValue,
-      style: Theme.of(context).textTheme.titleLarge?.copyWith(fontSize: 22),
+      autofocus: widget.autoFocus ?? false,
+      onTap: widget.onTap,
+      style: widget.textStyle ?? Theme.of(context).textTheme.titleLarge?.copyWith(fontSize: 22),
       decoration: InputDecoration(
         contentPadding: const EdgeInsets.symmetric(vertical: 0.0, horizontal: 0),
         hintText: widget.hintText,
-        hintStyle: Theme.of(context).textTheme.titleLarge?.copyWith(color: AppPallete.neutralColor, fontSize: 22),
+        hintStyle: widget.hintStyle ?? Theme.of(context).textTheme.titleLarge?.copyWith(color: AppPallete.neutralColor, fontSize: 22),
         prefixIcon: widget.prefixIcon,
         prefixIconConstraints: const BoxConstraints(minWidth: 60),
         suffixIconConstraints: const BoxConstraints(minWidth: 60),

@@ -6,7 +6,7 @@ import 'package:go_router/go_router.dart';
 import 'package:socieaty/core/enums/user_role.enum.dart';
 import 'package:socieaty/core/theme/app_pallete.dart';
 import 'package:socieaty/core/utils/custom_extension.dart';
-import 'package:socieaty/core/utils/show_image_picker_modal.dart';
+import 'package:socieaty/core/utils/show_picker_modal.dart';
 import 'package:socieaty/core/utils/show_snackbar.dart';
 import 'package:socieaty/features/authentication/repository/auth_local_repository.dart';
 import 'package:socieaty/features/home/customer/provider/all_post_provider.dart';
@@ -16,10 +16,10 @@ import 'package:socieaty/features/post/post/viewmodel/create_post_view_model.dar
 import 'package:socieaty/features/post/post/viewstate/create_post_form_state.dart';
 import 'package:socieaty/shared/view_state.dart';
 import 'package:socieaty/shared/widgets/custom_text_field.dart';
-import 'package:socieaty/shared/widgets/form_item.dart';
-import 'package:socieaty/shared/widgets/image_card.dart';
-import 'package:socieaty/shared/widgets/loading_indicator.dart';
-import 'package:socieaty/shared/widgets/profile_card.dart';
+import 'package:socieaty/shared/widgets/form_item_widget.dart';
+import 'package:socieaty/shared/widgets/image_card_widget.dart';
+import 'package:socieaty/shared/widgets/loading_indicator_widget.dart';
+import 'package:socieaty/shared/widgets/profile_card_widget.dart';
 import 'package:socieaty/shared/widgets/video_thumbail_widget.dart';
 
 class CreatePostScreen extends ConsumerStatefulWidget {
@@ -84,7 +84,7 @@ class _CreatePostScreenState extends ConsumerState<CreatePostScreen> {
                     mainAxisAlignment: MainAxisAlignment.center,
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      ProfileCard(),
+                      ProfileCardWidget(),
                       SizedBox(height: 20),
                       SizedBox(
                         height: 100,
@@ -95,7 +95,7 @@ class _CreatePostScreenState extends ConsumerState<CreatePostScreen> {
                             if (index == files.length) {
                               return GestureDetector(
                                 onTap: () {
-                                  showImagePickerModal(context, (image) {
+                                  showContentPickerModal(context, (image) {
                                     setState(() {
                                       files.add(image);
                                     });
@@ -125,7 +125,7 @@ class _CreatePostScreenState extends ConsumerState<CreatePostScreen> {
                                 videoPath: file.path,
                               );
                             } else {
-                              return ImageCard(
+                              return ImageCardWidget(
                                 file: files[index],
                                 size: Size(100, 100),
                               );
@@ -245,7 +245,7 @@ class _CreatePostScreenState extends ConsumerState<CreatePostScreen> {
                                 );
                               });
                         },
-                        child: FormItem(itemIcon: Icons.tag, itemTitle: hashtagsText.isEmpty ? "Hashtags" : hashtagsText),
+                        child: FormItemWidget(itemIcon: Icons.tag, itemTitle: hashtagsText.isEmpty ? "Hashtags" : hashtagsText),
                       ),
                       GestureDetector(
                         onTap: () {
@@ -258,7 +258,7 @@ class _CreatePostScreenState extends ConsumerState<CreatePostScreen> {
                             }
                           });
                         },
-                        child: FormItem(
+                        child: FormItemWidget(
                           itemIcon: Icons.location_on_outlined,
                           itemTitle: locationAddress.isEmpty ? "Lokasi" : locationAddress,
                         ),
@@ -281,7 +281,7 @@ class _CreatePostScreenState extends ConsumerState<CreatePostScreen> {
                         ref.read(createPostViewModelProvider.notifier).createPost(formData, files);
                       }
                     },
-                    child: isLoading ? LoadingIndicator() : Text("Unggah"),
+                    child: isLoading ? LoadingIndicatorWidget() : Text("Unggah"),
                   ),
                 ),
               ),

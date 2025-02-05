@@ -9,7 +9,7 @@ import 'package:socieaty/features/livestream/view/live_screen.dart';
 import 'package:socieaty/features/livestream/viewmodel/setup_livestream_view_model.dart';
 import 'package:socieaty/features/livestream/viewstate/setup_livestream_form_state.dart';
 import 'package:socieaty/shared/view_state.dart';
-import 'package:socieaty/shared/widgets/loading_indicator.dart';
+import 'package:socieaty/shared/widgets/loading_indicator_widget.dart';
 import 'package:permission_handler/permission_handler.dart';
 
 class SetupLiveStreamScreen extends ConsumerStatefulWidget {
@@ -159,7 +159,7 @@ class _SetupLiveStreamViewState extends ConsumerState<SetupLiveStreamScreen> {
                     _localVideoTrack!,
                     fit: RTCVideoViewObjectFit.RTCVideoViewObjectFitCover,
                   )
-                : LoadingIndicator(),
+                : LoadingIndicatorWidget(),
           ),
           SafeArea(
             child: Padding(
@@ -256,7 +256,7 @@ class _SetupLiveStreamViewState extends ConsumerState<SetupLiveStreamScreen> {
                               ref.read(setupLivestreamViewModelProvider.notifier).startLivestream(formState);
                             }
                           },
-                          child: _isLoading ? LoadingIndicator() : Text("Go Live"),
+                          child: _isLoading ? LoadingIndicatorWidget() : Text("Go Live"),
                         ),
                       ),
                     ],

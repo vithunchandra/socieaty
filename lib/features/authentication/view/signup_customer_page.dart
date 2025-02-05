@@ -8,7 +8,7 @@ import 'package:socieaty/features/authentication/viewstate/signup_customer_form_
 import 'package:socieaty/features/user/model/socieaty_user.dart';
 import 'package:socieaty/shared/view_state.dart';
 import 'package:socieaty/shared/widgets/custom_underline_text_field.dart';
-import 'package:socieaty/shared/widgets/loading_indicator.dart';
+import 'package:socieaty/shared/widgets/loading_indicator_widget.dart';
 import 'package:socieaty/shared/widgets/obscure_underline_text_field.dart';
 
 import '../../../core/theme/app_pallete.dart';
@@ -231,7 +231,7 @@ class _SignupCustomerPageState extends ConsumerState<SignupCustomerPage> {
                         ref.read(signupCustomerViewmodelProvider.notifier).signupCustomer(_formData);
                       }
                     },
-                    child: isLoading ? LoadingIndicator() : const Text("Sign Up"),
+                    child: isLoading ? LoadingIndicatorWidget() : const Text("Sign Up"),
                   ),
                 ),
               )

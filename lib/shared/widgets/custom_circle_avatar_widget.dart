@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:socieaty/core/theme/app_pallete.dart';
 
-class CustomCircleAvatar extends StatelessWidget {
+class CustomCircleAvatarWidget extends StatelessWidget {
   final double radius;
   final String imageUrl;
-  const CustomCircleAvatar({super.key, required this.radius, required this.imageUrl});
+  const CustomCircleAvatarWidget({super.key, required this.radius, required this.imageUrl});
 
   @override
   Widget build(BuildContext context) {

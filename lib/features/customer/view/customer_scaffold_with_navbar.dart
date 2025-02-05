@@ -5,10 +5,10 @@ import 'package:socieaty/app_theme.dart';
 import 'package:socieaty/core/theme/theme.dart';
 import 'package:socieaty/features/home/customer/provider/all_post_provider.dart';
 import 'package:socieaty/shared/provider/navigation_provider.dart';
-import 'package:socieaty/shared/widgets/navbar.dart';
+import 'package:socieaty/features/customer/view/customer_navbar.dart';
 
-class ScaffoldWithNavbar extends ConsumerStatefulWidget {
-  const ScaffoldWithNavbar({
+class CustomerScaffoldWithNavbar extends ConsumerStatefulWidget {
+  const CustomerScaffoldWithNavbar({
     super.key,
     required this.navigationShell,
     required this.showNavbar,
@@ -17,10 +17,10 @@ class ScaffoldWithNavbar extends ConsumerStatefulWidget {
   final bool showNavbar;
 
   @override
-  ConsumerState<ScaffoldWithNavbar> createState() => _ScaffoldWithNavbarState();
+  ConsumerState<CustomerScaffoldWithNavbar> createState() => _CustomerScaffoldWithNavbarState();
 }
 
-class _ScaffoldWithNavbarState extends ConsumerState<ScaffoldWithNavbar> {
+class _CustomerScaffoldWithNavbarState extends ConsumerState<CustomerScaffoldWithNavbar> {
   void _pushNewBranch(int index) {
     ref.read(navigationIndexProvider.notifier).addIndex(index);
 
@@ -65,7 +65,7 @@ class _ScaffoldWithNavbarState extends ConsumerState<ScaffoldWithNavbar> {
       child: Scaffold(
         body: widget.navigationShell,
         bottomNavigationBar: widget.showNavbar
-            ? Navbar(
+            ? CustomerNavbar(
                 selectedIndex: widget.navigationShell.currentIndex,
                 onDestinationSelected: _pushNewBranch,
               )
