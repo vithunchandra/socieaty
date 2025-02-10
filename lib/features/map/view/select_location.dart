@@ -91,7 +91,6 @@ class _SelectLocationState extends State<SelectLocation> {
               if (newLocation == null) return;
               var preciseLocation = await LocationHandler.getAddressFromLatLng(newLocation);
               if (preciseLocation == null || !mounted) return;
-              debugPrint(preciseLocation.toString());
               String preciseLocationAddress =
                   "${preciseLocation.street}, ${preciseLocation.subLocality} ${preciseLocation.locality}, ${preciseLocation.administrativeArea}, ${preciseLocation.postalCode}, ${preciseLocation.country}";
               String preciseLocationName = "${preciseLocation.street}";

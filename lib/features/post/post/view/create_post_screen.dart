@@ -44,7 +44,6 @@ class _CreatePostScreenState extends ConsumerState<CreatePostScreen> {
     ref.listen(createPostViewModelProvider, (_, next) {
       switch (next.createPostState) {
         case SuccessState<Post>():
-          debugPrint("Invalidate create");
           ref.invalidate(allPostProvider);
           if (user?.role == UserRole.customer) {
             context.pop();
@@ -159,7 +158,7 @@ class _CreatePostScreenState extends ConsumerState<CreatePostScreen> {
                                 decoration: InputDecoration.collapsed(
                                   hintText: "Judul post kamu...",
                                   hintStyle: Theme.of(context).textTheme.titleLarge?.copyWith(color: AppPallete.neutralColor.shade400),
-                                  hintFadeDuration: Duration(milliseconds: 250),
+                                  // hintFadeDuration: Duration(milliseconds: 250),
                                   border: InputBorder.none,
                                 ),
                               ),
@@ -181,7 +180,7 @@ class _CreatePostScreenState extends ConsumerState<CreatePostScreen> {
                                 decoration: InputDecoration.collapsed(
                                   hintText: "Tulis caption kamu disini. Buat caption yang menarik untuk post kamu",
                                   hintStyle: Theme.of(context).textTheme.bodyMedium?.copyWith(color: AppPallete.neutralColor.shade400),
-                                  hintFadeDuration: Duration(milliseconds: 250),
+                                  // hintFadeDuration: Duration(milliseconds: 250),
                                   border: InputBorder.none,
                                 ),
                                 minLines: 5,
@@ -251,7 +250,6 @@ class _CreatePostScreenState extends ConsumerState<CreatePostScreen> {
                         onTap: () {
                           context.push<MyLocationData>('/select_location').then((locationData) {
                             if (locationData != null) {
-                              debugPrint("${locationData.address} halooo");
                               locationAddress = locationData.address;
                               formData = formData.copyWith(location: locationData.latlng);
                               setState(() {});

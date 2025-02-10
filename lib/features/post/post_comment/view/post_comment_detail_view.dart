@@ -41,7 +41,6 @@ class _PostCommentDetailViewState extends ConsumerState<PostCommentDetailView> {
       _debounce?.cancel();
     }
     _debounce = Timer(_debounceDuration, () {
-      debugPrint("isLiked: $isLiked");
       ref.read(postCommentDetailViewModelProvider(postId: widget.postId, commentId: widget.postComment.id).notifier).likePostComment(isLiked);
     });
   }
@@ -56,7 +55,6 @@ class _PostCommentDetailViewState extends ConsumerState<PostCommentDetailView> {
             likeCount = data.likes;
           });
         case ErrorState(message: final message):
-          debugPrint("Error : $message");
         case LoadingState():
         case IdleState():
       }

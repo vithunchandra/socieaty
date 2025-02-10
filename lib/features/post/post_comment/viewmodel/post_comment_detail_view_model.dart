@@ -23,11 +23,9 @@ class PostCommentDetailViewModel extends _$PostCommentDetailViewModel {
   }
 
   Future<void> likePostComment(bool isLiked) async {
-    debugPrint("isLiked: $isLiked");
     final result = await _postCommentRepository.likePostComment(state.postId, state.commentId, isLiked);
     switch (result) {
       case Success<LikePostCommentResponse>(data: final data):
-        debugPrint("Success : $data");
         state = state.copyWith(likePostCommentState: SuccessState(data: data));
       case Error(message: final message):
         state = state.copyWith(likePostCommentState: ErrorState(message: message));

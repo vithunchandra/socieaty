@@ -1,18 +1,20 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:socieaty/core/theme/app_pallete.dart';
+import 'package:socieaty/features/authentication/repository/auth_local_repository.dart';
 import 'package:socieaty/shared/widgets/header_icon_widget.dart';
 import 'package:flutter/scheduler.dart';
 
-class OutletScreen extends StatefulWidget {
+class OutletScreen extends ConsumerStatefulWidget {
   const OutletScreen({super.key});
 
   @override
-  State<OutletScreen> createState() => _OutletScreenState();
+  ConsumerState<OutletScreen> createState() => _OutletScreenState();
 }
 
-class _OutletScreenState extends State<OutletScreen> with SingleTickerProviderStateMixin {
+class _OutletScreenState extends ConsumerState<OutletScreen> with SingleTickerProviderStateMixin {
   final ScrollController _scrollController = ScrollController();
   final mainHeaderHeightPercentage = 0.5;
   bool _isCollapsed = false;
@@ -34,7 +36,8 @@ class _OutletScreenState extends State<OutletScreen> with SingleTickerProviderSt
   void _onScroll() {
     if (!_scrollController.hasClients) return;
     final screenHeight = MediaQuery.of(context).size.height;
-    double collapsedPercentage = _scrollController.offset / (screenHeight * mainHeaderHeightPercentage);
+    double collapsedPercentage =
+        _scrollController.offset / (screenHeight * mainHeaderHeightPercentage);
 
     SchedulerBinding.instance.addPostFrameCallback((_) {
       if (collapsedPercentage >= 0.65) {
@@ -55,7 +58,8 @@ class _OutletScreenState extends State<OutletScreen> with SingleTickerProviderSt
             _isCollapsed = true;
           });
         }
-      } else if (_isCollapsed && _scrollController.offset < screenHeight * mainHeaderHeightPercentage - 56) {
+      } else if (_isCollapsed &&
+          _scrollController.offset < screenHeight * mainHeaderHeightPercentage - 56) {
         setState(() {
           _isCollapsed = false;
         });
@@ -85,7 +89,9 @@ class _OutletScreenState extends State<OutletScreen> with SingleTickerProviderSt
                     )
                   : null,
               surfaceTintColor: Colors.transparent,
-              backgroundColor: _isAlmostCollapsed ? AppPallete.neutralColor.shade50 : AppPallete.neutralColor.shade800,
+              backgroundColor: _isAlmostCollapsed
+                  ? AppPallete.neutralColor.shade50
+                  : AppPallete.neutralColor.shade800,
               flexibleSpace: FlexibleSpaceBar(
                 background: Stack(
                   fit: StackFit.expand,
@@ -106,7 +112,7 @@ class _OutletScreenState extends State<OutletScreen> with SingleTickerProviderSt
                               end: Alignment.bottomCenter,
                               colors: [
                                 Colors.black.withAlpha(0),
-                                Colors.black.withAlpha(178), // 0.7 opacity
+                                Colors.black.withAlpha(255), // 0.7 opacity
                               ],
                               stops: const [0.3, 1.0],
                             ),
@@ -153,7 +159,8 @@ class _OutletScreenState extends State<OutletScreen> with SingleTickerProviderSt
                                   child: Row(
                                     mainAxisSize: MainAxisSize.min,
                                     children: [
-                                      Icon(Icons.check_circle, color: AppPallete.primaryColor, size: 16),
+                                      Icon(Icons.check_circle,
+                                          color: AppPallete.primaryColor, size: 16),
                                       const SizedBox(width: 4),
                                       Text(
                                         "Open Now | 12pm - 1am",
@@ -231,16 +238,19 @@ class _OutletScreenState extends State<OutletScreen> with SingleTickerProviderSt
                             children: [
                               Expanded(
                                 child: FilledButton(
-                                  onPressed: () {},
+                                  onPressed: () {
+                                    context.push('/restaurant/dashboard/outlet/menu', extra: ref.watch(authLocalRepositoryProvider).getUserData()!);
+                                  },
                                   child: Padding(
-                                    padding: const EdgeInsets.symmetric(vertical: 4, horizontal: 12.0),
+                                    padding:
+                                        const EdgeInsets.symmetric(vertical: 4, horizontal: 12.0),
                                     child: Row(
                                       mainAxisAlignment: MainAxisAlignment.center,
                                       children: [
                                         Icon(Icons.fastfood, size: 20),
                                         const SizedBox(width: 4),
                                         Text(
-                                          "Atur Menu",
+                                          "Tambah Menu",
                                         ),
                                       ],
                                     ),
@@ -251,7 +261,8 @@ class _OutletScreenState extends State<OutletScreen> with SingleTickerProviderSt
                               FilledButton(
                                 onPressed: () {},
                                 child: Padding(
-                                  padding: const EdgeInsets.symmetric(vertical: 4, horizontal: 16.0),
+                                  padding:
+                                      const EdgeInsets.symmetric(vertical: 4, horizontal: 16.0),
                                   child: Row(
                                     mainAxisAlignment: MainAxisAlignment.center,
                                     children: [

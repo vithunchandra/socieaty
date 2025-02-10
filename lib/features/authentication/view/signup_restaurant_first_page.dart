@@ -32,7 +32,7 @@ class _SignupRestaurantFirstPageState extends State<SignupRestaurantFirstPage> {
     return Scaffold(
       backgroundColor: AppPallete.neutralColor.shade50,
       appBar: AppBar(
-        title: const Text("Registrasi customer"),
+        title: const Text("Registrasi Restaurant"),
         backgroundColor: AppPallete.primaryColor,
         foregroundColor: AppPallete.darkColorOnSurface,
       ),
@@ -47,7 +47,8 @@ class _SignupRestaurantFirstPageState extends State<SignupRestaurantFirstPage> {
                     children: [
                       Container(
                         width: screenWidth,
-                        padding: const EdgeInsets.only(bottom: 48.0, left: 16.0, right: 16.0, top: 24.0),
+                        padding:
+                            const EdgeInsets.only(bottom: 48.0, left: 16.0, right: 16.0, top: 24.0),
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
@@ -64,7 +65,10 @@ class _SignupRestaurantFirstPageState extends State<SignupRestaurantFirstPage> {
                                 Expanded(
                                   child: Text(
                                     "Isi data user",
-                                    style: Theme.of(context).textTheme.headlineSmall?.copyWith(color: AppPallete.darkColorOnSurface),
+                                    style: Theme.of(context)
+                                        .textTheme
+                                        .headlineSmall
+                                        ?.copyWith(color: AppPallete.darkColorOnSurface),
                                   ),
                                 ),
                               ],
@@ -72,7 +76,10 @@ class _SignupRestaurantFirstPageState extends State<SignupRestaurantFirstPage> {
                             const SizedBox(height: 16.0),
                             Text(
                               "Silahkan masukan data-data user yang diperlukan untuk lanjut ke proses selanjutnya",
-                              style: Theme.of(context).textTheme.bodyLarge?.copyWith(color: AppPallete.darkColorOnSurface),
+                              style: Theme.of(context)
+                                  .textTheme
+                                  .bodyLarge
+                                  ?.copyWith(color: AppPallete.darkColorOnSurface),
                             ),
                           ],
                         ),
@@ -118,7 +125,6 @@ class _SignupRestaurantFirstPageState extends State<SignupRestaurantFirstPage> {
                                   hintText: "Masukan password",
                                   maxLength: 32,
                                   validator: (value) {
-                                    debugPrint("${_passwordController.text} Hallo");
                                     if (value == null || value.trim().isEmpty) {
                                       return "Password tidak boleh kosong";
                                     }

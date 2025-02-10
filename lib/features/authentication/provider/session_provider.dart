@@ -11,7 +11,6 @@ part 'session_provider.g.dart';
 @riverpod
 Future<ApiResult<SocieatyUser>> getSessionData(Ref ref) async {
   final token = ref.watch(authLocalRepositoryProvider).getToken();
-  debugPrint("Token: $token");
   if (token == null) {
       return Error(message: "Session not found");
   }

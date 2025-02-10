@@ -10,11 +10,14 @@ part 'restaurant_data.g.dart';
 @freezed
 class RestaurantData with _$RestaurantData {
   const factory RestaurantData({
+    required String id,
     required String restaurantBannerUrl,
     @LatLngConverter() required LatLng location,
     required List<RestaurantTheme> themes,
     required BankEnum payoutBank,
     required String accountNumber,
+    required String openTime,
+    required String closeTime,
   }) = _RestaurantData;
 
   factory RestaurantData.fromJson(Map<String, dynamic> json) => _$RestaurantDataFromJson(json);

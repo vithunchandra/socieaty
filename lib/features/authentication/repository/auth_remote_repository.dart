@@ -43,10 +43,9 @@ class AuthRemoteRepository {
       ...data.toJson(),
       'themes[]': List.generate(data.themes.length, (index) => data.themes[index]),
       'role': "Restaurant",
-      'profilePicture': await MultipartFile.fromFile(profilePicture.path, filename: "${data.name}.$profilePictureExtension"),
-      'restaurantBanner': await MultipartFile.fromFile(restaurantBanner.path, filename: "${data.name}.$restaurantBannerExtension"),
+      'profilePicture': await MultipartFile.fromFile(profilePicture.path, filename: "${data.email}.$profilePictureExtension"),
+      'restaurantBanner': await MultipartFile.fromFile(restaurantBanner.path, filename: "${data.email}.$restaurantBannerExtension"),
     });
-    debugPrint(formData.fields.toString());
     return executeRequest<SignupRestaurantResponse>(
       requestFunction: () => dio.post("auth/signup/restaurant", data: formData),
       successParser: (data) => SignupRestaurantResponse.fromJson(data),

@@ -1,5 +1,4 @@
 import 'package:dio/dio.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:geocoding/geocoding.dart' as geocoding;
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:location/location.dart';
@@ -35,12 +34,12 @@ abstract class LocationHandler {
       Location.instance.changeSettings(accuracy: LocationAccuracy.high);
       return await Location.instance.getLocation();
     } catch (e) {
-      debugPrint(e.toString());
       return null;
     }
   }
 
-  static Future<dynamic> getAutoComplete(String query, String token, CancelToken cancelToken) async {
+  static Future<dynamic> getAutoComplete(
+      String query, String token, CancelToken cancelToken) async {
     try {
       String basedUrl = "https://maps.googleapis.com/maps/api/place/autocomplete/json";
       final response = await Dio().get(
@@ -61,7 +60,6 @@ abstract class LocationHandler {
       final data = response.data['predictions'];
       return data;
     } catch (err) {
-      debugPrint(err.toString());
       return [];
     }
   }
@@ -81,8 +79,13 @@ abstract class LocationHandler {
   }
 
   static Future<geocoding.Placemark?> getAddressFromLatLng(LatLng location) async {
-    var rawAddress = await geocoding.GeocodingPlatform.instance?.placemarkFromCoordinates(location.latitude, location.longitude);
-    return rawAddress?[0];
+    try {
+      var rawAddress = await geocoding.GeocodingPlatform.instance
+          ?.placemarkFromCoordinates(location.latitude, location.longitude);
+      return rawAddress?[0];
+    } catch (error) {
+      return null;
+    }
   }
 
   static Future getPlaceDetails(String placeId) async {
@@ -95,7 +98,6 @@ abstract class LocationHandler {
     if (response.statusCode != 200) {
       throw Exception("Something went wrong");
     }
-    debugPrint(response.data.toString());
     return response.data['result'];
   }
 

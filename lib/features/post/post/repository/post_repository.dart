@@ -13,53 +13,58 @@ import 'package:socieaty/features/post/post/model/create_post_response.dart';
 import 'package:socieaty/features/post/post/model/get_post_response.dart';
 import 'package:socieaty/features/post/post/model/like_post_response.dart';
 import 'package:socieaty/features/post/post/viewstate/create_post_form_state.dart';
+import 'package:socieaty/features/user/model/socieaty_user.dart';
 
 part 'post_repository.g.dart';
 
 @riverpod
 PostRepository postRepository(Ref ref) {
-  final token = ref.watch(authLocalRepositoryProvider).getToken();
+  final AuthLocalRepository authLocalRepository = ref.watch(authLocalRepositoryProvider);
+  final token = authLocalRepository.getToken();
+  final user = authLocalRepository.getUserData()!;
   return PostRepository(
-    ref.watch(apiClientProvider(url: AppConstants.socieatyBackendUrl, token: token)),
+    dio: ref.watch(apiClientProvider(url: AppConstants.socieatyBackendUrl, token: token)),
+    user: user,
   );
 }
 
 class PostRepository {
-  late final Dio _dio;
+  final Dio dio;
+  final SocieatyUser user;
 
-  PostRepository(Dio dio) {
-    _dio = dio;
-  }
+  PostRepository({required this.dio, required this.user});
 
-  Future<ApiResult<CreatePostResponse>> createPost(CreatePostFormState data, List<File> medias) async {
-    debugPrint("${data.toJson()}");
+  Future<ApiResult<CreatePostResponse>> createPost(
+      CreatePostFormState data, List<File> medias) async {
     FormData formData = FormData.fromMap({
       ...data.toJson(),
       'hashtags[]': data.hashtags.isEmpty ? [''] : data.hashtags,
     });
     for (File media in medias) {
       formData.files.addAll([
-        MapEntry("medias", await MultipartFile.fromFile(media.path)),
+        MapEntry(
+            "medias",
+            await MultipartFile.fromFile(media.path,
+                filename: "${user.name}_${data.title}_${media.path}")),
       ]);
     }
-    debugPrint("${formData.fields}");
 
     return executeRequest<CreatePostResponse>(
-      requestFunction: () => _dio.post('post/', data: formData),
+      requestFunction: () => dio.post('post/', data: formData),
       successParser: (data) => CreatePostResponse.fromJson(data),
     );
   }
 
   Future<ApiResult<GetPostResponse>> getPost(String postId) {
     return executeRequest<GetPostResponse>(
-      requestFunction: () => _dio.get('post/$postId'),
+      requestFunction: () => dio.get('post/$postId'),
       successParser: (data) => GetPostResponse.fromJson(data),
     );
   }
 
   Future<ApiResult<LikePostResponse>> likePost(String postId, bool isLiked) {
     return executeRequest<LikePostResponse>(
-      requestFunction: () => _dio.put('post/$postId/like', data: {'isLiked': isLiked}),
+      requestFunction: () => dio.put('post/$postId/like', data: {'isLiked': isLiked}),
       successParser: (data) => LikePostResponse.fromJson(data),
     );
   }

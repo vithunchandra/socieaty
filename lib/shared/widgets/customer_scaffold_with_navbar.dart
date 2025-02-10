@@ -33,7 +33,6 @@ class _CustomerScaffoldWithNavbarState extends ConsumerState<CustomerScaffoldWit
     } else {
       ref.read(appThemeProvider.notifier).setTheme(SocieatyAppTheme.lightTheme);
     }
-    debugPrint("index: $index");
     if (index == 2) {
       context.push('/create_content');
     } else if (index == 1) {

@@ -19,8 +19,13 @@ import 'package:socieaty/features/livestream/view/livestream_home_screen.dart';
 import 'package:socieaty/features/map/view/select_location.dart';
 import 'package:socieaty/features/restaurant/view/outlet_screen.dart';
 import 'package:socieaty/features/restaurant/view/restaurant_scaffold_with_navbar.dart';
+import 'package:socieaty/features/restaurant_menu/model/restaurant_menu.dart';
+import 'package:socieaty/features/restaurant_menu/restaurant/view/create_restaurant_menu_screen.dart';
+import 'package:socieaty/features/restaurant_menu/restaurant/view/restaurant_menu_screen.dart';
+import 'package:socieaty/features/restaurant_menu/restaurant/view/update_restaurant_menu_screen.dart';
 import 'package:socieaty/features/shop/customer/view/shop_view.dart';
 import 'package:socieaty/features/transaction/restaurant/view/restaurant_transaction_screen.dart';
+import 'package:socieaty/features/user/model/socieaty_user.dart';
 import 'package:socieaty/shared/widgets/create_screen.dart';
 import 'package:socieaty/features/customer/view/customer_scaffold_with_navbar.dart';
 
@@ -73,7 +78,6 @@ GoRouter router(Ref ref) {
       ),
       StatefulShellRoute.indexedStack(
         builder: (context, state, navigationShell) {
-          debugPrint(state.fullPath);
           final showNavbar = state.fullPath != '/customer/create_post';
           return CustomerScaffoldWithNavbar(
             navigationShell: navigationShell,
@@ -140,17 +144,40 @@ GoRouter router(Ref ref) {
           StatefulShellBranch(
             routes: [
               GoRoute(
-                  path: '/restaurant/dashboard',
-                  pageBuilder: (context, state) => const NoTransitionPage(
-                        child: RestaurantDashboardScreen(),
+                path: '/restaurant/dashboard',
+                pageBuilder: (context, state) => const NoTransitionPage(
+                  child: RestaurantDashboardScreen(),
+                ),
+                routes: [
+                  GoRoute(
+                    path: '/outlet',
+                    parentNavigatorKey: rootNavigatorKey,
+                    builder: (context, state) => const OutletScreen(),
+                  ),
+                  GoRoute(
+                    path: "/outlet/menu",
+                    parentNavigatorKey: rootNavigatorKey,
+                    builder: (context, state) =>
+                        RestaurantMenuScreen(restaurant: state.extra as SocieatyUser),
+                    routes: [
+                      GoRoute(
+                        path: '/create',
+                        parentNavigatorKey: rootNavigatorKey,
+                        builder: (context, state) => const CreateRestaurantMenuScreen(),
                       ),
-                  routes: [
-                    GoRoute(
-                      path: '/outlet',
-                      parentNavigatorKey: rootNavigatorKey,
-                      builder: (context, state) => const OutletScreen(),
-                    )
-                  ])
+                      GoRoute(
+                        path: '/update',
+                        parentNavigatorKey: rootNavigatorKey,
+                        builder: (context, state) => UpdateRestaurantMenuScreen(
+                          restaurantMenu: state.extra as RestaurantMenu,
+                        ),
+                      ),
+                    ],
+                  ),
+
+                ],
+
+              ),
             ],
           ),
           StatefulShellBranch(

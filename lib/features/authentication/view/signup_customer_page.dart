@@ -225,7 +225,6 @@ class _SignupCustomerPageState extends ConsumerState<SignupCustomerPage> {
                   height: 45,
                   child: FilledButton(
                     onPressed: () {
-                      debugPrint("Hallo 1");
                       if (_formKey.currentState != null && _formKey.currentState!.validate()) {
                         _formKey.currentState!.save();
                         ref.read(signupCustomerViewmodelProvider.notifier).signupCustomer(_formData);

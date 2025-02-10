@@ -128,7 +128,7 @@ class _PostCommentsViewState extends ConsumerState<PostCommentsView> {
                           decoration: InputDecoration.collapsed(
                             hintText: "Tulis komentar kamu disini...",
                             hintStyle: Theme.of(context).textTheme.bodyMedium?.copyWith(color: AppPallete.neutralColor.shade400),
-                            hintFadeDuration: Duration(milliseconds: 250),
+                            // hintFadeDuration: Duration(milliseconds: 250),
                             border: InputBorder.none,
                           ),
                         ),

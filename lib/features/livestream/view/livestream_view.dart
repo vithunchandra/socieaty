@@ -438,7 +438,6 @@ class _LivestreamViewState extends ConsumerState<LivestreamView> {
                                                   style: Theme.of(context).textTheme.bodyLarge,
                                                   decoration: InputDecoration.collapsed(
                                                     hintText: 'Komen disini...',
-                                                    hintFadeDuration: const Duration(milliseconds: 200),
                                                     border: InputBorder.none,
                                                   ),
                                                 ),

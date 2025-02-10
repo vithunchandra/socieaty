@@ -1,4 +1,6 @@
-sealed class ViewState<T> {}
+sealed class ViewState<T> {
+  const ViewState();
+}
 
 class SuccessState<T> extends ViewState<T> {
   final T data;
@@ -10,6 +12,8 @@ class ErrorState extends ViewState<Never> {
   ErrorState({required this.message});
 }
 
-class LoadingState extends ViewState<Never> {}
+class LoadingState<T> extends ViewState<T> {
+  const LoadingState();
+}
 
 class IdleState extends ViewState<Never> {}

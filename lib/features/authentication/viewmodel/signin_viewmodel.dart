@@ -30,7 +30,6 @@ class SigninViewmodel extends _$SigninViewmodel {
     final response = await _authRemoteRepository.signinCustomer(data);
     switch (response) {
       case Success(data: final result):
-        debugPrint("Token: ${result.token}");
         await _authLocalRepository.setToken(result.token);
         await _authLocalRepository.setUserData(result.user);
         ref.invalidate(getSessionDataProvider);

@@ -35,6 +35,8 @@ class _SignupRestaurantFinalPageState extends ConsumerState<SignupRestaurantFina
   LatLng? _restaurantLatLng;
   final List<int> _selectedThemes = [];
   Bank? _selectedBank;
+  final _openTimeController = TextEditingController(text: "");
+  final _closeTimeController = TextEditingController(text: "");
 
   // List of restaurant themes
   final List<String> _restaurantThemes = [
@@ -92,8 +94,12 @@ class _SignupRestaurantFinalPageState extends ConsumerState<SignupRestaurantFina
                             title: Text(
                               entry.value,
                               style: Theme.of(context).textTheme.titleSmall?.copyWith(
-                                    color: _selectedThemes.contains(entry.key) ? AppPallete.primaryColor : Colors.black87,
-                                    fontWeight: _selectedThemes.contains(entry.key) ? FontWeight.bold : FontWeight.normal,
+                                    color: _selectedThemes.contains(entry.key)
+                                        ? AppPallete.primaryColor
+                                        : Colors.black87,
+                                    fontWeight: _selectedThemes.contains(entry.key)
+                                        ? FontWeight.bold
+                                        : FontWeight.normal,
                                   ),
                             ),
                             trailing: _selectedThemes.contains(entry.key)
@@ -140,7 +146,8 @@ class _SignupRestaurantFinalPageState extends ConsumerState<SignupRestaurantFina
   @override
   Widget build(BuildContext context) {
     final double screenWidth = MediaQuery.of(context).size.width;
-    final isSignupLoading = ref.watch(signupRestaurantViewModelProvider).signupRestaurantState is LoadingState;
+    final isSignupLoading =
+        ref.watch(signupRestaurantViewModelProvider).signupRestaurantState is LoadingState;
 
     ref.listen(signupRestaurantViewModelProvider, (_, next) {
       switch (next.signupRestaurantState) {
@@ -171,7 +178,8 @@ class _SignupRestaurantFinalPageState extends ConsumerState<SignupRestaurantFina
                     children: [
                       Container(
                         width: screenWidth,
-                        padding: const EdgeInsets.only(bottom: 48.0, left: 16.0, right: 16.0, top: 24.0),
+                        padding:
+                            const EdgeInsets.only(bottom: 48.0, left: 16.0, right: 16.0, top: 24.0),
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
@@ -188,7 +196,10 @@ class _SignupRestaurantFinalPageState extends ConsumerState<SignupRestaurantFina
                                 Expanded(
                                   child: Text(
                                     "Isi data restaurant",
-                                    style: Theme.of(context).textTheme.headlineSmall?.copyWith(color: AppPallete.darkColorOnSurface),
+                                    style: Theme.of(context)
+                                        .textTheme
+                                        .headlineSmall
+                                        ?.copyWith(color: AppPallete.darkColorOnSurface),
                                   ),
                                 ),
                               ],
@@ -196,7 +207,10 @@ class _SignupRestaurantFinalPageState extends ConsumerState<SignupRestaurantFina
                             const SizedBox(height: 16.0),
                             Text(
                               "Silahkan masukan data-data restaurant yang diperlukan untuk lanjut ke proses selanjutnya",
-                              style: Theme.of(context).textTheme.bodyLarge?.copyWith(color: AppPallete.darkColorOnSurface),
+                              style: Theme.of(context)
+                                  .textTheme
+                                  .bodyLarge
+                                  ?.copyWith(color: AppPallete.darkColorOnSurface),
                             ),
                           ],
                         ),
@@ -272,7 +286,10 @@ class _SignupRestaurantFinalPageState extends ConsumerState<SignupRestaurantFina
                                             controller: _restaurantNameController,
                                             maxLength: 24,
                                             hintText: "Masukan nama restaurant",
-                                            hintStyle: Theme.of(context).textTheme.titleSmall?.copyWith(color: AppPallete.neutralColor),
+                                            hintStyle: Theme.of(context)
+                                                .textTheme
+                                                .titleSmall
+                                                ?.copyWith(color: AppPallete.neutralColor),
                                             validator: (value) {
                                               if (value == null || value.trim().isEmpty) {
                                                 return "Nama restaurant tidak boleh kosong";
@@ -311,7 +328,8 @@ class _SignupRestaurantFinalPageState extends ConsumerState<SignupRestaurantFina
                                         width: screenWidth - 48,
                                         height: (screenWidth - 48) * 0.5625,
                                         decoration: BoxDecoration(
-                                          border: Border.all(width: 1.0, color: AppPallete.neutralColor),
+                                          border: Border.all(
+                                              width: 1.0, color: AppPallete.neutralColor),
                                           borderRadius: BorderRadius.circular(15.0),
                                         ),
                                         child: _selectedBannerImage != null
@@ -406,9 +424,10 @@ class _SignupRestaurantFinalPageState extends ConsumerState<SignupRestaurantFina
                                   autoFocus: false,
                                   suffixIcon: const Icon(Icons.location_on),
                                   suffixIconAction: () {
-                                    context.push<MyLocationData>('/select_location').then((locationData) {
+                                    context
+                                        .push<MyLocationData>('/select_location')
+                                        .then((locationData) {
                                       if (locationData != null) {
-                                        debugPrint("${locationData.address} halooo");
                                         _addressController.text = locationData.address;
                                         _restaurantLatLng = locationData.latlng;
                                         setState(() {});
@@ -428,17 +447,85 @@ class _SignupRestaurantFinalPageState extends ConsumerState<SignupRestaurantFina
                                 SizedBox(height: 8.0),
                                 Text("Pastikan alamat restaurant benar"),
                                 SizedBox(height: 32.0),
-                                Text("Bank"),
+                                Text(
+                                  "Jam Buka Restaurant",
+                                  style: Theme.of(context).textTheme.titleSmall,
+                                ),
+                                Row(
+                                  children: [
+                                    Expanded(
+                                      child: CustomUnderlineTextField(
+                                        controller: _openTimeController,
+                                        hintText: "Buka",
+                                        onTap: () async {
+                                          showTimePicker(
+                                            context: context,
+                                            initialTime: TimeOfDay.now(),
+                                          ).then((value) {
+                                            if (value != null) {
+                                              _formData = _formData.copyWith(
+                                                  openTime: value.hour * 60 + value.minute);
+                                              _openTimeController.text =
+                                                  "${value.hour.toString().padLeft(2, '0')}:${value.minute.toString().padLeft(2, '0')}";
+                                              setState(() {});
+                                            }
+                                          });
+                                        },
+                                        validator: (value) {
+                                          if (value == null || value.isEmpty) {
+                                            return "Waktu buka tidak boleh kosong";
+                                          }
+                                          return null;
+                                        },
+                                      ),
+                                    ),
+                                    const SizedBox(width: 8.0),
+                                    Expanded(
+                                      child: CustomUnderlineTextField(
+                                        controller: _closeTimeController,
+                                        hintText: "Tutup",
+                                        onTap: () async {
+                                          showTimePicker(
+                                                  context: context, initialTime: TimeOfDay.now())
+                                              .then((value) {
+                                            if (value != null) {
+                                              _formData = _formData.copyWith(
+                                                  closeTime: value.hour * 60 + value.minute);
+                                              _closeTimeController.text =
+                                                  "${value.hour.toString().padLeft(2, '0')}:${value.minute.toString().padLeft(2, '0')}";
+                                              setState(() {});
+                                            }
+                                          });
+                                        },
+                                        validator: (value) {
+                                          if (value == null || value.isEmpty) {
+                                            return "Waktu tutup tidak boleh kosong";
+                                          }
+                                          return null;
+                                        },
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                                SizedBox(height: 32.0),
+                                Text(
+                                  "Bank",
+                                  style: Theme.of(context).textTheme.titleSmall,
+                                ),
                                 SizedBox(
                                   width: double.infinity,
                                   child: DropdownButtonFormField<Bank>(
-                                    style: Theme.of(context).textTheme.titleLarge?.copyWith(fontSize: 22),
+                                    style: Theme.of(context)
+                                        .textTheme
+                                        .titleLarge
+                                        ?.copyWith(fontSize: 22),
                                     decoration: InputDecoration(
                                       border: const UnderlineInputBorder(
                                         borderSide: BorderSide(width: 2.0),
                                       ),
                                       enabledBorder: const UnderlineInputBorder(
-                                        borderSide: BorderSide(color: AppPallete.neutralColor, width: 2.0),
+                                        borderSide:
+                                            BorderSide(color: AppPallete.neutralColor, width: 2.0),
                                       ),
                                     ),
                                     value: _selectedBank, // Current selected value
@@ -470,7 +557,10 @@ class _SignupRestaurantFinalPageState extends ConsumerState<SignupRestaurantFina
                                 SizedBox(
                                   height: 12.0,
                                 ),
-                                Text("No Rekening"),
+                                Text(
+                                  "No Rekening",
+                                  style: Theme.of(context).textTheme.titleSmall,
+                                ),
                                 CustomUnderlineTextField(
                                   hintText: "Masukan no rekening",
                                   validator: (value) {
@@ -488,7 +578,8 @@ class _SignupRestaurantFinalPageState extends ConsumerState<SignupRestaurantFina
                                   },
                                 ),
                                 SizedBox(height: 8.0),
-                                Text("No rekening akan digunakan untuk melakukan pembayaran. Pastikan no rekening benar"),
+                                Text(
+                                    "No rekening akan digunakan untuk melakukan pembayaran. Pastikan no rekening benar"),
                               ],
                             ),
                           ),
@@ -512,15 +603,19 @@ class _SignupRestaurantFinalPageState extends ConsumerState<SignupRestaurantFina
                       if (_formKey.currentState != null &&
                           _formKey.currentState!.validate() &&
                           _selectedBannerImage != null &&
-                          _selectedProfileImage != null) {
+                          _selectedProfileImage != null &&
+                          _openTimeController.text.isNotEmpty &&
+                          _closeTimeController.text.isNotEmpty) {
                         _formKey.currentState?.save();
                         _formData = _formData.copyWith(themes: _selectedThemes);
-                        debugPrint("${_formData.toJson()}");
+
                         ref.read(signupRestaurantViewModelProvider.notifier).signupRestaurant(
                               _formData,
                               _selectedProfileImage!,
                               _selectedBannerImage!,
                             );
+                      } else {
+                        showSnackbar(context, "Masukan semua data yang diperlukan");
                       }
                     },
                     child: !isSignupLoading ? const Text("Daftar") : LoadingIndicatorWidget(),

@@ -14,10 +14,13 @@ class SignupRestaurantFormState with _$SignupRestaurantFormState {
     @Default(null) String? password,
     @Default(null) String? confirmPassword,
     @Default(null) String? phoneNumber,
+    @Default(0) int openTime,
+    @Default(0) int closeTime,
     @Default(null) BankEnum? payoutBank,
     @Default(null) String? accountNumber,
     @Default([]) List<int> themes,
     @LatLngConverter() @Default(null) LatLng? address,
+
   }) = _SignupRestaurantFormState;
 
   factory SignupRestaurantFormState.fromJson(Map<String, Object?> json) => _$SignupRestaurantFormStateFromJson(json);

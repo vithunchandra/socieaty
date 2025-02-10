@@ -22,9 +22,15 @@ extension StringCasingExtension on String {
   List<String> extractHashtags() {
     return replaceAll(' ', '').split('#').where((element) => element.isNotEmpty).toList();
   }
+
+  TimeOfDay toTimeOfDay() {
+    final parts = split(':');
+    return TimeOfDay(hour: int.parse(parts[0]), minute: int.parse(parts[1]));
+  }
 }
 
 extension ListStringExtension on List<String> {
+
   String toHashtags() {
     return where((hashtag) => hashtag.isNotEmpty) // Exclude empty strings
         .map((hashtag) => "#$hashtag") // Prepend #
@@ -56,5 +62,14 @@ extension BuildContextExtension on BuildContext {
       }
       router.pop();
     }
+  }
+}
+
+extension PriceFormatter on num {
+  String toIDRFormat() {
+    return toString().replaceAllMapped(
+      RegExp(r'(\d{1,3})(?=(\d{3})+(?!\d))'),
+      (Match m) => '${m[1]}.',
+    );
   }
 }

@@ -22,7 +22,7 @@ class PostView extends ConsumerStatefulWidget {
   ConsumerState<PostView> createState() => _PostViewState();
 }
 
-class _PostViewState extends ConsumerState<PostView> with AutomaticKeepAliveClientMixin<PostView> {
+class _PostViewState extends ConsumerState<PostView> {
   late PageController _pageController;
   String locationName = "";
   String hashtags = "";
@@ -44,7 +44,6 @@ class _PostViewState extends ConsumerState<PostView> with AutomaticKeepAliveClie
     likes = widget.post.likes.length;
     hashtags = widget.post.hashtags.map((hashtag) => hashtag.tag).toList().toHashtags();
     postMedia = widget.post.medias;
-    debugPrint("postMedia: $postMedia");
   }
 
   @override
@@ -55,7 +54,8 @@ class _PostViewState extends ConsumerState<PostView> with AutomaticKeepAliveClie
     if (widget.post.location != null) {
       getLocationName();
     }
-    if (oldWidget.post.likes.any((like) => like.id == widget.userId) != widget.post.likes.any((like) => like.id == widget.userId)) {
+    if (oldWidget.post.likes.any((like) => like.id == widget.userId) !=
+        widget.post.likes.any((like) => like.id == widget.userId)) {
       isLiked = widget.post.likes.any((like) => like.id == widget.userId);
     }
     if (oldWidget.post.likes.length != widget.post.likes.length) {
@@ -81,16 +81,17 @@ class _PostViewState extends ConsumerState<PostView> with AutomaticKeepAliveClie
   }
 
   void getLocationName() async {
-    var location = await LocationHandler.getAddressFromLatLng(widget.post.location!);
-    locationName = "${location?.street}, ${location?.locality}, ${location?.country}";
-    if (mounted) {
-      setState(() {});
+    if (widget.post.location != null) {
+      var location = await LocationHandler.getAddressFromLatLng(widget.post.location!);
+      locationName = "${location?.street}, ${location?.locality}, ${location?.country}";
+      if (mounted) {
+        setState(() {});
+      }
     }
   }
 
   @override
   Widget build(BuildContext context) {
-    super.build(context);
     final screenWidth = MediaQuery.of(context).size.width;
     int stateComments = ref.watch(postViewModelProvider(postId: widget.post.id)).comments;
     comments = stateComments == -1 ? widget.post.comments : stateComments;
@@ -99,12 +100,10 @@ class _PostViewState extends ConsumerState<PostView> with AutomaticKeepAliveClie
       switch (next.likeState) {
         case SuccessState<LikePostResponse>(data: final data):
           setState(() {
-            debugPrint("SuccessState");
             isLiked = data.isLiked;
             likes = data.likes;
           });
         case ErrorState(message: final message):
-          debugPrint("Error: $message");
           showSnackbar(context, message);
         case LoadingState():
         case IdleState():
@@ -129,6 +128,13 @@ class _PostViewState extends ConsumerState<PostView> with AutomaticKeepAliveClie
                           child: Image.network(
                             media.url,
                             fit: BoxFit.contain,
+                            errorBuilder: (context, error, stackTrace) {
+                              return SizedBox(
+                                width: screenWidth * 0.5,
+                                height: screenWidth * 0.5,
+                                child: Icon(Icons.image_not_supported_outlined),
+                              );
+                            },
                           ),
                         )
                       : Center(
@@ -165,7 +171,7 @@ class _PostViewState extends ConsumerState<PostView> with AutomaticKeepAliveClie
                               Shadow(
                                 offset: Offset(0, 1),
                                 blurRadius: 5,
-                                color: AppPallete.neutralColor.shade300.withValues(alpha: 0.5),
+                                color: AppPallete.neutralColor.shade300.withAlpha(128),
                               ),
                             ],
                           ),
@@ -178,7 +184,7 @@ class _PostViewState extends ConsumerState<PostView> with AutomaticKeepAliveClie
                               Shadow(
                                 offset: Offset(0, 1),
                                 blurRadius: 4,
-                                color: AppPallete.neutralColor.withValues(alpha: 0.5),
+                                color: AppPallete.neutralColor.withAlpha(128),
                               ),
                             ],
                           ),
@@ -241,7 +247,8 @@ class _PostViewState extends ConsumerState<PostView> with AutomaticKeepAliveClie
                             useSafeArea: true,
                             builder: (context) {
                               return Padding(
-                                padding: EdgeInsets.only(bottom: MediaQuery.of(context).viewInsets.bottom),
+                                padding: EdgeInsets.only(
+                                    bottom: MediaQuery.of(context).viewInsets.bottom),
                                 child: PostCommentsView(postId: widget.post.id),
                               );
                             },
@@ -261,7 +268,4 @@ class _PostViewState extends ConsumerState<PostView> with AutomaticKeepAliveClie
       ),
     );
   }
-
-  @override
-  bool get wantKeepAlive => true;
 }
