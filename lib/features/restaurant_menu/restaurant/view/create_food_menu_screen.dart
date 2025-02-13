@@ -5,20 +5,20 @@ import 'package:socieaty/core/theme/app_pallete.dart';
 import 'dart:io';
 import 'package:socieaty/core/utils/show_picker_modal.dart';
 import 'package:socieaty/core/utils/show_snackbar.dart';
-import 'package:socieaty/features/restaurant_menu/restaurant/viewmodel/create_restaurant_menu_view_model.dart';
-import 'package:socieaty/features/restaurant_menu/restaurant/viewstate/create_restaurant_menu_form_state.dart';
+import 'package:socieaty/features/restaurant_menu/restaurant/viewmodel/create_food_menu_view_model.dart';
+import 'package:socieaty/features/restaurant_menu/restaurant/viewstate/create_food_menu_form_state.dart';
 import 'package:socieaty/shared/view_state.dart';
 import 'package:socieaty/shared/widgets/custom_text_field.dart';
 import 'package:socieaty/shared/widgets/loading_indicator_widget.dart';
 
-class CreateRestaurantMenuScreen extends ConsumerStatefulWidget {
-  const CreateRestaurantMenuScreen({super.key});
+class CreateFoodMenuScreen extends ConsumerStatefulWidget {
+  const CreateFoodMenuScreen({super.key});
 
   @override
-  CreateRestaurantMenuScreenState createState() => CreateRestaurantMenuScreenState();
+  CreateFoodMenuScreenState createState() => CreateFoodMenuScreenState();
 }
 
-class CreateRestaurantMenuScreenState extends ConsumerState<CreateRestaurantMenuScreen> {
+class CreateFoodMenuScreenState extends ConsumerState<CreateFoodMenuScreen> {
   final _formKey = GlobalKey<FormState>();
   final List<String> _menuTypes = [
     'Drink',
@@ -38,7 +38,7 @@ class CreateRestaurantMenuScreenState extends ConsumerState<CreateRestaurantMenu
     'Alcohol'
   ];
   final List<int> _selectedCategories = [];
-  CreateRestaurantMenuFormState _formData = CreateRestaurantMenuFormState();
+  CreateFoodMenuFormState _formData = CreateFoodMenuFormState();
 
   File? _selectedMenuImage;
 
@@ -129,9 +129,9 @@ class CreateRestaurantMenuScreenState extends ConsumerState<CreateRestaurantMenu
   Widget build(BuildContext context) {
     final screenWidth = MediaQuery.of(context).size.width;
     final isCreateLoading =
-        ref.watch(createRestaurantMenuViewModelProvider).createMenuState is LoadingState;
+        ref.watch(createFoodMenuViewModelProvider).createMenuState is LoadingState;
 
-    ref.listen(createRestaurantMenuViewModelProvider, (_, next) {
+    ref.listen(createFoodMenuViewModelProvider, (_, next) {
       switch (next.createMenuState) {
         case SuccessState():
           context.pop();
@@ -358,8 +358,8 @@ class CreateRestaurantMenuScreenState extends ConsumerState<CreateRestaurantMenu
                       _formKey.currentState!.save();
                       _formData = _formData.copyWith(categories: _selectedCategories);
                       ref
-                          .read(createRestaurantMenuViewModelProvider.notifier)
-                          .createRestaurantMenu(_formData, _selectedMenuImage!);
+                          .read(createFoodMenuViewModelProvider.notifier)
+                          .createFoodMenu(_formData, _selectedMenuImage!);
                     }
                   },
                   child: Padding(

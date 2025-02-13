@@ -1,31 +1,33 @@
 import 'dart:async';
 
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:socieaty/core/theme/app_pallete.dart';
 import 'package:socieaty/core/utils/custom_extension.dart';
 import 'package:socieaty/core/utils/show_snackbar.dart';
-import 'package:socieaty/features/restaurant_menu/model/restaurant_menu.dart';
-import 'package:socieaty/features/restaurant_menu/provider/get_restaurant_menu_provider.dart';
-import 'package:socieaty/features/restaurant_menu/restaurant/viewmodel/restaurant_menu_detail_widget_view_model.dart';
-import 'package:socieaty/features/restaurant_menu/restaurant/viewmodel/restaurant_menu_item_widget_view_model.dart';
+import 'package:socieaty/features/restaurant_menu/model/food_menu.dart';
+import 'package:socieaty/features/restaurant_menu/provider/get_food_menu_provider.dart';
+import 'package:socieaty/features/restaurant_menu/restaurant/viewmodel/food_menu_detail_widget_view_model.dart';
+import 'package:socieaty/features/restaurant_menu/restaurant/viewmodel/food_menu_item_widget_view_model.dart';
 import 'package:socieaty/shared/view_state.dart';
 import 'package:socieaty/shared/widgets/image_error_widget.dart';
 import 'package:socieaty/shared/widgets/image_loading_widget.dart';
 import 'package:socieaty/shared/widgets/loading_indicator_widget.dart';
 import 'package:socieaty/shared/widgets/delete_confirmation_dialog.dart';
+import 'package:socieaty/shared/widgets/menu_filter_widget.dart';
 
-class RestaurantMenuDetailWidget extends ConsumerStatefulWidget {
-  final RestaurantMenu restaurantMenu;
-  const RestaurantMenuDetailWidget({super.key, required this.restaurantMenu});
+class FoodMenuDetailWidget extends ConsumerStatefulWidget {
+  final FoodMenu restaurantMenu;
+  const FoodMenuDetailWidget({super.key, required this.restaurantMenu});
 
   @override
-  ConsumerState<RestaurantMenuDetailWidget> createState() => _RestaurantMenuDetailWidgetState();
+  ConsumerState<FoodMenuDetailWidget> createState() => _FoodMenuDetailWidgetState();
 }
 
-class _RestaurantMenuDetailWidgetState extends ConsumerState<RestaurantMenuDetailWidget> {
-  late RestaurantMenu _menu;
+class _FoodMenuDetailWidgetState extends ConsumerState<FoodMenuDetailWidget> {
+  late FoodMenu _menu;
   bool _isAvailable = false;
   Timer? _debounce;
   final Duration _debounceDuration = Duration(milliseconds: 500);
@@ -33,21 +35,23 @@ class _RestaurantMenuDetailWidgetState extends ConsumerState<RestaurantMenuDetai
   @override
   void initState() {
     super.initState();
-    debugPrint('menu: ${widget.restaurantMenu}');
     _menu = widget.restaurantMenu;
     _isAvailable = _menu.isStockAvailable;
   }
 
   @override
-  void didUpdateWidget(RestaurantMenuDetailWidget oldWidget) {
+  void didUpdateWidget(FoodMenuDetailWidget oldWidget) {
     super.didUpdateWidget(oldWidget);
-    if (oldWidget.restaurantMenu.id != widget.restaurantMenu.id) {
+    debugPrint('oldWidget: ${oldWidget.restaurantMenu}');
+    debugPrint('widget: ${widget.restaurantMenu}');
+    if (oldWidget.restaurantMenu.hashCode != widget.restaurantMenu.hashCode) {
       _menu = widget.restaurantMenu;
       _isAvailable = _menu.isStockAvailable;
     }
+    setState(() {});
   }
 
-  _onSwitch() {
+  onSwitch() {
     setState(() {
       _isAvailable = !_isAvailable;
     });
@@ -57,22 +61,21 @@ class _RestaurantMenuDetailWidgetState extends ConsumerState<RestaurantMenuDetai
 
     _debounce = Timer(_debounceDuration, () {
       ref
-          .read(restaurantMenuDetailWidgetViewModelProvider(_menu.id).notifier)
+          .read(foodMenuDetailWidgetViewModelProvider(_menu.id).notifier)
           .updateMenuStock(_menu.id, _isAvailable);
     });
   }
 
   @override
   Widget build(BuildContext context) {
-    bool isDeleting = ref
-        .watch(restaurantMenuDetailWidgetViewModelProvider(_menu.id))
-        .deletedMenuMessage is LoadingState;
+    bool isDeleting = ref.watch(foodMenuDetailWidgetViewModelProvider(_menu.id)).deletedMenuMessage
+        is LoadingState;
 
-    ref.listen(restaurantMenuDetailWidgetViewModelProvider(_menu.id), (_, next) {
+    ref.listen(foodMenuDetailWidgetViewModelProvider(_menu.id), (_, next) {
       switch (next.updatedMenu) {
         case SuccessState(data: final data):
           _menu = data;
-          ref.watch(restaurantMenuItemWidgetViewModelProvider(_menu.id).notifier).updateMenu(_menu);
+          ref.watch(foodMenuItemWidgetViewModelProvider(_menu.id).notifier).updateMenu(_menu);
           setState(() {});
         case ErrorState(message: final message):
           showSnackbar(context, message, isError: true);
@@ -82,9 +85,9 @@ class _RestaurantMenuDetailWidgetState extends ConsumerState<RestaurantMenuDetai
 
       switch (next.deletedMenuMessage) {
         case SuccessState():
-          ref.invalidate(getRestaurantMenusProvider);
-          ref.invalidate(restaurantMenuItemWidgetViewModelProvider(_menu.id));
-          ref.invalidate(restaurantMenuDetailWidgetViewModelProvider(_menu.id));
+          ref.invalidate(getFoodMenusProvider(MenuFilterFormState()));
+          ref.invalidate(foodMenuItemWidgetViewModelProvider(_menu.id));
+          ref.invalidate(foodMenuDetailWidgetViewModelProvider(_menu.id));
           context.pop();
         case ErrorState(message: final message):
           showSnackbar(context, message, isError: true);
@@ -136,15 +139,14 @@ class _RestaurantMenuDetailWidgetState extends ConsumerState<RestaurantMenuDetai
                         ),
                         child: ClipRRect(
                           borderRadius: BorderRadius.circular(20),
-                          child: Image.network(
-                            widget.restaurantMenu.pictureUrl,
+                          child: CachedNetworkImage(
+                            imageUrl: _menu.pictureUrl,
                             fit: BoxFit.cover,
-                            loadingBuilder: (context, child, loadingProgress) {
-                              return imageLoadingWidget(context, child, loadingProgress);
-                            },
-                            errorBuilder: (context, error, stackTrace) {
-                              return imageErrorWidget(context, error, stackTrace);
-                            },
+                            progressIndicatorBuilder: (context, url, progress) =>
+                                imageLoadingWidget(context, url, progress),
+                            errorWidget: (context, error, stackTrace) =>
+                                imageErrorWidget(context, error, null),
+                            useOldImageOnUrlChange: true,
                           ),
                         ),
                       ),
@@ -161,7 +163,7 @@ class _RestaurantMenuDetailWidgetState extends ConsumerState<RestaurantMenuDetai
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
                               Text(
-                                widget.restaurantMenu.name,
+                                _menu.name,
                                 style: Theme.of(context).textTheme.headlineSmall?.copyWith(
                                       fontWeight: FontWeight.bold,
                                     ),
@@ -184,7 +186,7 @@ class _RestaurantMenuDetailWidgetState extends ConsumerState<RestaurantMenuDetai
                               ),
                               const SizedBox(width: 4),
                               Text(
-                                "${widget.restaurantMenu.estimatedTime} menit",
+                                "${_menu.estimatedTime} menit",
                                 style: TextStyle(
                                   color: Theme.of(context).primaryColor,
                                   fontWeight: FontWeight.w500,
@@ -197,7 +199,7 @@ class _RestaurantMenuDetailWidgetState extends ConsumerState<RestaurantMenuDetai
                     ),
                     const SizedBox(height: 8),
                     Text(
-                      "Rp ${widget.restaurantMenu.price.toIDRFormat()}",
+                      "Rp ${_menu.price.toIDRFormat()}",
                       style: Theme.of(context).textTheme.titleLarge?.copyWith(
                             color: Theme.of(context).primaryColor,
                             fontWeight: FontWeight.w600,
@@ -209,7 +211,7 @@ class _RestaurantMenuDetailWidgetState extends ConsumerState<RestaurantMenuDetai
                       spacing: 8,
                       runSpacing: 8,
                       children: [
-                        ...widget.restaurantMenu.categories.map((category) {
+                        ..._menu.categories.map((category) {
                           return Chip(
                             label: Text(
                               category.name,
@@ -243,7 +245,7 @@ class _RestaurantMenuDetailWidgetState extends ConsumerState<RestaurantMenuDetai
                     ),
                     const SizedBox(height: 8),
                     Text(
-                      widget.restaurantMenu.description,
+                      _menu.description,
                       style: Theme.of(context).textTheme.bodyMedium?.copyWith(
                             color: AppPallete.neutralColor.shade500,
                             height: 1.5,
@@ -276,9 +278,7 @@ class _RestaurantMenuDetailWidgetState extends ConsumerState<RestaurantMenuDetai
                                 height: 8,
                                 decoration: BoxDecoration(
                                   shape: BoxShape.circle,
-                                  color: widget.restaurantMenu.isStockAvailable
-                                      ? Colors.green
-                                      : Colors.red,
+                                  color: _isAvailable ? Colors.green : Colors.red,
                                 ),
                               ),
                               const SizedBox(width: 8),
@@ -298,7 +298,7 @@ class _RestaurantMenuDetailWidgetState extends ConsumerState<RestaurantMenuDetai
                             ),
                             inactiveThumbColor: AppPallete.errorColor,
                             onChanged: (bool value) {
-                              _onSwitch();
+                              onSwitch();
                             },
                           ),
                         ],
@@ -335,8 +335,7 @@ class _RestaurantMenuDetailWidgetState extends ConsumerState<RestaurantMenuDetai
                           onDelete: () {
                             Navigator.pop(context);
                             ref
-                                .read(
-                                    restaurantMenuDetailWidgetViewModelProvider(_menu.id).notifier)
+                                .read(foodMenuDetailWidgetViewModelProvider(_menu.id).notifier)
                                 .deleteMenu();
                           },
                         ),
@@ -365,11 +364,16 @@ class _RestaurantMenuDetailWidgetState extends ConsumerState<RestaurantMenuDetai
                 const SizedBox(width: 12),
                 Expanded(
                   child: FilledButton(
-                    onPressed: () {
-                      context.push(
+                    onPressed: () async {
+                      final result = await context.push(
                         '/restaurant/dashboard/outlet/menu/update',
                         extra: _menu,
                       );
+                      if (result != null) {
+                        setState(() {
+                          _menu = result as FoodMenu;
+                        });
+                      }
                     },
                     style: FilledButton.styleFrom(
                       padding: const EdgeInsets.symmetric(vertical: 12),

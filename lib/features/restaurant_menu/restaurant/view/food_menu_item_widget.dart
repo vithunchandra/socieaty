@@ -1,29 +1,30 @@
 import 'dart:async';
 
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:socieaty/core/theme/app_pallete.dart';
 import 'package:socieaty/core/utils/custom_extension.dart';
 import 'package:socieaty/core/utils/show_snackbar.dart';
-import 'package:socieaty/features/restaurant_menu/model/restaurant_menu.dart';
-import 'package:socieaty/features/restaurant_menu/restaurant/view/restaurant_menu_detail_widget.dart';
-import 'package:socieaty/features/restaurant_menu/restaurant/viewmodel/restaurant_menu_item_widget_view_model.dart';
+import 'package:socieaty/features/restaurant_menu/model/food_menu.dart';
+import 'package:socieaty/features/restaurant_menu/restaurant/view/food_menu_detail_widget.dart';
+import 'package:socieaty/features/restaurant_menu/restaurant/viewmodel/food_menu_item_widget_view_model.dart';
 import 'package:socieaty/shared/view_state.dart';
 import 'package:socieaty/shared/widgets/image_error_widget.dart';
 import 'package:socieaty/shared/widgets/image_loading_widget.dart';
 
-class RestaurantMenuItemWidget extends ConsumerStatefulWidget {
-  final RestaurantMenu restaurantMenu;
-  const RestaurantMenuItemWidget({super.key, required this.restaurantMenu});
+class FoodMenuItemWidget extends ConsumerStatefulWidget {
+  final FoodMenu restaurantMenu;
+  const FoodMenuItemWidget({super.key, required this.restaurantMenu});
 
   @override
-  ConsumerState<RestaurantMenuItemWidget> createState() => _RestaurantMenuItemWidgetState();
+  ConsumerState<FoodMenuItemWidget> createState() => _FoodMenuItemWidgetState();
 }
 
-class _RestaurantMenuItemWidgetState extends ConsumerState<RestaurantMenuItemWidget> {
+class _FoodMenuItemWidgetState extends ConsumerState<FoodMenuItemWidget> {
   bool _isAvailable = true;
-  late RestaurantMenu _menu;
+  late FoodMenu _menu;
   Timer? _debounce;
   final Duration _debounceDuration = Duration(milliseconds: 500);
 
@@ -35,12 +36,10 @@ class _RestaurantMenuItemWidgetState extends ConsumerState<RestaurantMenuItemWid
   }
 
   @override
-  void didUpdateWidget(RestaurantMenuItemWidget oldWidget) {
+  void didUpdateWidget(FoodMenuItemWidget oldWidget) {
     super.didUpdateWidget(oldWidget);
-    if (oldWidget.restaurantMenu.id != widget.restaurantMenu.id) {
-      _menu = widget.restaurantMenu;
-      _isAvailable = _menu.isStockAvailable;
-    }
+    _menu = widget.restaurantMenu;
+    _isAvailable = _menu.isStockAvailable;
   }
 
   _onSwitch() {
@@ -53,14 +52,14 @@ class _RestaurantMenuItemWidgetState extends ConsumerState<RestaurantMenuItemWid
 
     _debounce = Timer(_debounceDuration, () {
       ref
-          .read(restaurantMenuItemWidgetViewModelProvider(_menu.id).notifier)
+          .read(foodMenuItemWidgetViewModelProvider(_menu.id).notifier)
           .updateMenuStock(_menu.id, _isAvailable);
     });
   }
 
   @override
   Widget build(BuildContext context) {
-    ref.listen(restaurantMenuItemWidgetViewModelProvider(_menu.id), (previous, current) {
+    ref.listen(foodMenuItemWidgetViewModelProvider(_menu.id), (previous, current) {
       switch (current.updatedMenu) {
         case SuccessState(data: final data):
           setState(() {
@@ -77,6 +76,7 @@ class _RestaurantMenuItemWidgetState extends ConsumerState<RestaurantMenuItemWid
 
     return GestureDetector(
       onTap: () {
+        FocusScope.of(context).focusedChild?.unfocus();
         showModalBottomSheet(
           context: context,
           backgroundColor: AppPallete.neutralColor.shade50,
@@ -84,7 +84,7 @@ class _RestaurantMenuItemWidgetState extends ConsumerState<RestaurantMenuItemWid
           useRootNavigator: true,
           isScrollControlled: true,
           useSafeArea: true,
-          builder: (context) => RestaurantMenuDetailWidget(
+          builder: (context) => FoodMenuDetailWidget(
             restaurantMenu: _menu,
           ),
         );
@@ -101,8 +101,11 @@ class _RestaurantMenuItemWidgetState extends ConsumerState<RestaurantMenuItemWid
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Text(widget.restaurantMenu.name.toCapitalized(),
-                        style: Theme.of(context).textTheme.titleMedium),
+                    Text(
+                      widget.restaurantMenu.name.toCapitalized(),
+                      style: Theme.of(context).textTheme.titleMedium,
+                      maxLines: 2,
+                    ),
                     SizedBox(height: 8),
                     Text(
                       widget.restaurantMenu.description,
@@ -164,15 +167,17 @@ class _RestaurantMenuItemWidgetState extends ConsumerState<RestaurantMenuItemWid
                           height: 120,
                           child: ClipRRect(
                             borderRadius: BorderRadius.circular(20),
-                            child: Image.network(
-                              widget.restaurantMenu.pictureUrl,
+                            child: CachedNetworkImage(
+                              imageUrl: widget.restaurantMenu.pictureUrl,
                               fit: BoxFit.cover,
-                              loadingBuilder: (context, child, loadingProgress) {
-                                return imageLoadingWidget(context, child, loadingProgress);
-                              },
-                              errorBuilder: (context, error, stackTrace) {
-                                return imageErrorWidget(context, error, stackTrace);
-                              },
+                              progressIndicatorBuilder: (context, url, progress) =>
+                                  imageLoadingWidget(context, url, progress),
+                              errorWidget: (context, url, error) =>
+                                  imageErrorWidget(context, error, null),
+                              memCacheWidth: 240,
+                              memCacheHeight: 240,
+                              maxWidthDiskCache: 240,
+                              maxHeightDiskCache: 240,
                             ),
                           ),
                         ),
@@ -186,6 +191,7 @@ class _RestaurantMenuItemWidgetState extends ConsumerState<RestaurantMenuItemWid
                               height: 40,
                               child: FilledButton(
                                 onPressed: () {
+                                  FocusScope.of(context).focusedChild?.unfocus();
                                   context.push(
                                     '/restaurant/dashboard/outlet/menu/update',
                                     extra: widget.restaurantMenu,

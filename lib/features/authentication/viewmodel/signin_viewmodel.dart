@@ -1,4 +1,3 @@
-import 'package:flutter/material.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 import 'package:socieaty/core/network/api_result.dart';
 import 'package:socieaty/features/authentication/provider/session_provider.dart';

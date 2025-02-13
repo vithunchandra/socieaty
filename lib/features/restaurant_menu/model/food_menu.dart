@@ -1,12 +1,12 @@
 import 'package:freezed_annotation/freezed_annotation.dart';
 import 'package:socieaty/features/restaurant_menu/model/menu_category.dart';
 
-part 'restaurant_menu.freezed.dart';
-part 'restaurant_menu.g.dart';
+part 'food_menu.freezed.dart';
+part 'food_menu.g.dart';
 
 @freezed
-class RestaurantMenu with _$RestaurantMenu {
-  const factory RestaurantMenu({
+class FoodMenu with _$FoodMenu {
+  const factory FoodMenu({
     required String id,
     required String restaurantId,
     required String name,
@@ -16,7 +16,7 @@ class RestaurantMenu with _$RestaurantMenu {
     required int estimatedTime,
     required bool isStockAvailable,
     required List<MenuCategory> categories,
-  }) = _RestaurantMenu;
+  }) = _FoodMenu;
 
-  factory RestaurantMenu.fromJson(Map<String, dynamic> json) => _$RestaurantMenuFromJson(json);
+  factory FoodMenu.fromJson(Map<String, dynamic> json) => _$FoodMenuFromJson(json);
 }

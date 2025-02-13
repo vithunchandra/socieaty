@@ -17,10 +17,10 @@ class Post with _$Post {
     required String title,
     required String caption,
     @Default(null) @LatLngConverter() LatLng? location,
-    required List<PostHashtag> hashtags,
-    required int comments,
-    required List<PostMedia> medias,
-    required List<SocieatyUser> likes,
+    @Default([]) List<PostHashtag> hashtags,
+    @Default(0) int comments,
+    @Default([]) List<PostMedia> medias,
+    @Default([]) List<SocieatyUser> likes,
   }) = _Post;
 
   factory Post.fromJson(Map<String, Object?> json) => _$PostFromJson(json);

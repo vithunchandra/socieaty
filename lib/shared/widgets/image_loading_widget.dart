@@ -1,18 +1,16 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 
-Widget imageLoadingWidget(BuildContext context, Widget child, ImageChunkEvent? loadingProgress) {
-  if (loadingProgress == null) {
-    return child;
-  } else {
-    return Container(
-      color: Colors.grey[200],
-      child: Center(
-        child: CircularProgressIndicator(
-          value: loadingProgress.expectedTotalBytes != null
-              ? loadingProgress.cumulativeBytesLoaded / loadingProgress.expectedTotalBytes!
-              : null,
-        ),
+Widget imageLoadingWidget(BuildContext context, String url, DownloadProgress loadingProgress) {
+  final screenWidth = MediaQuery.of(context).size.width;
+
+  return SizedBox(
+    width: screenWidth * 0.1,
+    height: screenWidth * 0.1,
+    child: Center(
+      child: CircularProgressIndicator(
+        value: loadingProgress.progress,
       ),
-    );
-  }
+    ),
+  );
 }

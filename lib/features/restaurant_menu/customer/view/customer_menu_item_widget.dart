@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:socieaty/core/utils/custom_extension.dart';
-import 'package:socieaty/features/restaurant_menu/model/restaurant_menu.dart';
+import 'package:socieaty/features/restaurant_menu/model/food_menu.dart';
 
 class CustomerMenuItemWidget extends ConsumerStatefulWidget {
-  final RestaurantMenu restaurantMenu;
+  final FoodMenu restaurantMenu;
   const CustomerMenuItemWidget({super.key, required this.restaurantMenu});
 
   @override

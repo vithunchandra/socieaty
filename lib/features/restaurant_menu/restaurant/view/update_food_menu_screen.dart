@@ -1,3 +1,4 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
@@ -6,28 +7,30 @@ import 'dart:io';
 import 'package:socieaty/core/utils/show_picker_modal.dart';
 import 'package:socieaty/core/utils/show_snackbar.dart';
 import 'package:socieaty/features/restaurant_menu/model/menu_category.dart';
-import 'package:socieaty/features/restaurant_menu/model/restaurant_menu.dart';
-import 'package:socieaty/features/restaurant_menu/provider/get_all_restaurant_menu_categories_provider.dart';
-import 'package:socieaty/features/restaurant_menu/provider/get_restaurant_menu_provider.dart';
-import 'package:socieaty/features/restaurant_menu/restaurant/viewmodel/update_restaurant_menu_view_model.dart';
-import 'package:socieaty/features/restaurant_menu/restaurant/viewstate/update_restaurant_menu_form_state.dart';
+import 'package:socieaty/features/restaurant_menu/model/food_menu.dart';
+import 'package:socieaty/features/restaurant_menu/provider/get_all_food_menu_categories_provider.dart';
+import 'package:socieaty/features/restaurant_menu/provider/get_food_menu_provider.dart';
+import 'package:socieaty/features/restaurant_menu/restaurant/viewmodel/update_food_menu_view_model.dart';
+import 'package:socieaty/features/restaurant_menu/restaurant/viewstate/update_food_menu_form_state.dart';
 import 'package:socieaty/shared/view_state.dart';
 import 'package:socieaty/shared/widgets/custom_text_field.dart';
+import 'package:socieaty/shared/widgets/image_error_widget.dart';
+import 'package:socieaty/shared/widgets/image_loading_widget.dart';
 import 'package:socieaty/shared/widgets/loading_indicator_widget.dart';
+import 'package:socieaty/shared/widgets/menu_filter_widget.dart';
 
-class UpdateRestaurantMenuScreen extends ConsumerStatefulWidget {
-  final RestaurantMenu restaurantMenu;
-  const UpdateRestaurantMenuScreen({super.key, required this.restaurantMenu});
+class UpdateFoodMenuScreen extends ConsumerStatefulWidget {
+  final FoodMenu restaurantMenu;
+  const UpdateFoodMenuScreen({super.key, required this.restaurantMenu});
 
   @override
-  UpdateRestaurantMenuScreenState createState() => UpdateRestaurantMenuScreenState();
+  UpdateFoodMenuScreenState createState() => UpdateFoodMenuScreenState();
 }
 
-class UpdateRestaurantMenuScreenState extends ConsumerState<UpdateRestaurantMenuScreen> {
+class UpdateFoodMenuScreenState extends ConsumerState<UpdateFoodMenuScreen> {
   final _formKey = GlobalKey<FormState>();
-  List<MenuCategory> _menuCategories = [];
   final List<MenuCategory> _selectedCategories = [];
-  UpdateRestaurantMenuFormState _formData = UpdateRestaurantMenuFormState();
+  UpdateFoodMenuFormState _formData = UpdateFoodMenuFormState();
   File? _selectedMenuImage;
 
   @override
@@ -54,16 +57,7 @@ class UpdateRestaurantMenuScreenState extends ConsumerState<UpdateRestaurantMenu
       builder: (BuildContext context) {
         return StatefulBuilder(builder: (context, childSetState) {
           return Consumer(builder: (context, ref, child) {
-            ref.listen(getAllRestaurantMenuCategoriesProvider, (_, next) {
-              switch (next) {
-                case AsyncData<List<MenuCategory>>(value: final data):
-                  _menuCategories = data;
-                case AsyncError<List<MenuCategory>>(error: final error):
-                  showSnackbar(context, error.toString(), isError: true);
-                default:
-              }
-              childSetState(() {});
-            });
+            final menuCategories = ref.watch(getAllFoodMenuCategoriesProvider);
 
             return PopScope(
               onPopInvokedWithResult: (didPop, result) {
@@ -77,7 +71,7 @@ class UpdateRestaurantMenuScreenState extends ConsumerState<UpdateRestaurantMenu
                   'Pilih Tipe Menu',
                   style: Theme.of(context).textTheme.headlineSmall,
                 ),
-                content: ref.watch(getAllRestaurantMenuCategoriesProvider).isLoading
+                content: ref.watch(getAllFoodMenuCategoriesProvider).isLoading
                     ? SizedBox(
                         height: 300,
                         child: LoadingIndicatorWidget(),
@@ -89,46 +83,58 @@ class UpdateRestaurantMenuScreenState extends ConsumerState<UpdateRestaurantMenu
                           radius: const Radius.circular(10),
                           child: SingleChildScrollView(
                             child: Column(
-                              children: _menuCategories
-                                  .asMap()
-                                  .entries
-                                  .map(
-                                    (entry) => ListTile(
-                                      dense: true,
-                                      splashColor: AppPallete.primaryColor,
-                                      shape: RoundedRectangleBorder(
-                                          borderRadius: BorderRadius.circular(10)),
-                                      title: Text(
-                                        entry.value.name,
-                                        style: Theme.of(context).textTheme.titleSmall?.copyWith(
-                                              color: _selectedCategories.contains(entry.value)
-                                                  ? AppPallete.primaryColor
-                                                  : Colors.black87,
-                                              fontWeight: _selectedCategories.contains(entry.value)
-                                                  ? FontWeight.bold
-                                                  : FontWeight.normal,
-                                            ),
-                                      ),
-                                      trailing: _selectedCategories.contains(entry.value)
-                                          ? Icon(
-                                              Icons.check_circle,
-                                              color: AppPallete.primaryColor,
-                                            )
-                                          : null,
-                                      onTap: () {
-                                        setState(() {
-                                          if (_selectedCategories.contains(entry.value)) {
-                                            _selectedCategories.remove(entry.value);
-                                          } else {
-                                            _selectedCategories.add(entry.value);
-                                          }
-                                        });
+                              children: menuCategories.when(
+                                data: (value) {
+                                  return value
+                                      .asMap()
+                                      .entries
+                                      .map(
+                                        (entry) => ListTile(
+                                          dense: true,
+                                          splashColor: AppPallete.primaryColor,
+                                          shape: RoundedRectangleBorder(
+                                              borderRadius: BorderRadius.circular(10)),
+                                          title: Text(
+                                            entry.value.name,
+                                            style: Theme.of(context).textTheme.titleSmall?.copyWith(
+                                                  color: _selectedCategories.contains(entry.value)
+                                                      ? AppPallete.primaryColor
+                                                      : Colors.black87,
+                                                  fontWeight:
+                                                      _selectedCategories.contains(entry.value)
+                                                          ? FontWeight.bold
+                                                          : FontWeight.normal,
+                                                ),
+                                          ),
+                                          trailing: _selectedCategories.contains(entry.value)
+                                              ? Icon(
+                                                  Icons.check_circle,
+                                                  color: AppPallete.primaryColor,
+                                                )
+                                              : null,
+                                          onTap: () {
+                                            setState(() {
+                                              if (_selectedCategories.contains(entry.value)) {
+                                                _selectedCategories.remove(entry.value);
+                                              } else {
+                                                _selectedCategories.add(entry.value);
+                                              }
+                                            });
 
-                                        context.pop();
-                                      },
-                                    ),
-                                  )
-                                  .toList(),
+                                            context.pop();
+                                          },
+                                        ),
+                                      )
+                                      .toList();
+                                },
+                                error: (error, stacktrace) {
+                                  showSnackbar(context, error.toString(), isError: true);
+                                  return [];
+                                },
+                                loading: () {
+                                  return [];
+                                },
+                              ),
                             ),
                           ),
                         ),
@@ -156,15 +162,15 @@ class UpdateRestaurantMenuScreenState extends ConsumerState<UpdateRestaurantMenu
   Widget build(BuildContext context) {
     final screenWidth = MediaQuery.of(context).size.width;
     final isUpdateLoading = ref
-        .watch(updateRestaurantMenuViewModelProvider(widget.restaurantMenu.id))
+        .watch(updateFoodMenuViewModelProvider(widget.restaurantMenu.id))
         .updateMenuState is LoadingState;
     // final isCategoriesLoading = ref.watch(getAllRestaurantMenuCategoriesProvider).isLoading;
 
-    ref.listen(updateRestaurantMenuViewModelProvider(widget.restaurantMenu.id), (_, next) {
+    ref.listen(updateFoodMenuViewModelProvider(widget.restaurantMenu.id), (_, next) {
       switch (next.updateMenuState) {
-        case SuccessState():
-          ref.invalidate(getRestaurantMenusProvider);
-          context.pop();
+        case SuccessState<FoodMenu>(data: final data):
+          ref.invalidate(getFoodMenusProvider(MenuFilterFormState()));
+          context.pop(data);
         case ErrorState(message: final message):
           showSnackbar(context, message, isError: true);
         case LoadingState():
@@ -175,7 +181,7 @@ class UpdateRestaurantMenuScreenState extends ConsumerState<UpdateRestaurantMenu
     return PopScope(
       onPopInvokedWithResult: (didPop, result) {
         FocusManager.instance.primaryFocus?.unfocus();
-        ref.invalidate(getAllRestaurantMenuCategoriesProvider);
+        ref.invalidate(getAllFoodMenuCategoriesProvider);
       },
       child: Scaffold(
         backgroundColor: AppPallete.neutralColor.shade50,
@@ -222,7 +228,14 @@ class UpdateRestaurantMenuScreenState extends ConsumerState<UpdateRestaurantMenu
                                   )
                                 : FittedBox(
                                     fit: BoxFit.fitWidth,
-                                    child: Image.network(widget.restaurantMenu.pictureUrl),
+                                    child: CachedNetworkImage(
+                                      imageUrl: widget.restaurantMenu.pictureUrl,
+                                      progressIndicatorBuilder: (context, url, progress) =>
+                                          imageLoadingWidget(context, url, progress),
+                                      errorWidget: (context, error, stackTrace) =>
+                                          imageErrorWidget(context, error, null),
+                                      useOldImageOnUrlChange: false,
+                                    ),
                                   ),
                           ),
                         ),
@@ -385,9 +398,8 @@ class UpdateRestaurantMenuScreenState extends ConsumerState<UpdateRestaurantMenu
                                 _selectedCategories.map((category) => category.id).toList());
                       }
                       ref
-                          .read(updateRestaurantMenuViewModelProvider(widget.restaurantMenu.id)
-                              .notifier)
-                          .updateRestaurantMenu(_formData, _selectedMenuImage);
+                          .read(updateFoodMenuViewModelProvider(widget.restaurantMenu.id).notifier)
+                          .updateFoodMenu(_formData, _selectedMenuImage);
                     },
                     child: Padding(
                       padding: EdgeInsets.symmetric(vertical: 8),

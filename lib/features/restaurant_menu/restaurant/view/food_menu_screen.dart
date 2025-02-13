@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -5,22 +7,27 @@ import 'package:go_router/go_router.dart';
 import 'package:socieaty/core/theme/app_pallete.dart';
 import 'package:socieaty/core/utils/custom_extension.dart';
 import 'package:socieaty/core/utils/location_handler.dart';
+import 'package:socieaty/core/utils/show_snackbar.dart';
 import 'package:socieaty/core/utils/time_utils.dart';
-import 'package:socieaty/features/restaurant_menu/model/restaurant_menu.dart';
-import 'package:socieaty/features/restaurant_menu/provider/get_restaurant_menu_provider.dart';
-import 'package:socieaty/features/restaurant_menu/restaurant/view/restaurant_menu_item_widget.dart';
+import 'package:socieaty/features/restaurant_menu/model/menu_category.dart';
+import 'package:socieaty/features/restaurant_menu/model/food_menu.dart';
+import 'package:socieaty/features/restaurant_menu/provider/get_all_food_menu_categories_provider.dart';
+import 'package:socieaty/features/restaurant_menu/provider/get_food_menu_provider.dart';
+import 'package:socieaty/features/restaurant_menu/restaurant/view/food_menu_item_widget.dart';
 import 'package:socieaty/features/user/model/socieaty_user.dart';
+import 'package:socieaty/shared/widgets/custom_error_widget.dart';
 import 'package:socieaty/shared/widgets/dotted_divider.dart';
+import 'package:socieaty/shared/widgets/menu_filter_widget.dart';
 
-class RestaurantMenuScreen extends ConsumerStatefulWidget {
+class FoodMenuScreen extends ConsumerStatefulWidget {
   final SocieatyUser restaurant;
-  const RestaurantMenuScreen({super.key, required this.restaurant});
+  const FoodMenuScreen({super.key, required this.restaurant});
 
   @override
-  ConsumerState<RestaurantMenuScreen> createState() => _RestaurantMenuScreenState();
+  ConsumerState<FoodMenuScreen> createState() => _FoodMenuScreenState();
 }
 
-class _RestaurantMenuScreenState extends ConsumerState<RestaurantMenuScreen> {
+class _FoodMenuScreenState extends ConsumerState<FoodMenuScreen> {
   String _locationName = "";
   final ScrollController _scrollController = ScrollController();
   bool _isCollapsed = false;
@@ -28,6 +35,12 @@ class _RestaurantMenuScreenState extends ConsumerState<RestaurantMenuScreen> {
   final GlobalKey _sliverKey = GlobalKey();
   double _sliverHeight = 0;
   bool _isOpen = false;
+  List<MenuCategory> _menuCategories = [];
+  MenuFilterFormState _menuFilterFormState = MenuFilterFormState();
+  final TextEditingController _searchController = TextEditingController();
+  Timer? _debounce;
+  final Duration _debounceDuration = Duration(milliseconds: 500);
+  final FocusNode _searchFocusNode = FocusNode();
 
   @override
   void initState() {
@@ -46,6 +59,7 @@ class _RestaurantMenuScreenState extends ConsumerState<RestaurantMenuScreen> {
   @override
   void dispose() {
     _scrollController.dispose();
+    _searchFocusNode.dispose();
     super.dispose();
   }
 
@@ -86,22 +100,34 @@ class _RestaurantMenuScreenState extends ConsumerState<RestaurantMenuScreen> {
     }
   }
 
+  void _onSearchChanged(String value) {
+    if (_debounce?.isActive ?? false) {
+      _debounce?.cancel();
+    }
+
+    _debounce = Timer(_debounceDuration, () {
+      _menuFilterFormState = _menuFilterFormState.copyWith(searchQuery: value);
+      setState(() {});
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
-    final restaurantMenus = ref.watch(getRestaurantMenusProvider);
+    final restaurantMenus = ref.watch(getFoodMenusProvider(_menuFilterFormState));
 
     _isOpen = isNowBetween(widget.restaurant.restaurantData?.openTime.toTimeOfDay(),
         widget.restaurant.restaurantData?.closeTime.toTimeOfDay());
 
-    ref.listen(getRestaurantMenusProvider, (_, next) {
+    ref.listen(getAllFoodMenuCategoriesProvider, (_, next) {
       switch (next) {
-        case AsyncData<List<RestaurantMenu>>():
-          debugPrint("-------------------------------------------------------");
-          debugPrint('data: ${next.value}');
-          setState(() {});
-        case AsyncError():
+        case AsyncData<List<MenuCategory>>(value: final data):
+          debugPrint('data: $data');
+          _menuCategories = data;
+        case AsyncError<List<MenuCategory>>(error: final error):
+          showSnackbar(context, error.toString(), isError: true);
         default:
       }
+      setState(() {});
     });
 
     return Scaffold(
@@ -304,37 +330,72 @@ class _RestaurantMenuScreenState extends ConsumerState<RestaurantMenuScreen> {
                               padding: const EdgeInsets.symmetric(horizontal: 16.0),
                               child: Row(
                                 children: [
-                                  Chip(
-                                    label: Row(children: [
-                                      Icon(
-                                        Icons.tune,
-                                        size: 16,
-                                        color: Colors.white,
-                                      ),
-                                      const SizedBox(width: 4),
-                                      Text(
-                                        "Filters",
-                                        style: Theme.of(context).textTheme.labelMedium?.copyWith(
-                                              color: Colors.white,
-                                            ),
-                                      ),
-                                      Icon(Icons.arrow_drop_down, size: 20, color: Colors.white),
-                                    ]),
-                                    side: BorderSide(color: AppPallete.primaryColor, width: 1),
-                                    padding: EdgeInsets.zero,
-                                    backgroundColor: AppPallete.primaryColor,
-                                    labelStyle: Theme.of(context).textTheme.labelMedium,
+                                  GestureDetector(
+                                    onTap: () {
+                                      FocusScope.of(context).focusedChild?.unfocus();
+                                      showFilterBottomSheet(context, _menuFilterFormState).then(
+                                        (value) {
+                                          if (value != null) {
+                                            _menuFilterFormState = value;
+                                            setState(() {});
+                                          }
+                                        },
+                                      );
+                                    },
+                                    child: Chip(
+                                      label: Row(children: [
+                                        Icon(
+                                          Icons.tune,
+                                          size: 16,
+                                          color: Colors.white,
+                                        ),
+                                        const SizedBox(width: 4),
+                                        Text(
+                                          "Filters",
+                                          style: Theme.of(context).textTheme.labelMedium?.copyWith(
+                                                color: Colors.white,
+                                              ),
+                                        ),
+                                        Icon(Icons.arrow_drop_down, size: 20, color: Colors.white),
+                                      ]),
+                                      side: BorderSide(color: AppPallete.primaryColor, width: 1),
+                                      padding: EdgeInsets.zero,
+                                      backgroundColor: AppPallete.primaryColor,
+                                      labelStyle: Theme.of(context).textTheme.labelMedium,
+                                    ),
                                   ),
                                   const SizedBox(width: 8),
-                                  ...widget.restaurant.restaurantData!.themes.map(
+                                  ..._menuCategories.map(
                                     (theme) => Padding(
                                       padding: const EdgeInsets.symmetric(horizontal: 2.0),
-                                      child: Chip(
+                                      child: FilterChip(
                                         label: Text(theme.name),
+                                        selected:
+                                            _menuFilterFormState.categories.contains(theme.id),
+                                        onSelected: (bool selected) {
+                                          setState(() {
+                                            final newCategories =
+                                                List<int>.from(_menuFilterFormState.categories);
+                                            if (selected) {
+                                              newCategories.add(theme.id);
+                                            } else {
+                                              newCategories.remove(theme.id);
+                                            }
+                                            _menuFilterFormState = _menuFilterFormState.copyWith(
+                                              categories: newCategories,
+                                            );
+                                          });
+                                        },
                                         padding: EdgeInsets.zero,
-                                        side: BorderSide(color: AppPallete.primaryColor, width: 1),
                                         backgroundColor: Colors.white,
-                                        labelStyle: Theme.of(context).textTheme.labelMedium,
+                                        selectedColor: AppPallete.primaryColor,
+                                        checkmarkColor: Colors.white,
+                                        showCheckmark: false,
+                                        side: BorderSide(
+                                          color: _menuFilterFormState.categories.contains(theme.id)
+                                              ? AppPallete.primaryColor
+                                              : AppPallete.neutralColor.shade300,
+                                        ),
                                       ),
                                     ),
                                   ),
@@ -363,7 +424,7 @@ class _RestaurantMenuScreenState extends ConsumerState<RestaurantMenuScreen> {
                     ),
                   ),
                   switch (restaurantMenus) {
-                    AsyncData<List<RestaurantMenu>>(value: final data) => SliverPadding(
+                    AsyncData<List<FoodMenu>>(value: final data) => SliverPadding(
                         padding: const EdgeInsets.symmetric(horizontal: 16.0),
                         sliver: SliverList.builder(
                           itemCount: data.length,
@@ -372,7 +433,7 @@ class _RestaurantMenuScreenState extends ConsumerState<RestaurantMenuScreen> {
                               children: [
                                 if (index != 0)
                                   Divider(color: AppPallete.neutralColor, height: 0.5),
-                                RestaurantMenuItemWidget(
+                                FoodMenuItemWidget(
                                   restaurantMenu: data[index],
                                 ),
                               ],
@@ -381,40 +442,12 @@ class _RestaurantMenuScreenState extends ConsumerState<RestaurantMenuScreen> {
                         ),
                       ),
                     AsyncError(:final error) => SliverToBoxAdapter(
-                        child: Padding(
-                          padding: const EdgeInsets.all(24.0),
-                          child: Column(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            children: [
-                              Icon(
-                                Icons.error_outline,
-                                size: 48,
-                                color: AppPallete.errorColor,
-                              ),
-                              const SizedBox(height: 16),
-                              Text(
-                                'Failed to load menu items',
-                                style: Theme.of(context).textTheme.titleMedium,
-                                textAlign: TextAlign.center,
-                              ),
-                              const SizedBox(height: 8),
-                              Text(
-                                error.toString(),
-                                style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                                      color: AppPallete.neutralColor.shade600,
-                                    ),
-                                textAlign: TextAlign.center,
-                              ),
-                              const SizedBox(height: 16),
-                              FilledButton.tonal(
-                                onPressed: () {
-                                  // Refresh the data
-                                  ref.invalidate(getRestaurantMenusProvider);
-                                },
-                                child: const Text('Try Again'),
-                              ),
-                            ],
-                          ),
+                        child: CustomErrorWidget(
+                          title: "Menu items",
+                          error: error.toString(),
+                          onPressed: () {
+                            ref.invalidate(getFoodMenusProvider(_menuFilterFormState));
+                          },
                         ),
                       ),
                     _ => const SliverToBoxAdapter(
@@ -453,6 +486,12 @@ class _RestaurantMenuScreenState extends ConsumerState<RestaurantMenuScreen> {
                         child: SizedBox(
                       height: 45,
                       child: TextField(
+                        controller: _searchController,
+                        focusNode: _searchFocusNode,
+                        onChanged: (value) {
+                          _onSearchChanged(value);
+                        },
+                        autofocus: false,
                         style: Theme.of(context).textTheme.bodyLarge,
                         decoration: InputDecoration(
                           contentPadding: const EdgeInsets.symmetric(vertical: 0, horizontal: 12.0),
@@ -467,6 +506,7 @@ class _RestaurantMenuScreenState extends ConsumerState<RestaurantMenuScreen> {
                       child: FilledButton(
                         onPressed: () {
                           context.push("/restaurant/dashboard/outlet/menu/create");
+                          FocusScope.of(context).focusedChild?.unfocus();
                         },
                         child: Padding(
                           padding: const EdgeInsets.symmetric(horizontal: 12.0),

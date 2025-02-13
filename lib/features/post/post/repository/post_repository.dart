@@ -1,7 +1,6 @@
 import 'dart:io';
 
 import 'package:dio/dio.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 import 'package:socieaty/core/constants.dart';
@@ -12,6 +11,7 @@ import 'package:socieaty/features/authentication/repository/auth_local_repositor
 import 'package:socieaty/features/post/post/model/create_post_response.dart';
 import 'package:socieaty/features/post/post/model/get_post_response.dart';
 import 'package:socieaty/features/post/post/model/like_post_response.dart';
+import 'package:socieaty/features/post/post/repository/response/paginate_post_response.dart';
 import 'package:socieaty/features/post/post/viewstate/create_post_form_state.dart';
 import 'package:socieaty/features/user/model/socieaty_user.dart';
 
@@ -59,6 +59,17 @@ class PostRepository {
     return executeRequest<GetPostResponse>(
       requestFunction: () => dio.get('post/$postId'),
       successParser: (data) => GetPostResponse.fromJson(data),
+    );
+  }
+
+  Future<ApiResult<PaginatePostResponse>> paginatePost(int offset, int limit, String? authorId) {
+    return executeRequest<PaginatePostResponse>(
+      requestFunction: () => dio.get('post/paginate', queryParameters: {
+        'offset': offset,
+        'limit': limit,
+        if (authorId != null) 'authorId': authorId,
+      }),
+      successParser: (data) => PaginatePostResponse.fromJson(data),
     );
   }
 

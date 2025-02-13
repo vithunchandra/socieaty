@@ -1,0 +1,133 @@
+import 'dart:io';
+
+import 'package:dio/dio.dart';
+import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:riverpod_annotation/riverpod_annotation.dart';
+import 'package:socieaty/core/constants.dart';
+import 'package:socieaty/core/network/api_client.dart';
+import 'package:socieaty/core/network/api_result.dart';
+import 'package:socieaty/core/utils/execute_request.dart';
+import 'package:socieaty/features/authentication/repository/auth_local_repository.dart';
+import 'package:socieaty/features/restaurant_menu/repository/response/create_food_menu_response.dart';
+import 'package:socieaty/features/restaurant_menu/repository/response/delete_food_menu_response.dart';
+import 'package:socieaty/features/restaurant_menu/repository/response/get_all_menu_categories_response.dart';
+import 'package:socieaty/features/restaurant_menu/repository/response/get_all_food_menu_response.dart';
+import 'package:socieaty/features/restaurant_menu/repository/response/get_food_menu_response.dart';
+import 'package:socieaty/features/restaurant_menu/repository/response/update_food_menu_response.dart';
+import 'package:socieaty/features/restaurant_menu/repository/response/update_food_menu_stock_availablity.dart';
+import 'package:socieaty/features/restaurant_menu/restaurant/viewstate/create_food_menu_form_state.dart';
+import 'package:socieaty/features/restaurant_menu/restaurant/viewstate/update_food_menu_form_state.dart';
+import 'package:socieaty/features/user/model/socieaty_user.dart';
+import 'package:socieaty/shared/widgets/menu_filter_widget.dart';
+
+part 'food_menu_repository.g.dart';
+
+@riverpod
+FoodMenuRepository foodMenuRepository(Ref ref) {
+  final AuthLocalRepository authLocalRepository = ref.watch(authLocalRepositoryProvider);
+  final token = authLocalRepository.getToken();
+  final restaurant = authLocalRepository.getUserData()!;
+  return FoodMenuRepository(
+    dio: ref.watch(apiClientProvider(url: AppConstants.socieatyBackendUrl, token: token)),
+    restaurant: restaurant,
+  );
+}
+
+class FoodMenuRepository {
+  final Dio dio;
+  final SocieatyUser restaurant;
+  FoodMenuRepository({required this.dio, required this.restaurant});
+
+  Future<ApiResult<CreateFoodMenuResponse>> createFoodMenu(
+    CreateFoodMenuFormState data,
+    File menuPicture,
+  ) async {
+    String menuPictureExtension = menuPicture.path.split('.').last;
+    FormData formData = FormData.fromMap(
+      {
+        ...data.toJson(),
+        'categories[]': List.generate(data.categories.length, (index) => data.categories[index]),
+        'menuPicture': await MultipartFile.fromFile(menuPicture.path,
+            filename: "${restaurant.name}_${data.name}.$menuPictureExtension"),
+      },
+    );
+
+    return executeRequest<CreateFoodMenuResponse>(
+      requestFunction: () => dio.post('restaurant/menu', data: formData),
+      successParser: (data) => CreateFoodMenuResponse.fromJson(data),
+    );
+  }
+
+  Future<ApiResult<UpdateFoodMenuResponse>> updateFoodMenu(
+    String menuId,
+    UpdateFoodMenuFormState data,
+    File? menuPicture,
+  ) async {
+    FormData formData = FormData.fromMap({
+      ...data.toJson(),
+    });
+
+    if (menuPicture != null) {
+      String menuPictureExtension = menuPicture.path.split('.').last;
+      formData.files.add(MapEntry(
+          'menuPicture',
+          await MultipartFile.fromFile(menuPicture.path,
+              filename: "${restaurant.name}_${data.name}.$menuPictureExtension")));
+    }
+
+    return executeRequest<UpdateFoodMenuResponse>(
+      requestFunction: () => dio.put('restaurant/menu/$menuId', data: formData),
+      successParser: (data) => UpdateFoodMenuResponse.fromJson(data),
+    );
+  }
+
+  Future<ApiResult<UpdateFoodMenuStockAvailabilityResponse>> updateFoodMenuStock(
+    String menuId,
+    bool isAvailable,
+  ) {
+    return executeRequest<UpdateFoodMenuStockAvailabilityResponse>(
+      requestFunction: () =>
+          dio.put('restaurant/menu/$menuId/stock', data: {'isAvailable': isAvailable}),
+      successParser: (data) => UpdateFoodMenuStockAvailabilityResponse.fromJson(data),
+    );
+  }
+
+  Future<ApiResult<DeleteFoodMenuResponse>> deleteFoodMenu(String menuId) {
+    return executeRequest<DeleteFoodMenuResponse>(
+      requestFunction: () => dio.delete('restaurant/menu/$menuId'),
+      successParser: (data) => DeleteFoodMenuResponse.fromJson(data),
+    );
+  }
+
+  Future<ApiResult<GetAllFoodMenuResponse>> getAllFoodMenu(MenuFilterFormState? query) {
+    final queryData = {
+      'searchQuery': query?.searchQuery ?? '',
+      'minRating': query?.minRating ?? 0,
+      'priceConditionIds[]': query?.priceRanges.toList() ?? [],
+      'categoryIds[]': query?.categories.toList() ?? [],
+    };
+    debugPrint('queryData: $queryData');
+    return executeRequest<GetAllFoodMenuResponse>(
+      requestFunction: () => dio.get(
+        'restaurant/menu/${restaurant.restaurantData?.id}',
+        queryParameters: queryData,
+      ),
+      successParser: (data) => GetAllFoodMenuResponse.fromJson(data),
+    );
+  }
+
+  Future<ApiResult<GetFoodMenuResponse>> getFoodMenu(String menuId) {
+    return executeRequest<GetFoodMenuResponse>(
+      requestFunction: () => dio.get('restaurant/menu/$menuId'),
+      successParser: (data) => GetFoodMenuResponse.fromJson(data),
+    );
+  }
+
+  Future<ApiResult<GetAllMenuCategoriesResponse>> getAllMenuCategories() {
+    return executeRequest<GetAllMenuCategoriesResponse>(
+      requestFunction: () => dio.get('restaurant/menu/categories'),
+      successParser: (data) => GetAllMenuCategoriesResponse.fromJson(data),
+    );
+  }
+}
