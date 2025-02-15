@@ -12,7 +12,7 @@ Future<List<LivestreamComment>> getLivestreamComments(Ref ref, String roomName) 
   switch (result) {
     case Success(data: final data):
       return data.comments;
-    case Error(message: final message):
-      throw Exception(message);
+    case Error(error: final error):
+      throw Exception(error.message);
   }
 }

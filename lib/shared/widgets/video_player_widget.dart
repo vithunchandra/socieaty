@@ -64,10 +64,9 @@ class _VideoPlayerWidgetState extends ConsumerState<VideoPlayerWidget> {
       if (next[next.length - 1] != 0) {
         _videoController.pause();
       } else {
-        if (ref.watch(homeScreenViewModelProvider).currentPostId == widget.postId) {
-          _videoController.play();
-        }
+        _videoController.play();
       }
+      setState(() {});
     });
 
     ref.listen(homeScreenViewModelProvider, (_, next) {
@@ -77,6 +76,7 @@ class _VideoPlayerWidgetState extends ConsumerState<VideoPlayerWidget> {
       } else {
         _videoController.play();
       }
+      setState(() {});
     });
 
     if (_errorMessage != null) {
@@ -92,6 +92,9 @@ class _VideoPlayerWidgetState extends ConsumerState<VideoPlayerWidget> {
         _videoController.pause();
       },
       onLongPressEnd: (details) {
+        _videoController.play();
+      },
+      onTap: () {
         _videoController.play();
       },
       child: AspectRatio(

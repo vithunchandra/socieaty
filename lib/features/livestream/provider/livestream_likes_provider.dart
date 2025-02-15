@@ -11,7 +11,7 @@ Future<int> getLivestreamLikes(Ref ref, String roomName) async {
   switch (result) {
     case Success(data: final data):
       return data.likes;
-    case Error(message: final message):
-      throw Exception(message);
+    case Error(error: final error):
+      throw Exception(error.message);
   }
 }

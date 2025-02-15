@@ -26,8 +26,8 @@ class LivestreamViewModel extends _$LivestreamViewModel {
     switch (result) {
       case Success(data: final data):
         state = state.copyWith(comment: SuccessState(data: data.comment));
-      case Error(message: final message):
-        state = state.copyWith(comment: ErrorState(message: message));
+      case Error(error: final error):
+        state = state.copyWith(comment: ErrorState(message: error.message));
     }
   }
 
@@ -37,8 +37,8 @@ class LivestreamViewModel extends _$LivestreamViewModel {
     switch (result) {
       case Success(data: final data):
         state = state.copyWith(likes: SuccessState(data: data));
-      case Error(message: final message):
-        state = state.copyWith(likes: ErrorState(message: message));
+      case Error(error: final error):
+        state = state.copyWith(likes: ErrorState(message: error.message));
     }
   }
 }

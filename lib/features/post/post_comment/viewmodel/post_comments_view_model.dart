@@ -1,7 +1,7 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 import 'package:socieaty/core/network/api_result.dart';
-import 'package:socieaty/features/post/post/viewmodel/post_view_model.dart';
+import 'package:socieaty/features/post/post/viewmodel/post_detail_view_model.dart';
 import 'package:socieaty/features/post/post_comment/model/create_post_comment_response.dart';
 import 'package:socieaty/features/post/post_comment/model/get_post_comments_response.dart';
 import 'package:socieaty/features/post/post_comment/model/post_comment.dart';
@@ -19,10 +19,10 @@ Future<List<PostComment>> postComments(Ref ref, String postId) async {
   final result = await postCommentRepository.getPostComments(postId);
   switch (result) {
     case Success<GetPostCommentsResponse>(data: final data):
-      ref.read(postViewModelProvider(postId: postId).notifier).setComments(data.comments.length);
+      ref.read(postDetailViewModelProvider(postId: postId).notifier).setComments(data.comments.length);
       return data.comments;
-    case Error(message: final message):
-      throw Exception(message);
+    case Error(error: final error):
+      throw Exception(error.message);
   }
 }
 
@@ -42,8 +42,8 @@ class PostCommentsViewModel extends _$PostCommentsViewModel {
     switch (result) {
       case Success<CreatePostCommentResponse>(data: final data):
         state = state.copyWith(createCommentState: SuccessState(data: data.comment));
-      case Error(message: final message):
-        state = state.copyWith(createCommentState: ErrorState(message: message));
+      case Error(error: final error):
+        state = state.copyWith(createCommentState: ErrorState(message: error.message));
     }
   }
 }

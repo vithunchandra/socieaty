@@ -33,8 +33,8 @@ class SigninViewmodel extends _$SigninViewmodel {
         await _authLocalRepository.setUserData(result.user);
         ref.invalidate(getSessionDataProvider);
         state = state.copyWith(signinState: SuccessState(data: result.user));
-      case Error(message: final message):
-        state = state.copyWith(signinState: ErrorState(message: message));
+      case Error(error: final error):
+        state = state.copyWith(signinState: ErrorState(message: error.message));
     }
   }
 }

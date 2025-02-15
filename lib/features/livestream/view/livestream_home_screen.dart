@@ -7,7 +7,7 @@ import 'package:socieaty/core/utils/show_snackbar.dart';
 import 'package:socieaty/features/livestream/model/live_room.dart';
 import 'package:socieaty/features/livestream/provider/livestream_room_provider.dart';
 import 'package:socieaty/shared/provider/navigation_provider.dart';
-import 'package:socieaty/features/livestream/view/livestream_view.dart';
+import 'package:socieaty/features/livestream/view/livestream_widget.dart';
 import 'package:socieaty/shared/widgets/custom_scroll_physics.dart';
 import 'package:socieaty/shared/widgets/loading_indicator_widget.dart';
 
@@ -107,7 +107,7 @@ class _LivestreamHomeScreenState extends ConsumerState<LivestreamHomeScreen> {
                         },
                         itemBuilder: (context, index) {
                           final liveRoom = _rooms[index];
-                          return LivestreamView(
+                          return LivestreamWidget(
                             liveRoom,
                             key: UniqueKey(),
                           );

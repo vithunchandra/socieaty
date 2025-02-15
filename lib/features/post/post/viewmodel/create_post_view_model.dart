@@ -25,8 +25,8 @@ class CreatePostViewModel extends _$CreatePostViewModel {
     switch (result) {
       case Success<CreatePostResponse>(data: final data):
         state = state.copyWith(createPostState: SuccessState(data: data.post));
-      case Error(message: final message):
-        state = state.copyWith(createPostState: ErrorState(message: message));
+      case Error(error: final error):
+        state = state.copyWith(createPostState: ErrorState(message: error.message));
     }
   }
 }

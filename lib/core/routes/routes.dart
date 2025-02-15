@@ -14,15 +14,15 @@ import 'package:socieaty/features/authentication/view/splash_screen.dart';
 import 'package:socieaty/features/authentication/viewstate/signup_restaurant_form_state.dart';
 import 'package:socieaty/features/home/customer/view/home_screen.dart';
 import 'package:socieaty/features/home/restaurant/view/restaurant_dashboard_screen.dart';
-import 'package:socieaty/features/livestream/view/live_screen.dart';
 import 'package:socieaty/features/livestream/view/livestream_home_screen.dart';
 import 'package:socieaty/features/map/view/select_location.dart';
+import 'package:socieaty/features/post/post/view/post_screen.dart';
 import 'package:socieaty/features/restaurant/view/outlet_screen.dart';
 import 'package:socieaty/features/restaurant/view/restaurant_scaffold_with_navbar.dart';
-import 'package:socieaty/features/restaurant_menu/model/food_menu.dart';
-import 'package:socieaty/features/restaurant_menu/restaurant/view/create_food_menu_screen.dart';
-import 'package:socieaty/features/restaurant_menu/restaurant/view/food_menu_screen.dart';
-import 'package:socieaty/features/restaurant_menu/restaurant/view/update_food_menu_screen.dart';
+import 'package:socieaty/features/food_menu/model/food_menu.dart';
+import 'package:socieaty/features/food_menu/restaurant/view/create_food_menu_screen.dart';
+import 'package:socieaty/features/food_menu/restaurant/view/restaurant_food_menu_screen.dart';
+import 'package:socieaty/features/food_menu/restaurant/view/update_food_menu_screen.dart';
 import 'package:socieaty/features/shop/customer/view/shop_view.dart';
 import 'package:socieaty/features/transaction/restaurant/view/restaurant_transaction_screen.dart';
 import 'package:socieaty/features/user/model/socieaty_user.dart';
@@ -55,26 +55,38 @@ GoRouter router(Ref ref) {
       ]),
       GoRoute(path: '/select_location', builder: (context, state) => const SelectLocation()),
       GoRoute(
-          path: '/create_content',
-          pageBuilder: (context, state) => const NoTransitionPage(
-                child: CreateScreen(),
-              ),
-          routes: [
-            GoRoute(
-              parentNavigatorKey: rootNavigatorKey,
-              path: 'live',
-              builder: (context, state) {
-                return LiveScreen(
-                  args: state.extra as LiveScreenArgs,
-                );
-              },
-            ),
-          ]),
+        path: '/create_content',
+        pageBuilder: (context, state) => const NoTransitionPage(
+          child: CreateScreen(),
+        ),
+      ),
       GoRoute(
-        path: '/livestream',
+        path: '/livestreams',
         pageBuilder: (context, state) => const NoTransitionPage(
           child: LivestreamHomeScreen(),
         ),
+      ),
+      GoRoute(
+        path: '/posts',
+        builder: (context, state) => PostScreen(
+          args: state.extra as PostScreenArgs,
+        ),
+      ),
+      GoRoute(
+        path: '/:userId',
+        builder: (context, state) => const Scaffold(),
+        routes: [
+          GoRoute(
+            path: 'posts',
+            builder: (context, state) => PostScreen(
+              args: state.extra as PostScreenArgs,
+            ),
+          ),
+          GoRoute(
+            path: 'livestream',
+            builder: (context, state) => const Scaffold(),
+          ),
+        ],
       ),
       StatefulShellRoute.indexedStack(
         builder: (context, state, navigationShell) {
@@ -158,7 +170,7 @@ GoRouter router(Ref ref) {
                     path: "/outlet/menu",
                     parentNavigatorKey: rootNavigatorKey,
                     builder: (context, state) =>
-                        FoodMenuScreen(restaurant: state.extra as SocieatyUser),
+                        RestaurantFoodMenuScreen(restaurant: state.extra as SocieatyUser),
                     routes: [
                       GoRoute(
                         path: '/create',

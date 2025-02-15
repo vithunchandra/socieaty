@@ -25,8 +25,8 @@ class SignupRestaurantViewModel extends _$SignupRestaurantViewModel {
     switch (response) {
       case Success<SignupRestaurantResponse>(data: final result):
         state = state.copyWith(signupRestaurantState: SuccessState(data: result.user));
-      case Error(message: final message):
-        state = state.copyWith(signupRestaurantState: ErrorState(message: message));
+      case Error(error: final error):
+        state = state.copyWith(signupRestaurantState: ErrorState(message: error.message));
     }
   }
 }

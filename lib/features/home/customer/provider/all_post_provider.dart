@@ -13,7 +13,7 @@ Future<List<Post>> allPost(Ref ref) async {
   switch (result) {
     case Success(data: final data):
       return data.posts;
-    case Error(message: final message):
-      throw message;
+    case Error(error: final error):
+      throw error.message;
   }
 }

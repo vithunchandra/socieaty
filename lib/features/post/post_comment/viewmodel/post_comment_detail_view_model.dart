@@ -1,4 +1,3 @@
-import 'package:flutter/material.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 import 'package:socieaty/core/network/api_result.dart';
 import 'package:socieaty/features/post/post_comment/model/like_post_comment_response.dart';
@@ -27,8 +26,8 @@ class PostCommentDetailViewModel extends _$PostCommentDetailViewModel {
     switch (result) {
       case Success<LikePostCommentResponse>(data: final data):
         state = state.copyWith(likePostCommentState: SuccessState(data: data));
-      case Error(message: final message):
-        state = state.copyWith(likePostCommentState: ErrorState(message: message));
+      case Error(error: final error):
+        state = state.copyWith(likePostCommentState: ErrorState(message: error.message));
     }
   }
 }

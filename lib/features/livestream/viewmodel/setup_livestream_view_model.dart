@@ -22,8 +22,8 @@ class SetupLivestreamViewModel extends _$SetupLivestreamViewModel {
     switch (result) {
       case Success(data: final data):
         state = state.copyWith(accessTokenState: SuccessState(data: data.accessToken));
-      case Error(message: final error):
-        state = state.copyWith(accessTokenState: ErrorState(message: error));
+      case Error(error: final error):
+        state = state.copyWith(accessTokenState: ErrorState(message: error.message));
     }
   }
 }

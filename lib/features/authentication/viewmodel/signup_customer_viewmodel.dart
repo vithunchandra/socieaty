@@ -27,8 +27,8 @@ class SignupCustomerViewmodel extends _$SignupCustomerViewmodel {
     switch (response) {
       case Success<SignupCustomerResponse>(data: final result):
         state = state.copyWith(signupState: SuccessState(data: result.user));
-      case Error(message: final message):
-        state = state.copyWith(signupState: ErrorState(message: message));
+      case Error(error: final error):
+        state = state.copyWith(signupState: ErrorState(message: error.message));
     }
   }
 }

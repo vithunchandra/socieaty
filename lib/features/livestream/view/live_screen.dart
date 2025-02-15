@@ -10,9 +10,9 @@ import 'package:socieaty/core/utils/custom_extension.dart';
 import 'package:socieaty/core/utils/show_snackbar.dart';
 import 'package:socieaty/features/livestream/model/livestream_comment.dart';
 import 'package:socieaty/features/livestream/model/livestream_likes.dart';
-import 'package:socieaty/features/livestream/view/live_disconnected_view.dart';
-import 'package:socieaty/features/livestream/view/live_ended_view.dart';
-import 'package:socieaty/features/livestream/view/livestream_comments_view.dart';
+import 'package:socieaty/features/livestream/view/live_disconnected_screen.dart';
+import 'package:socieaty/features/livestream/view/live_ended_screen.dart';
+import 'package:socieaty/features/livestream/view/livestream_comments_widget.dart';
 import 'package:socieaty/features/livestream/viewmodel/live_screen_view_model.dart';
 import 'package:socieaty/shared/view_state.dart';
 import 'package:socieaty/shared/widgets/loading_indicator_widget.dart';
@@ -208,7 +208,8 @@ class _LiveScreenState extends ConsumerState<LiveScreen> {
   }
 
   _toggleCameraPosition() async {
-    _cameraPosition = _cameraPosition == CameraPosition.front ? CameraPosition.back : CameraPosition.front;
+    _cameraPosition =
+        _cameraPosition == CameraPosition.front ? CameraPosition.back : CameraPosition.front;
     await _localVideoTrack?.setCameraPosition(_cameraPosition!);
     setState(() {});
   }
@@ -259,9 +260,9 @@ class _LiveScreenState extends ConsumerState<LiveScreen> {
       }
     });
     if (_isDisconnected) {
-      return const LiveDisconnectedView();
+      return const LiveDisconnectedScreen();
     } else if (_isRoomClosed) {
-      return const LiveEndedView();
+      return const LiveEndedScreen();
     }
 
     return PopScope(
@@ -326,18 +327,23 @@ class _LiveScreenState extends ConsumerState<LiveScreen> {
                           children: [
                             Text(
                               "Live",
-                              style: Theme.of(context).textTheme.bodyMedium?.copyWith(color: Colors.red),
+                              style: Theme.of(context)
+                                  .textTheme
+                                  .bodyMedium
+                                  ?.copyWith(color: Colors.red),
                             ),
                             SizedBox(width: 2),
                             Icon(Icons.podcasts, color: Colors.red),
                             SizedBox(width: 4),
                             Icon(Icons.person, color: Colors.white),
                             SizedBox(width: 2),
-                            Text("$_totalParticipants", style: Theme.of(context).textTheme.bodyMedium),
+                            Text("$_totalParticipants",
+                                style: Theme.of(context).textTheme.bodyMedium),
                             SizedBox(width: 4),
                             Icon(Icons.favorite, color: Colors.white),
                             SizedBox(width: 2),
-                            Text("${_roomLikes.likes}", style: Theme.of(context).textTheme.bodyMedium),
+                            Text("${_roomLikes.likes}",
+                                style: Theme.of(context).textTheme.bodyMedium),
                           ],
                         ),
                       )
@@ -364,7 +370,9 @@ class _LiveScreenState extends ConsumerState<LiveScreen> {
                           _toggleCameraEnabledState();
                         },
                         icon: Icon(
-                          _localVideoTrack != null && !_isVideoTrackLoading ? Icons.videocam_off_outlined : Icons.videocam,
+                          _localVideoTrack != null && !_isVideoTrackLoading
+                              ? Icons.videocam_off_outlined
+                              : Icons.videocam,
                           color: Colors.white,
                         ),
                       ),
@@ -395,7 +403,7 @@ class _LiveScreenState extends ConsumerState<LiveScreen> {
               left: 0,
               right: 0,
               bottom: 0,
-              child: LivestreamCommentsView(
+              child: LivestreamCommentsWidget(
                 comments: _comments,
               ),
             )

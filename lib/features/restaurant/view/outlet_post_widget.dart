@@ -1,13 +1,14 @@
-import 'dart:typed_data';
-
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:get_thumbnail_video/index.dart';
-import 'package:get_thumbnail_video/video_thumbnail.dart';
+import 'package:go_router/go_router.dart';
+import 'package:socieaty/app_theme.dart';
+import 'package:socieaty/core/theme/theme.dart';
 import 'package:socieaty/core/utils/show_snackbar.dart';
+import 'package:socieaty/features/post/post/model/paginate_post_query.dart';
 import 'package:socieaty/features/post/post/model/post.dart';
 import 'package:socieaty/features/post/post/provider/paginate_posts_provider.dart';
+import 'package:socieaty/features/post/post/view/post_screen.dart';
 import 'package:socieaty/features/user/model/socieaty_user.dart';
 import 'package:socieaty/shared/widgets/image_error_widget.dart';
 import 'package:socieaty/shared/widgets/image_loading_widget.dart';
@@ -23,51 +24,23 @@ class PostCard extends StatefulWidget {
 }
 
 class _PostCardState extends State<PostCard> {
-  Uint8List? _thumbnail;
-
   @override
   void initState() {
     super.initState();
-    if (widget.post.medias.first.type == "video") {
-      () async {
-        final thumbnail = await VideoThumbnail.thumbnailData(
-          video: widget.post.medias.first.url,
-          imageFormat: ImageFormat.JPEG,
-          maxWidth:
-              128, // specify the width of the thumbnail, let the height auto-scaled to keep the source aspect ratio
-          quality: 25,
-        );
-        if (mounted) {
-          setState(() {
-            _thumbnail = thumbnail;
-          });
-        }
-      }();
-    }
   }
 
   @override
   Widget build(BuildContext context) {
-    final mediaWidget = widget.post.medias.first.type == "image"
-        ? CachedNetworkImage(
-            imageUrl: widget.post.medias.first.url,
-            fit: BoxFit.cover,
-            progressIndicatorBuilder: (context, url, downloadProgress) =>
-                imageLoadingWidget(context, url, downloadProgress),
-            errorWidget: (context, url, error) => imageErrorWidget(context, error, null),
-            memCacheWidth: 240,
-            memCacheHeight: 240,
-            maxWidthDiskCache: 240,
-            maxHeightDiskCache: 240,
-          )
-        : _thumbnail != null
-            ? FittedBox(
-                fit: BoxFit.cover,
-                child: Image.memory(_thumbnail!),
-              )
-            : const Center(
-                child: CircularProgressIndicator(),
-              );
+    final imageUrl = widget.post.medias.first.type == "image"
+        ? widget.post.medias.first.url
+        : widget.post.medias.first.videoThumbnailUrl ?? "";
+    final mediaWidget = CachedNetworkImage(
+      imageUrl: imageUrl,
+      fit: BoxFit.cover,
+      progressIndicatorBuilder: (context, url, downloadProgress) =>
+          imageLoadingWidget(context, url, downloadProgress),
+      errorWidget: (context, url, error) => imageErrorWidget(context, error, null),
+    );
 
     return Card(
       clipBehavior: Clip.antiAlias,
@@ -82,15 +55,7 @@ class _PostCardState extends State<PostCard> {
 class OutletPostWidget extends ConsumerStatefulWidget {
   final SocieatyUser restaurant;
 
-  /// The scrollController is kept here to continue working seamlessly
-  /// with a NestedScrollView, even though pagination is now handled internally.
-  final ScrollController scrollController;
-
-  const OutletPostWidget(
-    this.restaurant, {
-    required this.scrollController,
-    super.key,
-  });
+  const OutletPostWidget(this.restaurant, {super.key});
 
   @override
   ConsumerState<OutletPostWidget> createState() => _OutletPostWidgetState();
@@ -119,9 +84,11 @@ class _OutletPostWidgetState extends ConsumerState<OutletPostWidget> {
       try {
         final response = await ref.read(
           paginatePostsProvider(
-            offset: pageKey,
-            limit: _pageSize,
-            authorId: widget.restaurant.id,
+            PaginatePostQuery(
+              offset: pageKey,
+              limit: _pageSize,
+              authorId: widget.restaurant.id,
+            ),
           ).future,
         );
 
@@ -166,7 +133,23 @@ class _OutletPostWidgetState extends ConsumerState<OutletPostWidget> {
           crossAxisSpacing: 2,
         ),
         builderDelegate: PagedChildBuilderDelegate<Post>(
-          itemBuilder: (context, post, index) => PostCard(post: post),
+          itemBuilder: (context, post, index) {
+            return GestureDetector(
+              onTap: () {
+                ref.read(appThemeProvider.notifier).setTheme(SocieatyAppTheme.darkTheme);
+                context.push(
+                  '/posts',
+                  extra: PostScreenArgs(
+                    previousTheme: SocieatyAppTheme.lightTheme,
+                    paginatePostQuery:
+                        PaginatePostQuery(authorId: widget.restaurant.id, offset: index),
+                    posts: _pagingController.itemList,
+                  ),
+                );
+              },
+              child: PostCard(post: post),
+            );
+          },
           firstPageProgressIndicatorBuilder: (context) => LoadingIndicatorWidget(),
           newPageProgressIndicatorBuilder: (context) => LoadingIndicatorWidget(),
           noItemsFoundIndicatorBuilder: (context) => const Center(child: Text("No posts found")),

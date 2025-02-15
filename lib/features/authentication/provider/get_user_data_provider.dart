@@ -12,7 +12,7 @@ Future<SocieatyUser> getUserData(Ref ref, String userId) async {
   switch (result) {
     case Success<SocieatyUser>(data: final user):
       return user;
-    case Error(message: final message):
-      throw Exception(message);
+    case Error(error: final error):
+      throw Exception(error.message);
   }
 }

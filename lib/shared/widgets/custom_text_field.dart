@@ -57,6 +57,8 @@ class _CustomTextFieldState extends State<CustomTextField> {
                 child: widget.suffixIcon,
               ),
         counterText: "",
+        prefixIconConstraints: const BoxConstraints(minWidth: 60),
+        suffixIconConstraints: const BoxConstraints(minWidth: 60),
       ),
       onSaved: widget.onSaved,
     );

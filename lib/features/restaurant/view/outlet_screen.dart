@@ -7,7 +7,6 @@ import 'package:socieaty/features/authentication/repository/auth_local_repositor
 import 'package:socieaty/features/restaurant/view/outlet_home_widget.dart';
 import 'package:socieaty/features/restaurant/view/outlet_post_widget.dart';
 import 'package:socieaty/shared/widgets/header_icon_widget.dart';
-import 'package:flutter/scheduler.dart';
 
 class OutletScreen extends ConsumerStatefulWidget {
   const OutletScreen({super.key});
@@ -78,7 +77,6 @@ class _OutletScreenState extends ConsumerState<OutletScreen> with SingleTickerPr
         icon: Icons.grid_view_outlined,
         widget: OutletPostWidget(
           ref.watch(authLocalRepositoryProvider).getUserData()!,
-          scrollController: _scrollController,
         ),
       ),
       OutletTabs(title: "Reviews", icon: Icons.reviews_outlined, widget: Container()),
@@ -364,8 +362,7 @@ class _OutletScreenState extends ConsumerState<OutletScreen> with SingleTickerPr
                           SliverToBoxAdapter(
                             child: tab.widget,
                           ),
-                        if (tab.title == "Post")
-                          tab.widget
+                        if (tab.title == "Post") tab.widget
                       ],
                     );
                   },

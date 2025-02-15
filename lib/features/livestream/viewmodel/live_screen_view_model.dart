@@ -23,8 +23,8 @@ class LiveScreenViewModel extends _$LiveScreenViewModel {
     switch (result) {
       case Success(data: final data):
         state = state.copyWith(isDeleted: SuccessState(data: data.isDeleted));
-      case Error(message: final message):
-        state = state.copyWith(isDeleted: ErrorState(message: message));
+      case Error(error: final error):
+        state = state.copyWith(isDeleted: ErrorState(message: error.message));
     }
   }
 }

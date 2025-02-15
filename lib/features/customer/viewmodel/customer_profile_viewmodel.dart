@@ -17,7 +17,7 @@ Future<SocieatyUser> getCustomerProfile(Ref ref) async {
   switch (result) {
     case Success<SocieatyUser>(data: final user):
       return user;
-    case Error(message: final message):
-      throw message;
+    case Error(error: final error):
+      throw error.message;
   }
 }

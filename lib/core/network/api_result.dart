@@ -1,3 +1,5 @@
+import 'package:socieaty/shared/models/network_error.dart';
+
 sealed class ApiResult<T> {}
 
 class Success<T> extends ApiResult<T> {
@@ -6,6 +8,6 @@ class Success<T> extends ApiResult<T> {
 }
 
 class Error extends ApiResult<Never> {
-  final String message;
-  Error({required this.message});
+  final NetworkError error;
+  Error({required this.error});
 }

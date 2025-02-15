@@ -11,7 +11,7 @@ Future<String> joinLivestream(Ref ref, String roomTitle) async {
   switch (result) {
     case Success(:final data):
       return data.accessToken;
-    case Error(:final message):
-      throw Exception(message);
+    case Error(error: final error):
+      throw Exception(error.message);
   }
 }

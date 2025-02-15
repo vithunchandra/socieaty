@@ -4,10 +4,11 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:socieaty/core/theme/app_pallete.dart';
 import 'package:socieaty/features/authentication/repository/auth_local_repository.dart';
+import 'package:socieaty/features/post/post/model/paginate_post_query.dart';
 import 'package:socieaty/features/post/post/provider/paginate_posts_provider.dart';
-import 'package:socieaty/features/post/post/view/post_carousel_item.dart';
-import 'package:socieaty/features/restaurant_menu/provider/get_food_menu_provider.dart';
-import 'package:socieaty/features/restaurant_menu/restaurant/view/food_menu_item_view_widget.dart';
+import 'package:socieaty/features/post/post/view/post_carousel_item_widget.dart';
+import 'package:socieaty/features/food_menu/provider/get_food_menu_provider.dart';
+import 'package:socieaty/features/food_menu/restaurant/view/food_menu_highlight_item_widget.dart';
 import 'package:socieaty/shared/widgets/custom_error_widget.dart';
 import 'package:socieaty/shared/widgets/loading_indicator_widget.dart';
 import 'package:socieaty/shared/widgets/menu_filter_widget.dart';
@@ -27,7 +28,9 @@ class _OutletHomeWidgetState extends ConsumerState<OutletHomeWidget> {
   Widget build(BuildContext context) {
     final screenWidth = MediaQuery.of(context).size.width;
     final restaurantMenus = ref.watch(getFoodMenusProvider(MenuFilterFormState()));
-    final posts = ref.watch(paginatePostsProvider(offset: 0, limit: 5));
+    final posts = ref.watch(
+      paginatePostsProvider(PaginatePostQuery(offset: 0, limit: 5)),
+    );
 
     return SizedBox(
       width: double.infinity,
@@ -91,7 +94,7 @@ class _OutletHomeWidgetState extends ConsumerState<OutletHomeWidget> {
                           ),
                         ],
                       ),
-                      child: FoodMenuItemViewWidget(restaurantMenu: menu),
+                      child: FoodMenuHighlightItemWidget(restaurantMenu: menu),
                     ),
                   );
                 }).toList(),
@@ -138,7 +141,8 @@ class _OutletHomeWidgetState extends ConsumerState<OutletHomeWidget> {
                       padding: EdgeInsets.symmetric(horizontal: 3.0),
                       shrinkExtent: screenWidth * 0.1,
                       flexWeights: data.posts.length > 2 ? [1, 4, 1] : [1],
-                      children: data.posts.map((post) => PostCarouselItem(post: post)).toList(),
+                      children:
+                          data.posts.map((post) => PostCarouselItemWidget(post: post)).toList(),
                     );
                   },
                   error: (error, stacktrace) {
@@ -146,7 +150,9 @@ class _OutletHomeWidgetState extends ConsumerState<OutletHomeWidget> {
                       error: error.toString(),
                       title: "Posts items",
                       onPressed: () {
-                        ref.invalidate(paginatePostsProvider(offset: 0, limit: 5));
+                        ref.invalidate(
+                          paginatePostsProvider(PaginatePostQuery(offset: 0, limit: 5)),
+                        );
                         FocusScope.of(context).focusedChild?.unfocus();
                       },
                     );

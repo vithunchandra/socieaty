@@ -10,6 +10,7 @@ class PostMedia with _$PostMedia {
     required String type,
     required String postId,
     required String extension,
+    @Default(null) String? videoThumbnailUrl,
   }) = _PostMedia;
 
   factory PostMedia.fromJson(Map<String, Object?> json) => _$PostMediaFromJson(json);

@@ -8,7 +8,6 @@ class PostHashtag with _$PostHashtag {
   const factory PostHashtag({
     required String id,
     required String tag,
-    required int popularity,
   }) = _PostHashtag;
 
   factory PostHashtag.fromJson(Map<String, Object?> json) => _$PostHashtagFromJson(json);

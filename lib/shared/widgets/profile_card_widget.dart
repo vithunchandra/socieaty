@@ -41,8 +41,8 @@ class _ProfileCardState extends ConsumerState<ProfileCardWidget> {
                 )
               ],
             );
-          case Error(message: final message):
-            return Text(message);
+          case Error(error: final error):
+            return Text(error.message);
         }
       },
       error: (error, stack) {
