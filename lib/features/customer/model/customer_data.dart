@@ -7,7 +7,7 @@ part 'customer_data.g.dart';
 class CustomerData with _$CustomerData {
   const factory CustomerData({
     required String id,
-    @Default(null) String? bio,
+    @Default('') String bio,
     required int wallet,
   }) = _CustomerData;
 

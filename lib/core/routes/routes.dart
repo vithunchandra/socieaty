@@ -2,8 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
-import 'package:socieaty/features/account/customer/view/account_view.dart';
 import 'package:socieaty/features/account/restaurant/view/restaurant_account_screen.dart';
+import 'package:socieaty/features/authentication/repository/auth_local_repository.dart';
 import 'package:socieaty/features/authentication/view/landing_page.dart';
 import 'package:socieaty/features/authentication/view/signin_page.dart';
 import 'package:socieaty/features/authentication/view/signup_customer_page.dart';
@@ -12,20 +12,22 @@ import 'package:socieaty/features/authentication/view/signup_restaurant_final_pa
 import 'package:socieaty/features/authentication/view/signup_restaurant_first_page.dart';
 import 'package:socieaty/features/authentication/view/splash_screen.dart';
 import 'package:socieaty/features/authentication/viewstate/signup_restaurant_form_state.dart';
+import 'package:socieaty/features/customer/model/socieaty_customer.dart';
+import 'package:socieaty/features/customer/view/update_customer_profile_screen.dart';
 import 'package:socieaty/features/home/customer/view/home_screen.dart';
 import 'package:socieaty/features/home/restaurant/view/restaurant_dashboard_screen.dart';
 import 'package:socieaty/features/livestream/view/livestream_home_screen.dart';
 import 'package:socieaty/features/map/view/select_location.dart';
 import 'package:socieaty/features/post/post/view/post_screen.dart';
-import 'package:socieaty/features/restaurant/view/outlet_screen.dart';
+import 'package:socieaty/features/restaurant/model/socieaty_restaurant.dart';
 import 'package:socieaty/features/restaurant/view/restaurant_scaffold_with_navbar.dart';
-import 'package:socieaty/features/food_menu/model/food_menu.dart';
 import 'package:socieaty/features/food_menu/restaurant/view/create_food_menu_screen.dart';
 import 'package:socieaty/features/food_menu/restaurant/view/restaurant_food_menu_screen.dart';
 import 'package:socieaty/features/food_menu/restaurant/view/update_food_menu_screen.dart';
-import 'package:socieaty/features/shop/customer/view/shop_view.dart';
+import 'package:socieaty/features/shop/customer/view/shop_screen.dart';
+import 'package:socieaty/features/shop/customer/view/shop_search_screen.dart';
 import 'package:socieaty/features/transaction/restaurant/view/restaurant_transaction_screen.dart';
-import 'package:socieaty/features/user/model/socieaty_user.dart';
+import 'package:socieaty/features/user/view/profile_loader_screen.dart';
 import 'package:socieaty/shared/widgets/create_screen.dart';
 import 'package:socieaty/features/customer/view/customer_scaffold_with_navbar.dart';
 
@@ -74,19 +76,8 @@ GoRouter router(Ref ref) {
       ),
       GoRoute(
         path: '/:userId',
-        builder: (context, state) => const Scaffold(),
-        routes: [
-          GoRoute(
-            path: 'posts',
-            builder: (context, state) => PostScreen(
-              args: state.extra as PostScreenArgs,
-            ),
-          ),
-          GoRoute(
-            path: 'livestream',
-            builder: (context, state) => const Scaffold(),
-          ),
-        ],
+        builder: (context, state) =>
+            ProfileLoaderScreen(userId: state.pathParameters['userId'] ?? ''),
       ),
       StatefulShellRoute.indexedStack(
         builder: (context, state, navigationShell) {
@@ -128,8 +119,16 @@ GoRouter router(Ref ref) {
               GoRoute(
                 path: '/customer/shop',
                 pageBuilder: (context, state) => const NoTransitionPage(
-                  child: ShopView(),
+                  child: ShopScreen(),
                 ),
+                routes: [
+                  GoRoute(
+                    path: 'search',
+                    pageBuilder: (context, state) => const NoTransitionPage(
+                      child: ShopSearchScreen(),
+                    ),
+                  ),
+                ],
               ),
             ],
           ),
@@ -137,9 +136,20 @@ GoRouter router(Ref ref) {
             routes: [
               GoRoute(
                 path: '/customer/profile',
-                pageBuilder: (context, state) => const NoTransitionPage(
-                  child: AccountView(),
-                ),
+                pageBuilder: (context, state) {
+                  final userId = ref.watch(authLocalRepositoryProvider).getUserData()?.id ?? '';
+                  return NoTransitionPage(
+                    child: ProfileLoaderScreen(userId: userId),
+                  );
+                },
+                routes: [
+                  GoRoute(
+                    path: 'update',
+                    pageBuilder: (context, state) => NoTransitionPage(
+                      child: UpdateCustomerProfileScreen(user: state.extra as SocieatyCustomer),
+                    ),
+                  )
+                ],
               ),
             ],
           ),
@@ -164,13 +174,18 @@ GoRouter router(Ref ref) {
                   GoRoute(
                     path: '/outlet',
                     parentNavigatorKey: rootNavigatorKey,
-                    builder: (context, state) => const OutletScreen(),
+                    pageBuilder: (context, state) {
+                      final userId = ref.watch(authLocalRepositoryProvider).getUserData()?.id ?? '';
+                      return NoTransitionPage(
+                        child: ProfileLoaderScreen(userId: userId),
+                      );
+                    },
                   ),
                   GoRoute(
                     path: "/outlet/menu",
                     parentNavigatorKey: rootNavigatorKey,
                     builder: (context, state) =>
-                        RestaurantFoodMenuScreen(restaurant: state.extra as SocieatyUser),
+                        RestaurantFoodMenuScreen(restaurant: state.extra as SocieatyRestaurant),
                     routes: [
                       GoRoute(
                         path: '/create',
@@ -181,7 +196,7 @@ GoRouter router(Ref ref) {
                         path: '/update',
                         parentNavigatorKey: rootNavigatorKey,
                         builder: (context, state) => UpdateFoodMenuScreen(
-                          restaurantMenu: state.extra as FoodMenu,
+                          args: state.extra as UpdateFoodMenuScreenArgs,
                         ),
                       ),
                     ],
@@ -197,6 +212,145 @@ GoRouter router(Ref ref) {
                 pageBuilder: (context, state) => const NoTransitionPage(
                   child: RestaurantTransactionScreen(),
                 ),
+                routes: [
+                  GoRoute(
+                    path: 'page_a',
+                    pageBuilder: (context, state) => NoTransitionPage(
+                      child: Scaffold(
+                        body: Center(
+                          child: Column(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              Text('Page A'),
+                              FilledButton(
+                                onPressed: () {
+                                  context.go('/restaurant/transaksi/page_a/page_a_1');
+                                },
+                                child: Text('Page A 1'),
+                              ),
+                              FilledButton(
+                                onPressed: () {
+                                  context.go('/restaurant/transaksi/page_b/page_b_1');
+                                },
+                                child: Text('Page B 2'),
+                              ),
+                              FilledButton(
+                                onPressed: () {
+                                  context.go('/restaurant/transaksi/page_c/page_c_1');
+                                },
+                                child: Text('Page C 3'),
+                              ),
+                            ],
+                          ),
+                        ),
+                      ),
+                    ),
+                    routes: [
+                      GoRoute(
+                        path: 'page_a_1',
+                        pageBuilder: (context, state) => const NoTransitionPage(
+                          child: Scaffold(
+                            body: Center(
+                              child: Text('Page A 1'),
+                            ),
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                  GoRoute(
+                    path: 'page_b',
+                    pageBuilder: (context, state) => NoTransitionPage(
+                      child: Scaffold(
+                        body: Center(
+                          child: Column(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            crossAxisAlignment: CrossAxisAlignment.center,
+                            children: [
+                              Text('Page B'),
+                              FilledButton(
+                                onPressed: () {
+                                  context.go('/restaurant/transaksi/page_a/page_a_1');
+                                },
+                                child: Text('Page B 1'),
+                              ),
+                              FilledButton(
+                                onPressed: () {
+                                  context.go('/restaurant/transaksi/page_b/page_b_1');
+                                },
+                                child: Text('Page B 2'),
+                              ),
+                              FilledButton(
+                                onPressed: () {
+                                  context.go('/restaurant/transaksi/page_c/page_c_1');
+                                },
+                                child: Text('Page B 3'),
+                              ),
+                            ],
+                          ),
+                        ),
+                      ),
+                    ),
+                    routes: [
+                      GoRoute(
+                        path: 'page_b_1',
+                        pageBuilder: (context, state) => const NoTransitionPage(
+                          child: Scaffold(
+                            body: Center(
+                              child: Text('Page B 1'),
+                            ),
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                  GoRoute(
+                    path: 'page_c',
+                    pageBuilder: (context, state) => NoTransitionPage(
+                      child: Scaffold(
+                        body: Center(
+                          child: Column(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            crossAxisAlignment: CrossAxisAlignment.center,
+                            children: [
+                              Text('Page C'),
+                              FilledButton(
+                                onPressed: () {
+                                  context.go('/restaurant/transaksi/page_a/page_a_1');
+                                },
+                                child: Text('Page A 1'),
+                              ),
+                              FilledButton(
+                                onPressed: () {
+                                  context.go('/restaurant/transaksi/page_b/page_b_1');
+                                },
+                                child: Text('Page B 2'),
+                              ),
+                              FilledButton(
+                                onPressed: () {
+                                  context.go('/restaurant/transaksi/page_c/page_c_1');
+                                },
+                                child: Text('Page C 3'),
+                              ),
+                            ],
+                          ),
+                        ),
+                      ),
+                    ),
+                    routes: [
+                      GoRoute(
+                        path: 'page_c_1',
+                        pageBuilder: (context, state) => const NoTransitionPage(
+                          child: Scaffold(
+                            body: Center(
+                              child: Text('Page C 1'),
+                            ),
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                ],
               ),
             ],
           ),

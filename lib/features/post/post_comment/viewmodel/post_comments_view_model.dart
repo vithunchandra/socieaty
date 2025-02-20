@@ -41,7 +41,7 @@ class PostCommentsViewModel extends _$PostCommentsViewModel {
     final result = await _postCommentRepository.createPostComment(data, postId);
     switch (result) {
       case Success<CreatePostCommentResponse>(data: final data):
-        state = state.copyWith(createCommentState: SuccessState(data: data.comment));
+        state = state.copyWith(createCommentState: SuccessState(data: data));
       case Error(error: final error):
         state = state.copyWith(createCommentState: ErrorState(message: error.message));
     }

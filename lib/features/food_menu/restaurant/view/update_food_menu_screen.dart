@@ -19,9 +19,18 @@ import 'package:socieaty/shared/widgets/image_loading_widget.dart';
 import 'package:socieaty/shared/widgets/loading_indicator_widget.dart';
 import 'package:socieaty/shared/widgets/menu_filter_widget.dart';
 
-class UpdateFoodMenuScreen extends ConsumerStatefulWidget {
+class UpdateFoodMenuScreenArgs {
+  final String restaurantId;
   final FoodMenu restaurantMenu;
-  const UpdateFoodMenuScreen({super.key, required this.restaurantMenu});
+  const UpdateFoodMenuScreenArgs({
+    required this.restaurantId,
+    required this.restaurantMenu,
+  });
+}
+
+class UpdateFoodMenuScreen extends ConsumerStatefulWidget {
+  final UpdateFoodMenuScreenArgs args;
+  const UpdateFoodMenuScreen({super.key, required this.args});
 
   @override
   UpdateFoodMenuScreenState createState() => UpdateFoodMenuScreenState();
@@ -37,13 +46,13 @@ class UpdateFoodMenuScreenState extends ConsumerState<UpdateFoodMenuScreen> {
   void initState() {
     super.initState();
     _formData = _formData.copyWith(
-      name: widget.restaurantMenu.name,
-      description: widget.restaurantMenu.description,
-      price: widget.restaurantMenu.price,
-      estimatedTime: widget.restaurantMenu.estimatedTime,
-      categories: widget.restaurantMenu.categories.map((category) => category.id).toList(),
+      name: widget.args.restaurantMenu.name,
+      description: widget.args.restaurantMenu.description,
+      price: widget.args.restaurantMenu.price,
+      estimatedTime: widget.args.restaurantMenu.estimatedTime,
+      categories: widget.args.restaurantMenu.categories.map((category) => category.id).toList(),
     );
-    _selectedCategories.addAll(widget.restaurantMenu.categories);
+    _selectedCategories.addAll(widget.args.restaurantMenu.categories);
   }
 
   @override
@@ -162,14 +171,17 @@ class UpdateFoodMenuScreenState extends ConsumerState<UpdateFoodMenuScreen> {
   Widget build(BuildContext context) {
     final screenWidth = MediaQuery.of(context).size.width;
     final isUpdateLoading = ref
-        .watch(updateFoodMenuViewModelProvider(widget.restaurantMenu.id))
+        .watch(updateFoodMenuViewModelProvider(widget.args.restaurantMenu.id))
         .updateMenuState is LoadingState;
     // final isCategoriesLoading = ref.watch(getAllRestaurantMenuCategoriesProvider).isLoading;
 
-    ref.listen(updateFoodMenuViewModelProvider(widget.restaurantMenu.id), (_, next) {
+    ref.listen(updateFoodMenuViewModelProvider(widget.args.restaurantMenu.id), (_, next) {
       switch (next.updateMenuState) {
         case SuccessState<FoodMenu>(data: final data):
-          ref.invalidate(getFoodMenusProvider(MenuFilterFormState()));
+          ref.invalidate(getFoodMenusProvider(
+            restaurantId: widget.args.restaurantMenu.restaurantId,
+            query: MenuFilterFormState(),
+          ));
           context.pop(data);
         case ErrorState(message: final message):
           showSnackbar(context, message, isError: true);
@@ -229,7 +241,7 @@ class UpdateFoodMenuScreenState extends ConsumerState<UpdateFoodMenuScreen> {
                                 : FittedBox(
                                     fit: BoxFit.fitWidth,
                                     child: CachedNetworkImage(
-                                      imageUrl: widget.restaurantMenu.pictureUrl,
+                                      imageUrl: widget.args.restaurantMenu.pictureUrl,
                                       progressIndicatorBuilder: (context, url, progress) =>
                                           imageLoadingWidget(context, url, progress),
                                       errorWidget: (context, error, stackTrace) =>
@@ -250,7 +262,7 @@ class UpdateFoodMenuScreenState extends ConsumerState<UpdateFoodMenuScreen> {
                           Text("Nama", style: Theme.of(context).textTheme.titleSmall),
                           SizedBox(height: 8.0),
                           CustomTextField(
-                            initialValue: widget.restaurantMenu.name,
+                            initialValue: widget.args.restaurantMenu.name,
                             minLines: 1,
                             maxLines: 2,
                             hintText: "Nasi goreng merah",
@@ -325,7 +337,7 @@ class UpdateFoodMenuScreenState extends ConsumerState<UpdateFoodMenuScreen> {
                 Text("Deskripsi", style: Theme.of(context).textTheme.titleSmall),
                 SizedBox(height: 8.0),
                 CustomTextField(
-                  initialValue: widget.restaurantMenu.description,
+                  initialValue: widget.args.restaurantMenu.description,
                   prefixIcon: Icon(Icons.description),
                   hintText: "Masukan deskripsi menu kamu",
                   validator: (value) {
@@ -346,7 +358,7 @@ class UpdateFoodMenuScreenState extends ConsumerState<UpdateFoodMenuScreen> {
                 Text("Estimasi waktu (menit)", style: Theme.of(context).textTheme.titleSmall),
                 SizedBox(height: 8.0),
                 CustomTextField(
-                  initialValue: widget.restaurantMenu.estimatedTime.toString(),
+                  initialValue: widget.args.restaurantMenu.estimatedTime.toString(),
                   keyboardType: TextInputType.number,
                   hintText: "Contoh, 40 menit",
                   prefixIcon: Icon(Icons.timer),
@@ -367,7 +379,7 @@ class UpdateFoodMenuScreenState extends ConsumerState<UpdateFoodMenuScreen> {
                 Text("Harga", style: Theme.of(context).textTheme.titleSmall),
                 SizedBox(height: 8.0),
                 CustomTextField(
-                  initialValue: widget.restaurantMenu.price.toString(),
+                  initialValue: widget.args.restaurantMenu.price.toString(),
                   keyboardType: TextInputType.numberWithOptions(decimal: true),
                   prefixIcon: Icon(Icons.attach_money),
                   hintText: "Contoh, 100.000",
@@ -398,7 +410,7 @@ class UpdateFoodMenuScreenState extends ConsumerState<UpdateFoodMenuScreen> {
                                 _selectedCategories.map((category) => category.id).toList());
                       }
                       ref
-                          .read(updateFoodMenuViewModelProvider(widget.restaurantMenu.id).notifier)
+                          .read(updateFoodMenuViewModelProvider(widget.args.restaurantMenu.id).notifier)
                           .updateFoodMenu(_formData, _selectedMenuImage);
                     },
                     child: Padding(

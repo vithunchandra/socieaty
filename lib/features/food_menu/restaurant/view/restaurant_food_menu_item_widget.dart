@@ -9,14 +9,20 @@ import 'package:socieaty/core/utils/custom_extension.dart';
 import 'package:socieaty/core/utils/show_snackbar.dart';
 import 'package:socieaty/features/food_menu/model/food_menu.dart';
 import 'package:socieaty/features/food_menu/restaurant/view/restaurant_food_menu_detail_widget.dart';
+import 'package:socieaty/features/food_menu/restaurant/view/update_food_menu_screen.dart';
 import 'package:socieaty/features/food_menu/restaurant/viewmodel/food_menu_item_widget_view_model.dart';
 import 'package:socieaty/shared/view_state.dart';
 import 'package:socieaty/shared/widgets/image_error_widget.dart';
 import 'package:socieaty/shared/widgets/image_loading_widget.dart';
 
 class RestaurantFoodMenuItemWidget extends ConsumerStatefulWidget {
+  final String restaurantId;
   final FoodMenu restaurantMenu;
-  const RestaurantFoodMenuItemWidget({super.key, required this.restaurantMenu});
+  const RestaurantFoodMenuItemWidget({
+    super.key,
+    required this.restaurantId,
+    required this.restaurantMenu,
+  });
 
   @override
   ConsumerState<RestaurantFoodMenuItemWidget> createState() => _RestaurantFoodMenuItemWidgetState();
@@ -85,6 +91,7 @@ class _RestaurantFoodMenuItemWidgetState extends ConsumerState<RestaurantFoodMen
           isScrollControlled: true,
           useSafeArea: true,
           builder: (context) => RestaurantFoodMenuDetailWidget(
+            restaurantId: widget.restaurantMenu.restaurantId,
             restaurantMenu: _menu,
           ),
         );
@@ -194,7 +201,10 @@ class _RestaurantFoodMenuItemWidgetState extends ConsumerState<RestaurantFoodMen
                                   FocusScope.of(context).focusedChild?.unfocus();
                                   context.push(
                                     '/restaurant/dashboard/outlet/menu/update',
-                                    extra: widget.restaurantMenu,
+                                    extra: UpdateFoodMenuScreenArgs(
+                                      restaurantId: widget.restaurantMenu.restaurantId,
+                                      restaurantMenu: widget.restaurantMenu,
+                                    ),
                                   );
                                 },
                                 child: Text("Edit"),

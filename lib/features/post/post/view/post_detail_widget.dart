@@ -2,7 +2,10 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
+import 'package:socieaty/app_theme.dart';
 import 'package:socieaty/core/theme/app_pallete.dart';
+import 'package:socieaty/core/theme/theme.dart';
 import 'package:socieaty/core/utils/custom_extension.dart';
 import 'package:socieaty/core/utils/location_handler.dart';
 import 'package:socieaty/core/utils/show_snackbar.dart';
@@ -14,10 +17,18 @@ import 'package:socieaty/features/post/post_media/model/post_media.dart';
 import 'package:socieaty/shared/view_state.dart';
 import 'package:socieaty/shared/widgets/video_player_widget.dart';
 
+typedef PostUpdateCallback = void Function(Post updatedPost);
+
 class PostDetailWidget extends ConsumerStatefulWidget {
   final Post post;
   final String userId;
-  const PostDetailWidget({super.key, required this.post, required this.userId});
+  final PostUpdateCallback onUpdate;
+  const PostDetailWidget({
+    super.key,
+    required this.post,
+    required this.userId,
+    required this.onUpdate,
+  });
   @override
   ConsumerState<PostDetailWidget> createState() => _PostDetailWidgetState();
 }
@@ -85,7 +96,9 @@ class _PostDetailWidgetState extends ConsumerState<PostDetailWidget> {
       var location = await LocationHandler.getAddressFromLatLng(widget.post.location!);
       locationName = "${location?.street}, ${location?.locality}, ${location?.country}";
       if (mounted) {
-        setState(() {});
+        WidgetsBinding.instance.addPostFrameCallback((_) {
+          if (mounted) setState(() {});
+        });
       }
     }
   }
@@ -99,14 +112,24 @@ class _PostDetailWidgetState extends ConsumerState<PostDetailWidget> {
     ref.listen(postDetailViewModelProvider(postId: widget.post.id), (_, next) {
       switch (next.likeState) {
         case SuccessState<LikePostResponse>(data: final data):
-          setState(() {
-            isLiked = data.isLiked;
-            likes = data.likes;
+          WidgetsBinding.instance.addPostFrameCallback((_) {
+            if (mounted) {
+              setState(() {
+                isLiked = data.isLiked;
+                likes = data.likes;
+              });
+            }
+            widget.onUpdate(data.updatedPost);
           });
+          break;
         case ErrorState(message: final message):
-          showSnackbar(context, message);
+          WidgetsBinding.instance.addPostFrameCallback((_) {
+            showSnackbar(context, message);
+          });
+          break;
         case LoadingState():
         case IdleState():
+          break;
       }
     });
 
@@ -210,21 +233,30 @@ class _PostDetailWidgetState extends ConsumerState<PostDetailWidget> {
                     mainAxisAlignment: MainAxisAlignment.start,
                     crossAxisAlignment: CrossAxisAlignment.center,
                     children: [
-                      Material(
-                        color: AppPallete.neutralColor.shade50,
-                        borderRadius: BorderRadius.circular(25),
-                        elevation: 2.0,
-                        child: CircleAvatar(
-                          radius: 22.5,
-                          backgroundImage: AssetImage('assets/images/person_dummy.jpg'),
+                      GestureDetector(
+                        onTap: () async {
+                          ref.read(appThemeProvider.notifier).setTheme(SocieatyAppTheme.lightTheme);
+                          await context.push('/${widget.post.authorId}');
+                          ref.read(appThemeProvider.notifier).setTheme(SocieatyAppTheme.darkTheme);
+                        },
+                        child: Material(
+                          color: AppPallete.neutralColor.shade50,
+                          borderRadius: BorderRadius.circular(25),
+                          elevation: 2.0,
+                          child: CircleAvatar(
+                            radius: 22.5,
+                            backgroundImage: AssetImage('assets/images/person_dummy.jpg'),
+                          ),
                         ),
                       ),
                       SizedBox(height: 4),
                       IconButton(
                         onPressed: () {
-                          setState(() {
-                            isLiked = !isLiked;
-                          });
+                          if (mounted) {
+                            setState(() {
+                              isLiked = !isLiked;
+                            });
+                          }
                           _onLiked();
                         },
                         iconSize: 28,
@@ -238,8 +270,8 @@ class _PostDetailWidgetState extends ConsumerState<PostDetailWidget> {
                       Text(likes.toString()),
                       SizedBox(height: 4.0),
                       IconButton(
-                        onPressed: () {
-                          showModalBottomSheet(
+                        onPressed: () async {
+                          await showModalBottomSheet(
                             context: context,
                             enableDrag: true,
                             useRootNavigator: true,
@@ -253,6 +285,11 @@ class _PostDetailWidgetState extends ConsumerState<PostDetailWidget> {
                               );
                             },
                           );
+
+                          ref.invalidate(getPostProvider(widget.post.id));
+                          final updatedPost =
+                              await ref.watch(getPostProvider(widget.post.id).future);
+                          widget.onUpdate(updatedPost);
                         },
                         iconSize: 28,
                         icon: Icon(Icons.comment_outlined),

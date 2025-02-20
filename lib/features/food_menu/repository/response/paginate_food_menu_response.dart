@@ -8,9 +8,10 @@ part 'paginate_food_menu_response.g.dart';
 @freezed
 class PaginateFoodMenuResponse with _$PaginateFoodMenuResponse {
   const factory PaginateFoodMenuResponse({
-    required List<FoodMenu> menu,
+    required List<FoodMenu> menus,
     required Pagination pagination,
   }) = _PaginateFoodMenuResponse;
 
-  factory PaginateFoodMenuResponse.fromJson(Map<String, dynamic> json) => _$PaginateFoodMenuResponseFromJson(json);
+  factory PaginateFoodMenuResponse.fromJson(Map<String, dynamic> json) =>
+      _$PaginateFoodMenuResponseFromJson(json);
 }

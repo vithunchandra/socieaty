@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:socieaty/core/utils/show_snackbar.dart';
 import 'package:socieaty/features/post/post_comment/model/like_post_comment_response.dart';
 import 'package:socieaty/features/post/post_comment/model/post_comment.dart';
 import 'package:socieaty/features/post/post_comment/viewmodel/post_comment_detail_view_model.dart';
@@ -63,6 +64,7 @@ class _PostCommentItemWidgetState extends ConsumerState<PostCommentItemWidget> {
             likeCount = data.likes;
           });
         case ErrorState(message: final message):
+          showSnackbar(context, message);
         case LoadingState():
         case IdleState():
       }

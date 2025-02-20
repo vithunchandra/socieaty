@@ -3,6 +3,9 @@ import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:socieaty/core/enums/bank.enum.dart';
 import 'package:socieaty/core/enums/user_role.enum.dart';
 import 'package:socieaty/core/utils/custom_extension.dart';
+import 'package:socieaty/features/customer/model/socieaty_customer.dart';
+import 'package:socieaty/features/restaurant/model/socieaty_restaurant.dart';
+import 'package:socieaty/features/user/model/socieaty_user.dart';
 
 class LatLngConverter implements JsonConverter<LatLng, Map<String, dynamic>> {
   const LatLngConverter();
@@ -55,7 +58,7 @@ class BankConverter implements JsonConverter<BankEnum, String> {
       return BankEnum.bni;
     } else if (json.toLowerCase() == BankEnum.bca.name.toLowerCase()) {
       return BankEnum.bca;
-    } else{
+    } else {
       return BankEnum.mandiri;
     }
   }
@@ -63,5 +66,31 @@ class BankConverter implements JsonConverter<BankEnum, String> {
   @override
   String toJson(BankEnum object) {
     return object.name;
+  }
+}
+
+class UserConverter {
+  static SocieatyCustomer userToCustomer(SocieatyUser user) {
+    return SocieatyCustomer(
+      id: user.id,
+      name: user.name,
+      email: user.email,
+      phoneNumber: user.phoneNumber,
+      profilePictureUrl: user.profilePictureUrl,
+      role: user.role,
+      customerData: user.customerData!,
+    );
+  }
+
+  static SocieatyRestaurant userToRestaurant(SocieatyUser user) {
+    return SocieatyRestaurant(
+      id: user.id,
+      name: user.name,
+      email: user.email,
+      phoneNumber: user.phoneNumber,
+      profilePictureUrl: user.profilePictureUrl,
+      role: user.role,
+      restaurantData: user.restaurantData!,
+    );
   }
 }

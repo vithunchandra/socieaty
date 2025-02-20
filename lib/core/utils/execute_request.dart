@@ -40,21 +40,29 @@ String _handleDioError(DioException error) {
       return "Waktu habis saat mengirim atau menerima data dari server";
     case DioExceptionType.badResponse:
       final statusCode = error.response?.statusCode;
+      final errorData = error.response?.data['message'];
+      String? errorMessage;
+
+      if (errorData is String) {
+        errorMessage = errorData;
+      } else if (errorData is List<dynamic>) {
+        errorMessage = errorData.map((e) => e.toString()).join("\n");
+      }
       if (statusCode != null) {
         switch (statusCode) {
           case StatusCode.badRequest:
-            return "Permintaan tidak valid";
+            return errorMessage ?? "Permintaan tidak valid";
           case StatusCode.unauthorized:
-            return "User tidak terotentikasi";
+            return errorMessage ?? "User tidak terotentikasi";
           case StatusCode.forbidden:
-            return "User tidak memiliki hak akses";
+            return errorMessage ?? "User tidak memiliki hak akses";
           case StatusCode.notFound:
-            return "Data tidak ditemukan";
+            return errorMessage ?? "Data tidak ditemukan";
           case StatusCode.conflict:
-            return 'Konflik';
+            return errorMessage ?? 'Konflik';
 
           case StatusCode.internalServerError:
-            return "Kesalahan server internal";
+            return errorMessage ?? "Kesalahan server internal";
         }
       }
       break;
@@ -66,6 +74,6 @@ String _handleDioError(DioException error) {
       return "Kesalahan sertifikat server";
     case DioExceptionType.connectionError:
       return "Koneksi ke server gagal";
-    }
+  }
   return "Kesalahan tidak diketahui";
 }

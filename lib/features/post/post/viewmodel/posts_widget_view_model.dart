@@ -1,16 +1,36 @@
 import 'package:riverpod_annotation/riverpod_annotation.dart';
-import 'package:socieaty/features/post/post/model/paginate_post_query.dart';
-import 'package:socieaty/features/post/post/provider/paginate_posts_provider.dart';
-import 'package:socieaty/features/post/post/viewstate/posts_view_state.dart';
-import 'package:socieaty/shared/view_state.dart';
+import 'package:socieaty/features/post/post/model/post.dart';
 
 part 'posts_widget_view_model.g.dart';
 
 @riverpod
 class PostsWidgetViewModel extends _$PostsWidgetViewModel {
   @override
-  PostsViewState build() {
-    final posts = ref.watch(paginatePostsProvider(PaginatePostQuery(offset: 0, limit: 5)));
-    return PostsViewState(posts: IdleState());
+  List<Post> build(String? authorId) {
+    return [];
+  }
+
+  void addPosts(List<Post> posts) {
+    state = [...state, ...posts];
+  }
+
+  void setPosts(List<Post> posts) {
+    state = posts;
+  }
+
+  void updatePosts(Post post, int index) {
+    final newState = [...state];
+    newState[index] = post;
+    state = newState;
+  }
+
+  void removePost(int index) {
+    final newState = [...state];
+    newState.removeAt(index);
+    state = newState;
+  }
+
+  void clearPosts() {
+    state = [];
   }
 }

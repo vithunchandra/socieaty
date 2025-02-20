@@ -14,13 +14,13 @@ import 'package:socieaty/features/food_menu/model/food_menu.dart';
 import 'package:socieaty/features/food_menu/provider/get_all_food_menu_categories_provider.dart';
 import 'package:socieaty/features/food_menu/provider/get_food_menu_provider.dart';
 import 'package:socieaty/features/food_menu/restaurant/view/restaurant_food_menu_item_widget.dart';
-import 'package:socieaty/features/user/model/socieaty_user.dart';
+import 'package:socieaty/features/restaurant/model/socieaty_restaurant.dart';
 import 'package:socieaty/shared/widgets/custom_error_widget.dart';
 import 'package:socieaty/shared/widgets/dotted_divider.dart';
 import 'package:socieaty/shared/widgets/menu_filter_widget.dart';
 
 class RestaurantFoodMenuScreen extends ConsumerStatefulWidget {
-  final SocieatyUser restaurant;
+  final SocieatyRestaurant restaurant;
   const RestaurantFoodMenuScreen({super.key, required this.restaurant});
 
   @override
@@ -64,13 +64,11 @@ class _RestaurantFoodMenuScreenState extends ConsumerState<RestaurantFoodMenuScr
   }
 
   void getLocationName() async {
-    if (widget.restaurant.restaurantData?.location != null) {
-      var location =
-          await LocationHandler.getAddressFromLatLng(widget.restaurant.restaurantData!.location);
-      _locationName = "${location?.street}";
-      if (mounted) {
-        setState(() {});
-      }
+    var location =
+        await LocationHandler.getAddressFromLatLng(widget.restaurant.restaurantData.location);
+    _locationName = "${location?.street}";
+    if (mounted) {
+      setState(() {});
     }
   }
 
@@ -113,10 +111,13 @@ class _RestaurantFoodMenuScreenState extends ConsumerState<RestaurantFoodMenuScr
 
   @override
   Widget build(BuildContext context) {
-    final restaurantMenus = ref.watch(getFoodMenusProvider(_menuFilterFormState));
+    final restaurantMenus = ref.watch(getFoodMenusProvider(
+      restaurantId: widget.restaurant.restaurantData.id,
+      query: _menuFilterFormState,
+    ));
 
-    _isOpen = isNowBetween(widget.restaurant.restaurantData?.openTime.toTimeOfDay(),
-        widget.restaurant.restaurantData?.closeTime.toTimeOfDay());
+    _isOpen = isNowBetween(widget.restaurant.restaurantData.openTime.toTimeOfDay(),
+        widget.restaurant.restaurantData.closeTime.toTimeOfDay());
 
     ref.listen(getAllFoodMenuCategoriesProvider, (_, next) {
       switch (next) {
@@ -188,7 +189,7 @@ class _RestaurantFoodMenuScreenState extends ConsumerState<RestaurantFoodMenuScr
                                           Icon(Icons.check_circle, color: Colors.white, size: 16),
                                           const SizedBox(width: 4),
                                           Text(
-                                              "${_isOpen ? "Buka" : "Tutup"} | ${widget.restaurant.restaurantData?.openTime} - ${widget.restaurant.restaurantData?.closeTime}",
+                                              "${_isOpen ? "Buka" : "Tutup"} | ${widget.restaurant.restaurantData.openTime} - ${widget.restaurant.restaurantData.closeTime}",
                                               style: Theme.of(context)
                                                   .textTheme
                                                   .bodyMedium
@@ -270,28 +271,27 @@ class _RestaurantFoodMenuScreenState extends ConsumerState<RestaurantFoodMenuScr
                             child: Row(
                               mainAxisAlignment: MainAxisAlignment.start,
                               children: [
-                                ...widget.restaurant.restaurantData?.themes.map((theme) {
-                                      return Padding(
-                                        padding: const EdgeInsets.only(right: 4),
-                                        child: Chip(
-                                          backgroundColor: Colors.white,
-                                          side: BorderSide(
-                                            color: AppPallete.primaryColor.withOpacity(0.3),
-                                          ),
-                                          shape: RoundedRectangleBorder(
-                                              borderRadius: BorderRadius.circular(20)),
-                                          padding: const EdgeInsets.symmetric(
-                                              horizontal: 12, vertical: 6),
-                                          label: Text(
-                                            theme.name,
-                                            style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                                                  color: AppPallete.primaryColor,
-                                                ),
-                                          ),
-                                        ),
-                                      );
-                                    }).toList() ??
-                                    [],
+                                ...widget.restaurant.restaurantData.themes.map((theme) {
+                                  return Padding(
+                                    padding: const EdgeInsets.only(right: 4),
+                                    child: Chip(
+                                      backgroundColor: Colors.white,
+                                      side: BorderSide(
+                                        color: AppPallete.primaryColor.withOpacity(0.3),
+                                      ),
+                                      shape: RoundedRectangleBorder(
+                                          borderRadius: BorderRadius.circular(20)),
+                                      padding:
+                                          const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                                      label: Text(
+                                        theme.name,
+                                        style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                                              color: AppPallete.primaryColor,
+                                            ),
+                                      ),
+                                    ),
+                                  );
+                                }),
                               ],
                             ),
                           ),
@@ -434,6 +434,7 @@ class _RestaurantFoodMenuScreenState extends ConsumerState<RestaurantFoodMenuScr
                                 if (index != 0)
                                   Divider(color: AppPallete.neutralColor, height: 0.5),
                                 RestaurantFoodMenuItemWidget(
+                                  restaurantId: widget.restaurant.id,
                                   restaurantMenu: data[index],
                                 ),
                               ],
@@ -446,7 +447,10 @@ class _RestaurantFoodMenuScreenState extends ConsumerState<RestaurantFoodMenuScr
                           title: "Menu items",
                           error: error.toString(),
                           onPressed: () {
-                            ref.invalidate(getFoodMenusProvider(_menuFilterFormState));
+                            ref.invalidate(getFoodMenusProvider(
+                              restaurantId: widget.restaurant.restaurantData.id,
+                              query: _menuFilterFormState,
+                            ));
                           },
                         ),
                       ),

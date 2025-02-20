@@ -8,8 +8,8 @@ import 'package:socieaty/shared/widgets/menu_filter_widget.dart';
 part 'get_food_menu_provider.g.dart';
 
 @riverpod
-Future<List<FoodMenu>> getFoodMenus(Ref ref, MenuFilterFormState query) async {
-  final result = await ref.watch(foodMenuRepositoryProvider).getAllFoodMenu(query);
+Future<List<FoodMenu>> getFoodMenus(Ref ref, {required String restaurantId, required MenuFilterFormState query}) async {
+  final result = await ref.watch(foodMenuRepositoryProvider).getAllFoodMenu(restaurantId, query);
   switch (result) {
     case Success(data: final menus):
       return menus.menus;

@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:dio/dio.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
@@ -6,7 +8,8 @@ import 'package:socieaty/core/network/api_client.dart';
 import 'package:socieaty/core/network/api_result.dart';
 import 'package:socieaty/core/utils/execute_request.dart';
 import 'package:socieaty/features/authentication/repository/auth_local_repository.dart';
-import 'package:socieaty/features/user/model/socieaty_user.dart';
+import 'package:socieaty/features/customer/repository/response/update_customer_profile_response.dart';
+import 'package:socieaty/features/customer/viewstate/update_customer_profile_form_state.dart';
 
 part 'customer_profile_remote_repository.g.dart';
 
@@ -25,10 +28,14 @@ class CustomerProfileRemoteRepository {
     _dio = dio;
   }
 
-  Future<ApiResult<SocieatyUser>> getProfile() {
-    return executeRequest<SocieatyUser>(
-      requestFunction: () => _dio.get('customer/profile'),
-      successParser: (data) => SocieatyUser.fromJson(data),
+  Future<ApiResult<UpdateCustomerProfileResponse>> updateProfile(UpdateCustomerProfileFormState data, File? profilePicture) {
+    final formData = FormData.fromMap({
+      ...data.toJson(),
+      'profilePicture': profilePicture != null ? MultipartFile.fromFileSync(profilePicture.path) : null,
+    });
+    return executeRequest<UpdateCustomerProfileResponse>(
+      requestFunction: () => _dio.put('customer/profile', data: formData),
+      successParser: (data) => UpdateCustomerProfileResponse.fromJson(data),
     );
   }
 }

@@ -4,18 +4,21 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:socieaty/core/theme/app_pallete.dart';
 import 'package:socieaty/features/authentication/repository/auth_local_repository.dart';
+import 'package:socieaty/features/post/post/view/post_sliver_grid_widget.dart';
+import 'package:socieaty/features/restaurant/model/socieaty_restaurant.dart';
 import 'package:socieaty/features/restaurant/view/outlet_home_widget.dart';
-import 'package:socieaty/features/restaurant/view/outlet_post_widget.dart';
 import 'package:socieaty/shared/widgets/header_icon_widget.dart';
 
-class OutletScreen extends ConsumerStatefulWidget {
-  const OutletScreen({super.key});
+class CurrentOutletScreen extends ConsumerStatefulWidget {
+  final SocieatyRestaurant restaurant;
+  const CurrentOutletScreen({super.key, required this.restaurant});
 
   @override
-  ConsumerState<OutletScreen> createState() => _OutletScreenState();
+  ConsumerState<CurrentOutletScreen> createState() => _CurrentOutletScreenState();
 }
 
-class _OutletScreenState extends ConsumerState<OutletScreen> with SingleTickerProviderStateMixin {
+class _CurrentOutletScreenState extends ConsumerState<CurrentOutletScreen>
+    with SingleTickerProviderStateMixin {
   final ScrollController _scrollController = ScrollController();
   final mainHeaderHeightPercentage = 0.5;
   bool _isCollapsed = false;
@@ -71,12 +74,28 @@ class _OutletScreenState extends ConsumerState<OutletScreen> with SingleTickerPr
   @override
   Widget build(BuildContext context) {
     final List<OutletTabs> tabs = [
-      OutletTabs(title: "Home", icon: Icons.home_outlined, widget: OutletHomeWidget()),
+      OutletTabs(
+        title: "Home",
+        icon: Icons.home_outlined,
+        widget: OutletHomeWidget(
+          restaurantId: widget.restaurant.restaurantData.id,
+          onMenuCarouselItemTapped: () {
+            context.push(
+              '/restaurant/dashboard/outlet/menu',
+              extra: widget.restaurant,
+            );
+          },
+          onPostCarouselItemTapped: () {
+            DefaultTabController.of(context).animateTo(1);
+          },
+          onReviewCarouselItemTapped: () {},
+        ),
+      ),
       OutletTabs(
         title: "Post",
         icon: Icons.grid_view_outlined,
-        widget: OutletPostWidget(
-          ref.watch(authLocalRepositoryProvider).getUserData()!,
+        widget: PostSliverGridWidget(
+          authorId: ref.watch(authLocalRepositoryProvider).getUserData()!.id,
         ),
       ),
       OutletTabs(title: "Reviews", icon: Icons.reviews_outlined, widget: Container()),
@@ -85,6 +104,7 @@ class _OutletScreenState extends ConsumerState<OutletScreen> with SingleTickerPr
 
     return DefaultTabController(
       length: 3,
+      initialIndex: 0,
       child: Scaffold(
         backgroundColor: AppPallete.neutralColor.shade50,
         body: NestedScrollView(
@@ -258,10 +278,10 @@ class _OutletScreenState extends ConsumerState<OutletScreen> with SingleTickerPr
                                   Expanded(
                                     child: FilledButton(
                                       onPressed: () {
-                                        context.push('/restaurant/dashboard/outlet/menu',
-                                            extra: ref
-                                                .watch(authLocalRepositoryProvider)
-                                                .getUserData()!);
+                                        context.push(
+                                          '/restaurant/dashboard/outlet/menu',
+                                          extra: widget.restaurant,
+                                        );
                                       },
                                       child: Padding(
                                         padding: const EdgeInsets.symmetric(

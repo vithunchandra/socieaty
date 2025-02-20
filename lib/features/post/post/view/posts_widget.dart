@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/rendering.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:infinite_scroll_pagination/infinite_scroll_pagination.dart';
 import 'package:socieaty/features/authentication/repository/auth_local_repository.dart';
@@ -28,6 +29,17 @@ class _PostsWidgetState extends ConsumerState<PostsWidget> {
 
   late PageController _pageController;
 
+  void _updatePostInPagingController(Post updatedPost) {
+    final itemList = _pagingController.itemList;
+    if (itemList != null) {
+      final index = itemList.indexWhere((post) => post.id == updatedPost.id);
+      if (index != -1) {
+        itemList[index] = updatedPost;
+        _pagingController.itemList = List<Post>.from(itemList);
+      }
+    }
+  }
+
   @override
   void initState() {
     super.initState();
@@ -35,7 +47,7 @@ class _PostsWidgetState extends ConsumerState<PostsWidget> {
     // Set up your query. If you have an initial query, use it.
     _query = widget.initialQuery ?? PaginatePostQuery(offset: 0, limit: 5);
 
-    // Initialize PageController with the correct initialPage based on your query.
+    // Initialize the paging and page controllers.
     _pagingController = PagingController<int, Post>(firstPageKey: _query.offset);
     _pageController = PageController(initialPage: _query.offset);
 
@@ -64,6 +76,7 @@ class _PostsWidgetState extends ConsumerState<PostsWidget> {
         final nextPageKey = pageKey + newPosts.length;
         _pagingController.appendPage(newPosts, nextPageKey);
       }
+      debugPrint("HEiiiii");
     } catch (error) {
       _pagingController.error = error;
     }
@@ -79,10 +92,15 @@ class _PostsWidgetState extends ConsumerState<PostsWidget> {
   @override
   Widget build(BuildContext context) {
     final builderDelegate = PagedChildBuilderDelegate<Post>(
-      itemBuilder: (context, item, index) => PostDetailWidget(
-        post: item,
-        userId: ref.watch(authLocalRepositoryProvider).getUserData()!.id,
-      ),
+      itemBuilder: (context, item, index) {
+        return PostDetailWidget(
+          post: item,
+          userId: ref.watch(authLocalRepositoryProvider).getUserData()!.id,
+          onUpdate: (post) {
+            _updatePostInPagingController(post);
+          },
+        );
+      },
       firstPageProgressIndicatorBuilder: (_) => LoadingIndicatorWidget(),
       newPageProgressIndicatorBuilder: (_) => LoadingIndicatorWidget(),
       firstPageErrorIndicatorBuilder: (context) => CustomErrorWidget(

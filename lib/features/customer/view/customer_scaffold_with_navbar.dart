@@ -36,7 +36,7 @@ class _CustomerScaffoldWithNavbarState extends ConsumerState<CustomerScaffoldWit
     if (index == 2) {
       context.push('/create_content');
     } else if (index == 1) {
-      context.push('/livestream');
+      context.push('/livestreams');
     } else {
       if (index == 0 && widget.navigationShell.currentIndex == 0) {
         ref.invalidate(allPostProvider);

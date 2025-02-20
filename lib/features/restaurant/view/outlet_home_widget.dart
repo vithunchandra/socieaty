@@ -1,9 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_carousel_widget/flutter_carousel_widget.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:go_router/go_router.dart';
 import 'package:socieaty/core/theme/app_pallete.dart';
-import 'package:socieaty/features/authentication/repository/auth_local_repository.dart';
 import 'package:socieaty/features/post/post/model/paginate_post_query.dart';
 import 'package:socieaty/features/post/post/provider/paginate_posts_provider.dart';
 import 'package:socieaty/features/post/post/view/post_carousel_item_widget.dart';
@@ -14,7 +12,17 @@ import 'package:socieaty/shared/widgets/loading_indicator_widget.dart';
 import 'package:socieaty/shared/widgets/menu_filter_widget.dart';
 
 class OutletHomeWidget extends ConsumerStatefulWidget {
-  const OutletHomeWidget({super.key});
+  final String restaurantId;
+  final VoidCallback onMenuCarouselItemTapped;
+  final VoidCallback onPostCarouselItemTapped;
+  final VoidCallback onReviewCarouselItemTapped;
+  const OutletHomeWidget({
+    super.key,
+    required this.onMenuCarouselItemTapped,
+    required this.onPostCarouselItemTapped,
+    required this.onReviewCarouselItemTapped,
+    required this.restaurantId,
+  });
 
   @override
   ConsumerState<OutletHomeWidget> createState() => _OutletHomeWidgetState();
@@ -27,7 +35,10 @@ class _OutletHomeWidgetState extends ConsumerState<OutletHomeWidget> {
   @override
   Widget build(BuildContext context) {
     final screenWidth = MediaQuery.of(context).size.width;
-    final restaurantMenus = ref.watch(getFoodMenusProvider(MenuFilterFormState()));
+    final restaurantMenus = ref.watch(getFoodMenusProvider(
+      restaurantId: widget.restaurantId,
+      query: MenuFilterFormState(),
+    ));
     final posts = ref.watch(
       paginatePostsProvider(PaginatePostQuery(offset: 0, limit: 5)),
     );
@@ -56,6 +67,7 @@ class _OutletHomeWidgetState extends ConsumerState<OutletHomeWidget> {
             ),
             SizedBox(height: 12),
             restaurantMenus.when(data: (data) {
+              debugPrint("data: $data");
               final partialData = data.take(5).toList();
               return ExpandableCarousel(
                 options: ExpandableCarouselOptions(
@@ -72,10 +84,7 @@ class _OutletHomeWidgetState extends ConsumerState<OutletHomeWidget> {
                 items: partialData.map((menu) {
                   return GestureDetector(
                     onTap: () {
-                      context.push(
-                        '/restaurant/dashboard/outlet/menu',
-                        extra: ref.watch(authLocalRepositoryProvider).getUserData(),
-                      );
+                      widget.onMenuCarouselItemTapped();
                     },
                     child: Container(
                       clipBehavior: Clip.none,
@@ -139,6 +148,9 @@ class _OutletHomeWidgetState extends ConsumerState<OutletHomeWidget> {
                       controller: carouselController,
                       itemSnapping: true,
                       padding: EdgeInsets.symmetric(horizontal: 3.0),
+                      onTap: (index) {
+                        widget.onPostCarouselItemTapped();
+                      },
                       shrinkExtent: screenWidth * 0.1,
                       flexWeights: data.posts.length > 2 ? [1, 4, 1] : [1],
                       children:

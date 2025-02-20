@@ -14,9 +14,11 @@ import 'package:socieaty/features/food_menu/repository/response/delete_food_menu
 import 'package:socieaty/features/food_menu/repository/response/get_all_menu_categories_response.dart';
 import 'package:socieaty/features/food_menu/repository/response/get_all_food_menu_response.dart';
 import 'package:socieaty/features/food_menu/repository/response/get_food_menu_response.dart';
+import 'package:socieaty/features/food_menu/repository/response/paginate_food_menu_response.dart';
 import 'package:socieaty/features/food_menu/repository/response/update_food_menu_response.dart';
 import 'package:socieaty/features/food_menu/repository/response/update_food_menu_stock_availablity.dart';
 import 'package:socieaty/features/food_menu/restaurant/viewstate/create_food_menu_form_state.dart';
+import 'package:socieaty/features/food_menu/restaurant/viewstate/paginate_menu_form_state.dart';
 import 'package:socieaty/features/food_menu/restaurant/viewstate/update_food_menu_form_state.dart';
 import 'package:socieaty/features/user/model/socieaty_user.dart';
 import 'package:socieaty/shared/widgets/menu_filter_widget.dart';
@@ -54,7 +56,7 @@ class FoodMenuRepository {
     );
 
     return executeRequest<CreateFoodMenuResponse>(
-      requestFunction: () => dio.post('restaurant/menu', data: formData),
+      requestFunction: () => dio.post('menu', data: formData),
       successParser: (data) => CreateFoodMenuResponse.fromJson(data),
     );
   }
@@ -77,7 +79,7 @@ class FoodMenuRepository {
     }
 
     return executeRequest<UpdateFoodMenuResponse>(
-      requestFunction: () => dio.put('restaurant/menu/$menuId', data: formData),
+      requestFunction: () => dio.put('menu/$menuId', data: formData),
       successParser: (data) => UpdateFoodMenuResponse.fromJson(data),
     );
   }
@@ -87,20 +89,36 @@ class FoodMenuRepository {
     bool isAvailable,
   ) {
     return executeRequest<UpdateFoodMenuStockAvailabilityResponse>(
-      requestFunction: () =>
-          dio.put('restaurant/menu/$menuId/stock', data: {'isAvailable': isAvailable}),
+      requestFunction: () => dio.put('menu/$menuId/stock', data: {'isAvailable': isAvailable}),
       successParser: (data) => UpdateFoodMenuStockAvailabilityResponse.fromJson(data),
     );
   }
 
   Future<ApiResult<DeleteFoodMenuResponse>> deleteFoodMenu(String menuId) {
     return executeRequest<DeleteFoodMenuResponse>(
-      requestFunction: () => dio.delete('restaurant/menu/$menuId'),
+      requestFunction: () => dio.delete('menu/$menuId'),
       successParser: (data) => DeleteFoodMenuResponse.fromJson(data),
     );
   }
 
-  Future<ApiResult<GetAllFoodMenuResponse>> getAllFoodMenu(MenuFilterFormState? query) {
+  Future<ApiResult<PaginateFoodMenuResponse>> getPaginatedFoodMenu(PaginateMenuFormState? query) {
+    final queryData = {
+      'searchQuery': query?.searchQuery,
+      'minRating': query?.minRating ?? 0,
+      'priceConditionIds[]': query?.priceRanges,
+      'categoryIds[]': query?.categories,
+      'offset': query?.offset,
+      'limit': query?.limit,
+    };
+    debugPrint('queryData: $queryData');
+    return executeRequest<PaginateFoodMenuResponse>(
+      requestFunction: () => dio.get('menu', queryParameters: queryData),
+      successParser: (data) => PaginateFoodMenuResponse.fromJson(data),
+    );
+  }
+
+  Future<ApiResult<GetAllFoodMenuResponse>> getAllFoodMenu(
+      String restaurantId, MenuFilterFormState? query) {
     final queryData = {
       'searchQuery': query?.searchQuery ?? '',
       'minRating': query?.minRating ?? 0,
@@ -110,7 +128,7 @@ class FoodMenuRepository {
     debugPrint('queryData: $queryData');
     return executeRequest<GetAllFoodMenuResponse>(
       requestFunction: () => dio.get(
-        'restaurant/menu/${restaurant.restaurantData?.id}',
+        'menu/$restaurantId',
         queryParameters: queryData,
       ),
       successParser: (data) => GetAllFoodMenuResponse.fromJson(data),
@@ -119,14 +137,14 @@ class FoodMenuRepository {
 
   Future<ApiResult<GetFoodMenuResponse>> getFoodMenu(String menuId) {
     return executeRequest<GetFoodMenuResponse>(
-      requestFunction: () => dio.get('restaurant/menu/$menuId'),
+      requestFunction: () => dio.get('menu/$menuId'),
       successParser: (data) => GetFoodMenuResponse.fromJson(data),
     );
   }
 
   Future<ApiResult<GetAllMenuCategoriesResponse>> getAllMenuCategories() {
     return executeRequest<GetAllMenuCategoriesResponse>(
-      requestFunction: () => dio.get('restaurant/menu/categories'),
+      requestFunction: () => dio.get('menu/categories'),
       successParser: (data) => GetAllMenuCategoriesResponse.fromJson(data),
     );
   }
