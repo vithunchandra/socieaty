@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 import 'package:socieaty/core/theme/theme.dart';
 
-part 'app_theme.g.dart';
+part 'app_theme_provider.g.dart';
 
 @riverpod
 class AppTheme extends _$AppTheme {

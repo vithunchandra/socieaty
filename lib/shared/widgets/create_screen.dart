@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:socieaty/app_theme.dart';
+import 'package:socieaty/app_theme_provider.dart';
 import 'package:socieaty/core/theme/theme.dart';
 import 'package:socieaty/features/livestream/view/setup_livestream_screen.dart';
 import 'package:socieaty/features/post/post/view/create_post_screen.dart';

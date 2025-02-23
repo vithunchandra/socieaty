@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:socieaty/app_theme.dart';
+import 'package:socieaty/app_theme_provider.dart';
 import 'package:socieaty/core/routes/routes.dart';
 import 'package:socieaty/core/theme/theme.dart';
 import 'package:socieaty/features/authentication/repository/auth_local_repository.dart';

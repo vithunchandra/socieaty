@@ -4,6 +4,7 @@ import 'package:socieaty/features/home/customer/viewmodel/home_screen_view_model
 import 'package:socieaty/shared/provider/navigation_provider.dart';
 import 'package:socieaty/shared/widgets/loading_indicator_widget.dart';
 import 'package:video_player/video_player.dart';
+import 'package:visibility_detector/visibility_detector.dart';
 
 class VideoPlayerWidget extends ConsumerStatefulWidget {
   final String videoUrl;
@@ -87,19 +88,29 @@ class _VideoPlayerWidgetState extends ConsumerState<VideoPlayerWidget> {
       return const Center(child: LoadingIndicatorWidget());
     }
 
-    return GestureDetector(
-      onLongPress: () {
-        _videoController.pause();
+    return VisibilityDetector(
+      key: Key(widget.postId),
+      onVisibilityChanged: (VisibilityInfo info) {
+        // if (info.visibleFraction == 0) {
+        //   _videoController.pause();
+        // } else {
+        //   _videoController.play();
+        // }
       },
-      onLongPressEnd: (details) {
-        _videoController.play();
-      },
-      onTap: () {
-        _videoController.play();
-      },
-      child: AspectRatio(
-        aspectRatio: _videoController.value.aspectRatio,
-        child: VideoPlayer(_videoController),
+      child: GestureDetector(
+        onLongPress: () {
+          _videoController.pause();
+        },
+        onLongPressEnd: (details) {
+          _videoController.play();
+        },
+        onTap: () {
+          _videoController.play();
+        },
+        child: AspectRatio(
+          aspectRatio: _videoController.value.aspectRatio,
+          child: VideoPlayer(_videoController),
+        ),
       ),
     );
   }

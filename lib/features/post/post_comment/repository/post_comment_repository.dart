@@ -6,10 +6,10 @@ import 'package:socieaty/core/network/api_client.dart';
 import 'package:socieaty/core/network/api_result.dart';
 import 'package:socieaty/core/utils/execute_request.dart';
 import 'package:socieaty/features/authentication/repository/auth_local_repository.dart';
-import 'package:socieaty/features/post/post_comment/model/create_post_comment_response.dart';
-import 'package:socieaty/features/post/post_comment/model/get_is_liked_response.dart';
-import 'package:socieaty/features/post/post_comment/model/get_post_comments_response.dart';
-import 'package:socieaty/features/post/post_comment/model/like_post_comment_response.dart';
+import 'package:socieaty/features/post/post_comment/repository/response/create_post_comment_response.dart';
+import 'package:socieaty/features/post/post_comment/repository/response/get_is_liked_response.dart';
+import 'package:socieaty/features/post/post_comment/repository/response/get_post_comments_response.dart';
+import 'package:socieaty/features/post/post_comment/repository/response/like_post_comment_response.dart';
 import 'package:socieaty/features/post/post_comment/viewstate/post_comments_form_state.dart';
 
 part 'post_comment_repository.g.dart';

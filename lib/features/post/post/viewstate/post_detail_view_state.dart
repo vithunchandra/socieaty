@@ -1,5 +1,5 @@
 import 'package:freezed_annotation/freezed_annotation.dart';
-import 'package:socieaty/features/post/post/model/like_post_response.dart';
+import 'package:socieaty/features/post/post/repository/response/like_post_response.dart';
 import 'package:socieaty/shared/view_state.dart';
 
 part 'post_detail_view_state.freezed.dart';

@@ -2,8 +2,8 @@ import 'dart:io';
 
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 import 'package:socieaty/core/network/api_result.dart';
-import 'package:socieaty/features/authentication/model/signup_restaurant_response.dart';
 import 'package:socieaty/features/authentication/repository/auth_remote_repository.dart';
+import 'package:socieaty/features/authentication/repository/response/signup_restaurant_response.dart';
 import 'package:socieaty/features/authentication/viewstate/signup_restaurant_form_state.dart';
 import 'package:socieaty/features/authentication/viewstate/signup_restaurant_view_state.dart';
 import 'package:socieaty/shared/view_state.dart';

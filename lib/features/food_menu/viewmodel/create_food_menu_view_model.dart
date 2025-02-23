@@ -3,8 +3,8 @@ import 'dart:io';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 import 'package:socieaty/core/network/api_result.dart';
 import 'package:socieaty/features/food_menu/repository/food_menu_repository.dart';
-import 'package:socieaty/features/food_menu/restaurant/viewstate/create_food_menu_form_state.dart';
-import 'package:socieaty/features/food_menu/restaurant/viewstate/create_food_menu_view_state.dart';
+import 'package:socieaty/features/food_menu/viewstate/create_food_menu_form_state.dart';
+import 'package:socieaty/features/food_menu/viewstate/create_food_menu_view_state.dart';
 import 'package:socieaty/shared/view_state.dart';
 
 part 'create_food_menu_view_model.g.dart';

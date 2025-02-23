@@ -13,7 +13,7 @@ import 'package:socieaty/core/utils/show_snackbar.dart';
 import 'package:socieaty/features/livestream/model/live_room.dart';
 import 'package:socieaty/features/livestream/model/livestream_comment.dart';
 import 'package:socieaty/features/livestream/model/livestream_likes.dart';
-import 'package:socieaty/features/livestream/model/send_livestream_like_response.dart';
+import 'package:socieaty/features/livestream/repository/response/send_livestream_like_response.dart';
 import 'package:socieaty/features/livestream/provider/join_livestream_provider.dart';
 import 'package:socieaty/features/livestream/view/live_disconnected_screen.dart';
 import 'package:socieaty/features/livestream/view/live_ended_screen.dart';

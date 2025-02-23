@@ -3,21 +3,22 @@ import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:socieaty/core/theme/app_pallete.dart';
-import 'package:socieaty/features/authentication/repository/auth_local_repository.dart';
+import 'package:socieaty/core/utils/custom_extension.dart';
+import 'package:socieaty/core/utils/time_utils.dart';
 import 'package:socieaty/features/post/post/view/post_sliver_grid_widget.dart';
 import 'package:socieaty/features/restaurant/model/socieaty_restaurant.dart';
 import 'package:socieaty/features/restaurant/view/outlet_home_widget.dart';
 import 'package:socieaty/shared/widgets/header_icon_widget.dart';
 
-class CurrentOutletScreen extends ConsumerStatefulWidget {
+class OwnerOutletScreen extends ConsumerStatefulWidget {
   final SocieatyRestaurant restaurant;
-  const CurrentOutletScreen({super.key, required this.restaurant});
+  const OwnerOutletScreen({super.key, required this.restaurant});
 
   @override
-  ConsumerState<CurrentOutletScreen> createState() => _CurrentOutletScreenState();
+  ConsumerState<OwnerOutletScreen> createState() => _OwnerOutletScreenState();
 }
 
-class _CurrentOutletScreenState extends ConsumerState<CurrentOutletScreen>
+class _OwnerOutletScreenState extends ConsumerState<OwnerOutletScreen>
     with SingleTickerProviderStateMixin {
   final ScrollController _scrollController = ScrollController();
   final mainHeaderHeightPercentage = 0.5;
@@ -73,12 +74,15 @@ class _CurrentOutletScreenState extends ConsumerState<CurrentOutletScreen>
 
   @override
   Widget build(BuildContext context) {
+    final isOpen = isNowBetween(widget.restaurant.restaurantData.openTime.toTimeOfDay(),
+        widget.restaurant.restaurantData.closeTime.toTimeOfDay());
+
     final List<OutletTabs> tabs = [
       OutletTabs(
         title: "Home",
         icon: Icons.home_outlined,
         widget: OutletHomeWidget(
-          restaurantId: widget.restaurant.restaurantData.id,
+          restaurant: widget.restaurant,
           onMenuCarouselItemTapped: () {
             context.push(
               '/restaurant/dashboard/outlet/menu',
@@ -95,7 +99,7 @@ class _CurrentOutletScreenState extends ConsumerState<CurrentOutletScreen>
         title: "Post",
         icon: Icons.grid_view_outlined,
         widget: PostSliverGridWidget(
-          authorId: ref.watch(authLocalRepositoryProvider).getUserData()!.id,
+          authorId: widget.restaurant.id,
         ),
       ),
       OutletTabs(title: "Reviews", icon: Icons.reviews_outlined, widget: Container()),
@@ -173,7 +177,7 @@ class _CurrentOutletScreenState extends ConsumerState<CurrentOutletScreen>
                                   crossAxisAlignment: CrossAxisAlignment.start,
                                   children: [
                                     Text(
-                                      "Socieaty",
+                                      widget.restaurant.name,
                                       style: Theme.of(context).textTheme.headlineLarge?.copyWith(
                                             color: Colors.white,
                                             fontWeight: FontWeight.bold,
@@ -200,7 +204,7 @@ class _CurrentOutletScreenState extends ConsumerState<CurrentOutletScreen>
                                               color: AppPallete.primaryColor, size: 16),
                                           const SizedBox(width: 4),
                                           Text(
-                                            "Open Now | 12pm - 1am",
+                                            "${isOpen ? "Open Now" : "Closed"} | ${widget.restaurant.restaurantData.openTime} - ${widget.restaurant.restaurantData.closeTime}",
                                             style: Theme.of(context).textTheme.bodyMedium?.copyWith(
                                                   color: Colors.white,
                                                 ),
@@ -380,7 +384,19 @@ class _CurrentOutletScreenState extends ConsumerState<CurrentOutletScreen>
                         ),
                         if (tab.title == "Home")
                           SliverToBoxAdapter(
-                            child: tab.widget,
+                            child: OutletHomeWidget(
+                              restaurant: widget.restaurant,
+                              onMenuCarouselItemTapped: () {
+                                context.push(
+                                  '/restaurant/dashboard/outlet/menu',
+                                  extra: widget.restaurant,
+                                );
+                              },
+                              onPostCarouselItemTapped: () {
+                                DefaultTabController.of(context).animateTo(1);
+                              },
+                              onReviewCarouselItemTapped: () {},
+                            ),
                           ),
                         if (tab.title == "Post") tab.widget
                       ],

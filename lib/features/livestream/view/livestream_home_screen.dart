@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
-import 'package:socieaty/app_theme.dart';
+import 'package:socieaty/app_theme_provider.dart';
 import 'package:socieaty/core/theme/theme.dart';
 import 'package:socieaty/core/utils/show_snackbar.dart';
 import 'package:socieaty/features/livestream/model/live_room.dart';

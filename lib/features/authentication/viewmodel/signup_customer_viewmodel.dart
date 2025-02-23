@@ -1,5 +1,5 @@
 import 'package:riverpod_annotation/riverpod_annotation.dart';
-import 'package:socieaty/features/authentication/model/signup_customer_response.dart';
+import 'package:socieaty/features/authentication/repository/response/signup_customer_response.dart';
 import 'package:socieaty/features/authentication/viewstate/signup_customer_form_state.dart';
 import 'package:socieaty/features/authentication/viewstate/signup_customer_view_state.dart';
 import 'package:socieaty/shared/view_state.dart';

@@ -3,13 +3,13 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
-import 'package:socieaty/app_theme.dart';
+import 'package:socieaty/app_theme_provider.dart';
 import 'package:socieaty/core/theme/app_pallete.dart';
 import 'package:socieaty/core/theme/theme.dart';
 import 'package:socieaty/core/utils/custom_extension.dart';
 import 'package:socieaty/core/utils/location_handler.dart';
 import 'package:socieaty/core/utils/show_snackbar.dart';
-import 'package:socieaty/features/post/post/model/like_post_response.dart';
+import 'package:socieaty/features/post/post/repository/response/like_post_response.dart';
 import 'package:socieaty/features/post/post/model/post.dart';
 import 'package:socieaty/features/post/post/viewmodel/post_detail_view_model.dart';
 import 'package:socieaty/features/post/post_comment/view/post_comments_widget.dart';
@@ -236,8 +236,7 @@ class _PostDetailWidgetState extends ConsumerState<PostDetailWidget> {
                       GestureDetector(
                         onTap: () async {
                           ref.read(appThemeProvider.notifier).setTheme(SocieatyAppTheme.lightTheme);
-                          await context.push('/${widget.post.authorId}');
-                          ref.read(appThemeProvider.notifier).setTheme(SocieatyAppTheme.darkTheme);
+                          context.pushReplacement('/${widget.post.authorId}');
                         },
                         child: Material(
                           color: AppPallete.neutralColor.shade50,

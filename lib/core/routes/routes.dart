@@ -14,6 +14,7 @@ import 'package:socieaty/features/authentication/view/splash_screen.dart';
 import 'package:socieaty/features/authentication/viewstate/signup_restaurant_form_state.dart';
 import 'package:socieaty/features/customer/model/socieaty_customer.dart';
 import 'package:socieaty/features/customer/view/update_customer_profile_screen.dart';
+import 'package:socieaty/features/food_menu/view/outlet_food_menu_screen.dart';
 import 'package:socieaty/features/home/customer/view/home_screen.dart';
 import 'package:socieaty/features/home/restaurant/view/restaurant_dashboard_screen.dart';
 import 'package:socieaty/features/livestream/view/livestream_home_screen.dart';
@@ -21,9 +22,9 @@ import 'package:socieaty/features/map/view/select_location.dart';
 import 'package:socieaty/features/post/post/view/post_screen.dart';
 import 'package:socieaty/features/restaurant/model/socieaty_restaurant.dart';
 import 'package:socieaty/features/restaurant/view/restaurant_scaffold_with_navbar.dart';
-import 'package:socieaty/features/food_menu/restaurant/view/create_food_menu_screen.dart';
-import 'package:socieaty/features/food_menu/restaurant/view/restaurant_food_menu_screen.dart';
-import 'package:socieaty/features/food_menu/restaurant/view/update_food_menu_screen.dart';
+import 'package:socieaty/features/food_menu/view/create_food_menu_screen.dart';
+import 'package:socieaty/features/food_menu/view/owner_food_menu_screen.dart';
+import 'package:socieaty/features/food_menu/view/update_food_menu_screen.dart';
 import 'package:socieaty/features/shop/customer/view/shop_screen.dart';
 import 'package:socieaty/features/shop/customer/view/shop_search_screen.dart';
 import 'package:socieaty/features/transaction/restaurant/view/restaurant_transaction_screen.dart';
@@ -73,11 +74,6 @@ GoRouter router(Ref ref) {
         builder: (context, state) => PostScreen(
           args: state.extra as PostScreenArgs,
         ),
-      ),
-      GoRoute(
-        path: '/:userId',
-        builder: (context, state) =>
-            ProfileLoaderScreen(userId: state.pathParameters['userId'] ?? ''),
       ),
       StatefulShellRoute.indexedStack(
         builder: (context, state, navigationShell) {
@@ -185,7 +181,7 @@ GoRouter router(Ref ref) {
                     path: "/outlet/menu",
                     parentNavigatorKey: rootNavigatorKey,
                     builder: (context, state) =>
-                        RestaurantFoodMenuScreen(restaurant: state.extra as SocieatyRestaurant),
+                        OwnerFoodMenuScreen(restaurant: state.extra as SocieatyRestaurant),
                     routes: [
                       GoRoute(
                         path: '/create',
@@ -363,6 +359,19 @@ GoRouter router(Ref ref) {
                 ),
               ),
             ],
+          ),
+        ],
+      ),
+      GoRoute(
+        path: '/:userId',
+        builder: (context, state) =>
+            ProfileLoaderScreen(userId: state.pathParameters['userId'] ?? ''),
+        routes: [
+          GoRoute(
+            path: 'shop',
+            builder: (context, state) => OutletFoodMenuScreen(
+              restaurant: state.extra as SocieatyRestaurant,
+            ),
           ),
         ],
       ),

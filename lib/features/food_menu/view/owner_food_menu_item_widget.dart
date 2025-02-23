@@ -8,27 +8,27 @@ import 'package:socieaty/core/theme/app_pallete.dart';
 import 'package:socieaty/core/utils/custom_extension.dart';
 import 'package:socieaty/core/utils/show_snackbar.dart';
 import 'package:socieaty/features/food_menu/model/food_menu.dart';
-import 'package:socieaty/features/food_menu/restaurant/view/restaurant_food_menu_detail_widget.dart';
-import 'package:socieaty/features/food_menu/restaurant/view/update_food_menu_screen.dart';
-import 'package:socieaty/features/food_menu/restaurant/viewmodel/food_menu_item_widget_view_model.dart';
+import 'package:socieaty/features/food_menu/view/owner_food_menu_detail_widget.dart';
+import 'package:socieaty/features/food_menu/view/update_food_menu_screen.dart';
+import 'package:socieaty/features/food_menu/viewmodel/food_menu_item_widget_view_model.dart';
 import 'package:socieaty/shared/view_state.dart';
 import 'package:socieaty/shared/widgets/image_error_widget.dart';
 import 'package:socieaty/shared/widgets/image_loading_widget.dart';
 
-class RestaurantFoodMenuItemWidget extends ConsumerStatefulWidget {
+class OwnerFoodMenuItemWidget extends ConsumerStatefulWidget {
   final String restaurantId;
   final FoodMenu restaurantMenu;
-  const RestaurantFoodMenuItemWidget({
+  const OwnerFoodMenuItemWidget({
     super.key,
     required this.restaurantId,
     required this.restaurantMenu,
   });
 
   @override
-  ConsumerState<RestaurantFoodMenuItemWidget> createState() => _RestaurantFoodMenuItemWidgetState();
+  ConsumerState<OwnerFoodMenuItemWidget> createState() => _OwnerFoodMenuItemWidgetState();
 }
 
-class _RestaurantFoodMenuItemWidgetState extends ConsumerState<RestaurantFoodMenuItemWidget> {
+class _OwnerFoodMenuItemWidgetState extends ConsumerState<OwnerFoodMenuItemWidget> {
   bool _isAvailable = true;
   late FoodMenu _menu;
   Timer? _debounce;
@@ -42,7 +42,7 @@ class _RestaurantFoodMenuItemWidgetState extends ConsumerState<RestaurantFoodMen
   }
 
   @override
-  void didUpdateWidget(RestaurantFoodMenuItemWidget oldWidget) {
+  void didUpdateWidget(OwnerFoodMenuItemWidget oldWidget) {
     super.didUpdateWidget(oldWidget);
     _menu = widget.restaurantMenu;
     _isAvailable = _menu.isStockAvailable;
@@ -90,7 +90,7 @@ class _RestaurantFoodMenuItemWidgetState extends ConsumerState<RestaurantFoodMen
           useRootNavigator: true,
           isScrollControlled: true,
           useSafeArea: true,
-          builder: (context) => RestaurantFoodMenuDetailWidget(
+          builder: (context) => OwnerFoodMenuDetailWidget(
             restaurantId: widget.restaurantMenu.restaurantId,
             restaurantMenu: _menu,
           ),

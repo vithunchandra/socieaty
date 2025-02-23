@@ -9,9 +9,9 @@ import 'package:socieaty/core/utils/custom_extension.dart';
 import 'package:socieaty/core/utils/show_snackbar.dart';
 import 'package:socieaty/features/food_menu/model/food_menu.dart';
 import 'package:socieaty/features/food_menu/provider/get_food_menu_provider.dart';
-import 'package:socieaty/features/food_menu/restaurant/view/update_food_menu_screen.dart';
-import 'package:socieaty/features/food_menu/restaurant/viewmodel/food_menu_detail_widget_view_model.dart';
-import 'package:socieaty/features/food_menu/restaurant/viewmodel/food_menu_item_widget_view_model.dart';
+import 'package:socieaty/features/food_menu/view/update_food_menu_screen.dart';
+import 'package:socieaty/features/food_menu/viewmodel/food_menu_detail_widget_view_model.dart';
+import 'package:socieaty/features/food_menu/viewmodel/food_menu_item_widget_view_model.dart';
 import 'package:socieaty/shared/view_state.dart';
 import 'package:socieaty/shared/widgets/image_error_widget.dart';
 import 'package:socieaty/shared/widgets/image_loading_widget.dart';
@@ -19,21 +19,20 @@ import 'package:socieaty/shared/widgets/loading_indicator_widget.dart';
 import 'package:socieaty/shared/widgets/delete_confirmation_dialog.dart';
 import 'package:socieaty/shared/widgets/menu_filter_widget.dart';
 
-class RestaurantFoodMenuDetailWidget extends ConsumerStatefulWidget {
+class OwnerFoodMenuDetailWidget extends ConsumerStatefulWidget {
   final String restaurantId;
   final FoodMenu restaurantMenu;
-  const RestaurantFoodMenuDetailWidget({
+  const OwnerFoodMenuDetailWidget({
     super.key,
     required this.restaurantId,
     required this.restaurantMenu,
   });
 
   @override
-  ConsumerState<RestaurantFoodMenuDetailWidget> createState() =>
-      _RestaurantFoodMenuDetailWidgetState();
+  ConsumerState<OwnerFoodMenuDetailWidget> createState() => _OwnerFoodMenuDetailWidgetState();
 }
 
-class _RestaurantFoodMenuDetailWidgetState extends ConsumerState<RestaurantFoodMenuDetailWidget> {
+class _OwnerFoodMenuDetailWidgetState extends ConsumerState<OwnerFoodMenuDetailWidget> {
   late FoodMenu _menu;
   bool _isAvailable = false;
   Timer? _debounce;
@@ -47,7 +46,7 @@ class _RestaurantFoodMenuDetailWidgetState extends ConsumerState<RestaurantFoodM
   }
 
   @override
-  void didUpdateWidget(RestaurantFoodMenuDetailWidget oldWidget) {
+  void didUpdateWidget(OwnerFoodMenuDetailWidget oldWidget) {
     super.didUpdateWidget(oldWidget);
     debugPrint('oldWidget: ${oldWidget.restaurantMenu}');
     debugPrint('widget: ${widget.restaurantMenu}');
@@ -92,7 +91,8 @@ class _RestaurantFoodMenuDetailWidgetState extends ConsumerState<RestaurantFoodM
 
       switch (next.deletedMenuMessage) {
         case SuccessState():
-          ref.invalidate(getFoodMenusProvider(restaurantId:  widget.restaurantId, query: MenuFilterFormState()));
+          ref.invalidate(getFoodMenusProvider(
+              restaurantId: widget.restaurantId, query: MenuFilterFormState()));
           ref.invalidate(foodMenuItemWidgetViewModelProvider(_menu.id));
           ref.invalidate(foodMenuDetailWidgetViewModelProvider(_menu.id));
           context.pop();

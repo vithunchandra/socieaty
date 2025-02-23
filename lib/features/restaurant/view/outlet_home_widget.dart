@@ -2,17 +2,18 @@ import 'package:flutter/material.dart';
 import 'package:flutter_carousel_widget/flutter_carousel_widget.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:socieaty/core/theme/app_pallete.dart';
-import 'package:socieaty/features/post/post/model/paginate_post_query.dart';
+import 'package:socieaty/features/post/post/repository/response/paginate_post_query.dart';
 import 'package:socieaty/features/post/post/provider/paginate_posts_provider.dart';
 import 'package:socieaty/features/post/post/view/post_carousel_item_widget.dart';
 import 'package:socieaty/features/food_menu/provider/get_food_menu_provider.dart';
-import 'package:socieaty/features/food_menu/restaurant/view/food_menu_highlight_item_widget.dart';
+import 'package:socieaty/features/food_menu/view/food_menu_highlight_item_widget.dart';
+import 'package:socieaty/features/restaurant/model/socieaty_restaurant.dart';
 import 'package:socieaty/shared/widgets/custom_error_widget.dart';
 import 'package:socieaty/shared/widgets/loading_indicator_widget.dart';
 import 'package:socieaty/shared/widgets/menu_filter_widget.dart';
 
 class OutletHomeWidget extends ConsumerStatefulWidget {
-  final String restaurantId;
+  final SocieatyRestaurant restaurant;
   final VoidCallback onMenuCarouselItemTapped;
   final VoidCallback onPostCarouselItemTapped;
   final VoidCallback onReviewCarouselItemTapped;
@@ -21,7 +22,7 @@ class OutletHomeWidget extends ConsumerStatefulWidget {
     required this.onMenuCarouselItemTapped,
     required this.onPostCarouselItemTapped,
     required this.onReviewCarouselItemTapped,
-    required this.restaurantId,
+    required this.restaurant,
   });
 
   @override
@@ -36,11 +37,11 @@ class _OutletHomeWidgetState extends ConsumerState<OutletHomeWidget> {
   Widget build(BuildContext context) {
     final screenWidth = MediaQuery.of(context).size.width;
     final restaurantMenus = ref.watch(getFoodMenusProvider(
-      restaurantId: widget.restaurantId,
+      restaurantId: widget.restaurant.restaurantData.id,
       query: MenuFilterFormState(),
     ));
     final posts = ref.watch(
-      paginatePostsProvider(PaginatePostQuery(offset: 0, limit: 5)),
+      paginatePostsProvider(PaginatePostQuery(offset: 0, limit: 5, authorId: widget.restaurant.id)),
     );
 
     return SizedBox(

@@ -7,7 +7,7 @@ import 'package:socieaty/features/authentication/provider/get_user_data_provider
 import 'package:socieaty/features/authentication/repository/auth_local_repository.dart';
 import 'package:socieaty/features/customer/view/current_customer_profile_screen.dart';
 import 'package:socieaty/features/customer/view/others_customer_profile_screen.dart';
-import 'package:socieaty/features/restaurant/view/current_outlet_screen.dart';
+import 'package:socieaty/features/restaurant/view/owner_outlet_screen.dart';
 import 'package:socieaty/features/restaurant/view/other_outlet_screen.dart';
 import 'package:socieaty/shared/widgets/custom_error_widget.dart';
 import 'package:socieaty/shared/widgets/loading_indicator_widget.dart';
@@ -49,7 +49,7 @@ class _ProfileLoaderScreenState extends ConsumerState<ProfileLoaderScreen> {
           }
         } else if (userData.role == UserRole.restaurant && userData.restaurantData != null) {
           if (userData.id == currentUser.id) {
-            return CurrentOutletScreen(restaurant: UserConverter.userToRestaurant(userData));
+            return OwnerOutletScreen(restaurant: UserConverter.userToRestaurant(userData));
           } else {
             return OtherOutletScreen(restaurant: UserConverter.userToRestaurant(userData));
           }

@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:socieaty/features/post/post/model/paginate_post_query.dart';
+import 'package:socieaty/features/post/post/repository/response/paginate_post_query.dart';
 import 'package:socieaty/features/post/post/model/post.dart';
 import 'package:socieaty/features/post/post/view/posts_widget.dart';
 import 'package:socieaty/shared/widgets/scaffold_with_custom_theme.dart';

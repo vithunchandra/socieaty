@@ -1,5 +1,6 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 import 'package:socieaty/core/theme/app_pallete.dart';
 import 'package:socieaty/core/utils/location_handler.dart';
 import 'package:socieaty/features/restaurant/model/socieaty_restaurant.dart';
@@ -53,12 +54,13 @@ class _OutletSuggestionItemWidgetState extends State<OutletSuggestionItemWidget>
         color: Colors.transparent,
         child: InkWell(
           borderRadius: BorderRadius.circular(12),
-          onTap: () {},
+          onTap: () {
+            context.push('/${widget.restaurant.id}');
+          },
           child: Padding(
             padding: const EdgeInsets.all(12),
             child: Row(
               children: [
-                // Restaurant Image
                 Hero(
                   tag: 'restaurant_${widget.restaurant.id}',
                   child: Container(

@@ -1,7 +1,7 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 import 'package:socieaty/core/network/api_result.dart';
-import 'package:socieaty/features/post/post/model/get_post_response.dart';
+import 'package:socieaty/features/post/post/repository/response/get_post_response.dart';
 import 'package:socieaty/features/post/post/model/post.dart';
 import 'package:socieaty/features/post/post/repository/post_repository.dart';
 

@@ -9,25 +9,24 @@ import 'package:socieaty/core/utils/custom_extension.dart';
 import 'package:socieaty/core/utils/location_handler.dart';
 import 'package:socieaty/core/utils/show_snackbar.dart';
 import 'package:socieaty/core/utils/time_utils.dart';
-import 'package:socieaty/features/food_menu/model/menu_category.dart';
 import 'package:socieaty/features/food_menu/model/food_menu.dart';
 import 'package:socieaty/features/food_menu/provider/get_all_food_menu_categories_provider.dart';
 import 'package:socieaty/features/food_menu/provider/get_food_menu_provider.dart';
-import 'package:socieaty/features/food_menu/restaurant/view/restaurant_food_menu_item_widget.dart';
+import 'package:socieaty/features/food_menu/view/owner_food_menu_item_widget.dart';
 import 'package:socieaty/features/restaurant/model/socieaty_restaurant.dart';
 import 'package:socieaty/shared/widgets/custom_error_widget.dart';
 import 'package:socieaty/shared/widgets/dotted_divider.dart';
 import 'package:socieaty/shared/widgets/menu_filter_widget.dart';
 
-class RestaurantFoodMenuScreen extends ConsumerStatefulWidget {
+class OwnerFoodMenuScreen extends ConsumerStatefulWidget {
   final SocieatyRestaurant restaurant;
-  const RestaurantFoodMenuScreen({super.key, required this.restaurant});
+  const OwnerFoodMenuScreen({super.key, required this.restaurant});
 
   @override
-  ConsumerState<RestaurantFoodMenuScreen> createState() => _RestaurantFoodMenuScreenState();
+  ConsumerState<OwnerFoodMenuScreen> createState() => _OwnerFoodMenuScreenState();
 }
 
-class _RestaurantFoodMenuScreenState extends ConsumerState<RestaurantFoodMenuScreen> {
+class _OwnerFoodMenuScreenState extends ConsumerState<OwnerFoodMenuScreen> {
   String _locationName = "";
   final ScrollController _scrollController = ScrollController();
   bool _isCollapsed = false;
@@ -35,7 +34,6 @@ class _RestaurantFoodMenuScreenState extends ConsumerState<RestaurantFoodMenuScr
   final GlobalKey _sliverKey = GlobalKey();
   double _sliverHeight = 0;
   bool _isOpen = false;
-  List<MenuCategory> _menuCategories = [];
   MenuFilterFormState _menuFilterFormState = MenuFilterFormState();
   final TextEditingController _searchController = TextEditingController();
   Timer? _debounce;
@@ -119,17 +117,7 @@ class _RestaurantFoodMenuScreenState extends ConsumerState<RestaurantFoodMenuScr
     _isOpen = isNowBetween(widget.restaurant.restaurantData.openTime.toTimeOfDay(),
         widget.restaurant.restaurantData.closeTime.toTimeOfDay());
 
-    ref.listen(getAllFoodMenuCategoriesProvider, (_, next) {
-      switch (next) {
-        case AsyncData<List<MenuCategory>>(value: final data):
-          debugPrint('data: $data');
-          _menuCategories = data;
-        case AsyncError<List<MenuCategory>>(error: final error):
-          showSnackbar(context, error.toString(), isError: true);
-        default:
-      }
-      setState(() {});
-    });
+    final menuCategories = ref.watch(getAllFoodMenuCategoriesProvider);
 
     return Scaffold(
         backgroundColor: AppPallete.neutralColor.shade50,
@@ -365,39 +353,52 @@ class _RestaurantFoodMenuScreenState extends ConsumerState<RestaurantFoodMenuScr
                                     ),
                                   ),
                                   const SizedBox(width: 8),
-                                  ..._menuCategories.map(
-                                    (theme) => Padding(
-                                      padding: const EdgeInsets.symmetric(horizontal: 2.0),
-                                      child: FilterChip(
-                                        label: Text(theme.name),
-                                        selected:
-                                            _menuFilterFormState.categories.contains(theme.id),
-                                        onSelected: (bool selected) {
-                                          setState(() {
-                                            final newCategories =
-                                                List<int>.from(_menuFilterFormState.categories);
-                                            if (selected) {
-                                              newCategories.add(theme.id);
-                                            } else {
-                                              newCategories.remove(theme.id);
-                                            }
-                                            _menuFilterFormState = _menuFilterFormState.copyWith(
-                                              categories: newCategories,
-                                            );
-                                          });
-                                        },
-                                        padding: EdgeInsets.zero,
-                                        backgroundColor: Colors.white,
-                                        selectedColor: AppPallete.primaryColor,
-                                        checkmarkColor: Colors.white,
-                                        showCheckmark: false,
-                                        side: BorderSide(
-                                          color: _menuFilterFormState.categories.contains(theme.id)
-                                              ? AppPallete.primaryColor
-                                              : AppPallete.neutralColor.shade300,
-                                        ),
-                                      ),
+                                  menuCategories.when(
+                                    data: (data) => Wrap(
+                                      spacing: 4,
+                                      children: data
+                                          .map((theme) => Padding(
+                                                padding:
+                                                    const EdgeInsets.symmetric(horizontal: 2.0),
+                                                child: FilterChip(
+                                                  label: Text(theme.name),
+                                                  selected: _menuFilterFormState.categories
+                                                      .contains(theme.id),
+                                                  onSelected: (bool selected) {
+                                                    setState(() {
+                                                      final newCategories = List<int>.from(
+                                                          _menuFilterFormState.categories);
+                                                      if (selected) {
+                                                        newCategories.add(theme.id);
+                                                      } else {
+                                                        newCategories.remove(theme.id);
+                                                      }
+                                                      _menuFilterFormState =
+                                                          _menuFilterFormState.copyWith(
+                                                        categories: newCategories,
+                                                      );
+                                                    });
+                                                  },
+                                                  padding: EdgeInsets.zero,
+                                                  backgroundColor: Colors.white,
+                                                  selectedColor: AppPallete.primaryColor,
+                                                  checkmarkColor: Colors.white,
+                                                  showCheckmark: false,
+                                                  side: BorderSide(
+                                                    color: _menuFilterFormState.categories
+                                                            .contains(theme.id)
+                                                        ? AppPallete.primaryColor
+                                                        : AppPallete.neutralColor.shade300,
+                                                  ),
+                                                ),
+                                              ))
+                                          .toList(),
                                     ),
+                                    error: (error, stacktrace) {
+                                      showSnackbar(context, error.toString(), isError: true);
+                                      return const SizedBox.shrink();
+                                    },
+                                    loading: () => const SizedBox.shrink(),
                                   ),
                                 ],
                               ),
@@ -433,7 +434,7 @@ class _RestaurantFoodMenuScreenState extends ConsumerState<RestaurantFoodMenuScr
                               children: [
                                 if (index != 0)
                                   Divider(color: AppPallete.neutralColor, height: 0.5),
-                                RestaurantFoodMenuItemWidget(
+                                OwnerFoodMenuItemWidget(
                                   restaurantId: widget.restaurant.id,
                                   restaurantMenu: data[index],
                                 ),
@@ -524,30 +525,5 @@ class _RestaurantFoodMenuScreenState extends ConsumerState<RestaurantFoodMenuScr
             )
           ],
         ));
-  }
-
-  IconData _getThemeIcon(String themeName) {
-    switch (themeName.toLowerCase()) {
-      case 'italian':
-        return Icons.local_pizza;
-      case 'japanese':
-        return Icons.ramen_dining;
-      case 'chinese':
-        return Icons.rice_bowl;
-      case 'indian':
-        return Icons.dinner_dining;
-      case 'vegetarian':
-        return Icons.eco;
-      case 'seafood':
-        return Icons.set_meal;
-      case 'fast food':
-        return Icons.fastfood;
-      case 'dessert':
-        return Icons.cake;
-      case 'drinks':
-        return Icons.local_bar;
-      default:
-        return Icons.restaurant;
-    }
   }
 }

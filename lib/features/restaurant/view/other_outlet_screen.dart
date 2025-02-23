@@ -3,9 +3,11 @@ import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:socieaty/core/theme/app_pallete.dart';
-import 'package:socieaty/features/authentication/repository/auth_local_repository.dart';
+import 'package:socieaty/core/utils/custom_extension.dart';
+import 'package:socieaty/core/utils/time_utils.dart';
 import 'package:socieaty/features/post/post/view/post_sliver_grid_widget.dart';
 import 'package:socieaty/features/restaurant/model/socieaty_restaurant.dart';
+import 'package:socieaty/features/restaurant/view/bottom_cart_widget.dart';
 import 'package:socieaty/features/restaurant/view/outlet_home_widget.dart';
 import 'package:socieaty/shared/widgets/header_icon_widget.dart';
 
@@ -73,12 +75,16 @@ class _OtherOutletScreenState extends ConsumerState<OtherOutletScreen>
 
   @override
   Widget build(BuildContext context) {
+    final isCartVisisble = true;
+    final isOpen = isNowBetween(widget.restaurant.restaurantData.openTime.toTimeOfDay(),
+        widget.restaurant.restaurantData.closeTime.toTimeOfDay());
+
     final List<OutletTabs> tabs = [
       OutletTabs(
         title: "Home",
         icon: Icons.home_outlined,
         widget: OutletHomeWidget(
-          restaurantId: widget.restaurant.restaurantData.id,
+          restaurant: widget.restaurant,
           onMenuCarouselItemTapped: () {},
           onPostCarouselItemTapped: () {
             DefaultTabController.of(context).animateTo(1);
@@ -90,7 +96,7 @@ class _OtherOutletScreenState extends ConsumerState<OtherOutletScreen>
         title: "Post",
         icon: Icons.grid_view_outlined,
         widget: PostSliverGridWidget(
-          authorId: ref.watch(authLocalRepositoryProvider).getUserData()!.id,
+          authorId: widget.restaurant.id,
         ),
       ),
       OutletTabs(title: "Reviews", icon: Icons.reviews_outlined, widget: Container()),
@@ -101,152 +107,109 @@ class _OtherOutletScreenState extends ConsumerState<OtherOutletScreen>
       length: 3,
       child: Scaffold(
         backgroundColor: AppPallete.neutralColor.shade50,
-        body: NestedScrollView(
-          controller: _scrollController,
-          headerSliverBuilder: (context, innerBoxIsScrolled) {
-            return [
-              SliverOverlapAbsorber(
-                handle: NestedScrollView.sliverOverlapAbsorberHandleFor(context),
-                sliver: SliverAppBar(
-                  expandedHeight: screenHeight * mainHeaderHeightPercentage + 48,
-                  pinned: true,
-                  title: _isCollapsed
-                      ? Text(
-                          "Socieaty",
-                          style: Theme.of(context)
-                              .textTheme
-                              .titleMedium
-                              ?.copyWith(color: Colors.black),
-                        )
-                      : null,
-                  surfaceTintColor: Colors.transparent,
-                  backgroundColor: _isAlmostCollapsed
-                      ? AppPallete.neutralColor.shade50
-                      : AppPallete.neutralColor.shade800,
-                  flexibleSpace: FlexibleSpaceBar(
-                    background: Stack(
-                      fit: StackFit.expand,
-                      clipBehavior: Clip.none,
-                      children: [
-                        // Background image with dark overlay
-                        Stack(
-                          fit: StackFit.expand,
-                          children: [
-                            Image.asset(
-                              "assets/images/restaurant_2.jpg",
-                              fit: BoxFit.cover,
-                            ),
-                            Container(
-                              decoration: BoxDecoration(
-                                gradient: LinearGradient(
-                                  begin: Alignment.topCenter,
-                                  end: Alignment.bottomCenter,
-                                  colors: [
-                                    Colors.black.withAlpha(0),
-                                    Colors.black.withAlpha(255), // 0.7 opacity
-                                  ],
-                                  stops: const [0.3, 1.0],
-                                ),
-                              ),
-                            ),
-                          ],
-                        ),
-
-                        // Restaurant info
-                        Positioned(
-                          left: 16,
-                          right: 16,
-                          bottom: 130,
-                          child: Row(
-                            crossAxisAlignment: CrossAxisAlignment.center,
-                            mainAxisAlignment: MainAxisAlignment.start,
+        body: BottomCartWidget(
+          showCart: isCartVisisble,
+          scrollController: _scrollController,
+          itemCount: 10,
+          totalPrice: 100.0,
+          child: NestedScrollView(
+            controller: _scrollController,
+            headerSliverBuilder: (context, innerBoxIsScrolled) {
+              return [
+                SliverOverlapAbsorber(
+                  handle: NestedScrollView.sliverOverlapAbsorberHandleFor(context),
+                  sliver: SliverAppBar(
+                    expandedHeight: screenHeight * mainHeaderHeightPercentage + 48,
+                    pinned: true,
+                    title: _isCollapsed
+                        ? Text(
+                            "Socieaty",
+                            style: Theme.of(context)
+                                .textTheme
+                                .titleMedium
+                                ?.copyWith(color: Colors.black),
+                          )
+                        : null,
+                    surfaceTintColor: Colors.transparent,
+                    backgroundColor: _isAlmostCollapsed
+                        ? AppPallete.neutralColor.shade50
+                        : AppPallete.neutralColor.shade800,
+                    flexibleSpace: FlexibleSpaceBar(
+                      background: Stack(
+                        fit: StackFit.expand,
+                        clipBehavior: Clip.none,
+                        children: [
+                          // Background image with dark overlay
+                          Stack(
+                            fit: StackFit.expand,
                             children: [
-                              Expanded(
-                                child: Column(
-                                  mainAxisSize: MainAxisSize.min,
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
-                                    Text(
-                                      "Socieaty",
-                                      style: Theme.of(context).textTheme.headlineLarge?.copyWith(
-                                            color: Colors.white,
-                                            fontWeight: FontWeight.bold,
-                                          ),
-                                    ),
-                                    const SizedBox(height: 8),
-                                    Text(
-                                      "Jln. Ngagel Jaya Tengah No.158",
-                                      style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                                            color: Colors.white,
-                                          ),
-                                    ),
-                                    const SizedBox(height: 4),
-                                    Container(
-                                      decoration: BoxDecoration(
-                                        color: Colors.black.withAlpha(128),
-                                        borderRadius: BorderRadius.circular(50),
-                                      ),
-                                      padding: EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-                                      child: Row(
-                                        mainAxisSize: MainAxisSize.min,
-                                        children: [
-                                          Icon(Icons.check_circle,
-                                              color: AppPallete.primaryColor, size: 16),
-                                          const SizedBox(width: 4),
-                                          Text(
-                                            "Open Now | 12pm - 1am",
-                                            style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                                                  color: Colors.white,
-                                                ),
-                                          ),
-                                        ],
-                                      ),
-                                    ),
-                                  ],
+                              Image.asset(
+                                "assets/images/restaurant_2.jpg",
+                                fit: BoxFit.cover,
+                              ),
+                              Container(
+                                decoration: BoxDecoration(
+                                  gradient: LinearGradient(
+                                    begin: Alignment.topCenter,
+                                    end: Alignment.bottomCenter,
+                                    colors: [
+                                      Colors.black.withAlpha(0),
+                                      Colors.black.withAlpha(255), // 0.7 opacity
+                                    ],
+                                    stops: const [0.3, 1.0],
+                                  ),
                                 ),
                               ),
-                              ClipRRect(
-                                borderRadius: BorderRadius.circular(12),
-                                child: SizedBox(
-                                  width: 68,
+                            ],
+                          ),
+
+                          // Restaurant info
+                          Positioned(
+                            left: 16,
+                            right: 16,
+                            bottom: 130,
+                            child: Row(
+                              crossAxisAlignment: CrossAxisAlignment.center,
+                              mainAxisAlignment: MainAxisAlignment.start,
+                              children: [
+                                Expanded(
                                   child: Column(
-                                    crossAxisAlignment: CrossAxisAlignment.stretch,
+                                    mainAxisSize: MainAxisSize.min,
+                                    crossAxisAlignment: CrossAxisAlignment.start,
                                     children: [
-                                      Container(
-                                        padding: const EdgeInsets.all(2),
-                                        color: AppPallete.successColor,
-                                        child: Row(
-                                          mainAxisAlignment: MainAxisAlignment.center,
-                                          children: [
-                                            Text(
-                                              "4.6",
-                                              style:
-                                                  Theme.of(context).textTheme.titleMedium?.copyWith(
-                                                        color: Colors.white,
-                                                        fontWeight: FontWeight.bold,
-                                                      ),
+                                      Text(
+                                        widget.restaurant.name,
+                                        style: Theme.of(context).textTheme.headlineLarge?.copyWith(
+                                              color: Colors.white,
+                                              fontWeight: FontWeight.bold,
                                             ),
-                                            const SizedBox(width: 4),
-                                            Icon(Icons.star, color: Colors.white, size: 20),
-                                          ],
-                                        ),
                                       ),
-                                      Container(
-                                        padding: const EdgeInsets.all(2),
-                                        color: Colors.white,
-                                        child: Column(
-                                          mainAxisAlignment: MainAxisAlignment.center,
-                                          children: [
-                                            Text(
-                                              "9403",
-                                              style:
-                                                  Theme.of(context).textTheme.bodyLarge?.copyWith(
-                                                        fontWeight: FontWeight.bold,
-                                                      ),
+                                      const SizedBox(height: 8),
+                                      Text(
+                                        "Jln. Ngagel Jaya Tengah No.158",
+                                        style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                                              color: Colors.white,
                                             ),
+                                      ),
+                                      const SizedBox(height: 4),
+                                      Container(
+                                        decoration: BoxDecoration(
+                                          color: Colors.black.withAlpha(128),
+                                          borderRadius: BorderRadius.circular(50),
+                                        ),
+                                        padding: EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                                        child: Row(
+                                          mainAxisSize: MainAxisSize.min,
+                                          children: [
+                                            Icon(Icons.check_circle,
+                                                color: AppPallete.primaryColor, size: 16),
+                                            const SizedBox(width: 4),
                                             Text(
-                                              "Reviews",
-                                              style: Theme.of(context).textTheme.bodyMedium,
+                                              "${isOpen ? "Open Now" : "Closed"} | ${widget.restaurant.restaurantData.openTime} - ${widget.restaurant.restaurantData.closeTime}",
+                                              style:
+                                                  Theme.of(context).textTheme.bodyMedium?.copyWith(
+                                                        color: Colors.white,
+                                                      ),
                                             ),
                                           ],
                                         ),
@@ -254,115 +217,185 @@ class _OtherOutletScreenState extends ConsumerState<OtherOutletScreen>
                                     ],
                                   ),
                                 ),
-                              ),
-                            ],
+                                ClipRRect(
+                                  borderRadius: BorderRadius.circular(12),
+                                  child: SizedBox(
+                                    width: 68,
+                                    child: Column(
+                                      crossAxisAlignment: CrossAxisAlignment.stretch,
+                                      children: [
+                                        Container(
+                                          padding: const EdgeInsets.all(2),
+                                          color: AppPallete.successColor,
+                                          child: Row(
+                                            mainAxisAlignment: MainAxisAlignment.center,
+                                            children: [
+                                              Text(
+                                                "4.6",
+                                                style: Theme.of(context)
+                                                    .textTheme
+                                                    .titleMedium
+                                                    ?.copyWith(
+                                                      color: Colors.white,
+                                                      fontWeight: FontWeight.bold,
+                                                    ),
+                                              ),
+                                              const SizedBox(width: 4),
+                                              Icon(Icons.star, color: Colors.white, size: 20),
+                                            ],
+                                          ),
+                                        ),
+                                        Container(
+                                          padding: const EdgeInsets.all(2),
+                                          color: Colors.white,
+                                          child: Column(
+                                            mainAxisAlignment: MainAxisAlignment.center,
+                                            children: [
+                                              Text(
+                                                "9403",
+                                                style:
+                                                    Theme.of(context).textTheme.bodyLarge?.copyWith(
+                                                          fontWeight: FontWeight.bold,
+                                                        ),
+                                              ),
+                                              Text(
+                                                "Reviews",
+                                                style: Theme.of(context).textTheme.bodyMedium,
+                                              ),
+                                            ],
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                  ),
+                                ),
+                              ],
+                            ),
                           ),
-                        ),
-                        Positioned(
-                          left: 0,
-                          right: 0,
-                          bottom: 56,
-                          child: SizedBox(
-                            width: double.infinity,
-                            height: 60,
-                            child: Padding(
-                              padding: const EdgeInsets.symmetric(horizontal: 16.0),
-                              child: Row(
-                                children: [
-                                  Expanded(
-                                    child: FilledButton(
-                                      onPressed: () {},
-                                      child: Padding(
-                                        padding: const EdgeInsets.symmetric(
-                                            vertical: 4, horizontal: 12.0),
-                                        child: Row(
-                                          mainAxisAlignment: MainAxisAlignment.center,
-                                          children: [
-                                            Icon(Icons.fastfood, size: 20),
-                                            const SizedBox(width: 4),
-                                            Text(
-                                              "Order Menu",
-                                            ),
-                                          ],
+                          Positioned(
+                            left: 0,
+                            right: 0,
+                            bottom: 56,
+                            child: SizedBox(
+                              width: double.infinity,
+                              height: 60,
+                              child: Padding(
+                                padding: const EdgeInsets.symmetric(horizontal: 16.0),
+                                child: Row(
+                                  children: [
+                                    Expanded(
+                                      child: FilledButton(
+                                        onPressed: () {
+                                          context.push(
+                                            '/${widget.restaurant.id}/shop',
+                                            extra: widget.restaurant,
+                                          );
+                                        },
+                                        child: Padding(
+                                          padding: const EdgeInsets.symmetric(
+                                              vertical: 4, horizontal: 12.0),
+                                          child: Row(
+                                            mainAxisAlignment: MainAxisAlignment.center,
+                                            children: [
+                                              Icon(Icons.fastfood, size: 20),
+                                              const SizedBox(width: 4),
+                                              Text(
+                                                "Order Menu",
+                                              ),
+                                            ],
+                                          ),
                                         ),
                                       ),
                                     ),
-                                  ),
-                                  const SizedBox(width: 8),
-                                ],
+                                    const SizedBox(width: 8),
+                                  ],
+                                ),
                               ),
                             ),
-                          ),
-                        )
-                      ],
+                          )
+                        ],
+                      ),
+                      collapseMode: CollapseMode.pin,
                     ),
-                    collapseMode: CollapseMode.pin,
-                  ),
-                  leading: HeaderIconWidget(
-                    isScrollCompleted: _isCollapsed,
-                    icon: Icons.arrow_back,
-                    onPressed: () => context.pop(),
-                  ),
-                  actions: [
-                    HeaderIconWidget(
+                    leading: HeaderIconWidget(
                       isScrollCompleted: _isCollapsed,
-                      icon: Icons.reviews,
-                      onPressed: () {},
+                      icon: Icons.arrow_back,
+                      onPressed: () => context.pop(),
                     ),
-                    HeaderIconWidget(
-                      isScrollCompleted: _isCollapsed,
-                      icon: Icons.share,
-                      onPressed: () {},
-                    ),
-                  ],
-                  bottom: PreferredSize(
-                    preferredSize: const Size.fromHeight(48),
-                    child: Material(
-                      elevation: 1.0,
-                      child: Container(
-                        color: AppPallete.neutralColor.shade50,
-                        child: TabBar(
-                          labelColor: AppPallete.primaryColor,
-                          indicatorColor: AppPallete.primaryColor,
-                          overlayColor: WidgetStateProperty.resolveWith<Color?>(
-                            (Set<WidgetState> states) {
-                              // Set overlayColor to transparent for all states
-                              return Colors.transparent;
-                            },
+                    actions: [
+                      HeaderIconWidget(
+                        isScrollCompleted: _isCollapsed,
+                        icon: Icons.reviews,
+                        onPressed: () {},
+                      ),
+                      HeaderIconWidget(
+                        isScrollCompleted: _isCollapsed,
+                        icon: Icons.share,
+                        onPressed: () {},
+                      ),
+                    ],
+                    bottom: PreferredSize(
+                      preferredSize: const Size.fromHeight(48),
+                      child: Material(
+                        elevation: 1.0,
+                        child: Container(
+                          color: AppPallete.neutralColor.shade50,
+                          child: TabBar(
+                            labelColor: AppPallete.primaryColor,
+                            indicatorColor: AppPallete.primaryColor,
+                            overlayColor: WidgetStateProperty.resolveWith<Color?>(
+                              (Set<WidgetState> states) {
+                                // Set overlayColor to transparent for all states
+                                return Colors.transparent;
+                              },
+                            ),
+                            dividerColor: Colors.transparent,
+                            tabs: tabs.map((tab) => Tab(icon: Icon(tab.icon))).toList(),
                           ),
-                          dividerColor: Colors.transparent,
-                          tabs: tabs.map((tab) => Tab(icon: Icon(tab.icon))).toList(),
                         ),
                       ),
                     ),
                   ),
                 ),
-              ),
-            ];
-          },
-          body: TabBarView(
-            children: tabs.map((tab) {
-              return SafeArea(
-                top: false,
-                bottom: false,
-                child: Builder(
-                  builder: (context) {
-                    return CustomScrollView(
-                      slivers: [
-                        SliverOverlapInjector(
-                          handle: NestedScrollView.sliverOverlapAbsorberHandleFor(context),
+              ];
+            },
+            body: TabBarView(
+              children: tabs.map((tab) {
+                return SafeArea(
+                  top: false,
+                  bottom: false,
+                  child: Builder(
+                    builder: (context) {
+                      return NotificationListener<ScrollNotification>(
+                        onNotification: (notification) {
+                          return false;
+                        },
+                        child: CustomScrollView(
+                          slivers: [
+                            SliverOverlapInjector(
+                              handle: NestedScrollView.sliverOverlapAbsorberHandleFor(context),
+                            ),
+                            if (tab.title == "Home")
+                              SliverToBoxAdapter(
+                                child: OutletHomeWidget(
+                                  restaurant: widget.restaurant,
+                                  onMenuCarouselItemTapped: () {},
+                                  onPostCarouselItemTapped: () {
+                                    DefaultTabController.of(context).animateTo(1);
+                                  },
+                                  onReviewCarouselItemTapped: () {},
+                                ),
+                              ),
+                            if (tab.title == "Post") tab.widget,
+                            if (isCartVisisble) SliverToBoxAdapter(child: SizedBox(height: 80)),
+                          ],
                         ),
-                        if (tab.title == "Home")
-                          SliverToBoxAdapter(
-                            child: tab.widget,
-                          ),
-                        if (tab.title == "Post") tab.widget
-                      ],
-                    );
-                  },
-                ),
-              );
-            }).toList(),
+                      );
+                    },
+                  ),
+                );
+              }).toList(),
+            ),
           ),
         ),
       ),

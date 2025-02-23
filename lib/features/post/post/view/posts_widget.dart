@@ -4,7 +4,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:infinite_scroll_pagination/infinite_scroll_pagination.dart';
 import 'package:socieaty/features/authentication/repository/auth_local_repository.dart';
 import 'package:socieaty/features/home/customer/viewmodel/home_screen_view_model.dart';
-import 'package:socieaty/features/post/post/model/paginate_post_query.dart';
+import 'package:socieaty/features/post/post/repository/response/paginate_post_query.dart';
 import 'package:socieaty/features/post/post/model/post.dart';
 import 'package:socieaty/features/post/post/provider/paginate_posts_provider.dart';
 import 'package:socieaty/features/post/post/view/post_detail_widget.dart';
