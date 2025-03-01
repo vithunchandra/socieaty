@@ -4,6 +4,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:socieaty/app_theme_provider.dart';
 import 'package:socieaty/core/routes/routes.dart';
 import 'package:socieaty/core/theme/theme.dart';
+import 'package:socieaty/core/utils/show_new_order_dialog.dart';
 import 'package:socieaty/features/authentication/repository/auth_local_repository.dart';
 
 void main() async {
@@ -18,6 +19,8 @@ void main() async {
   );
 }
 
+GlobalKey<NavigatorState> rootNavigatorKey = GlobalKey();
+
 class App extends ConsumerStatefulWidget {
   const App({super.key});
 
@@ -31,9 +34,11 @@ class _AppState extends ConsumerState<App> {
     SystemChrome.setSystemUIOverlayStyle(
       SystemUiOverlayStyle(
         statusBarColor: Colors.transparent,
-        statusBarIconBrightness: themeData == SocieatyAppTheme.lightTheme ? Brightness.dark : Brightness.light,
+        statusBarIconBrightness:
+            themeData == SocieatyAppTheme.lightTheme ? Brightness.dark : Brightness.light,
         systemNavigationBarColor: themeData.scaffoldBackgroundColor,
-        systemNavigationBarIconBrightness: themeData == SocieatyAppTheme.lightTheme ? Brightness.dark : Brightness.light,
+        systemNavigationBarIconBrightness:
+            themeData == SocieatyAppTheme.lightTheme ? Brightness.dark : Brightness.light,
       ),
     );
   }
@@ -58,6 +63,7 @@ class _AppState extends ConsumerState<App> {
     });
 
     return MaterialApp.router(
+      key: rootNavigatorKey,
       theme: ref.watch(appThemeProvider),
       themeAnimationDuration: const Duration(milliseconds: 0),
       routerConfig: ref.watch(routerProvider),

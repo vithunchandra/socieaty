@@ -1,56 +1,41 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
 import 'package:socieaty/core/theme/app_pallete.dart';
+import 'package:socieaty/core/utils/custom_extension.dart';
+import 'package:socieaty/features/food_menu/provider/menu_cart_view_model.dart';
 import 'dart:async';
 
-class BottomCartWidget extends StatefulWidget {
-  // The main content of the screen.
+import 'package:socieaty/features/restaurant/model/socieaty_restaurant.dart';
+
+class BottomCartWidget extends ConsumerStatefulWidget {
   final Widget child;
-  // Flag to show cart widget when there are items in the cart.
-  final bool showCart;
-  // Restaurant name to display in the cart.
-  final String restaurantName;
-  // Number of items in the cart.
-  final int itemCount;
-  // Total price for the items in the cart.
-  final double totalPrice;
-  // An optional ScrollController to listen for scroll state changes.
+  final SocieatyRestaurant restaurant;
   final ScrollController? scrollController;
-  // The fixed height for the cart widget at the bottom.
   static const double _cartHeight = 80;
 
   const BottomCartWidget({
     super.key,
     required this.child,
-    this.showCart = false,
-    this.restaurantName = 'Socieaty',
-    this.itemCount = 0,
-    this.totalPrice = 0.0,
+    required this.restaurant,
     this.scrollController,
   });
 
   @override
-  State<BottomCartWidget> createState() => _BottomCartWidgetState();
+  ConsumerState<BottomCartWidget> createState() => _BottomCartWidgetState();
 }
 
-class _BottomCartWidgetState extends State<BottomCartWidget> {
-  // This flag will track if user is scrolling.
+class _BottomCartWidgetState extends ConsumerState<BottomCartWidget> {
   bool _isScrolling = false;
+  SocieatyRestaurant? _currentRestaurant;
   Timer? _scrollEndTimer;
 
-  // Internal state for cart items and total price.
-  int _currentItemCount = 0;
-  double _currentTotalPrice = 0.0;
-
   void _onScrollStatusChanged() {
-    // Ensure the scrollController is attached to a scroll view.
     if (!widget.scrollController!.hasClients) {
       return;
     }
-
-    // This method is triggered when the scrollController's isScrollingNotifier changes.
     final scrolling = widget.scrollController!.position.isScrollingNotifier.value;
-    // Cancel any existing timer.
     _scrollEndTimer?.cancel();
     if (scrolling) {
       if (!_isScrolling) {
@@ -59,7 +44,6 @@ class _BottomCartWidgetState extends State<BottomCartWidget> {
         });
       }
     } else {
-      // When scrolling stops, wait for 300ms before showing the bottom cart.
       _scrollEndTimer = Timer(const Duration(milliseconds: 300), () {
         if (mounted) {
           setState(() {
@@ -73,12 +57,6 @@ class _BottomCartWidgetState extends State<BottomCartWidget> {
   @override
   void initState() {
     super.initState();
-    // Initialize internal cart state from the widget.
-    _currentItemCount = widget.itemCount;
-    _currentTotalPrice = widget.totalPrice;
-
-    // If a scrollController is provided, wait for the first frame so that it's attached,
-    // then add a listener to its isScrollingNotifier.
     if (widget.scrollController != null) {
       WidgetsBinding.instance.addPostFrameCallback((_) {
         if (widget.scrollController!.hasClients) {
@@ -86,18 +64,17 @@ class _BottomCartWidgetState extends State<BottomCartWidget> {
         }
       });
     }
+    _currentRestaurant = widget.restaurant;
   }
 
   @override
   void didUpdateWidget(covariant BottomCartWidget oldWidget) {
     super.didUpdateWidget(oldWidget);
     if (oldWidget.scrollController != widget.scrollController) {
-      // Remove listener from the old scrollController if attached.
       if (oldWidget.scrollController?.hasClients ?? false) {
         oldWidget.scrollController!.position.isScrollingNotifier
             .removeListener(_onScrollStatusChanged);
       }
-      // Wait a frame before adding the listener to the new scrollController.
       if (widget.scrollController != null) {
         WidgetsBinding.instance.addPostFrameCallback((_) {
           if (widget.scrollController!.hasClients) {
@@ -107,24 +84,17 @@ class _BottomCartWidgetState extends State<BottomCartWidget> {
         });
       }
     }
-    // If parent's cart values change, update the internal state.
-    if (widget.itemCount != oldWidget.itemCount || widget.totalPrice != oldWidget.totalPrice) {
+    if (widget.restaurant.id != oldWidget.restaurant.id) {
       setState(() {
-        _currentItemCount = widget.itemCount;
-        _currentTotalPrice = widget.totalPrice;
+        _currentRestaurant = widget.restaurant;
       });
     }
   }
 
-  void _clearCart() {
-    setState(() {
-      _currentItemCount = 0;
-      _currentTotalPrice = 0.0;
-    });
-  }
-
   @override
   Widget build(BuildContext context) {
+    final menuItems = ref.watch(menuCartViewModelProvider(widget.restaurant.id)).menuItems;
+    final isThereItemsInCart = menuItems.isNotEmpty;
     return Stack(
       children: [
         // Always include the main content so that its state is preserved.
@@ -133,7 +103,7 @@ class _BottomCartWidgetState extends State<BottomCartWidget> {
           child: widget.child,
         ),
         // Conditionally show the bottom cart overlay.
-        if (widget.showCart && _currentItemCount > 0)
+        if (isThereItemsInCart)
           AnimatedPositioned(
             duration: const Duration(milliseconds: 300),
             curve: Curves.easeInOut,
@@ -149,7 +119,7 @@ class _BottomCartWidgetState extends State<BottomCartWidget> {
               alignment: Alignment.center,
               child: ElevatedButton(
                 onPressed: () {
-                  // TODO: Handle cart button press.
+                  context.push("/${widget.restaurant.id}/shop/order", extra: widget.restaurant);
                 },
                 style: ElevatedButton.styleFrom(
                   backgroundColor: AppPallete.primaryColor,
@@ -177,30 +147,51 @@ class _BottomCartWidgetState extends State<BottomCartWidget> {
                         ),
                       ),
                       onDismissed: (_) {
-                        _clearCart();
+                        ref
+                            .read(menuCartViewModelProvider(widget.restaurant.id).notifier)
+                            .clearCart();
                       },
                       child: Row(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
-                          // Left side: Restaurant name and item quantity.
-                          Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            mainAxisSize: MainAxisSize.min,
+                          // Left side: Cart icon (in a circle) plus restaurant name and item quantity.
+                          Row(
                             children: [
-                              Text(
-                                widget.restaurantName,
-                                style: const TextStyle(
-                                  fontSize: 16,
-                                  fontWeight: FontWeight.bold,
+                              Container(
+                                width: 32,
+                                height: 32,
+                                decoration: BoxDecoration(
+                                  color: Colors.white.withOpacity(0.2),
+                                  shape: BoxShape.circle,
+                                ),
+                                child: const Icon(
+                                  Icons.shopping_cart,
                                   color: Colors.white,
+                                  size: 18,
                                 ),
                               ),
-                              Text(
-                                "$_currentItemCount items",
-                                style: const TextStyle(
-                                  fontSize: 12,
-                                  color: Colors.white,
-                                ),
+                              const SizedBox(width: 12),
+                              Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                mainAxisSize: MainAxisSize.min,
+                                children: [
+                                  Text(
+                                    _currentRestaurant?.name ?? '',
+                                    style: const TextStyle(
+                                      fontSize: 16,
+                                      fontWeight: FontWeight.bold,
+                                      color: Colors.white,
+                                    ),
+                                  ),
+                                  const SizedBox(height: 4),
+                                  Text(
+                                    "${menuItems.fold(0, (sum, item) => sum + item.quantity)} items",
+                                    style: const TextStyle(
+                                      fontSize: 12,
+                                      color: Colors.white70,
+                                    ),
+                                  ),
+                                ],
                               ),
                             ],
                           ),
@@ -217,7 +208,7 @@ class _BottomCartWidgetState extends State<BottomCartWidget> {
                                 ),
                               ),
                               Text(
-                                "\$${_currentTotalPrice.toStringAsFixed(2)}",
+                                "Rp ${menuItems.fold(0, (sum, item) => sum + item.quantity * item.menuItem.price).toIDRFormat()}",
                                 style: const TextStyle(
                                   fontSize: 16,
                                   fontWeight: FontWeight.bold,

@@ -108,10 +108,8 @@ class _OtherOutletScreenState extends ConsumerState<OtherOutletScreen>
       child: Scaffold(
         backgroundColor: AppPallete.neutralColor.shade50,
         body: BottomCartWidget(
-          showCart: isCartVisisble,
+          restaurant: widget.restaurant,
           scrollController: _scrollController,
-          itemCount: 10,
-          totalPrice: 100.0,
           child: NestedScrollView(
             controller: _scrollController,
             headerSliverBuilder: (context, innerBoxIsScrolled) {

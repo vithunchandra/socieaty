@@ -1,6 +1,7 @@
 import 'package:freezed_annotation/freezed_annotation.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:socieaty/core/enums/bank.enum.dart';
+import 'package:socieaty/core/enums/transaction.enum.dart';
 import 'package:socieaty/core/enums/user_role.enum.dart';
 import 'package:socieaty/core/utils/custom_extension.dart';
 import 'package:socieaty/features/customer/model/socieaty_customer.dart';
@@ -65,6 +66,34 @@ class BankConverter implements JsonConverter<BankEnum, String> {
 
   @override
   String toJson(BankEnum object) {
+    return object.name;
+  }
+}
+
+class TransactionServiceTypeConverter implements JsonConverter<TransactionServiceType, String> {
+  const TransactionServiceTypeConverter();
+
+  @override
+  TransactionServiceType fromJson(String json) {
+    return TransactionServiceType.values.firstWhere((element) => element.value == json);
+  }
+
+  @override
+  String toJson(TransactionServiceType object) {
+    return object.value;
+  }
+}
+
+class TransactionStatusConverter implements JsonConverter<TransactionStatus, String> {
+  const TransactionStatusConverter();
+
+  @override
+  TransactionStatus fromJson(String json) {
+    return TransactionStatus.values.firstWhere((element) => element.name == json);
+  }
+
+  @override
+  String toJson(TransactionStatus object) {
     return object.name;
   }
 }

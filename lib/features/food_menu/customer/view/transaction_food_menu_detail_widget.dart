@@ -1,28 +1,24 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:go_router/go_router.dart';
 import 'package:socieaty/core/theme/app_pallete.dart';
 import 'package:socieaty/core/utils/custom_extension.dart';
 import 'package:socieaty/features/food_menu/model/food_menu.dart';
-import 'package:socieaty/features/food_menu/view/update_food_menu_screen.dart';
 import 'package:socieaty/shared/widgets/image_error_widget.dart';
 import 'package:socieaty/shared/widgets/image_loading_widget.dart';
 
-class OutletFoodMenuDetailWidget extends ConsumerStatefulWidget {
-  final String restaurantId;
+class TransactionFoodMenuDetailWidget extends ConsumerStatefulWidget {
   final FoodMenu restaurantMenu;
-  const OutletFoodMenuDetailWidget({
+  const TransactionFoodMenuDetailWidget({
     super.key,
-    required this.restaurantId,
     required this.restaurantMenu,
   });
 
   @override
-  ConsumerState<OutletFoodMenuDetailWidget> createState() => _OutletFoodMenuDetailWidgetState();
+  ConsumerState<TransactionFoodMenuDetailWidget> createState() => _TransactionFoodMenuDetailWidgetState();
 }
 
-class _OutletFoodMenuDetailWidgetState extends ConsumerState<OutletFoodMenuDetailWidget> {
+class _TransactionFoodMenuDetailWidgetState extends ConsumerState<TransactionFoodMenuDetailWidget> {
   late FoodMenu _menu;
   // bool _isAvailable = false;
 
@@ -32,18 +28,6 @@ class _OutletFoodMenuDetailWidgetState extends ConsumerState<OutletFoodMenuDetai
     _menu = widget.restaurantMenu;
     // _isAvailable = _menu.isStockAvailable;
   }
-
-  // @override
-  // void didUpdateWidget(OutletFoodMenuDetailWidget oldWidget) {
-  //   super.didUpdateWidget(oldWidget);
-  //   debugPrint('oldWidget: ${oldWidget.restaurantMenu}');
-  //   debugPrint('widget: ${widget.restaurantMenu}');
-  //   if (oldWidget.restaurantMenu.hashCode != widget.restaurantMenu.hashCode) {
-  //     _menu = widget.restaurantMenu;
-  //     _isAvailable = _menu.isStockAvailable;
-  //   }
-  //   setState(() {});
-  // }
 
   @override
   Widget build(BuildContext context) {
@@ -157,7 +141,6 @@ class _OutletFoodMenuDetailWidgetState extends ConsumerState<OutletFoodMenuDetai
                           ),
                     ),
                     const SizedBox(height: 12),
-                    // Categories with Chips
                     Wrap(
                       spacing: 8,
                       runSpacing: 8,
@@ -206,46 +189,6 @@ class _OutletFoodMenuDetailWidgetState extends ConsumerState<OutletFoodMenuDetai
                     const SizedBox(height: 32),
                   ],
                 ),
-              ),
-            ),
-          ),
-
-          // Action buttons
-          Container(
-            padding: const EdgeInsets.symmetric(vertical: 16, horizontal: 16),
-            decoration: BoxDecoration(
-              border: Border(
-                top: BorderSide(
-                  color: Colors.grey[200]!,
-                  width: 1,
-                ),
-              ),
-            ),
-            child: FilledButton(
-              onPressed: () async {
-                final result = await context.push(
-                  '/restaurant/dashboard/outlet/menu/update',
-                  extra: UpdateFoodMenuScreenArgs(
-                    restaurantId: _menu.restaurantId,
-                    restaurantMenu: _menu,
-                  ),
-                );
-                if (result != null) {
-                  setState(() {
-                    _menu = result as FoodMenu;
-                  });
-                }
-              },
-              style: FilledButton.styleFrom(
-                padding: const EdgeInsets.symmetric(vertical: 12),
-              ),
-              child: const Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Text("Tambahkan ke keranjang"),
-                  SizedBox(width: 8),
-                  Icon(Icons.add, size: 20)
-                ],
               ),
             ),
           ),

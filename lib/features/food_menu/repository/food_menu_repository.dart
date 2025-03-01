@@ -17,9 +17,9 @@ import 'package:socieaty/features/food_menu/repository/response/get_food_menu_re
 import 'package:socieaty/features/food_menu/repository/response/paginate_food_menu_response.dart';
 import 'package:socieaty/features/food_menu/repository/response/update_food_menu_response.dart';
 import 'package:socieaty/features/food_menu/repository/response/update_food_menu_stock_availablity.dart';
-import 'package:socieaty/features/food_menu/viewstate/create_food_menu_form_state.dart';
-import 'package:socieaty/features/food_menu/viewstate/paginate_menu_form_state.dart';
-import 'package:socieaty/features/food_menu/viewstate/update_food_menu_form_state.dart';
+import 'package:socieaty/features/food_menu/restaurant/viewstate/create_food_menu_form_state.dart';
+import 'package:socieaty/features/food_menu/restaurant/viewstate/paginate_menu_form_state.dart';
+import 'package:socieaty/features/food_menu/restaurant/viewstate/update_food_menu_form_state.dart';
 import 'package:socieaty/features/user/model/socieaty_user.dart';
 import 'package:socieaty/shared/widgets/menu_filter_widget.dart';
 

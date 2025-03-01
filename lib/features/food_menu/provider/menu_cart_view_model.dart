@@ -1,7 +1,7 @@
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 import 'package:socieaty/features/food_menu/model/food_menu.dart';
 import 'package:socieaty/features/food_menu/model/menu_cart.dart';
-import 'package:socieaty/features/food_menu/viewstate/menu_cart_view_state.dart';
+import 'package:socieaty/features/food_menu/restaurant/viewstate/menu_cart_view_state.dart';
 
 part 'menu_cart_view_model.g.dart';
 
@@ -47,5 +47,9 @@ class MenuCartViewModel extends _$MenuCartViewModel {
             .toList(),
       );
     }
+  }
+
+  void clearCart() {
+    state = state.copyWith(menuItems: []);
   }
 }

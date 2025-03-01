@@ -9,10 +9,10 @@ import 'package:socieaty/core/utils/custom_extension.dart';
 import 'package:socieaty/core/utils/location_handler.dart';
 import 'package:socieaty/core/utils/show_snackbar.dart';
 import 'package:socieaty/core/utils/time_utils.dart';
+import 'package:socieaty/features/food_menu/customer/view/outlet_food_menu_item_widget.dart';
 import 'package:socieaty/features/food_menu/model/food_menu.dart';
 import 'package:socieaty/features/food_menu/provider/get_all_food_menu_categories_provider.dart';
 import 'package:socieaty/features/food_menu/provider/get_food_menu_provider.dart';
-import 'package:socieaty/features/food_menu/view/outlet_food_menu_item_widget.dart';
 import 'package:socieaty/features/restaurant/model/socieaty_restaurant.dart';
 import 'package:socieaty/features/restaurant/view/bottom_cart_widget.dart';
 import 'package:socieaty/shared/widgets/custom_error_widget.dart';
@@ -136,10 +136,8 @@ class _OutletFoodMenuScreenState extends ConsumerState<OutletFoodMenuScreen> {
         children: [
           Expanded(
             child: BottomCartWidget(
-              showCart: isCartVisible,
+              restaurant: widget.restaurant,
               scrollController: _scrollController,
-              itemCount: 10,
-              totalPrice: 100.0,
               child: CustomScrollView(
                 controller: _scrollController,
                 slivers: [

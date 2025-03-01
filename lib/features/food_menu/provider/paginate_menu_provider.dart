@@ -3,7 +3,7 @@ import 'package:riverpod_annotation/riverpod_annotation.dart';
 import 'package:socieaty/core/network/api_result.dart';
 import 'package:socieaty/features/food_menu/repository/food_menu_repository.dart';
 import 'package:socieaty/features/food_menu/repository/response/paginate_food_menu_response.dart';
-import 'package:socieaty/features/food_menu/viewstate/paginate_menu_form_state.dart';
+import 'package:socieaty/features/food_menu/restaurant/viewstate/paginate_menu_form_state.dart';
 
 part 'paginate_menu_provider.g.dart';
 

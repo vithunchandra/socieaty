@@ -4,6 +4,7 @@ import 'package:socieaty/core/utils/converter.dart';
 import 'package:socieaty/features/customer/model/customer_data.dart';
 
 part 'socieaty_customer.freezed.dart';
+part 'socieaty_customer.g.dart';
 
 @freezed
 class SocieatyCustomer with _$SocieatyCustomer {
@@ -16,4 +17,6 @@ class SocieatyCustomer with _$SocieatyCustomer {
     @UserRoleConverter() required UserRole role,
     required CustomerData customerData,
   }) = _SocieatyCustomer;
+
+  factory SocieatyCustomer.fromJson(Map<String, dynamic> json) => _$SocieatyCustomerFromJson(json);
 }

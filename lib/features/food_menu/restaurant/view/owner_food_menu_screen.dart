@@ -12,7 +12,7 @@ import 'package:socieaty/core/utils/time_utils.dart';
 import 'package:socieaty/features/food_menu/model/food_menu.dart';
 import 'package:socieaty/features/food_menu/provider/get_all_food_menu_categories_provider.dart';
 import 'package:socieaty/features/food_menu/provider/get_food_menu_provider.dart';
-import 'package:socieaty/features/food_menu/view/owner_food_menu_item_widget.dart';
+import 'package:socieaty/features/food_menu/restaurant/view/owner_food_menu_item_widget.dart';
 import 'package:socieaty/features/restaurant/model/socieaty_restaurant.dart';
 import 'package:socieaty/shared/widgets/custom_error_widget.dart';
 import 'package:socieaty/shared/widgets/dotted_divider.dart';

@@ -7,9 +7,13 @@ import 'package:socieaty/core/enums/user_role.enum.dart';
 import 'package:socieaty/core/network/api_result.dart';
 import 'package:socieaty/core/theme/app_pallete.dart';
 import 'package:socieaty/core/theme/theme.dart';
+import 'package:socieaty/core/utils/show_new_order_dialog.dart';
 import 'package:socieaty/features/authentication/provider/session_provider.dart';
 import 'package:socieaty/features/authentication/repository/auth_local_repository.dart';
+import 'package:socieaty/features/restaurant/socket/restaurant_socket_service.dart';
+import 'package:socieaty/features/transaction/model/food_order_transaction.dart';
 import 'package:socieaty/features/user/model/socieaty_user.dart';
+import 'package:socieaty/main.dart';
 
 class SplashScreen extends ConsumerStatefulWidget {
   const SplashScreen({super.key});
@@ -53,6 +57,8 @@ class _InitPageState extends ConsumerState<SplashScreen> {
               } else {
                 Future.delayed(Duration(seconds: 3), () {
                   if (context.mounted) {
+                    final socketService = ref.read(restaurantSocketServiceProvider);
+                    socketService.initConnection();
                     context.pushReplacement("/restaurant/dashboard");
                   }
                 });
@@ -83,7 +89,9 @@ class _InitPageState extends ConsumerState<SplashScreen> {
         height: double.infinity,
         decoration: BoxDecoration(
           gradient: LinearGradient(
-              colors: [AppPallete.primaryColor.shade200, AppPallete.primaryColor.shade600], begin: Alignment.topLeft, end: Alignment.topRight),
+              colors: [AppPallete.primaryColor.shade200, AppPallete.primaryColor.shade600],
+              begin: Alignment.topLeft,
+              end: Alignment.topRight),
         ),
         child: Center(
           child: Text(

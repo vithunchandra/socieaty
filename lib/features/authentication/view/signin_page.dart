@@ -5,9 +5,13 @@ import 'package:socieaty/app_theme_provider.dart';
 import 'package:socieaty/core/enums/user_role.enum.dart';
 import 'package:socieaty/core/theme/app_pallete.dart';
 import 'package:socieaty/core/theme/theme.dart';
+import 'package:socieaty/core/utils/show_new_order_dialog.dart';
 import 'package:socieaty/core/utils/show_snackbar.dart';
 import 'package:socieaty/features/authentication/viewmodel/signin_viewmodel.dart';
 import 'package:socieaty/features/authentication/viewstate/signin_form_state.dart';
+import 'package:socieaty/features/restaurant/socket/restaurant_socket_service.dart';
+import 'package:socieaty/features/transaction/model/food_order_transaction.dart';
+import 'package:socieaty/main.dart';
 import 'package:socieaty/shared/view_state.dart';
 import 'package:socieaty/shared/widgets/banner_image_widget.dart';
 import 'package:socieaty/shared/widgets/custom_text_field.dart';
@@ -38,6 +42,14 @@ class _SignInPageState extends ConsumerState<SignInPage> {
             ref.read(appThemeProvider.notifier).setTheme(SocieatyAppTheme.darkTheme);
             context.replace('/customer/home');
           } else {
+            final socketService = ref.read(restaurantSocketServiceProvider);
+            socketService.initConnection();
+            socketService.listenNewOrder((data) {
+              if (rootNavigatorKey.currentState != null) {
+                showNewOrderDialog(FoodOrderTransaction.fromJson(data));
+              }
+            });
+            debugPrint('Replacing to restaurant dashboard');
             context.replace('/restaurant/dashboard');
           }
           isLoading = false;
@@ -58,7 +70,9 @@ class _SignInPageState extends ConsumerState<SignInPage> {
           width: screenWidth,
           child: Column(
             children: [
-              const Expanded(child: BannerImageWidget(image: "assets/images/login_background_alternative.png")),
+              const Expanded(
+                  child:
+                      BannerImageWidget(image: "assets/images/login_background_alternative.png")),
               SafeArea(
                 top: false,
                 child: Padding(
@@ -124,12 +138,14 @@ class _SignInPageState extends ConsumerState<SignInPage> {
                           height: 45,
                           child: FilledButton(
                             onPressed: () {
-                              if (_formKey.currentState != null && _formKey.currentState!.validate()) {
+                              if (_formKey.currentState != null &&
+                                  _formKey.currentState!.validate()) {
                                 _formKey.currentState!.save();
                                 ref.read(signinViewmodelProvider.notifier).signin(_formData);
                               }
                             },
-                            child: isLoading ? const LoadingIndicatorWidget() : const Text("Sign in"),
+                            child:
+                                isLoading ? const LoadingIndicatorWidget() : const Text("Sign in"),
                           ),
                         ),
                         const SizedBox(
@@ -148,7 +164,10 @@ class _SignInPageState extends ConsumerState<SignInPage> {
                               },
                               child: Text(
                                 "Sign up",
-                                style: Theme.of(context).textTheme.bodyMedium?.copyWith(color: AppPallete.primaryColor),
+                                style: Theme.of(context)
+                                    .textTheme
+                                    .bodyMedium
+                                    ?.copyWith(color: AppPallete.primaryColor),
                               ),
                             ),
                           ],

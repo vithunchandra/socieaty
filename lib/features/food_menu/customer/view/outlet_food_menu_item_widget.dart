@@ -1,17 +1,14 @@
 import 'package:cached_network_image/cached_network_image.dart';
+import 'package:collection/collection.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:socieaty/core/theme/app_pallete.dart';
 import 'package:socieaty/core/utils/custom_extension.dart';
-import 'package:socieaty/core/utils/show_snackbar.dart';
+import 'package:socieaty/features/food_menu/customer/view/outlet_food_menu_detail_widget.dart';
 import 'package:socieaty/features/food_menu/model/food_menu.dart';
 import 'package:socieaty/features/food_menu/provider/menu_cart_view_model.dart';
-import 'package:socieaty/features/food_menu/view/outlet_food_menu_detail_widget.dart';
-import 'package:socieaty/features/food_menu/viewmodel/food_menu_item_widget_view_model.dart';
-import 'package:socieaty/shared/view_state.dart';
 import 'package:socieaty/shared/widgets/image_error_widget.dart';
 import 'package:socieaty/shared/widgets/image_loading_widget.dart';
-import 'package:collection/collection.dart';
 
 class OutletFoodMenuItemWidget extends ConsumerStatefulWidget {
   final String restaurantId;
@@ -52,21 +49,6 @@ class _OutletFoodMenuItemWidgetState extends ConsumerState<OutletFoodMenuItemWid
       ),
     );
 
-    ref.listen(foodMenuItemWidgetViewModelProvider(_menu.id), (previous, current) {
-      switch (current.updatedMenu) {
-        case SuccessState(data: final data):
-          setState(() {
-            _menu = data;
-            _isAvailable = _menu.isStockAvailable;
-          });
-        case ErrorState(message: final message):
-          showSnackbar(context, message, isError: true);
-        case LoadingState():
-        case IdleState():
-        // No action needed for idle state
-      }
-    });
-
     return GestureDetector(
       onTap: () {
         FocusScope.of(context).focusedChild?.unfocus();
@@ -78,7 +60,7 @@ class _OutletFoodMenuItemWidgetState extends ConsumerState<OutletFoodMenuItemWid
           isScrollControlled: true,
           useSafeArea: true,
           builder: (context) => OutletFoodMenuDetailWidget(
-            restaurantId: widget.restaurantMenu.restaurantId,
+            restaurantId: widget.restaurantId,
             restaurantMenu: _menu,
           ),
         );
