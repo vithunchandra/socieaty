@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:permission_handler/permission_handler.dart';
+import 'package:socieaty/core/notifications/local_notification_service.dart';
 import 'package:socieaty/features/restaurant/socket/restaurant_socket_service.dart';
 
 /// Main dashboard screen for restaurant users.
@@ -19,7 +21,14 @@ class _RestaurantDashboardScreenState extends ConsumerState<RestaurantDashboardS
     super.initState();
 
     // Initialize socket connection when the dashboard loads
+    debugPrint("Initializing socket connection");
     _initializeSocketConnection();
+
+    // Set up notification tap handling
+    _setupNotificationTapHandling();
+
+    // Request notification permissions explicitly
+    _requestNotificationPermissions();
   }
 
   @override
@@ -32,6 +41,81 @@ class _RestaurantDashboardScreenState extends ConsumerState<RestaurantDashboardS
   void _initializeSocketConnection() {
     // Initialize the socket connection for receiving restaurant notifications
     ref.read(restaurantSocketServiceProvider).initConnection();
+
+    // Set up the order listener
+    ref.read(restaurantSocketServiceProvider).listenNewOrder((orderData) {
+      // Order data is already handled in the socket service to show notifications
+      debugPrint('Order received in dashboard: $orderData');
+    });
+  }
+
+  void _setupNotificationTapHandling() {
+    // Set up notification tap handler
+    ref.read(localNotificationServiceProvider).setOnNotificationTap((String? orderId) {
+      if (orderId != null) {
+        debugPrint('Navigating to order details for order: $orderId');
+        // Navigate to order details screen
+        // Replace this with your actual navigation logic
+        _navigateToOrderDetails(orderId);
+      }
+    });
+  }
+
+  Future<void> _requestNotificationPermissions() async {
+    final notificationService = ref.read(localNotificationServiceProvider);
+
+    // Show a dialog to inform the user about notifications (optional)
+    WidgetsBinding.instance.addPostFrameCallback((_) async {
+      // Wait a short delay before showing permission dialog
+      await Future.delayed(const Duration(seconds: 1));
+
+      // First check if notification permission is already granted
+      final status = await Permission.notification.status;
+      if (status.isGranted) {
+        debugPrint('Notification permission already granted');
+        return;
+      }
+
+      // Request notification permissions through our service
+      final bool granted = await notificationService.requestPermissions();
+
+      if (!granted && mounted) {
+        // Show a message if permissions were denied
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: const Text('Notification permissions are required to receive order alerts.'),
+            duration: const Duration(seconds: 5),
+            action: SnackBarAction(
+              label: 'Settings',
+              onPressed: () => _openAppSettings(),
+            ),
+          ),
+        );
+      }
+    });
+  }
+
+  Future<void> _openAppSettings() async {
+    // Open app settings using permission_handler
+    await openAppSettings();
+    debugPrint('Opening app settings to enable notifications');
+  }
+
+  void _navigateToOrderDetails(String orderId) {
+    // This method would navigate to your order details screen
+    // Replace with your actual navigation logic
+
+    // Example:
+    // context.pushNamed('orderDetails', pathParameters: {'id': orderId});
+
+    // For now, just show a snackbar as a demonstration
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Text('Opening order details for order: $orderId'),
+        backgroundColor: Colors.green,
+        duration: const Duration(seconds: 2),
+      ),
+    );
   }
 
   void _disconnectSocket() {

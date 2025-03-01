@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:socieaty/app_theme_provider.dart';
+import 'package:socieaty/core/notifications/local_notification_service.dart';
 import 'package:socieaty/core/routes/routes.dart';
 import 'package:socieaty/core/theme/theme.dart';
 import 'package:socieaty/core/utils/show_new_order_dialog.dart';
@@ -11,6 +12,10 @@ void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   final container = ProviderContainer();
   await container.read(authLocalRepositoryProvider).init();
+
+  // Initialize notification service at startup
+  await container.read(localNotificationServiceProvider).init();
+
   runApp(
     UncontrolledProviderScope(
       container: container,

@@ -42,14 +42,14 @@ class _SignInPageState extends ConsumerState<SignInPage> {
             ref.read(appThemeProvider.notifier).setTheme(SocieatyAppTheme.darkTheme);
             context.replace('/customer/home');
           } else {
-            final socketService = ref.read(restaurantSocketServiceProvider);
-            socketService.initConnection();
-            socketService.listenNewOrder((data) {
-              if (rootNavigatorKey.currentState != null) {
-                showNewOrderDialog(FoodOrderTransaction.fromJson(data));
-              }
-            });
-            debugPrint('Replacing to restaurant dashboard');
+            // final socketService = ref.read(restaurantSocketServiceProvider);
+            // socketService.initConnection();
+            // socketService.listenNewOrder((data) {
+            //   if (rootNavigatorKey.currentState != null) {
+            //     showNewOrderDialog(FoodOrderTransaction.fromJson(data));
+            //   }
+            // });
+            // debugPrint('Replacing to restaurant dashboard');
             context.replace('/restaurant/dashboard');
           }
           isLoading = false;

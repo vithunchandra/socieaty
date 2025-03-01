@@ -15,6 +15,20 @@ class RestaurantAccountScreen extends ConsumerStatefulWidget {
 }
 
 class _RestaurantAccountScreenState extends ConsumerState<RestaurantAccountScreen> {
+  void disconnectSocket() {
+    // Disconnect the socket when logging out
+    ref.read(restaurantSocketServiceProvider).disconnect();
+  }
+
+  void handleLogout() {
+    // Disconnect socket before navigating away
+    disconnectSocket();
+    ref.invalidate(getSessionDataProvider);
+
+    // Navigate to login screen (implement your navigation logic here)
+    context.go('/landing');
+  }
+
   @override
   Widget build(BuildContext context) {
     bool isLoading = ref.watch(accountViewModelProvider).isSignedOut is LoadingState ? true : false;
@@ -22,12 +36,10 @@ class _RestaurantAccountScreenState extends ConsumerState<RestaurantAccountScree
     ref.listen(accountViewModelProvider, (_, next) {
       switch (next.isSignedOut) {
         case SuccessState<bool>():
-          ref.invalidate(getSessionDataProvider);
-          ref.invalidate(restaurantSocketServiceProvider);
-          context.go('/landing');
+          handleLogout();
         case ErrorState():
-          ref.invalidate(getSessionDataProvider);
-          context.go('/landing');
+          handleLogout();
+
         case LoadingState():
         case IdleState():
       }

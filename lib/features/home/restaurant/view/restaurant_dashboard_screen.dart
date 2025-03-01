@@ -1,18 +1,100 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
+import 'package:permission_handler/permission_handler.dart';
+import 'package:socieaty/core/notifications/local_notification_service.dart';
 import 'package:socieaty/core/theme/app_pallete.dart';
 import 'package:socieaty/features/authentication/repository/auth_local_repository.dart';
 import 'package:socieaty/features/home/restaurant/view/grid_menu_button_widget.dart';
 import 'package:socieaty/features/home/restaurant/view/recent_reservation_widget.dart';
 import 'package:socieaty/features/home/restaurant/view/statistic_summary_widget.dart';
+import 'package:socieaty/features/restaurant/socket/restaurant_socket_service.dart';
 import 'package:socieaty/features/transaction/restaurant/view/transaction_item_widget.dart';
 
-class RestaurantDashboardScreen extends ConsumerWidget {
+class RestaurantDashboardScreen extends ConsumerStatefulWidget {
   const RestaurantDashboardScreen({super.key});
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
+  ConsumerState<RestaurantDashboardScreen> createState() => _RestaurantDashboardScreenState();
+}
+
+class _RestaurantDashboardScreenState extends ConsumerState<RestaurantDashboardScreen> {
+  @override
+  void initState() {
+    super.initState();
+
+    debugPrint("Initializing socket connection");
+    initializeSocketConnection();
+
+    setupNotificationTapHandling();
+
+    requestNotificationPermissions();
+  }
+
+  void initializeSocketConnection() {
+    ref.read(restaurantSocketServiceProvider).initConnection();
+
+    ref.read(restaurantSocketServiceProvider).listenNewOrder((orderData) {
+      debugPrint('Order received in dashboard: $orderData');
+    });
+  }
+
+  void navigateToOrderDetails(String orderId) {
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Text('Opening order details for order: $orderId'),
+        backgroundColor: Colors.green,
+        duration: const Duration(seconds: 2),
+      ),
+    );
+  }
+
+  void setupNotificationTapHandling() {
+    // Set up notification tap handler
+    ref.read(localNotificationServiceProvider).setOnNotificationTap((String? orderId) {
+      if (orderId != null) {
+        debugPrint('Navigating to order details for order: $orderId');
+        navigateToOrderDetails(orderId);
+      }
+    });
+  }
+
+  Future<void> openAppSettings() async {
+    await openAppSettings();
+    debugPrint('Opening app settings to enable notifications');
+  }
+
+  Future<void> requestNotificationPermissions() async {
+    final notificationService = ref.read(localNotificationServiceProvider);
+
+    WidgetsBinding.instance.addPostFrameCallback((_) async {
+      await Future.delayed(const Duration(seconds: 1));
+
+      final status = await Permission.notification.status;
+      if (status.isGranted) {
+        debugPrint('Notification permission already granted');
+        return;
+      }
+
+      final bool granted = await notificationService.requestPermissions();
+
+      if (!granted && mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: const Text('Notification permissions are required to receive order alerts.'),
+            duration: const Duration(seconds: 5),
+            action: SnackBarAction(
+              label: 'Settings',
+              onPressed: () => openAppSettings(),
+            ),
+          ),
+        );
+      }
+    });
+  }
+
+  @override
+  Widget build(BuildContext context) {
     final user = ref.watch(authLocalRepositoryProvider).getUserData();
 
     return Scaffold(
@@ -70,7 +152,8 @@ class RestaurantDashboardScreen extends ConsumerWidget {
                                   const SizedBox(height: 4),
                                   Row(
                                     children: [
-                                      const Icon(Icons.location_on, color: Colors.white70, size: 16),
+                                      const Icon(Icons.location_on,
+                                          color: Colors.white70, size: 16),
                                       const SizedBox(width: 4),
                                       Text(
                                         'Jakarta, Indonesia',
