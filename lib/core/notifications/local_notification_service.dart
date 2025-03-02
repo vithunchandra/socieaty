@@ -15,6 +15,7 @@ class LocalNotificationService {
   final FlutterLocalNotificationsPlugin _flutterLocalNotificationsPlugin =
       FlutterLocalNotificationsPlugin();
   bool _isInitialized = false;
+  @pragma('vm:entry-point')
   Function(String?)? _onNotificationTap;
 
   void setOnNotificationTap(Function(String?) onTap) {

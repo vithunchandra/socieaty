@@ -46,7 +46,7 @@ class _CreateTransactionScreenState extends ConsumerState<CreateTransactionScree
       restaurantId: widget.restaurant.restaurantData.id,
       serviceType: TransactionServiceType.foodOrder,
       menuItems: [],
-      additionalNotes: "",
+      note: "",
     );
   }
 
@@ -86,7 +86,7 @@ class _CreateTransactionScreenState extends ConsumerState<CreateTransactionScree
                 quantity: e.quantity,
               ))
           .toList(),
-      additionalNotes: _additionalNotes,
+      note: _additionalNotes,
     );
     debugPrint(_formState.toJson().toString());
     ref.read(createTransactionViewModelProvider.notifier).createTransaction(_formState);
@@ -171,6 +171,7 @@ class _CreateTransactionScreenState extends ConsumerState<CreateTransactionScree
         case SuccessState<FoodOrderTransaction>(data: final data):
           debugPrint(data.toString());
           ref.read(menuCartViewModelProvider(widget.restaurant.id).notifier).clearCart();
+          context.push('/track-order', extra: data.id);
         case ErrorState(message: final message):
           showSnackbar(context, message, isError: true);
         case LoadingState():

@@ -32,6 +32,8 @@ import 'package:socieaty/features/transaction/restaurant/view/restaurant_transac
 import 'package:socieaty/features/user/view/profile_loader_screen.dart';
 import 'package:socieaty/shared/widgets/create_screen.dart';
 import 'package:socieaty/features/customer/view/customer_scaffold_with_navbar.dart';
+import 'package:socieaty/features/transaction/customer/view/track_order_screen.dart';
+import 'package:socieaty/features/transaction/model/food_order_transaction.dart';
 
 part 'routes.g.dart';
 
@@ -209,145 +211,6 @@ GoRouter router(Ref ref) {
                 pageBuilder: (context, state) => const NoTransitionPage(
                   child: RestaurantTransactionScreen(),
                 ),
-                routes: [
-                  GoRoute(
-                    path: 'page_a',
-                    pageBuilder: (context, state) => NoTransitionPage(
-                      child: Scaffold(
-                        body: Center(
-                          child: Column(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            children: [
-                              Text('Page A'),
-                              FilledButton(
-                                onPressed: () {
-                                  context.go('/restaurant/transaksi/page_a/page_a_1');
-                                },
-                                child: Text('Page A 1'),
-                              ),
-                              FilledButton(
-                                onPressed: () {
-                                  context.go('/restaurant/transaksi/page_b/page_b_1');
-                                },
-                                child: Text('Page B 2'),
-                              ),
-                              FilledButton(
-                                onPressed: () {
-                                  context.go('/restaurant/transaksi/page_c/page_c_1');
-                                },
-                                child: Text('Page C 3'),
-                              ),
-                            ],
-                          ),
-                        ),
-                      ),
-                    ),
-                    routes: [
-                      GoRoute(
-                        path: 'page_a_1',
-                        pageBuilder: (context, state) => const NoTransitionPage(
-                          child: Scaffold(
-                            body: Center(
-                              child: Text('Page A 1'),
-                            ),
-                          ),
-                        ),
-                      ),
-                    ],
-                  ),
-                  GoRoute(
-                    path: 'page_b',
-                    pageBuilder: (context, state) => NoTransitionPage(
-                      child: Scaffold(
-                        body: Center(
-                          child: Column(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            crossAxisAlignment: CrossAxisAlignment.center,
-                            children: [
-                              Text('Page B'),
-                              FilledButton(
-                                onPressed: () {
-                                  context.go('/restaurant/transaksi/page_a/page_a_1');
-                                },
-                                child: Text('Page B 1'),
-                              ),
-                              FilledButton(
-                                onPressed: () {
-                                  context.go('/restaurant/transaksi/page_b/page_b_1');
-                                },
-                                child: Text('Page B 2'),
-                              ),
-                              FilledButton(
-                                onPressed: () {
-                                  context.go('/restaurant/transaksi/page_c/page_c_1');
-                                },
-                                child: Text('Page B 3'),
-                              ),
-                            ],
-                          ),
-                        ),
-                      ),
-                    ),
-                    routes: [
-                      GoRoute(
-                        path: 'page_b_1',
-                        pageBuilder: (context, state) => const NoTransitionPage(
-                          child: Scaffold(
-                            body: Center(
-                              child: Text('Page B 1'),
-                            ),
-                          ),
-                        ),
-                      ),
-                    ],
-                  ),
-                  GoRoute(
-                    path: 'page_c',
-                    pageBuilder: (context, state) => NoTransitionPage(
-                      child: Scaffold(
-                        body: Center(
-                          child: Column(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            crossAxisAlignment: CrossAxisAlignment.center,
-                            children: [
-                              Text('Page C'),
-                              FilledButton(
-                                onPressed: () {
-                                  context.go('/restaurant/transaksi/page_a/page_a_1');
-                                },
-                                child: Text('Page A 1'),
-                              ),
-                              FilledButton(
-                                onPressed: () {
-                                  context.go('/restaurant/transaksi/page_b/page_b_1');
-                                },
-                                child: Text('Page B 2'),
-                              ),
-                              FilledButton(
-                                onPressed: () {
-                                  context.go('/restaurant/transaksi/page_c/page_c_1');
-                                },
-                                child: Text('Page C 3'),
-                              ),
-                            ],
-                          ),
-                        ),
-                      ),
-                    ),
-                    routes: [
-                      GoRoute(
-                        path: 'page_c_1',
-                        pageBuilder: (context, state) => const NoTransitionPage(
-                          child: Scaffold(
-                            body: Center(
-                              child: Text('Page C 1'),
-                            ),
-                          ),
-                        ),
-                      ),
-                    ],
-                  ),
-                ],
               ),
             ],
           ),
@@ -362,6 +225,12 @@ GoRouter router(Ref ref) {
             ],
           ),
         ],
+      ),
+      GoRoute(
+        path: '/track-order',
+        builder: (context, state) => TrackOrderScreen(
+          orderId: state.extra as String,
+        ),
       ),
       GoRoute(
         path: '/:userId',

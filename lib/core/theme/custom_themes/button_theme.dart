@@ -6,6 +6,8 @@ class CustomButtonStyle {
   CustomButtonStyle._();
 
   static final elevatedButtonStyle = ElevatedButton.styleFrom(
+    backgroundColor: AppPallete.primaryColor,
+    foregroundColor: Colors.white,
     padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 8),
     shape: RoundedRectangleBorder(
       borderRadius: BorderRadius.circular(10),

@@ -9,6 +9,7 @@ import 'package:socieaty/features/home/restaurant/view/grid_menu_button_widget.d
 import 'package:socieaty/features/home/restaurant/view/recent_reservation_widget.dart';
 import 'package:socieaty/features/home/restaurant/view/statistic_summary_widget.dart';
 import 'package:socieaty/features/restaurant/socket/restaurant_socket_service.dart';
+import 'package:socieaty/features/restaurant/view/restaurant_scaffold_with_navbar.dart';
 import 'package:socieaty/features/transaction/restaurant/view/transaction_item_widget.dart';
 
 class RestaurantDashboardScreen extends ConsumerStatefulWidget {
@@ -40,13 +41,7 @@ class _RestaurantDashboardScreenState extends ConsumerState<RestaurantDashboardS
   }
 
   void navigateToOrderDetails(String orderId) {
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(
-        content: Text('Opening order details for order: $orderId'),
-        backgroundColor: Colors.green,
-        duration: const Duration(seconds: 2),
-      ),
-    );
+    ref.read(restaurantScaffoldPageControllerProvider).pushNewBranch(1);
   }
 
   void setupNotificationTapHandling() {

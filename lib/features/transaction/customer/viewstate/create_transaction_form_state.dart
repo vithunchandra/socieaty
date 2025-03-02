@@ -12,10 +12,9 @@ class CreateTransactionFormState with _$CreateTransactionFormState {
     required String restaurantId,
     @TransactionServiceTypeConverter() required TransactionServiceType serviceType,
     @Default([]) List<OrderMenuItem> menuItems,
-    @Default('') String additionalNotes,
+    @Default('') String note,
   }) = _CreateTransactionFormState;
 
   factory CreateTransactionFormState.fromJson(Map<String, dynamic> json) =>
       _$CreateTransactionFormStateFromJson(json);
 }
-

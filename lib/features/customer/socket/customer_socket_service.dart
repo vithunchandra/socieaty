@@ -8,12 +8,13 @@ import 'package:socket_io_client/socket_io_client.dart';
 
 part 'customer_socket_service.g.dart';
 
-@riverpod
+@Riverpod(keepAlive: true)
 CustomerSocketService customerSocketService(Ref ref) {
   final AuthLocalRepository authLocalRepository = ref.watch(authLocalRepositoryProvider);
   final token = authLocalRepository.getToken();
   return CustomerSocketService(
-    socket: ref.watch(websocketClientProvider('${AppConstants.socieatyBackendUrl}food-order', token)),
+    socket:
+        ref.watch(websocketClientProvider('${AppConstants.socieatyBackendUrl}food-order', token)),
   );
 }
 
@@ -60,7 +61,7 @@ class CustomerSocketService {
     _socket.emit('track-order', orderId);
   }
 
-  void listenOrderUpdate(Function(dynamic) onOrderUpdate) {
+  void listenOrderUpdate(String orderId, Function(dynamic) onOrderUpdate) {
     _socket.on('track-order', (data) {
       debugPrint('Order Tracking: $data');
       onOrderUpdate(data);

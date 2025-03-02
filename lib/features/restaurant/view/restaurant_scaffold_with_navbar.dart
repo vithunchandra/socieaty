@@ -1,8 +1,41 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
+import 'package:riverpod_annotation/riverpod_annotation.dart';
 import 'package:socieaty/features/restaurant/view/restaurant_navbar.dart';
 import 'package:socieaty/shared/provider/navigation_provider.dart';
+
+part 'restaurant_scaffold_with_navbar.g.dart';
+
+@Riverpod(keepAlive: true)
+RestaurantScaffoldPageController restaurantScaffoldPageController(Ref ref) {
+  return RestaurantScaffoldPageController(ref: ref);
+}
+
+class RestaurantScaffoldPageController{
+  StatefulNavigationShell? navigationShell;
+  final Ref ref;
+
+  RestaurantScaffoldPageController({required this.ref});
+
+  void setNavigationShell(StatefulNavigationShell shell){
+    navigationShell = shell;
+  }
+  
+  void pushNewBranch(int index) {
+    ref.read(navigationIndexProvider.notifier).addIndex(index);
+
+    goBranch(index);
+  }
+
+  void goBranch(int index) {
+    navigationShell?.goBranch(
+      index,
+      initialLocation: index == navigationShell?.currentIndex,
+    );
+  }
+
+}
 
 class RestaurantScaffoldWithNavbar extends ConsumerStatefulWidget {
   const RestaurantScaffoldWithNavbar({
@@ -18,6 +51,13 @@ class RestaurantScaffoldWithNavbar extends ConsumerStatefulWidget {
 }
 
 class _RestaurantScaffoldWithNavbarState extends ConsumerState<RestaurantScaffoldWithNavbar> {
+
+  @override
+  void initState() {
+    super.initState();
+    ref.read(restaurantScaffoldPageControllerProvider).setNavigationShell(widget.navigationShell);
+  }
+
   void _pushNewBranch(int index) {
     ref.read(navigationIndexProvider.notifier).addIndex(index);
 

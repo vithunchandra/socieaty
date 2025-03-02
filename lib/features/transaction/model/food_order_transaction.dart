@@ -19,6 +19,7 @@ class FoodOrderTransaction with _$FoodOrderTransaction {
     required SocieatyRestaurant restaurant,
     required SocieatyCustomer customer,
     required List<TransactionMenuItem> menuItems,
+    required String note,
   }) = _FoodOrderTransaction;
 
   factory FoodOrderTransaction.fromJson(Map<String, dynamic> json) =>
