@@ -94,7 +94,7 @@ class RestaurantSocketService {
         notificationService.showNewOrderNotification(
           title: notificationTitle,
           body: notificationBody,
-          payload: orderData.id,
+          payload: orderData,
           orderDetails: orderData.toJson(),
         );
 

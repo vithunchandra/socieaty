@@ -7,7 +7,7 @@ import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:location/location.dart';
 import 'package:socieaty/core/theme/app_pallete.dart';
 import 'package:socieaty/core/utils/location_handler.dart';
-import 'package:socieaty/features/map/model/MyLocationData.dart';
+import 'package:socieaty/features/map/model/my_location_data.dart';
 import 'package:uuid/uuid.dart';
 
 const double cameraZoom = 16;

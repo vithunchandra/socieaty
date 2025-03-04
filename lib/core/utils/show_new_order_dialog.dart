@@ -1,7 +1,9 @@
+import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:socieaty/features/transaction/model/food_order_transaction.dart';
 import 'package:socieaty/main.dart';
+import 'package:socieaty/core/utils/color_extension.dart';
 
 void showNewOrderDialog(FoodOrderTransaction order) {
   // Optional: Add vibration to notify without being too intrusive
@@ -29,7 +31,7 @@ void showNewOrderDialog(FoodOrderTransaction order) {
               borderRadius: BorderRadius.circular(16),
               boxShadow: [
                 BoxShadow(
-                  color: Colors.black.withOpacity(0.1),
+                  color: Colors.black.withOpacitySafe(0.1),
                   blurRadius: 10,
                   offset: const Offset(0, 4),
                 ),

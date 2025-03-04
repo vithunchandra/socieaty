@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:socieaty/core/enums/bank.enum.dart';
@@ -89,6 +90,8 @@ class TransactionStatusConverter implements JsonConverter<TransactionStatus, Str
 
   @override
   TransactionStatus fromJson(String json) {
+    debugPrint('json: $json');
+    debugPrint('TransactionStatus.values: ${TransactionStatus.values.first.name}');
     return TransactionStatus.values.firstWhere((element) => element.name == json);
   }
 

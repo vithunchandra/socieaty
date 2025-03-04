@@ -5,7 +5,6 @@ import 'package:socieaty/app_theme_provider.dart';
 import 'package:socieaty/core/notifications/local_notification_service.dart';
 import 'package:socieaty/core/routes/routes.dart';
 import 'package:socieaty/core/theme/theme.dart';
-import 'package:socieaty/core/utils/show_new_order_dialog.dart';
 import 'package:socieaty/features/authentication/repository/auth_local_repository.dart';
 
 void main() async {

@@ -9,7 +9,7 @@ import 'package:socieaty/core/utils/show_picker_modal.dart';
 import 'package:socieaty/core/utils/show_snackbar.dart';
 import 'package:socieaty/features/authentication/viewmodel/signup_restaurant_viewmodel.dart';
 import 'package:socieaty/features/authentication/viewstate/signup_restaurant_form_state.dart';
-import 'package:socieaty/features/map/model/MyLocationData.dart';
+import 'package:socieaty/features/map/model/my_location_data.dart';
 import 'package:socieaty/features/user/model/socieaty_user.dart';
 import 'package:socieaty/shared/view_state.dart';
 import 'package:socieaty/shared/widgets/loading_indicator_widget.dart';

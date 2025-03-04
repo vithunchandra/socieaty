@@ -1,8 +1,10 @@
+import 'dart:convert';
 import 'dart:typed_data';
 import 'package:flutter/material.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
+import 'package:socieaty/features/transaction/model/food_order_transaction.dart';
 
 part 'local_notification_service.g.dart';
 
@@ -153,7 +155,7 @@ class LocalNotificationService {
   Future<void> showNewOrderNotification({
     required String title,
     required String body,
-    String? payload,
+    FoodOrderTransaction? payload,
     Map<String, dynamic>? orderDetails,
   }) async {
     if (!_isInitialized) {
@@ -207,7 +209,7 @@ class LocalNotificationService {
       title,
       body,
       platformChannelSpecifics,
-      payload: payload,
+      payload: jsonEncode(payload),
     );
   }
 }

@@ -2,6 +2,7 @@ import 'package:dio/dio.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 import 'package:socieaty/core/constants.dart';
+import 'package:socieaty/core/enums/transaction.enum.dart';
 import 'package:socieaty/core/network/api_client.dart';
 import 'package:socieaty/core/network/api_result.dart';
 import 'package:socieaty/core/utils/execute_request.dart';
@@ -9,7 +10,9 @@ import 'package:socieaty/features/authentication/repository/auth_local_repositor
 import 'package:socieaty/features/transaction/customer/viewstate/create_transaction_form_state.dart';
 import 'package:socieaty/features/transaction/model/food_order_transaction.dart';
 import 'package:socieaty/features/transaction/repository/response/create_order_transaction_response.dart';
+import 'package:socieaty/features/transaction/repository/response/get_restaurant_food_transaction_response.dart';
 import 'package:socieaty/features/transaction/repository/response/track_order_transaction_response.dart';
+import 'package:socieaty/features/transaction/repository/response/update_order_transaction_response.dart';
 
 part 'transaction_repository.g.dart';
 
@@ -50,6 +53,23 @@ class TransactionRepository {
     return executeRequest<TrackOrderTransactionResponse>(
       requestFunction: () => _dio.get('transactions/order/$id/track'),
       successParser: (data) => TrackOrderTransactionResponse.fromJson(data),
+    );
+  }
+
+  Future<ApiResult<GetRestaurantFoodTransactionResponse>> getRestaurantFoodTransaction(
+      TransactionStatus status) async {
+    return executeRequest<GetRestaurantFoodTransactionResponse>(
+      requestFunction: () =>
+          _dio.get('transactions/order/restaurant', queryParameters: {'status': status.name}),
+      successParser: (data) => GetRestaurantFoodTransactionResponse.fromJson(data),
+    );
+  }
+
+  Future<ApiResult<UpdateOrderTransactionResponse>> updateTransactionStatus(
+      String id, TransactionStatus status) async {
+    return executeRequest<UpdateOrderTransactionResponse>(
+      requestFunction: () => _dio.put('transactions/order/$id/', data: {'status': status.name}),
+      successParser: (data) => UpdateOrderTransactionResponse.fromJson(data),
     );
   }
 }

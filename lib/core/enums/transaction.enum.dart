@@ -8,11 +8,11 @@ enum TransactionServiceType {
 }
 
 enum TransactionStatus {
-  confirming,
   pending,
-  process,
-  completed,
-  cancelled,
+  rejected,
+  preparing,
+  ready,
+  completed
 }
 
 

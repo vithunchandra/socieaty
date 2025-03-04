@@ -1,13 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:socieaty/core/theme/app_pallete.dart';
 
-class TransactionItemWidget extends StatelessWidget {
+class TransactionItemSummaryWidget extends StatelessWidget {
   final String customerName;
   final String time;
   final String amount;
   final String status;
 
-  const TransactionItemWidget({
+  const TransactionItemSummaryWidget({
     super.key,
     required this.customerName,
     required this.time,

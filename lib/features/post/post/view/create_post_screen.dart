@@ -10,7 +10,7 @@ import 'package:socieaty/core/utils/show_picker_modal.dart';
 import 'package:socieaty/core/utils/show_snackbar.dart';
 import 'package:socieaty/features/authentication/repository/auth_local_repository.dart';
 import 'package:socieaty/features/home/customer/provider/all_post_provider.dart';
-import 'package:socieaty/features/map/model/MyLocationData.dart';
+import 'package:socieaty/features/map/model/my_location_data.dart';
 import 'package:socieaty/features/post/post/model/post.dart';
 import 'package:socieaty/features/post/post/viewmodel/create_post_view_model.dart';
 import 'package:socieaty/features/post/post/viewstate/create_post_form_state.dart';

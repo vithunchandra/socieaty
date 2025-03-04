@@ -5,4 +5,4 @@ class MyLocationData {
   final String address;
 
   MyLocationData({required this.latlng, required this.address});
-}
+} 

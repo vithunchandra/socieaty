@@ -7,10 +7,8 @@ part 'livestream_home_view_model.g.dart';
 
 @riverpod
 class LivestreamHomeViewModel extends _$LivestreamHomeViewModel {
-  late LivestreamRepository _livestreamRepository;
   @override
   LivestreamHomeViewState build() {
-    _livestreamRepository = ref.watch(livestreamRepositoryProvider);
     return LivestreamHomeViewState(rooms: IdleState());
   }
 }

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:socieaty/core/theme/app_pallete.dart';
+import 'package:socieaty/core/utils/color_extension.dart';
 
 class DeleteConfirmationDialog extends StatelessWidget {
   final String title;
@@ -19,7 +20,7 @@ class DeleteConfirmationDialog extends StatelessWidget {
       icon: Container(
         padding: const EdgeInsets.all(8),
         decoration: BoxDecoration(
-          color: AppPallete.errorColor.withOpacity(0.1),
+          color: AppPallete.errorColor.withOpacitySafe(0.1),
           shape: BoxShape.circle,
         ),
         child: Icon(

@@ -10,7 +10,7 @@ import 'package:socieaty/features/home/restaurant/view/recent_reservation_widget
 import 'package:socieaty/features/home/restaurant/view/statistic_summary_widget.dart';
 import 'package:socieaty/features/restaurant/socket/restaurant_socket_service.dart';
 import 'package:socieaty/features/restaurant/view/restaurant_scaffold_with_navbar.dart';
-import 'package:socieaty/features/transaction/restaurant/view/transaction_item_widget.dart';
+import 'package:socieaty/features/transaction/restaurant/view/transaction_item_summary_widget.dart';
 
 class RestaurantDashboardScreen extends ConsumerStatefulWidget {
   const RestaurantDashboardScreen({super.key});
@@ -285,7 +285,7 @@ class _RestaurantDashboardScreenState extends ConsumerState<RestaurantDashboardS
                         ],
                       ),
                       const SizedBox(height: 12),
-                      TransactionItemWidget(
+                      TransactionItemSummaryWidget(
                         customerName: 'John Doe',
                         time: '2 hours ago',
                         amount: 'Rp 150.000',

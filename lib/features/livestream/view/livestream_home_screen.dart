@@ -22,7 +22,6 @@ class _LivestreamHomeScreenState extends ConsumerState<LivestreamHomeScreen> {
   final PageController _pageController = PageController();
   List<LiveRoom> _rooms = [];
   bool _isLoading = false;
-  int _currentPage = 0;
 
   @override
   void dispose() {
@@ -100,11 +99,6 @@ class _LivestreamHomeScreenState extends ConsumerState<LivestreamHomeScreen> {
                         controller: _pageController,
                         scrollDirection: Axis.vertical,
                         physics: CustomPageViewScrollPhysics(),
-                        onPageChanged: (index) {
-                          setState(() {
-                            _currentPage = index;
-                          });
-                        },
                         itemBuilder: (context, index) {
                           final liveRoom = _rooms[index];
                           return LivestreamWidget(
