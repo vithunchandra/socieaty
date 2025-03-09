@@ -1,3 +1,4 @@
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 import 'package:socieaty/core/enums/transaction.enum.dart';
 import 'package:socieaty/core/network/api_result.dart';
@@ -20,9 +21,11 @@ class UpdateTransactionStatusViewModel extends _$UpdateTransactionStatusViewMode
     );
   }
 
-  Future<void> updateTransactionStatus(TransactionStatus status) async {
+  Future<void> updateTransactionStatus(TransactionStatus newStatus) async {
     state = state.copyWith(updatedOrder: LoadingState());
-    final result = await _transactionRepository.updateTransactionStatus(orderId, status);
+
+    final result = await _transactionRepository.updateTransactionStatus(orderId, newStatus);
+
     switch (result) {
       case Success(data: var data):
         state = state.copyWith(updatedOrder: SuccessState(data: data.transaction));

@@ -1,19 +1,23 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
 import 'package:socieaty/core/enums/transaction.enum.dart';
 import 'package:socieaty/features/transaction/model/food_order_transaction.dart';
+import 'package:socieaty/features/transaction/restaurant/provider/new_order_notification_provider.dart';
+import 'package:socieaty/features/transaction/restaurant/provider/get_restaurant_food_transaction_provider.dart';
 import 'package:socieaty/features/transaction/restaurant/widgets/order_details_sheet.dart';
 import 'package:socieaty/features/transaction/restaurant/widgets/order_list.dart';
 
-class RestaurantTransactionScreen extends StatefulWidget {
+class RestaurantTransactionScreen extends ConsumerStatefulWidget {
   final FoodOrderTransaction? order;
 
   const RestaurantTransactionScreen({super.key, this.order});
 
   @override
-  State<RestaurantTransactionScreen> createState() => _RestaurantTransactionScreenState();
+  ConsumerState<RestaurantTransactionScreen> createState() => _RestaurantTransactionScreenState();
 }
 
-class _RestaurantTransactionScreenState extends State<RestaurantTransactionScreen>
+class _RestaurantTransactionScreenState extends ConsumerState<RestaurantTransactionScreen>
     with SingleTickerProviderStateMixin {
   late TabController _tabController;
 
@@ -51,14 +55,49 @@ class _RestaurantTransactionScreenState extends State<RestaurantTransactionScree
         expand: false,
         builder: (_, scrollController) => OrderDetailsSheet(
           order: order,
+          statusFilter: [TransactionStatus.pending],
           scrollController: scrollController,
         ),
       ),
     );
   }
 
+  // Navigate to the history screen
+  void _navigateToHistory() {
+    context.push('/restaurant/transaksi/history');
+  }
+
   @override
   Widget build(BuildContext context) {
+    // Listen for new order notifications
+    ref.listen(newOrderNotificationProvider, (previous, next) {
+      if (next != null) {
+        // New order received, refresh the pending orders list
+        ref.invalidate(getRestaurantFoodTransactionProvider([TransactionStatus.pending]));
+
+        // Show snackbar notification for new order
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('New order received from ${next.customer.name}'),
+            action: SnackBarAction(
+              label: 'View',
+              onPressed: () {
+                _showHighlightedOrder(next);
+              },
+            ),
+            duration: const Duration(seconds: 4),
+            behavior: SnackBarBehavior.floating,
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(10),
+            ),
+          ),
+        );
+
+        // Order notification has been processed, reset it
+        ref.read(newOrderNotificationProvider.notifier).resetNotification();
+      }
+    });
+
     return Scaffold(
       backgroundColor: Colors.grey[100],
       appBar: AppBar(
@@ -69,6 +108,13 @@ class _RestaurantTransactionScreenState extends State<RestaurantTransactionScree
         ),
         backgroundColor: Theme.of(context).primaryColor,
         foregroundColor: Colors.white,
+        actions: [
+          IconButton(
+            icon: const Icon(Icons.history),
+            tooltip: 'Riwayat Transaksi',
+            onPressed: _navigateToHistory,
+          ),
+        ],
         bottom: TabBar(
           controller: _tabController,
           indicatorColor: Colors.white,
@@ -78,21 +124,21 @@ class _RestaurantTransactionScreenState extends State<RestaurantTransactionScree
           tabs: const [
             Tab(text: 'Baru'),
             Tab(text: 'Berlangsung'),
-            Tab(text: 'Selesai'),
+            Tab(text: 'Siap'),
           ],
         ),
       ),
       body: TabBarView(
         controller: _tabController,
-        children: [
+        children: const [
           OrderList(
-            statusFilter: TransactionStatus.pending,
+            statusFilter: [TransactionStatus.pending],
           ),
           OrderList(
-            statusFilter: TransactionStatus.preparing,
+            statusFilter: [TransactionStatus.preparing],
           ),
           OrderList(
-            statusFilter: TransactionStatus.completed,
+            statusFilter: [TransactionStatus.ready],
           ),
         ],
       ),

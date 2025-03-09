@@ -11,11 +11,13 @@ import 'package:socieaty/shared/view_state.dart';
 
 class OrderCard extends ConsumerWidget {
   final FoodOrderTransaction order;
+  final List<TransactionStatus> statusFilter;
   final Function(FoodOrderTransaction)? onViewDetails;
 
   const OrderCard({
     super.key,
     required this.order,
+    required this.statusFilter,
     this.onViewDetails,
   });
 
@@ -34,6 +36,7 @@ class OrderCard extends ConsumerWidget {
         builder: (_, scrollController) => OrderDetailsSheet(
           order: order,
           scrollController: scrollController,
+          statusFilter: statusFilter,
         ),
       ),
     );
@@ -56,6 +59,19 @@ class OrderCard extends ConsumerWidget {
       TransactionStatus.ready: 'SIAP',
       TransactionStatus.completed: 'SELESAI',
     };
+
+    ref.listen(updateTransactionStatusViewModelProvider(order.id), (previous, next) {
+      switch (next.updatedOrder) {
+        case SuccessState<FoodOrderTransaction>():
+          if (next.updatedOrder is SuccessState<FoodOrderTransaction>) {
+            ref.invalidate(getRestaurantFoodTransactionProvider(statusFilter));
+          }
+        case ErrorState(message: var message):
+          showSnackbar(context, message, isError: true);
+        case LoadingState<FoodOrderTransaction>():
+        case IdleState():
+      }
+    });
 
     return Card(
       margin: const EdgeInsets.only(bottom: 16),
@@ -204,9 +220,23 @@ class OrderCard extends ConsumerWidget {
                     ),
                   ],
 
-                  // Action buttons for pending orders
+                  // Action buttons based on order status
                   if (order.status == TransactionStatus.pending)
                     PendingOrderCardActions(
+                      order: order,
+                      onViewDetails: onViewDetails != null
+                          ? onViewDetails!
+                          : (order) => _showOrderDetails(context, order),
+                    ),
+                  if (order.status == TransactionStatus.preparing)
+                    PreparingOrderCardActions(
+                      order: order,
+                      onViewDetails: onViewDetails != null
+                          ? onViewDetails!
+                          : (order) => _showOrderDetails(context, order),
+                    ),
+                  if (order.status == TransactionStatus.ready)
+                    ReadyOrderCardActions(
                       order: order,
                       onViewDetails: onViewDetails != null
                           ? onViewDetails!
@@ -234,19 +264,6 @@ class PendingOrderCardActions extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    ref.listen(updateTransactionStatusViewModelProvider(order.id), (previous, next) {
-      switch (next.updatedOrder) {
-        case SuccessState<FoodOrderTransaction>():
-          if (order.status == TransactionStatus.pending) {
-            ref.invalidate(getRestaurantFoodTransactionProvider(TransactionStatus.pending));
-          }
-        case ErrorState(message: var message):
-          showSnackbar(context, message, isError: true);
-        case LoadingState<FoodOrderTransaction>():
-        case IdleState():
-      }
-    });
-
     return Padding(
       padding: const EdgeInsets.only(top: 16),
       child: Row(
@@ -271,6 +288,102 @@ class PendingOrderCardActions extends ConsumerWidget {
                     .updateTransactionStatus(TransactionStatus.preparing);
               },
               child: const Text('Terima'),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class PreparingOrderCardActions extends ConsumerWidget {
+  final FoodOrderTransaction order;
+  final Function(FoodOrderTransaction) onViewDetails;
+
+  const PreparingOrderCardActions({
+    super.key,
+    required this.order,
+    required this.onViewDetails,
+  });
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    return Padding(
+      padding: const EdgeInsets.only(top: 16),
+      child: Row(
+        children: [
+          Expanded(
+            child: OutlinedButton(
+              onPressed: () => onViewDetails(order),
+              style: OutlinedButton.styleFrom(
+                foregroundColor: Theme.of(context).primaryColor,
+                side: BorderSide(color: Theme.of(context).primaryColor),
+                padding: const EdgeInsets.symmetric(vertical: 8),
+              ),
+              child: const Text('Lihat Detail'),
+            ),
+          ),
+          const SizedBox(width: 8),
+          Expanded(
+            child: FilledButton(
+              onPressed: () {
+                ref
+                    .read(updateTransactionStatusViewModelProvider(order.id).notifier)
+                    .updateTransactionStatus(TransactionStatus.ready);
+              },
+              style: FilledButton.styleFrom(
+                backgroundColor: Colors.amber,
+                padding: const EdgeInsets.symmetric(vertical: 8),
+              ),
+              child: const Text('Siap Diambil'),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class ReadyOrderCardActions extends ConsumerWidget {
+  final FoodOrderTransaction order;
+  final Function(FoodOrderTransaction) onViewDetails;
+
+  const ReadyOrderCardActions({
+    super.key,
+    required this.order,
+    required this.onViewDetails,
+  });
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    return Padding(
+      padding: const EdgeInsets.only(top: 16),
+      child: Row(
+        children: [
+          Expanded(
+            child: OutlinedButton(
+              onPressed: () => onViewDetails(order),
+              style: OutlinedButton.styleFrom(
+                foregroundColor: Theme.of(context).primaryColor,
+                side: BorderSide(color: Theme.of(context).primaryColor),
+                padding: const EdgeInsets.symmetric(vertical: 8),
+              ),
+              child: const Text('Lihat Detail'),
+            ),
+          ),
+          const SizedBox(width: 8),
+          Expanded(
+            child: FilledButton(
+              onPressed: () {
+                ref
+                    .read(updateTransactionStatusViewModelProvider(order.id).notifier)
+                    .updateTransactionStatus(TransactionStatus.completed);
+              },
+              style: FilledButton.styleFrom(
+                backgroundColor: Colors.green,
+                padding: const EdgeInsets.symmetric(vertical: 8),
+              ),
+              child: const Text('Selesai'),
             ),
           ),
         ],

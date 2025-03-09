@@ -15,24 +15,36 @@ part 'restaurant_socket_service.g.dart';
 RestaurantSocketService restaurantSocketService(Ref ref) {
   final AuthLocalRepository authLocalRepository = ref.watch(authLocalRepositoryProvider);
   final token = authLocalRepository.getToken();
-  return RestaurantSocketService(
+
+  final service = RestaurantSocketService(
     socket:
         ref.watch(websocketClientProvider('${AppConstants.socieatyBackendUrl}food-order', token)),
     notificationService: ref.watch(localNotificationServiceProvider),
   );
+
+  // Register for cleanup when the provider is disposed
+  ref.onDispose(() {
+    service.disconnect();
+  });
+
+  return service;
 }
 
 class RestaurantSocketService {
   Socket socket;
   bool _isConnected = false;
   final LocalNotificationService notificationService;
+  bool _hasNewOrderListener = false;
+  Function(FoodOrderTransaction)? _onNewOrderCallback;
 
-  RestaurantSocketService({required this.socket, required this.notificationService});
+  RestaurantSocketService({
+    required this.socket,
+    required this.notificationService,
+  });
 
   bool get isConnected => _isConnected;
 
   initConnection() {
-    debugPrint("TEst");
     if (_isConnected) return;
 
     notificationService.init();
@@ -46,11 +58,17 @@ class RestaurantSocketService {
     socket.onConnect((_) {
       debugPrint('Restaurant connected to server');
       _isConnected = true;
+
+      // Set up the new order listener when connected
+      if (!_hasNewOrderListener) {
+        _setupNewOrderListener();
+      }
     });
 
     socket.onDisconnect((_) {
       debugPrint('Restaurant disconnected from server');
       _isConnected = false;
+      _hasNewOrderListener = false;
     });
 
     socket.onerror((_) {
@@ -60,11 +78,17 @@ class RestaurantSocketService {
   }
 
   void disconnect() {
+    removeListener('new-order');
     socket.disconnect();
     _isConnected = false;
+    _hasNewOrderListener = false;
+    _onNewOrderCallback = null;
   }
 
-  void listenNewOrder(Function(dynamic) onNewOrder) {
+  // Setup the central new order listener that updates the provider
+  void _setupNewOrderListener() {
+    if (_hasNewOrderListener) return;
+
     socket.on('new-order', (data) {
       debugPrint('New Order Received: $data');
 
@@ -98,7 +122,10 @@ class RestaurantSocketService {
           orderDetails: orderData.toJson(),
         );
 
-        onNewOrder(data);
+        // Notify through callback if registered
+        if (_onNewOrderCallback != null) {
+          _onNewOrderCallback!(orderData);
+        }
       } catch (e) {
         debugPrint('Error processing new order: $e');
 
@@ -106,10 +133,23 @@ class RestaurantSocketService {
           title: '💰 New Restaurant Order',
           body: 'You have received a new order. Tap to view details.',
         );
-
-        onNewOrder(data);
       }
     });
+
+    _hasNewOrderListener = true;
+  }
+
+  // Register callback for new orders
+  void listenNewOrder(Function(FoodOrderTransaction) onNewOrder) {
+    // Save callback
+    _onNewOrderCallback = onNewOrder;
+
+    // Initialize connection and setup listener if needed
+    if (!_isConnected) {
+      initConnection();
+    } else if (!_hasNewOrderListener) {
+      _setupNewOrderListener();
+    }
   }
 
   String _formatCurrency(int amount) {
@@ -148,5 +188,9 @@ class RestaurantSocketService {
 
   void removeListener(String event) {
     socket.off(event);
+    if (event == 'new-order') {
+      _hasNewOrderListener = false;
+      _onNewOrderCallback = null;
+    }
   }
 }

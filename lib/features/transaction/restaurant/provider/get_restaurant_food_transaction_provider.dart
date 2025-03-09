@@ -8,7 +8,7 @@ import 'package:socieaty/features/transaction/repository/transaction_repository.
 part 'get_restaurant_food_transaction_provider.g.dart';
 
 @riverpod
-Future<List<FoodOrderTransaction>> getRestaurantFoodTransaction(Ref ref, TransactionStatus status) async {
+Future<List<FoodOrderTransaction>> getRestaurantFoodTransaction(Ref ref, List<TransactionStatus> status) async {
   final repository = ref.watch(transactionRepositoryProvider);
   final result = await repository.getRestaurantFoodTransaction(status);
   switch(result) {

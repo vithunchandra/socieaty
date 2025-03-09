@@ -12,8 +12,10 @@ import 'package:socieaty/shared/view_state.dart';
 class OrderDetailsSheet extends ConsumerStatefulWidget {
   final FoodOrderTransaction order;
   final ScrollController scrollController;
+  final List<TransactionStatus> statusFilter;
 
-  const OrderDetailsSheet({super.key, required this.order, required this.scrollController});
+  const OrderDetailsSheet(
+      {super.key, required this.order, required this.scrollController, required this.statusFilter});
 
   @override
   ConsumerState<OrderDetailsSheet> createState() => _OrderDetailsSheetState();
@@ -42,7 +44,7 @@ class _OrderDetailsSheetState extends ConsumerState<OrderDetailsSheet> {
       switch (next.updatedOrder) {
         case SuccessState<FoodOrderTransaction>():
           if (widget.order.status == TransactionStatus.pending) {
-            ref.invalidate(getRestaurantFoodTransactionProvider(TransactionStatus.pending));
+            ref.invalidate(getRestaurantFoodTransactionProvider(widget.statusFilter));
           }
           context.pop();
 
@@ -290,6 +292,10 @@ class _OrderDetailsSheetState extends ConsumerState<OrderDetailsSheet> {
           // Action buttons at the bottom (fixed position)
           if (widget.order.status == TransactionStatus.pending)
             PendingOrderDetailsActions(order: widget.order),
+          if (widget.order.status == TransactionStatus.preparing)
+            PreparingOrderDetailsActions(order: widget.order),
+          if (widget.order.status == TransactionStatus.ready)
+            ReadyOrderDetailsActions(order: widget.order),
         ],
       ),
     );
@@ -335,6 +341,76 @@ class _PendingOrderDetailsActionsState extends ConsumerState<PendingOrderDetails
                     .updateTransactionStatus(TransactionStatus.preparing);
               },
               child: const Text('Terima Pesanan'),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class PreparingOrderDetailsActions extends ConsumerStatefulWidget {
+  final FoodOrderTransaction order;
+  const PreparingOrderDetailsActions({super.key, required this.order});
+
+  @override
+  ConsumerState<PreparingOrderDetailsActions> createState() => _PreparingOrderDetailsActionsState();
+}
+
+class _PreparingOrderDetailsActionsState extends ConsumerState<PreparingOrderDetailsActions> {
+  @override
+  Widget build(BuildContext context) {
+    return Padding(
+      padding: const EdgeInsets.only(top: 8),
+      child: Row(
+        children: [
+          Expanded(
+            child: FilledButton(
+              onPressed: () {
+                ref
+                    .read(updateTransactionStatusViewModelProvider(widget.order.id).notifier)
+                    .updateTransactionStatus(TransactionStatus.ready);
+              },
+              style: FilledButton.styleFrom(
+                backgroundColor: Colors.amber,
+                padding: const EdgeInsets.symmetric(vertical: 12),
+              ),
+              child: const Text('Pesanan Siap Diambil'),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class ReadyOrderDetailsActions extends ConsumerStatefulWidget {
+  final FoodOrderTransaction order;
+  const ReadyOrderDetailsActions({super.key, required this.order});
+
+  @override
+  ConsumerState<ReadyOrderDetailsActions> createState() => _ReadyOrderDetailsActionsState();
+}
+
+class _ReadyOrderDetailsActionsState extends ConsumerState<ReadyOrderDetailsActions> {
+  @override
+  Widget build(BuildContext context) {
+    return Padding(
+      padding: const EdgeInsets.only(top: 8),
+      child: Row(
+        children: [
+          Expanded(
+            child: FilledButton(
+              onPressed: () {
+                ref
+                    .read(updateTransactionStatusViewModelProvider(widget.order.id).notifier)
+                    .updateTransactionStatus(TransactionStatus.completed);
+              },
+              style: FilledButton.styleFrom(
+                backgroundColor: Colors.green,
+                padding: const EdgeInsets.symmetric(vertical: 12),
+              ),
+              child: const Text('Pesanan Selesai'),
             ),
           ),
         ],

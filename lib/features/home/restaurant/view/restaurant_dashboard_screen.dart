@@ -8,9 +8,10 @@ import 'package:socieaty/features/authentication/repository/auth_local_repositor
 import 'package:socieaty/features/home/restaurant/view/grid_menu_button_widget.dart';
 import 'package:socieaty/features/home/restaurant/view/recent_reservation_widget.dart';
 import 'package:socieaty/features/home/restaurant/view/statistic_summary_widget.dart';
-import 'package:socieaty/features/restaurant/socket/restaurant_socket_service.dart';
+import 'package:socieaty/features/transaction/restaurant/socket/restaurant_socket_service.dart';
 import 'package:socieaty/features/restaurant/view/restaurant_scaffold_with_navbar.dart';
 import 'package:socieaty/features/transaction/restaurant/view/transaction_item_summary_widget.dart';
+import 'package:socieaty/features/transaction/restaurant/provider/new_order_notification_provider.dart';
 
 class RestaurantDashboardScreen extends ConsumerStatefulWidget {
   const RestaurantDashboardScreen({super.key});
@@ -33,10 +34,15 @@ class _RestaurantDashboardScreenState extends ConsumerState<RestaurantDashboardS
   }
 
   void initializeSocketConnection() {
-    ref.read(restaurantSocketServiceProvider).initConnection();
+    // Initialize the socket connection
+    final socketService = ref.read(restaurantSocketServiceProvider);
+    socketService.initConnection();
 
-    ref.read(restaurantSocketServiceProvider).listenNewOrder((orderData) {
-      debugPrint('Order received in dashboard: $orderData');
+    // Listen for new orders and update the notification provider
+    socketService.listenNewOrder((order) {
+      debugPrint('Order received in dashboard: ${order.id}');
+      // Update the notification provider when a new order arrives
+      ref.read(newOrderNotificationProvider.notifier).setNewOrder(order);
     });
   }
 

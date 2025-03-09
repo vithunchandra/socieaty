@@ -33,6 +33,7 @@ import 'package:socieaty/features/user/view/profile_loader_screen.dart';
 import 'package:socieaty/shared/widgets/create_screen.dart';
 import 'package:socieaty/features/customer/view/customer_scaffold_with_navbar.dart';
 import 'package:socieaty/features/transaction/customer/view/track_order_screen.dart';
+import 'package:socieaty/features/transaction/restaurant/view/restaurant_transaction_history_screen.dart';
 
 part 'routes.g.dart';
 
@@ -210,6 +211,14 @@ GoRouter router(Ref ref) {
                 pageBuilder: (context, state) => const NoTransitionPage(
                   child: RestaurantTransactionScreen(),
                 ),
+                routes: [
+                  GoRoute(
+                    path: 'history',
+                    pageBuilder: (context, state) => const NoTransitionPage(
+                      child: RestaurantTransactionHistoryScreen(),
+                    ),
+                  ),
+                ],
               ),
             ],
           ),

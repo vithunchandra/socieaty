@@ -9,8 +9,10 @@ import 'package:socieaty/core/utils/execute_request.dart';
 import 'package:socieaty/features/authentication/repository/auth_local_repository.dart';
 import 'package:socieaty/features/transaction/customer/viewstate/create_transaction_form_state.dart';
 import 'package:socieaty/features/transaction/model/food_order_transaction.dart';
+import 'package:socieaty/features/transaction/repository/response/create_food_order_transaction_response.dart';
 import 'package:socieaty/features/transaction/repository/response/create_order_transaction_response.dart';
 import 'package:socieaty/features/transaction/repository/response/get_restaurant_food_transaction_response.dart';
+import 'package:socieaty/features/transaction/repository/response/track_food_order_transaction_message_response.dart';
 import 'package:socieaty/features/transaction/repository/response/track_order_transaction_response.dart';
 import 'package:socieaty/features/transaction/repository/response/update_order_transaction_response.dart';
 
@@ -57,10 +59,11 @@ class TransactionRepository {
   }
 
   Future<ApiResult<GetRestaurantFoodTransactionResponse>> getRestaurantFoodTransaction(
-      TransactionStatus status) async {
+      List<TransactionStatus> status) async {
     return executeRequest<GetRestaurantFoodTransactionResponse>(
-      requestFunction: () =>
-          _dio.get('transactions/order/restaurant', queryParameters: {'status': status.name}),
+      requestFunction: () => _dio.get('transactions/order/restaurant', queryParameters: {
+        'status[]': List.generate(status.length, (index) => status[index].name),
+      }),
       successParser: (data) => GetRestaurantFoodTransactionResponse.fromJson(data),
     );
   }
@@ -70,6 +73,25 @@ class TransactionRepository {
     return executeRequest<UpdateOrderTransactionResponse>(
       requestFunction: () => _dio.put('transactions/order/$id/', data: {'status': status.name}),
       successParser: (data) => UpdateOrderTransactionResponse.fromJson(data),
+    );
+  }
+
+  Future<ApiResult<CreateFoodOrderTransactionMessageResponse>> createFoodOrderTransactionMessage(
+    String transactionId,
+    String message,
+  ) async {
+    return executeRequest<CreateFoodOrderTransactionMessageResponse>(
+      requestFunction: () => _dio.post('transactions/order/$transactionId/message'),
+      successParser: (data) => CreateFoodOrderTransactionMessageResponse.fromJson(data),
+    );
+  }
+
+  Future<ApiResult<TrackFoodOrderTransactionMessageResponse>> trackFoodOrderTransactionMessage(
+    String transactionId,
+  ) async {
+    return executeRequest<TrackFoodOrderTransactionMessageResponse>(
+      requestFunction: () => _dio.get('transactions/order/$transactionId/message'),
+      successParser: (data) => TrackFoodOrderTransactionMessageResponse.fromJson(data),
     );
   }
 }
