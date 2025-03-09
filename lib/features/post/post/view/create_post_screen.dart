@@ -117,7 +117,6 @@ class _CreatePostScreenState extends ConsumerState<CreatePostScreen> {
                               );
                             }
                             final file = files[index];
-                            // final extension = file.path.substring(file.path.lastIndexOf('.'));
                             if (RegExp(r'\.(mp4|mov|avi|wmv|flv|mkv|webm)$', caseSensitive: false).hasMatch(file.path)) {
                               return VideoThumbailWidget(
                                 size: Size(100, 100),
@@ -158,7 +157,6 @@ class _CreatePostScreenState extends ConsumerState<CreatePostScreen> {
                                 decoration: InputDecoration.collapsed(
                                   hintText: "Judul post kamu...",
                                   hintStyle: Theme.of(context).textTheme.titleLarge?.copyWith(color: AppPallete.neutralColor.shade400),
-                                  // hintFadeDuration: Duration(milliseconds: 250),
                                   border: InputBorder.none,
                                 ),
                               ),
@@ -180,7 +178,6 @@ class _CreatePostScreenState extends ConsumerState<CreatePostScreen> {
                                 decoration: InputDecoration.collapsed(
                                   hintText: "Tulis caption kamu disini. Buat caption yang menarik untuk post kamu",
                                   hintStyle: Theme.of(context).textTheme.bodyMedium?.copyWith(color: AppPallete.neutralColor.shade400),
-                                  // hintFadeDuration: Duration(milliseconds: 250),
                                   border: InputBorder.none,
                                 ),
                                 minLines: 5,

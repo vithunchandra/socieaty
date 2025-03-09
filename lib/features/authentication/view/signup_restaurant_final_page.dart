@@ -38,7 +38,6 @@ class _SignupRestaurantFinalPageState extends ConsumerState<SignupRestaurantFina
   final _openTimeController = TextEditingController(text: "");
   final _closeTimeController = TextEditingController(text: "");
 
-  // List of restaurant themes
   final List<String> _restaurantThemes = [
     'Casual',
     'Fine Dining',
@@ -228,10 +227,8 @@ class _SignupRestaurantFinalPageState extends ConsumerState<SignupRestaurantFina
                               mainAxisAlignment: MainAxisAlignment.start,
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
-                                // Profile Picture and Restaurant Name Row
                                 Row(
                                   children: [
-                                    // Profile Picture
                                     GestureDetector(
                                       onTap: () {
                                         showImagePickerModal(context, (image) {
@@ -273,7 +270,6 @@ class _SignupRestaurantFinalPageState extends ConsumerState<SignupRestaurantFina
                                       ),
                                     ),
                                     const SizedBox(width: 16),
-                                    // Restaurant Name
                                     Expanded(
                                       child: Column(
                                         crossAxisAlignment: CrossAxisAlignment.start,
@@ -362,15 +358,14 @@ class _SignupRestaurantFinalPageState extends ConsumerState<SignupRestaurantFina
                                   style: Theme.of(context).textTheme.bodyMedium,
                                 ),
                                 const SizedBox(height: 32.0),
-                                // Restaurant Theme
                                 Text(
                                   "Tema Restaurant",
                                   style: Theme.of(context).textTheme.titleSmall,
                                 ),
                                 const SizedBox(height: 8),
                                 Wrap(
-                                  spacing: 8.0, // Horizontal space between children
-                                  runSpacing: 4.0, // Vertical space between lines,
+                                  spacing: 8.0,
+                                  runSpacing: 4.0,
                                   children: [
                                     ..._selectedThemes.map(
                                       (key) => Chip(
@@ -528,11 +523,10 @@ class _SignupRestaurantFinalPageState extends ConsumerState<SignupRestaurantFina
                                             BorderSide(color: AppPallete.neutralColor, width: 2.0),
                                       ),
                                     ),
-                                    value: _selectedBank, // Current selected value
-                                    hint: Text('Pilih Bank'), // Hint text when no value is selected
+                                    value: _selectedBank,
+                                    hint: Text('Pilih Bank'),
                                     isExpanded: true,
                                     onChanged: (Bank? newValue) {
-                                      // Step 4: Update the selected value when the user selects an item
                                       setState(() {
                                         _selectedBank = newValue;
                                       });

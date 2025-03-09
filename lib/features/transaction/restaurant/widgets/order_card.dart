@@ -85,7 +85,6 @@ class OrderCard extends ConsumerWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            // Status header
             Container(
               padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
               decoration: BoxDecoration(
@@ -123,17 +122,13 @@ class OrderCard extends ConsumerWidget {
                 ],
               ),
             ),
-
-            // Order content
             Padding(
               padding: const EdgeInsets.all(16),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  // Customer row
                   Row(
                     children: [
-                      // Avatar
                       CircleAvatar(
                         backgroundColor: Colors.grey[200],
                         radius: 20,
@@ -146,8 +141,6 @@ class OrderCard extends ConsumerWidget {
                         ),
                       ),
                       const SizedBox(width: 12),
-
-                      // Customer details
                       Expanded(
                         child: Text(
                           order.customer.name,
@@ -159,15 +152,11 @@ class OrderCard extends ConsumerWidget {
                       ),
                     ],
                   ),
-
                   const Divider(height: 24),
-
-                  // Order summary
                   if (order.menuItems.isNotEmpty) ...[
                     Row(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        // Food image
                         ClipRRect(
                           borderRadius: BorderRadius.circular(8),
                           child: Image.network(
@@ -178,8 +167,6 @@ class OrderCard extends ConsumerWidget {
                           ),
                         ),
                         const SizedBox(width: 12),
-
-                        // Order info
                         Expanded(
                           child: Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
@@ -219,8 +206,6 @@ class OrderCard extends ConsumerWidget {
                       ],
                     ),
                   ],
-
-                  // Action buttons based on order status
                   if (order.status == TransactionStatus.pending)
                     PendingOrderCardActions(
                       order: order,

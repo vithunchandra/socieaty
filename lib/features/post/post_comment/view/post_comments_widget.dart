@@ -134,7 +134,6 @@ class _PostCommentsWidgetState extends ConsumerState<PostCommentsWidget> {
                                 .textTheme
                                 .bodyMedium
                                 ?.copyWith(color: AppPallete.neutralColor.shade400),
-                            // hintFadeDuration: Duration(milliseconds: 250),
                             border: InputBorder.none,
                           ),
                         ),

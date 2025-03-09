@@ -15,6 +15,6 @@ Future<FoodOrderTransaction> getTransaction(Ref ref, String id) async {
     case Success(data: final data):
       return data;
     case Error(error: final error):
-      throw error;
+      throw Exception(error.message);
   }
 }

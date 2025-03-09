@@ -34,14 +34,11 @@ class _RestaurantDashboardScreenState extends ConsumerState<RestaurantDashboardS
   }
 
   void initializeSocketConnection() {
-    // Initialize the socket connection
     final socketService = ref.read(restaurantSocketServiceProvider);
     socketService.initConnection();
 
-    // Listen for new orders and update the notification provider
     socketService.listenNewOrder((order) {
       debugPrint('Order received in dashboard: ${order.id}');
-      // Update the notification provider when a new order arrives
       ref.read(newOrderNotificationProvider.notifier).setNewOrder(order);
     });
   }
@@ -51,7 +48,6 @@ class _RestaurantDashboardScreenState extends ConsumerState<RestaurantDashboardS
   }
 
   void setupNotificationTapHandling() {
-    // Set up notification tap handler
     ref.read(localNotificationServiceProvider).setOnNotificationTap((String? orderId) {
       if (orderId != null) {
         debugPrint('Navigating to order details for order: $orderId');
@@ -109,7 +105,6 @@ class _RestaurantDashboardScreenState extends ConsumerState<RestaurantDashboardS
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                // Top Header Section
                 Container(
                   width: double.infinity,
                   decoration: BoxDecoration(
@@ -193,8 +188,6 @@ class _RestaurantDashboardScreenState extends ConsumerState<RestaurantDashboardS
                     ),
                   ),
                 ),
-
-                // Quick Actions
                 Padding(
                   padding: const EdgeInsets.symmetric(vertical: 24.0, horizontal: 16.0),
                   child: Column(
@@ -268,10 +261,7 @@ class _RestaurantDashboardScreenState extends ConsumerState<RestaurantDashboardS
                           ],
                         ),
                       ),
-
                       const SizedBox(height: 12),
-
-                      // Recent Transactions
                       Row(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
@@ -297,10 +287,7 @@ class _RestaurantDashboardScreenState extends ConsumerState<RestaurantDashboardS
                         amount: 'Rp 150.000',
                         status: 'Completed',
                       ),
-
                       const SizedBox(height: 16),
-
-                      // Recent Reservations
                       Row(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
@@ -321,10 +308,7 @@ class _RestaurantDashboardScreenState extends ConsumerState<RestaurantDashboardS
                       ),
                       const SizedBox(height: 16),
                       RecentReservationWidget(),
-
                       const SizedBox(height: 24),
-
-                      // Statistics Cards
                       Text(
                         'Statistik Hari Ini',
                         style: Theme.of(context).textTheme.titleMedium?.copyWith(
@@ -356,8 +340,6 @@ class _RestaurantDashboardScreenState extends ConsumerState<RestaurantDashboardS
                         ],
                       ),
                       const SizedBox(height: 24),
-
-                      // Engagement Section
                       Text(
                         'Social Engagement',
                         style: Theme.of(context).textTheme.titleMedium?.copyWith(

@@ -26,7 +26,6 @@ class _RestaurantTransactionScreenState extends ConsumerState<RestaurantTransact
     super.initState();
     _tabController = TabController(length: 3, vsync: this);
 
-    // If we received an orderId from notification, show that order details
     WidgetsBinding.instance.addPostFrameCallback((_) {
       if (widget.order != null) {
         _showHighlightedOrder(widget.order!);
@@ -40,7 +39,6 @@ class _RestaurantTransactionScreenState extends ConsumerState<RestaurantTransact
     super.dispose();
   }
 
-  // Show the order details for a highlighted order (from notifications)
   void _showHighlightedOrder(FoodOrderTransaction order) {
     showModalBottomSheet(
       context: context,
@@ -62,20 +60,16 @@ class _RestaurantTransactionScreenState extends ConsumerState<RestaurantTransact
     );
   }
 
-  // Navigate to the history screen
   void _navigateToHistory() {
     context.push('/restaurant/transaksi/history');
   }
 
   @override
   Widget build(BuildContext context) {
-    // Listen for new order notifications
     ref.listen(newOrderNotificationProvider, (previous, next) {
       if (next != null) {
-        // New order received, refresh the pending orders list
         ref.invalidate(getRestaurantFoodTransactionProvider([TransactionStatus.pending]));
 
-        // Show snackbar notification for new order
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
             content: Text('New order received from ${next.customer.name}'),
@@ -93,7 +87,6 @@ class _RestaurantTransactionScreenState extends ConsumerState<RestaurantTransact
           ),
         );
 
-        // Order notification has been processed, reset it
         ref.read(newOrderNotificationProvider.notifier).resetNotification();
       }
     });
@@ -120,7 +113,7 @@ class _RestaurantTransactionScreenState extends ConsumerState<RestaurantTransact
           indicatorColor: Colors.white,
           indicatorWeight: 3,
           labelColor: Colors.white,
-          unselectedLabelColor: Colors.white.withAlpha(178), // 70% of 255
+          unselectedLabelColor: Colors.white.withAlpha(178),
           tabs: const [
             Tab(text: 'Baru'),
             Tab(text: 'Berlangsung'),

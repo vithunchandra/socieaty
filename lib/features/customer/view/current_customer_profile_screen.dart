@@ -25,7 +25,6 @@ class _CurrentCustomerProfileScreenState extends ConsumerState<CurrentCustomerPr
   bool _showSmallProfile = false;
   Size? _profileHeaderSize;
 
-  // Add the GlobalKey for your profile header.
   final GlobalKey _profileHeaderKey = GlobalKey();
 
   @override
@@ -34,14 +33,12 @@ class _CurrentCustomerProfileScreenState extends ConsumerState<CurrentCustomerPr
     _scrollController = ScrollController();
     _scrollController.addListener(_scrollListener);
 
-    // Retrieve the size after the first frame is rendered.
     WidgetsBinding.instance.addPostFrameCallback((_) {
       _getProfileHeaderSize();
     });
   }
 
   void _getProfileHeaderSize() {
-    // Ensure that our key's context is not null
     if (_profileHeaderKey.currentContext != null) {
       final RenderBox renderBox = _profileHeaderKey.currentContext!.findRenderObject() as RenderBox;
       final size = renderBox.size;
@@ -126,7 +123,7 @@ class _CurrentCustomerProfileScreenState extends ConsumerState<CurrentCustomerPr
     });
 
     return DefaultTabController(
-      length: 3, // Three tabs: Grid, Lock, Favorite
+      length: 3,
       child: Scaffold(
         backgroundColor: AppPallete.neutralColor.shade50,
         appBar: AppBar(
@@ -136,7 +133,7 @@ class _CurrentCustomerProfileScreenState extends ConsumerState<CurrentCustomerPr
               ? Row(
                   children: [
                     CircleAvatar(
-                      radius: 16, // smaller avatar for the app bar
+                      radius: 16,
                       backgroundColor: AppPallete.neutralColor.shade200,
                       backgroundImage: widget.user.profilePictureUrl != null
                           ? NetworkImage(widget.user.profilePictureUrl!)
@@ -184,7 +181,6 @@ class _CurrentCustomerProfileScreenState extends ConsumerState<CurrentCustomerPr
                 onChanged: (value) {
                   switch (value) {
                     case 'balance':
-                      // Handle balance action
                       break;
                     case 'logout':
                       ref.read(accountViewModelProvider.notifier).signout();
@@ -212,14 +208,12 @@ class _CurrentCustomerProfileScreenState extends ConsumerState<CurrentCustomerPr
                 controller: _scrollController,
                 headerSliverBuilder: (context, innerBoxIsScrolled) {
                   return [
-                    // Profile header (non-scrolling part)
                     SliverToBoxAdapter(
                       child: Container(
                         key: _profileHeaderKey,
                         child: Column(
                           children: [
                             const SizedBox(height: 20),
-                            // Profile Picture Section
                             PhysicalModel(
                               color: AppPallete.neutralColor.shade50,
                               elevation: 2.0,
@@ -240,7 +234,6 @@ class _CurrentCustomerProfileScreenState extends ConsumerState<CurrentCustomerPr
                             Text("@${widget.user.email}",
                                 style: Theme.of(context).textTheme.titleMedium),
                             const SizedBox(height: 20),
-                            // Stats Row
                             Row(
                               mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                               children: [
@@ -250,7 +243,6 @@ class _CurrentCustomerProfileScreenState extends ConsumerState<CurrentCustomerPr
                               ],
                             ),
                             const SizedBox(height: 20),
-                            // Action Buttons
                             Padding(
                               padding: const EdgeInsets.symmetric(horizontal: 20),
                               child: Row(
@@ -268,7 +260,6 @@ class _CurrentCustomerProfileScreenState extends ConsumerState<CurrentCustomerPr
                               ),
                             ),
                             const SizedBox(height: 16),
-                            // Add Bio Button or display bio
                             widget.user.customerData.bio.isEmpty
                                 ? TextButton(
                                     onPressed: () => _showBioDialog(context),
@@ -303,7 +294,6 @@ class _CurrentCustomerProfileScreenState extends ConsumerState<CurrentCustomerPr
                     ),
                   ];
                 },
-                // TabBarView for the selected tab content
                 body: TabBarView(
                   children: [
                     PostGridWidget(authorId: widget.user.id),
@@ -326,7 +316,6 @@ class _CurrentCustomerProfileScreenState extends ConsumerState<CurrentCustomerPr
   }
 }
 
-// New SliverPersistentHeader delegate for pinning the TabBar
 class _SliverAppBarDelegate extends SliverPersistentHeaderDelegate {
   final TabBar _tabBar;
   _SliverAppBarDelegate(this._tabBar);
@@ -339,7 +328,6 @@ class _SliverAppBarDelegate extends SliverPersistentHeaderDelegate {
   @override
   Widget build(BuildContext context, double shrinkOffset, bool overlapsContent) {
     return Container(
-      // Use a background color matching the overall design
       color: AppPallete.neutralColor.shade50,
       child: _tabBar,
     );

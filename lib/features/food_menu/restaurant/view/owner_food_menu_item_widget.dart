@@ -76,7 +76,6 @@ class _OwnerFoodMenuItemWidgetState extends ConsumerState<OwnerFoodMenuItemWidge
           showSnackbar(context, message, isError: true);
         case LoadingState():
         case IdleState():
-        // No action needed for idle state
       }
     });
 

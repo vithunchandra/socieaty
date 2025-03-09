@@ -76,11 +76,9 @@ class _ShopScreenState extends ConsumerState<ShopScreen> {
         child: NestedScrollView(
           headerSliverBuilder: (context, innerBoxIsScrolled) {
             return [
-              // Shop Details Header
               SliverToBoxAdapter(
                 child: _ShopDetailsHeader(),
               ),
-              // Combined Search Bar and Filter Section
               SliverAppBar(
                 pinned: true,
                 backgroundColor: AppPallete.neutralColor.shade50,
@@ -88,12 +86,10 @@ class _ShopScreenState extends ConsumerState<ShopScreen> {
                 automaticallyImplyLeading: false,
                 toolbarHeight: 0,
                 bottom: PreferredSize(
-                  preferredSize: const Size.fromHeight(
-                      52 + 48 + 30), // search bar (60) + filter row (48) + extra padding (30)
+                  preferredSize: const Size.fromHeight(52 + 48 + 30),
                   child: Column(
                     mainAxisSize: MainAxisSize.min,
                     children: [
-                      // Search Bar
                       Padding(
                         padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
                         child: SearchBarWidget(
@@ -103,7 +99,6 @@ class _ShopScreenState extends ConsumerState<ShopScreen> {
                           },
                         ),
                       ),
-                      // Filter Chips Row
                       Padding(
                         padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
                         child: SizedBox(
@@ -184,9 +179,7 @@ class _ShopScreenState extends ConsumerState<ShopScreen> {
                     ),
                     items: partialData.map((restaurant) {
                       return GestureDetector(
-                        onTap: () {
-                          // widget.onMenuCarouselItemTapped();
-                        },
+                        onTap: () {},
                         child: SizedBox(
                           height: 250,
                           width: double.infinity,
@@ -239,9 +232,7 @@ class _ShopScreenState extends ConsumerState<ShopScreen> {
                       ),
                       items: partialData.map((menu) {
                         return GestureDetector(
-                          onTap: () {
-                            // widget.onMenuCarouselItemTapped();
-                          },
+                          onTap: () {},
                           child: Container(
                             clipBehavior: Clip.none,
                             margin: const EdgeInsets.all(12),
@@ -319,11 +310,6 @@ class _ShopScreenState extends ConsumerState<ShopScreen> {
   }
 }
 
-// -----------------------------------------------------------------------------
-// Header Widgets and Delegates
-// -----------------------------------------------------------------------------
-
-// Shop Details Header – displays location info and a toggle.
 class _ShopDetailsHeader extends StatelessWidget {
   @override
   Widget build(BuildContext context) {

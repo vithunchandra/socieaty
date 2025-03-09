@@ -68,7 +68,6 @@ class CustomerSocketService {
     });
   }
 
-  // Helper method to remove a specific listener
   void removeListener(String event) {
     _socket.off(event);
   }

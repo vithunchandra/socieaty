@@ -173,7 +173,6 @@ class UpdateFoodMenuScreenState extends ConsumerState<UpdateFoodMenuScreen> {
     final isUpdateLoading = ref
         .watch(updateFoodMenuViewModelProvider(widget.args.restaurantMenu.id))
         .updateMenuState is LoadingState;
-    // final isCategoriesLoading = ref.watch(getAllRestaurantMenuCategoriesProvider).isLoading;
 
     ref.listen(updateFoodMenuViewModelProvider(widget.args.restaurantMenu.id), (_, next) {
       switch (next.updateMenuState) {
@@ -291,8 +290,8 @@ class UpdateFoodMenuScreenState extends ConsumerState<UpdateFoodMenuScreen> {
                 ),
                 const SizedBox(height: 8),
                 Wrap(
-                  spacing: 8.0, // Horizontal space between children
-                  runSpacing: 4.0, // Vertical space between lines,
+                  spacing: 8.0,
+                  runSpacing: 4.0,
                   children: [
                     ..._selectedCategories.map(
                       (type) => Chip(
@@ -333,7 +332,6 @@ class UpdateFoodMenuScreenState extends ConsumerState<UpdateFoodMenuScreen> {
                 Text("Pilih tipe menu. Maksimal 3 tipe"),
                 SizedBox(height: 20),
 
-                // Description
                 Text("Deskripsi", style: Theme.of(context).textTheme.titleSmall),
                 SizedBox(height: 8.0),
                 CustomTextField(
@@ -354,7 +352,6 @@ class UpdateFoodMenuScreenState extends ConsumerState<UpdateFoodMenuScreen> {
                 Text("Pastikan deskripsi menu menjelaskan detail menu kamu"),
                 SizedBox(height: 20),
 
-                // Preparation Time and Price
                 Text("Estimasi waktu (menit)", style: Theme.of(context).textTheme.titleSmall),
                 SizedBox(height: 8.0),
                 CustomTextField(
@@ -398,7 +395,6 @@ class UpdateFoodMenuScreenState extends ConsumerState<UpdateFoodMenuScreen> {
 
                 SizedBox(height: 30),
 
-                // Submit Button
                 SizedBox(
                   width: double.infinity,
                   child: FilledButton(

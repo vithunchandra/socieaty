@@ -222,7 +222,6 @@ class _CreateTransactionScreenState extends ConsumerState<CreateTransactionScree
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  // Restaurant Information Card - Transaction-focused design
                   Container(
                     key: _containerKey,
                     padding: const EdgeInsets.all(16),
@@ -241,11 +240,9 @@ class _CreateTransactionScreenState extends ConsumerState<CreateTransactionScree
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        // Restaurant header with compact image
                         Row(
                           crossAxisAlignment: CrossAxisAlignment.center,
                           children: [
-                            // Restaurant image
                             ClipRRect(
                               borderRadius: BorderRadius.circular(8),
                               child: CachedNetworkImage(
@@ -272,7 +269,6 @@ class _CreateTransactionScreenState extends ConsumerState<CreateTransactionScree
                               ),
                             ),
                             const SizedBox(width: 12),
-                            // Restaurant info
                             Expanded(
                               child: Column(
                                 crossAxisAlignment: CrossAxisAlignment.start,
@@ -311,23 +307,19 @@ class _CreateTransactionScreenState extends ConsumerState<CreateTransactionScree
                             ),
                           ],
                         ),
-
                         const Padding(
                           padding: EdgeInsets.symmetric(vertical: 12),
                           child: DottedDivider(color: AppPallete.neutralColor),
                         ),
-
-                        // Delivery info row
                         Row(
                           children: [
-                            // Estimated time
                             Expanded(
                               child: Row(
                                 children: [
                                   Container(
                                     padding: const EdgeInsets.all(6),
                                     decoration: BoxDecoration(
-                                      color: AppPallete.primaryColor.withOpacity(0.1),
+                                      color: AppPallete.primaryColor.withAlpha(25),
                                       shape: BoxShape.circle,
                                     ),
                                     child: Icon(
@@ -358,15 +350,13 @@ class _CreateTransactionScreenState extends ConsumerState<CreateTransactionScree
                                 ],
                               ),
                             ),
-
-                            // Distance info
                             Expanded(
                               child: Row(
                                 children: [
                                   Container(
                                     padding: const EdgeInsets.all(6),
                                     decoration: BoxDecoration(
-                                      color: AppPallete.primaryColor.withOpacity(0.1),
+                                      color: AppPallete.primaryColor.withAlpha(25),
                                       shape: BoxShape.circle,
                                     ),
                                     child: Icon(
@@ -399,10 +389,7 @@ class _CreateTransactionScreenState extends ConsumerState<CreateTransactionScree
                             ),
                           ],
                         ),
-
                         const SizedBox(height: 12),
-
-                        // Location update button
                         SizedBox(
                           width: double.infinity,
                           child: OutlinedButton.icon(
@@ -421,7 +408,7 @@ class _CreateTransactionScreenState extends ConsumerState<CreateTransactionScree
                             ),
                             style: OutlinedButton.styleFrom(
                               padding: const EdgeInsets.symmetric(vertical: 10),
-                              side: BorderSide(color: AppPallete.primaryColor.withOpacity(0.5)),
+                              side: BorderSide(color: AppPallete.primaryColor.withAlpha(127)),
                               shape: RoundedRectangleBorder(
                                 borderRadius: BorderRadius.circular(8),
                               ),
@@ -431,8 +418,6 @@ class _CreateTransactionScreenState extends ConsumerState<CreateTransactionScree
                       ],
                     ),
                   ),
-
-                  // Order Details Section - Enhanced
                   const SizedBox(height: 24),
                   Row(
                     children: [
@@ -452,8 +437,6 @@ class _CreateTransactionScreenState extends ConsumerState<CreateTransactionScree
                     ],
                   ),
                   const SizedBox(height: 16),
-
-                  // Order Items - Enhanced
                   Container(
                     decoration: BoxDecoration(
                       color: Colors.white,
@@ -496,8 +479,6 @@ class _CreateTransactionScreenState extends ConsumerState<CreateTransactionScree
                       },
                     ),
                   ),
-
-                  // Additional Notes Section - Enhanced
                   const SizedBox(height: 16),
                   Container(
                     decoration: BoxDecoration(
@@ -614,8 +595,6 @@ class _CreateTransactionScreenState extends ConsumerState<CreateTransactionScree
                       ],
                     ),
                   ),
-
-                  // Payment Details Section - Already Enhanced
                   const SizedBox(height: 24),
                   Row(
                     children: [
@@ -679,8 +658,6 @@ class _CreateTransactionScreenState extends ConsumerState<CreateTransactionScree
                         const SizedBox(height: 12),
                         const DottedDivider(color: AppPallete.neutralColor),
                         const SizedBox(height: 12),
-
-                        // Compact order items list
                         ListView.separated(
                           physics: const NeverScrollableScrollPhysics(),
                           shrinkWrap: true,
@@ -691,12 +668,11 @@ class _CreateTransactionScreenState extends ConsumerState<CreateTransactionScree
                             return Row(
                               crossAxisAlignment: CrossAxisAlignment.center,
                               children: [
-                                // Quantity
                                 Container(
                                   width: 24,
                                   height: 24,
                                   decoration: BoxDecoration(
-                                    color: AppPallete.primaryColor.withOpacity(0.1),
+                                    color: AppPallete.primaryColor.withAlpha(25),
                                     shape: BoxShape.circle,
                                   ),
                                   child: Center(
@@ -711,8 +687,6 @@ class _CreateTransactionScreenState extends ConsumerState<CreateTransactionScree
                                   ),
                                 ),
                                 const SizedBox(width: 12),
-
-                                // Item name
                                 Expanded(
                                   child: Text(
                                     item.menuItem.name,
@@ -724,8 +698,6 @@ class _CreateTransactionScreenState extends ConsumerState<CreateTransactionScree
                                   ),
                                 ),
                                 const SizedBox(width: 12),
-
-                                // Price
                                 Text(
                                   (item.menuItem.price * item.quantity).toIDRFormat(),
                                   style: Theme.of(context).textTheme.bodyMedium?.copyWith(
@@ -736,13 +708,10 @@ class _CreateTransactionScreenState extends ConsumerState<CreateTransactionScree
                             );
                           },
                         ),
-
                         const Padding(
                           padding: EdgeInsets.symmetric(vertical: 16.0),
                           child: DottedDivider(color: AppPallete.neutralColor),
                         ),
-
-                        // Payment Details with improved styling
                         Row(
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [

@@ -18,14 +18,11 @@ class ProfileAvatarPlaceholderWidget extends StatelessWidget {
       Colors.cyan,
     ];
 
-    // Get the ASCII value of the first letter and use it to pick a color
     final int index = name.toUpperCase().codeUnitAt(0) % colors.length;
     return colors[index];
   }
 
   Color _getTextColor(Color backgroundColor) {
-    // Calculate the relative luminance of the background color
-    // If it's dark, return white. If it's light, return black.
     return backgroundColor.computeLuminance() > 0.5 ? Colors.black : Colors.white;
   }
 

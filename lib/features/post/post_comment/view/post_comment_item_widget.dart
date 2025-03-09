@@ -29,7 +29,7 @@ class _PostCommentItemWidgetState extends ConsumerState<PostCommentItemWidget> {
   void initState() {
     super.initState();
     isLiked = widget.postComment.likes
-        .any((user) => user.id == widget.userId); // Replace with actual user ID
+        .any((user) => user.id == widget.userId);
     likeCount = widget.postComment.likes.length;
   }
 
@@ -85,13 +85,11 @@ class _PostCommentItemWidgetState extends ConsumerState<PostCommentItemWidget> {
                 children: [
                   Text(
                     widget.postComment.userName,
-                    // widget.postComment.userName,
                     style: Theme.of(context).textTheme.bodyMedium,
                   ),
                   SizedBox(height: 2),
                   Text(
                     widget.postComment.text,
-                    // widget.postComment.text,
                     style: Theme.of(context).textTheme.bodyMedium,
                   ),
                 ],

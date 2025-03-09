@@ -86,7 +86,6 @@ class _UpdateCustomerProfileScreenState extends ConsumerState<UpdateCustomerProf
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    // Profile Picture Section
                     Center(
                       child: GestureDetector(
                         onTap: () {
@@ -142,7 +141,6 @@ class _UpdateCustomerProfileScreenState extends ConsumerState<UpdateCustomerProf
                     ),
                     const SizedBox(height: 32),
 
-                    // Name Field
                     Text(
                       "Nama",
                       style: Theme.of(context).textTheme.titleSmall,
@@ -166,7 +164,6 @@ class _UpdateCustomerProfileScreenState extends ConsumerState<UpdateCustomerProf
                     const Text("Nama yang akan ditampilkan ke user lain"),
                     const SizedBox(height: 20),
 
-                    // Phone Field
                     Text(
                       "Nomor Telepon",
                       style: Theme.of(context).textTheme.titleSmall,
@@ -191,7 +188,6 @@ class _UpdateCustomerProfileScreenState extends ConsumerState<UpdateCustomerProf
                     const Text("Nomor telepon untuk kontak"),
                     const SizedBox(height: 20),
 
-                    // Bio Field
                     Text(
                       "Bio",
                       style: Theme.of(context).textTheme.titleSmall,

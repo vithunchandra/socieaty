@@ -49,7 +49,6 @@ class _RestaurantFilterWidgetState extends ConsumerState<RestaurantFilterWidget>
   @override
   void initState() {
     super.initState();
-    // Initialize state with values from initialFilterState
     _selectedPriceRanges = List.from(widget.initialFilterState.priceRanges);
     _selectedFoodCategories = List.from(widget.initialFilterState.foodCategories);
     _selectedThemes = List.from(widget.initialFilterState.themes);
@@ -307,7 +306,6 @@ class _RestaurantFilterWidgetState extends ConsumerState<RestaurantFilterWidget>
                     ),
                   ),
                 ),
-                // Action buttons in a fixed bottom area
                 Container(
                   padding: const EdgeInsets.all(16.0),
                   decoration: BoxDecoration(
@@ -338,7 +336,6 @@ class _RestaurantFilterWidgetState extends ConsumerState<RestaurantFilterWidget>
                       Expanded(
                         child: FilledButton(
                           onPressed: () {
-                            // Implement filter logic here
                             pop();
                           },
                           child: const Text('Apply'),

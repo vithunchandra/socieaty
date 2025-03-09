@@ -19,22 +19,6 @@ class AppPallete {
     },
   );
 
-  // static const MaterialColor primaryColor = MaterialColor(
-  //   0xFFE6E62E, // Main color (E6E62E)
-  //   <int, Color>{
-  //     50: Color(0xFFFCFDEF), // Lightest tint
-  //     100: Color(0xFFF9FBDF), // Very light tint
-  //     200: Color(0xFFF2F4AB), // Light tint
-  //     300: Color(0xFFEAEC6E), // Mid tint
-  //     400: Color(0xFFE8E954), // Slightly darker tint
-  //     500: Color(0xFFE6E62E), // Main color
-  //     600: Color(0xFFC8C827), // Slightly darker shade
-  //     700: Color(0xFFABAB1F), // Darker shade
-  //     800: Color(0xFF737312), // Even darker shade
-  //     900: Color(0xFF404006), // Darkest shade
-  //   },
-  // );
-
   // Neutral Color
   static const MaterialColor neutralColor = MaterialColor(
     0xFFADB5BD, // Main color (AD B5 BD)

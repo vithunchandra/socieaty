@@ -24,7 +24,6 @@ class CompletedOrderScreen extends StatelessWidget {
           mainAxisAlignment: MainAxisAlignment.center,
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [
-            // Success icon with animation container
             Container(
               width: 120,
               height: 120,
@@ -41,7 +40,6 @@ class CompletedOrderScreen extends StatelessWidget {
 
             const SizedBox(height: 32),
 
-            // Success message
             Text(
               'Order Completed!',
               style: Theme.of(context).textTheme.headlineSmall?.copyWith(
@@ -52,7 +50,6 @@ class CompletedOrderScreen extends StatelessWidget {
 
             const SizedBox(height: 16),
 
-            // Description
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 16.0),
               child: Text(
@@ -67,7 +64,6 @@ class CompletedOrderScreen extends StatelessWidget {
 
             const SizedBox(height: 24),
 
-            // Order details
             Container(
               padding: const EdgeInsets.all(16),
               decoration: BoxDecoration(
@@ -148,7 +144,6 @@ class CompletedOrderScreen extends StatelessWidget {
 
             const SizedBox(height: 32),
 
-            // Buttons
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceEvenly,
               children: [

@@ -101,7 +101,6 @@ class _OutletSuggestionItemWidgetState extends State<OutletSuggestionItemWidget>
                   ),
                 ),
                 const SizedBox(width: 16),
-                // Restaurant Details
                 Expanded(
                   child: Column(
                     mainAxisAlignment: MainAxisAlignment.center,

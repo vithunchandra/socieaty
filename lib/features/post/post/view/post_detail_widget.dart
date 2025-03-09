@@ -170,7 +170,6 @@ class _PostDetailWidgetState extends ConsumerState<PostDetailWidget> {
               ],
             ),
           ),
-          // Bottom Content
           Positioned(
             bottom: 0,
             left: 0,
@@ -180,7 +179,6 @@ class _PostDetailWidgetState extends ConsumerState<PostDetailWidget> {
               child: Row(
                 crossAxisAlignment: CrossAxisAlignment.end,
                 children: [
-                  // Left Column
                   Expanded(
                     child: Column(
                       mainAxisSize: MainAxisSize.min,
@@ -228,7 +226,6 @@ class _PostDetailWidgetState extends ConsumerState<PostDetailWidget> {
                     ),
                   ),
                   SizedBox(width: screenWidth * 0.1),
-                  // Right Column
                   Column(
                     mainAxisAlignment: MainAxisAlignment.start,
                     crossAxisAlignment: CrossAxisAlignment.center,

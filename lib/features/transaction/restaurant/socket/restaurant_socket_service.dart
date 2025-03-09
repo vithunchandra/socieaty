@@ -22,7 +22,6 @@ RestaurantSocketService restaurantSocketService(Ref ref) {
     notificationService: ref.watch(localNotificationServiceProvider),
   );
 
-  // Register for cleanup when the provider is disposed
   ref.onDispose(() {
     service.disconnect();
   });
@@ -59,7 +58,6 @@ class RestaurantSocketService {
       debugPrint('Restaurant connected to server');
       _isConnected = true;
 
-      // Set up the new order listener when connected
       if (!_hasNewOrderListener) {
         _setupNewOrderListener();
       }
@@ -85,7 +83,6 @@ class RestaurantSocketService {
     _onNewOrderCallback = null;
   }
 
-  // Setup the central new order listener that updates the provider
   void _setupNewOrderListener() {
     if (_hasNewOrderListener) return;
 
@@ -122,7 +119,6 @@ class RestaurantSocketService {
           orderDetails: orderData.toJson(),
         );
 
-        // Notify through callback if registered
         if (_onNewOrderCallback != null) {
           _onNewOrderCallback!(orderData);
         }
@@ -139,12 +135,9 @@ class RestaurantSocketService {
     _hasNewOrderListener = true;
   }
 
-  // Register callback for new orders
   void listenNewOrder(Function(FoodOrderTransaction) onNewOrder) {
-    // Save callback
     _onNewOrderCallback = onNewOrder;
 
-    // Initialize connection and setup listener if needed
     if (!_isConnected) {
       initConnection();
     } else if (!_hasNewOrderListener) {

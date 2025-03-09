@@ -50,7 +50,6 @@ class _MenuFilterWidgetState extends ConsumerState<MenuFilterWidget> {
   @override
   void initState() {
     super.initState();
-    // Initialize state with values from initialFilterState
     _selectedPriceRanges = List.from(widget.initialFilterState.priceRanges);
     _minRating = widget.initialFilterState.minRating;
     _selectedCategories = List.from(widget.initialFilterState.categories);
@@ -261,7 +260,6 @@ class _MenuFilterWidgetState extends ConsumerState<MenuFilterWidget> {
                     ),
                   ),
                 ),
-                // Action buttons in a fixed bottom area
                 Container(
                   padding: const EdgeInsets.all(16.0),
                   decoration: BoxDecoration(
@@ -292,7 +290,6 @@ class _MenuFilterWidgetState extends ConsumerState<MenuFilterWidget> {
                       Expanded(
                         child: FilledButton(
                           onPressed: () {
-                            // Implement filter logic here
                             pop();
                           },
                           child: const Text('Apply'),

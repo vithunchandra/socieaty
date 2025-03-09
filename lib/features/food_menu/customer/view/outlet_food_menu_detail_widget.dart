@@ -25,13 +25,11 @@ class OutletFoodMenuDetailWidget extends ConsumerStatefulWidget {
 
 class _OutletFoodMenuDetailWidgetState extends ConsumerState<OutletFoodMenuDetailWidget> {
   late FoodMenu _menu;
-  // bool _isAvailable = false;
 
   @override
   void initState() {
     super.initState();
     _menu = widget.restaurantMenu;
-    // _isAvailable = _menu.isStockAvailable;
   }
 
   // @override
@@ -49,7 +47,6 @@ class _OutletFoodMenuDetailWidgetState extends ConsumerState<OutletFoodMenuDetai
   @override
   Widget build(BuildContext context) {
     final screenHeight = MediaQuery.of(context).size.height;
-    // Watch for this menu's status in the cart.
     final menuCart = ref.watch(
       menuCartViewModelProvider(widget.restaurantId).select(
         (value) => value.menuItems.firstWhereOrNull((e) => e.menuItem.id == _menu.id),
@@ -60,7 +57,6 @@ class _OutletFoodMenuDetailWidgetState extends ConsumerState<OutletFoodMenuDetai
       height: screenHeight * 0.8,
       child: Column(
         children: [
-          // Drag indicator
           Padding(
             padding: const EdgeInsets.symmetric(vertical: 16.0),
             child: Container(
@@ -79,7 +75,6 @@ class _OutletFoodMenuDetailWidgetState extends ConsumerState<OutletFoodMenuDetai
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    // Image section
                     Hero(
                       tag: widget.restaurantMenu.id,
                       child: Container(
@@ -111,7 +106,6 @@ class _OutletFoodMenuDetailWidgetState extends ConsumerState<OutletFoodMenuDetai
                     ),
                     const SizedBox(height: 24),
 
-                    // Menu information
                     Row(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -164,7 +158,6 @@ class _OutletFoodMenuDetailWidgetState extends ConsumerState<OutletFoodMenuDetai
                           ),
                     ),
                     const SizedBox(height: 12),
-                    // Categories with Chips
                     Wrap(
                       spacing: 8,
                       runSpacing: 8,
@@ -194,7 +187,6 @@ class _OutletFoodMenuDetailWidgetState extends ConsumerState<OutletFoodMenuDetai
                     ),
                     const SizedBox(height: 24),
 
-                    // Description
                     Text(
                       "Description",
                       style: Theme.of(context).textTheme.titleSmall?.copyWith(
@@ -217,7 +209,6 @@ class _OutletFoodMenuDetailWidgetState extends ConsumerState<OutletFoodMenuDetai
             ),
           ),
 
-          // Action buttons / Controller widget
           Container(
             padding: const EdgeInsets.symmetric(vertical: 16, horizontal: 16),
             decoration: BoxDecoration(

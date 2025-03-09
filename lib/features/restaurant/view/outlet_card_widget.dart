@@ -50,7 +50,6 @@ class _OutletCardWidgetState extends State<OutletCardWidget> {
       ),
       child: InkWell(
         onTap: () {
-          // Define onTap action, e.g., navigate to shop details
         },
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
@@ -68,7 +67,6 @@ class _OutletCardWidgetState extends State<OutletCardWidget> {
                         imageLoadingWidget(context, url, downloadProgress),
                     errorWidget: (context, url, error) => imageErrorWidget(context, error, null),
                   ),
-                  // Price Tag overlay on top left
                   Positioned(
                     top: 12,
                     left: 12,
@@ -88,7 +86,6 @@ class _OutletCardWidgetState extends State<OutletCardWidget> {
                       ),
                     ),
                   ),
-                  // Rating badge on top right (similar to restaurant highlight item)
                   Positioned(
                     top: 12,
                     right: 12,

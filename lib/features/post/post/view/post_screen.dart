@@ -11,14 +11,11 @@ class PostScreenArgs {
 
   PostScreenArgs({required this.previousTheme, required this.paginatePostQuery, this.posts});
 
-  // Add a toJson method to allow serialization by GoRouter.
-  // Note: ThemeData is not trivially serializable so we omit it.
   Map<String, dynamic> toJson() {
     return {
-      // 'previousTheme': previousTheme.toString(), // Omitted or adjust as needed.
       'paginatePostQuery':
-          paginatePostQuery.toJson(), // Ensure PaginatePostQuery implements toJson.
-      'posts': posts?.map((post) => post.toJson()).toList(), // Ensure Post implements toJson.
+          paginatePostQuery.toJson(),
+      'posts': posts?.map((post) => post.toJson()).toList(),
     };
   }
 }

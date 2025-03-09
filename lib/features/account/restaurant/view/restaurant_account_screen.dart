@@ -16,16 +16,12 @@ class RestaurantAccountScreen extends ConsumerStatefulWidget {
 
 class _RestaurantAccountScreenState extends ConsumerState<RestaurantAccountScreen> {
   void disconnectSocket() {
-    // Disconnect the socket when logging out
     ref.read(restaurantSocketServiceProvider).disconnect();
   }
 
   void handleLogout() {
-    // Disconnect socket before navigating away
     disconnectSocket();
     ref.invalidate(getSessionDataProvider);
-
-    // Navigate to login screen (implement your navigation logic here)
     context.go('/landing');
   }
 

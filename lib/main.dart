@@ -12,7 +12,6 @@ void main() async {
   final container = ProviderContainer();
   await container.read(authLocalRepositoryProvider).init();
 
-  // Initialize notification service at startup
   await container.read(localNotificationServiceProvider).init();
 
   runApp(
@@ -34,7 +33,6 @@ class App extends ConsumerStatefulWidget {
 
 class _AppState extends ConsumerState<App> {
   void _updateSystemChrome(ThemeData themeData) {
-    // Set SystemChrome settings
     SystemChrome.setSystemUIOverlayStyle(
       SystemUiOverlayStyle(
         statusBarColor: Colors.transparent,

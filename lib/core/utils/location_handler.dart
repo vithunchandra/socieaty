@@ -11,7 +11,6 @@ abstract class LocationHandler {
 
     serviceEnabled = await Location.instance.serviceEnabled();
     if (!serviceEnabled) {
-      // Location services are disabled. Please enable the services
       serviceEnabled = await Location.instance.requestService();
       if (!serviceEnabled) return false;
     }
@@ -101,13 +100,5 @@ abstract class LocationHandler {
     return response.data['result'];
   }
 
-  // static Future<String?> getAddressFromLatLng(Position position) async {
-  //   try {
-  //     List<Placemark> placeMarks = await placemarkFromCoordinates(position.latitude, position.longitude);
-  //     Placemark place = placeMarks[0];
-  //     return "${place.street}, ${place.subLocality},${place.subAdministrativeArea}, ${place.postalCode}";
-  //   } catch (e) {
-  //     return null;
-  //   }
-  // }
+  
 }

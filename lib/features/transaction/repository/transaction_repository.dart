@@ -1,4 +1,5 @@
 import 'package:dio/dio.dart';
+import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 import 'package:socieaty/core/constants.dart';
@@ -80,8 +81,11 @@ class TransactionRepository {
     String transactionId,
     String message,
   ) async {
+    debugPrint("Hallo");
     return executeRequest<CreateFoodOrderTransactionMessageResponse>(
-      requestFunction: () => _dio.post('transactions/order/$transactionId/message'),
+      requestFunction: () => _dio.post('transactions/order/$transactionId/messages', data: {
+        'message': message,
+      }),
       successParser: (data) => CreateFoodOrderTransactionMessageResponse.fromJson(data),
     );
   }
@@ -90,7 +94,7 @@ class TransactionRepository {
     String transactionId,
   ) async {
     return executeRequest<TrackFoodOrderTransactionMessageResponse>(
-      requestFunction: () => _dio.get('transactions/order/$transactionId/message'),
+      requestFunction: () => _dio.get('transactions/order/$transactionId/messages/track'),
       successParser: (data) => TrackFoodOrderTransactionMessageResponse.fromJson(data),
     );
   }

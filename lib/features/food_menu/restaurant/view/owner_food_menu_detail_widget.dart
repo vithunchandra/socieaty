@@ -109,7 +109,6 @@ class _OwnerFoodMenuDetailWidgetState extends ConsumerState<OwnerFoodMenuDetailW
       height: screenHeight * 0.8,
       child: Column(
         children: [
-          // Drag indicator
           Padding(
             padding: const EdgeInsets.symmetric(vertical: 16.0),
             child: Container(
@@ -128,7 +127,6 @@ class _OwnerFoodMenuDetailWidgetState extends ConsumerState<OwnerFoodMenuDetailW
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    // Image section
                     Hero(
                       tag: widget.restaurantMenu.id,
                       child: Container(
@@ -160,7 +158,6 @@ class _OwnerFoodMenuDetailWidgetState extends ConsumerState<OwnerFoodMenuDetailW
                     ),
                     const SizedBox(height: 24),
 
-                    // Menu information
                     Row(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -213,7 +210,6 @@ class _OwnerFoodMenuDetailWidgetState extends ConsumerState<OwnerFoodMenuDetailW
                           ),
                     ),
                     const SizedBox(height: 12),
-                    // Categories with Chips
                     Wrap(
                       spacing: 8,
                       runSpacing: 8,
@@ -243,7 +239,6 @@ class _OwnerFoodMenuDetailWidgetState extends ConsumerState<OwnerFoodMenuDetailW
                     ),
                     const SizedBox(height: 24),
 
-                    // Description
                     Text(
                       "Description",
                       style: Theme.of(context).textTheme.titleSmall?.copyWith(
@@ -318,7 +313,6 @@ class _OwnerFoodMenuDetailWidgetState extends ConsumerState<OwnerFoodMenuDetailW
             ),
           ),
 
-          // Action buttons
           Container(
             padding: const EdgeInsets.symmetric(vertical: 16, horizontal: 16),
             decoration: BoxDecoration(

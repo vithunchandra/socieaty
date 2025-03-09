@@ -90,13 +90,7 @@ class _VideoPlayerWidgetState extends ConsumerState<VideoPlayerWidget> {
 
     return VisibilityDetector(
       key: Key(widget.postId),
-      onVisibilityChanged: (VisibilityInfo info) {
-        // if (info.visibleFraction == 0) {
-        //   _videoController.pause();
-        // } else {
-        //   _videoController.play();
-        // }
-      },
+      onVisibilityChanged: (VisibilityInfo info) {},
       child: GestureDetector(
         onLongPress: () {
           _videoController.pause();

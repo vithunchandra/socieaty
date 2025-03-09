@@ -406,7 +406,6 @@ class _LivestreamViewState extends ConsumerState<LivestreamWidget> {
                         ),
                       ),
 
-                      // Overlay content
                       Positioned(
                         bottom: 0,
                         left: 0,

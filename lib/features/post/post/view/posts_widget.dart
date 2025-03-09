@@ -10,9 +10,6 @@ import 'package:socieaty/features/post/post/view/post_detail_widget.dart';
 import 'package:socieaty/shared/widgets/custom_error_widget.dart';
 import 'package:socieaty/shared/widgets/loading_indicator_widget.dart';
 
-// Assume you have a widget that builds a single post item.
-// If not, you can replace PostWidget with your own implementation.
-
 class PostsWidget extends ConsumerStatefulWidget {
   final PaginatePostQuery? initialQuery;
   final List<Post>? initialPosts;
@@ -43,10 +40,8 @@ class _PostsWidgetState extends ConsumerState<PostsWidget> {
   void initState() {
     super.initState();
 
-    // Set up your query. If you have an initial query, use it.
     _query = widget.initialQuery ?? PaginatePostQuery(offset: 0, limit: 5);
 
-    // Initialize the paging and page controllers.
     _pagingController = PagingController<int, Post>(firstPageKey: _query.offset);
     _pageController = PageController(initialPage: _query.offset);
 
@@ -54,7 +49,6 @@ class _PostsWidgetState extends ConsumerState<PostsWidget> {
       _pagingController.appendPage(widget.initialPosts!, widget.initialPosts!.length);
     }
 
-    // Listening for new page requests from the paging controller.
     _pagingController.addPageRequestListener((pageKey) {
       _fetchPosts(pageKey);
     });
@@ -62,7 +56,6 @@ class _PostsWidgetState extends ConsumerState<PostsWidget> {
 
   Future<void> _fetchPosts(int pageKey) async {
     try {
-      // Create a new query for the given offset (pageKey)
       final newQuery = _query.copyWith(offset: pageKey, limit: _query.limit);
       final response = await ref.read(paginatePostsProvider(newQuery).future);
       final newPosts = response.posts;
@@ -71,7 +64,6 @@ class _PostsWidgetState extends ConsumerState<PostsWidget> {
       if (isLastPage) {
         _pagingController.appendLastPage(newPosts);
       } else {
-        // Next page key based on how many items were fetched.
         final nextPageKey = pageKey + newPosts.length;
         _pagingController.appendPage(newPosts, nextPageKey);
       }

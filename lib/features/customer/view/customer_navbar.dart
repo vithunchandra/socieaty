@@ -28,7 +28,6 @@ class CustomerNavbar extends ConsumerWidget {
         indicatorColor: Colors.transparent,
         overlayColor: WidgetStateProperty.resolveWith<Color?>(
           (Set<WidgetState> states) {
-            // Set overlayColor to transparent for all states
             return Colors.transparent;
           },
         ),

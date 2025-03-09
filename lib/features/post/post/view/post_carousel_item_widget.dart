@@ -12,7 +12,7 @@ class PostCarouselItemWidget extends StatefulWidget {
   @override
   State<PostCarouselItemWidget> createState() => _PostCarouselItemWidgetState();
 }
-  
+
 class _PostCarouselItemWidgetState extends State<PostCarouselItemWidget> {
   VideoPlayerController? _controller;
 
@@ -23,7 +23,6 @@ class _PostCarouselItemWidgetState extends State<PostCarouselItemWidget> {
       debugPrint("url: ${widget.post.medias.first.url}");
       _controller = VideoPlayerController.networkUrl(Uri.parse(widget.post.medias.first.url))
         ..initialize().then((_) {
-          // Ensure the first frame is shown after the video is initialized
           setState(() {});
         });
     }
@@ -37,7 +36,6 @@ class _PostCarouselItemWidgetState extends State<PostCarouselItemWidget> {
 
   @override
   Widget build(BuildContext context) {
-    // Build the media widget based on whether it's an image or a video.
     final mediaWidget = widget.post.medias.first.type == "image"
         ? CachedNetworkImage(
             imageUrl: widget.post.medias.first.url,
@@ -62,7 +60,6 @@ class _PostCarouselItemWidgetState extends State<PostCarouselItemWidget> {
     return LayoutBuilder(
       builder: (context, constraints) {
         final double fullScreenWidth = MediaQuery.of(context).size.width;
-        // Determine if the overlay and title should be fully visible.
         final bool showOverlayAndTitle = constraints.maxWidth >= (fullScreenWidth / 2);
 
         return ClipRRect(
@@ -73,9 +70,7 @@ class _PostCarouselItemWidgetState extends State<PostCarouselItemWidget> {
             child: Stack(
               fit: StackFit.expand,
               children: [
-                // The media (image or video) is at the bottom.
                 mediaWidget,
-                // Always add the gradient overlay and control its opacity.
                 AnimatedOpacity(
                   duration: const Duration(milliseconds: 300),
                   opacity: showOverlayAndTitle ? 1.0 : 0.0,
@@ -85,18 +80,15 @@ class _PostCarouselItemWidgetState extends State<PostCarouselItemWidget> {
                       gradient: LinearGradient(
                         begin: Alignment.topCenter,
                         end: Alignment.bottomCenter,
-                        // Only the bottom part gets darker.
                         colors: [
                           Colors.transparent,
                           Colors.black.withOpacity(0.7),
                         ],
-                        // Adjust stops to control where the dark effect begins.
                         stops: const [0.5, 1.0],
                       ),
                     ),
                   ),
                 ),
-                // Always include the title, animating its opacity.
                 AnimatedOpacity(
                   duration: const Duration(milliseconds: 300),
                   opacity: showOverlayAndTitle ? 1.0 : 0.0,

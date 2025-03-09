@@ -28,7 +28,6 @@ class _ProfileLoaderScreenState extends ConsumerState<ProfileLoaderScreen> {
     final currentUser = ref.watch(authLocalRepositoryProvider).getUserData();
     return userAsyncValue.when(
       data: (userData) {
-        // Check the user role and return the appropriate widget
         if (currentUser == null) {
           return Scaffold(
             body: Center(

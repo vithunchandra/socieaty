@@ -5,17 +5,14 @@ import 'package:socieaty/main.dart';
 import 'package:socieaty/core/utils/color_extension.dart';
 
 void showNewOrderDialog(FoodOrderTransaction order) {
-  // Optional: Add vibration to notify without being too intrusive
   HapticFeedback.mediumImpact();
 
-  // Calculate total
   final int total = order.grossAmount + order.serviceFee;
 
-  // Use navigatorKey to show dialog without context
   if (rootNavigatorKey.currentState != null && rootNavigatorKey.currentContext != null) {
     showDialog(
       context: rootNavigatorKey.currentContext!,
-      barrierDismissible: true, // Allow dismissing by tapping outside
+      barrierDismissible: true,
       builder: (BuildContext context) {
         return Dialog(
           shape: RoundedRectangleBorder(
@@ -84,7 +81,6 @@ void showNewOrderDialog(FoodOrderTransaction order) {
                         foregroundColor: Colors.white,
                       ),
                       onPressed: () {
-                        // Add any additional action here if needed
                         Navigator.of(context).pop();
                       },
                       child: const Text('View Details'),

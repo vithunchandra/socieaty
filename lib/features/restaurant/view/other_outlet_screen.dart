@@ -137,7 +137,6 @@ class _OtherOutletScreenState extends ConsumerState<OtherOutletScreen>
                         fit: StackFit.expand,
                         clipBehavior: Clip.none,
                         children: [
-                          // Background image with dark overlay
                           Stack(
                             fit: StackFit.expand,
                             children: [
@@ -152,7 +151,7 @@ class _OtherOutletScreenState extends ConsumerState<OtherOutletScreen>
                                     end: Alignment.bottomCenter,
                                     colors: [
                                       Colors.black.withAlpha(0),
-                                      Colors.black.withAlpha(255), // 0.7 opacity
+                                      Colors.black.withAlpha(255),
                                     ],
                                     stops: const [0.3, 1.0],
                                   ),
@@ -161,7 +160,6 @@ class _OtherOutletScreenState extends ConsumerState<OtherOutletScreen>
                             ],
                           ),
 
-                          // Restaurant info
                           Positioned(
                             left: 16,
                             right: 16,
@@ -343,7 +341,6 @@ class _OtherOutletScreenState extends ConsumerState<OtherOutletScreen>
                             indicatorColor: AppPallete.primaryColor,
                             overlayColor: WidgetStateProperty.resolveWith<Color?>(
                               (Set<WidgetState> states) {
-                                // Set overlayColor to transparent for all states
                                 return Colors.transparent;
                               },
                             ),

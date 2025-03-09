@@ -19,7 +19,7 @@ class CustomUnderlineTextField extends StatefulWidget {
 
   const CustomUnderlineTextField({
     super.key,
-    this.controller, // Make this required
+    this.controller,
     this.prefixIcon,
     this.hintText,
     this.validator,
@@ -52,7 +52,11 @@ class _CustomUnderlineTextFieldState extends State<CustomUnderlineTextField> {
       decoration: InputDecoration(
         contentPadding: const EdgeInsets.symmetric(vertical: 0.0, horizontal: 0),
         hintText: widget.hintText,
-        hintStyle: widget.hintStyle ?? Theme.of(context).textTheme.titleLarge?.copyWith(color: AppPallete.neutralColor, fontSize: 22),
+        hintStyle: widget.hintStyle ??
+            Theme.of(context)
+                .textTheme
+                .titleLarge
+                ?.copyWith(color: AppPallete.neutralColor, fontSize: 22),
         prefixIcon: widget.prefixIcon,
         prefixIconConstraints: const BoxConstraints(minWidth: 60),
         suffixIconConstraints: const BoxConstraints(minWidth: 60),

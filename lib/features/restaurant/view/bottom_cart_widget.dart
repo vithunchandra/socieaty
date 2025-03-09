@@ -96,12 +96,10 @@ class _BottomCartWidgetState extends ConsumerState<BottomCartWidget> {
     final isThereItemsInCart = menuItems.isNotEmpty;
     return Stack(
       children: [
-        // Always include the main content so that its state is preserved.
         NotificationListener<ScrollNotification>(
           onNotification: (_) => false,
           child: widget.child,
         ),
-        // Conditionally show the bottom cart overlay.
         if (isThereItemsInCart)
           AnimatedPositioned(
             duration: const Duration(milliseconds: 300),
@@ -153,7 +151,6 @@ class _BottomCartWidgetState extends ConsumerState<BottomCartWidget> {
                       child: Row(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
-                          // Left side: Cart icon (in a circle) plus restaurant name and item quantity.
                           Row(
                             children: [
                               Container(
@@ -194,7 +191,6 @@ class _BottomCartWidgetState extends ConsumerState<BottomCartWidget> {
                               ),
                             ],
                           ),
-                          // Right side: Total price.
                           Column(
                             crossAxisAlignment: CrossAxisAlignment.end,
                             mainAxisSize: MainAxisSize.min,
@@ -230,7 +226,6 @@ class _BottomCartWidgetState extends ConsumerState<BottomCartWidget> {
 
   @override
   void dispose() {
-    // Remove the listener if the scrollController is attached.
     if (widget.scrollController?.hasClients ?? false) {
       widget.scrollController!.position.isScrollingNotifier.removeListener(_onScrollStatusChanged);
     }

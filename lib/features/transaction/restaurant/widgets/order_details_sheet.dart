@@ -64,7 +64,6 @@ class _OrderDetailsSheetState extends ConsumerState<OrderDetailsSheet> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          // Draggable handle
           Center(
             child: Container(
               width: 40,
@@ -76,13 +75,10 @@ class _OrderDetailsSheetState extends ConsumerState<OrderDetailsSheet> {
             ),
           ),
           const SizedBox(height: 16),
-
-          // Main content area with scroll view
           Expanded(
             child: ListView(
               controller: widget.scrollController,
               children: [
-                // Order header section
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
@@ -110,8 +106,6 @@ class _OrderDetailsSheetState extends ConsumerState<OrderDetailsSheet> {
                   ],
                 ),
                 const SizedBox(height: 24),
-
-                // Customer info section
                 const Text(
                   'Informasi Pelanggan',
                   style: TextStyle(
@@ -139,10 +133,7 @@ class _OrderDetailsSheetState extends ConsumerState<OrderDetailsSheet> {
                     ),
                   ),
                 ),
-
                 const Divider(height: 32),
-
-                // Additional Note section (if present)
                 if (widget.order.note.isNotEmpty) ...[
                   const Text(
                     'Catatan Tambahan',
@@ -177,8 +168,6 @@ class _OrderDetailsSheetState extends ConsumerState<OrderDetailsSheet> {
                   ),
                   const Divider(height: 32),
                 ],
-
-                // Order items section
                 const Text(
                   'Item Pesanan',
                   style: TextStyle(
@@ -192,7 +181,6 @@ class _OrderDetailsSheetState extends ConsumerState<OrderDetailsSheet> {
                       child: Row(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          // Food image
                           ClipRRect(
                             borderRadius: BorderRadius.circular(8),
                             child: Image.network(
@@ -203,7 +191,6 @@ class _OrderDetailsSheetState extends ConsumerState<OrderDetailsSheet> {
                             ),
                           ),
                           const SizedBox(width: 12),
-                          // Food details
                           Expanded(
                             child: Column(
                               crossAxisAlignment: CrossAxisAlignment.start,
@@ -226,7 +213,6 @@ class _OrderDetailsSheetState extends ConsumerState<OrderDetailsSheet> {
                               ],
                             ),
                           ),
-                          // Price
                           Text(
                             'Rp ${item.totalPrice.toIDRFormat()}',
                             style: const TextStyle(
@@ -236,10 +222,7 @@ class _OrderDetailsSheetState extends ConsumerState<OrderDetailsSheet> {
                         ],
                       ),
                     )),
-
                 const Divider(height: 32),
-
-                // Payment details section
                 const Text(
                   'Detail Pembayaran',
                   style: TextStyle(
@@ -288,8 +271,6 @@ class _OrderDetailsSheetState extends ConsumerState<OrderDetailsSheet> {
               ],
             ),
           ),
-
-          // Action buttons at the bottom (fixed position)
           if (widget.order.status == TransactionStatus.pending)
             PendingOrderDetailsActions(order: widget.order),
           if (widget.order.status == TransactionStatus.preparing)

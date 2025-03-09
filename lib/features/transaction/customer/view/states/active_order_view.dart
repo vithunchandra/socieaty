@@ -4,6 +4,7 @@ import 'package:socieaty/core/theme/app_pallete.dart';
 import 'package:socieaty/features/transaction/model/food_order_transaction.dart';
 import 'package:socieaty/shared/widgets/dotted_divider.dart';
 import 'package:socieaty/core/utils/custom_extension.dart';
+import 'package:socieaty/features/transaction/customer/view/chat_screen.dart';
 
 class ActiveOrderView extends StatefulWidget {
   final FoodOrderTransaction order;
@@ -28,7 +29,7 @@ class _ActiveOrderViewState extends State<ActiveOrderView> {
     if (!widget.scrollController.hasClients) return;
 
     final double offset = widget.scrollController.offset;
-    final threshold = 100.0; // Adjust this value to control when the header collapses
+    final threshold = 100.0;
     final isCollapsed = offset > threshold;
 
     if (isCollapsed != _isHeaderCollapsed) {
@@ -63,10 +64,7 @@ class _ActiveOrderViewState extends State<ActiveOrderView> {
         controller: widget.scrollController,
         child: Column(
           children: [
-            // Header
             _buildFixedHeader(widget.order),
-
-            // Content
             _buildContent(widget.order),
             const SizedBox(height: 28),
           ],
@@ -82,7 +80,6 @@ class _ActiveOrderViewState extends State<ActiveOrderView> {
       child: Column(
         mainAxisSize: MainAxisSize.min,
         children: [
-          // Status
           Container(
             padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
             decoration: BoxDecoration(
@@ -99,10 +96,7 @@ class _ActiveOrderViewState extends State<ActiveOrderView> {
               ),
             ),
           ),
-
           const SizedBox(height: 16),
-
-          // ETA and Map button
           Container(
             padding: const EdgeInsets.all(16),
             decoration: BoxDecoration(
@@ -172,25 +166,18 @@ class _ActiveOrderViewState extends State<ActiveOrderView> {
       ),
       child: Column(
         children: [
-          // Status timeline section
           Padding(
             padding: const EdgeInsets.fromLTRB(16.0, 24.0, 16.0, 16.0),
             child: _buildStatusTimeline(context, order.status),
           ),
-
-          // Status message
           Padding(
             padding: const EdgeInsets.fromLTRB(16.0, 8.0, 16.0, 16.0),
             child: _buildStatusMessage(order),
           ),
-
-          // Restaurant section
           Padding(
             padding: const EdgeInsets.fromLTRB(16.0, 0.0, 16.0, 16.0),
             child: _buildRestaurantSection(order),
           ),
-
-          // Order summary section
           Padding(
             padding: const EdgeInsets.fromLTRB(16.0, 8.0, 16.0, 24.0),
             child: _buildOrderSummary(order),
@@ -201,7 +188,6 @@ class _ActiveOrderViewState extends State<ActiveOrderView> {
   }
 
   Widget _buildStatusMessage(FoodOrderTransaction order) {
-    // Determine status colors based on current status
     final Color statusColor = _getStatusColor(order.status);
 
     return Container(
@@ -316,26 +302,36 @@ class _ActiveOrderViewState extends State<ActiveOrderView> {
               ],
             ),
           ),
-          Container(
-            padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
-            decoration: BoxDecoration(
-              color: AppPallete.primaryColor.withAlpha(25),
-              borderRadius: BorderRadius.circular(16),
-            ),
-            child: Row(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                Icon(Icons.phone, size: 16, color: AppPallete.primaryColor),
-                const SizedBox(width: 4),
-                Text(
-                  'Call',
-                  style: TextStyle(
-                    color: AppPallete.primaryColor,
-                    fontWeight: FontWeight.bold,
-                    fontSize: 12,
-                  ),
+          InkWell(
+            onTap: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => ChatScreen(order: order),
                 ),
-              ],
+              );
+            },
+            child: Container(
+              padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+              decoration: BoxDecoration(
+                color: AppPallete.primaryColor.withAlpha(25),
+                borderRadius: BorderRadius.circular(16),
+              ),
+              child: Row(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Icon(Icons.chat, size: 16, color: AppPallete.primaryColor),
+                  const SizedBox(width: 4),
+                  Text(
+                    'Chat',
+                    style: TextStyle(
+                      color: AppPallete.primaryColor,
+                      fontWeight: FontWeight.bold,
+                      fontSize: 12,
+                    ),
+                  ),
+                ],
+              ),
             ),
           ),
         ],
@@ -388,8 +384,6 @@ class _ActiveOrderViewState extends State<ActiveOrderView> {
           const SizedBox(height: 12),
           const DottedDivider(color: AppPallete.neutralColor),
           const SizedBox(height: 12),
-
-          // Compact order items list
           ListView.separated(
             physics: const NeverScrollableScrollPhysics(),
             shrinkWrap: true,
@@ -400,7 +394,6 @@ class _ActiveOrderViewState extends State<ActiveOrderView> {
               return Row(
                 crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
-                  // Quantity
                   Container(
                     width: 24,
                     height: 24,
@@ -420,8 +413,6 @@ class _ActiveOrderViewState extends State<ActiveOrderView> {
                     ),
                   ),
                   const SizedBox(width: 12),
-
-                  // Item name
                   Expanded(
                     child: Text(
                       item.menu.name,
@@ -433,8 +424,6 @@ class _ActiveOrderViewState extends State<ActiveOrderView> {
                     ),
                   ),
                   const SizedBox(width: 12),
-
-                  // Price
                   Text(
                     item.totalPrice.toIDRFormat(),
                     style: Theme.of(context).textTheme.bodyMedium?.copyWith(
@@ -445,13 +434,10 @@ class _ActiveOrderViewState extends State<ActiveOrderView> {
               );
             },
           ),
-
           const Padding(
             padding: EdgeInsets.symmetric(vertical: 16.0),
             child: DottedDivider(color: AppPallete.neutralColor),
           ),
-
-          // Payment Details with improved styling
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
@@ -508,8 +494,6 @@ class _ActiveOrderViewState extends State<ActiveOrderView> {
               ),
             ],
           ),
-
-          // Additional Notes (if any)
           if (order.note.isNotEmpty) ...[
             const SizedBox(height: 16),
             Text(
@@ -551,7 +535,6 @@ class _ActiveOrderViewState extends State<ActiveOrderView> {
     );
   }
 
-  // Improved horizontal timeline design
   Widget _buildStatusTimeline(BuildContext context, TransactionStatus status) {
     final bool isPending = status == TransactionStatus.pending;
     final bool isPreparing = status == TransactionStatus.preparing;
@@ -564,7 +547,7 @@ class _ActiveOrderViewState extends State<ActiveOrderView> {
           children: [
             _buildTimelineStep(
               title: 'Confirmed',
-              isActive: true, // Always active
+              isActive: true,
               isCompleted: isPreparing || isReady,
               icon: Icons.receipt_long,
             ),
@@ -583,12 +566,11 @@ class _ActiveOrderViewState extends State<ActiveOrderView> {
             _buildTimelineStep(
               title: 'Ready',
               isActive: isReady,
-              isCompleted: false, // Never completed in this flow
+              isCompleted: false,
               icon: Icons.delivery_dining,
             ),
           ],
         ),
-        // Current step description
         const SizedBox(height: 16),
         Container(
           padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),

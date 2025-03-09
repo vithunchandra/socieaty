@@ -43,7 +43,6 @@ class _PostGridWidgetState extends ConsumerState<PostGridWidget> {
   }
 
   Future<void> _fetchPage(int pageKey) async {
-    // Check if widget is still mounted and not disposed
     if (mounted && !_isDisposed) {
       try {
         final response = await ref.read(

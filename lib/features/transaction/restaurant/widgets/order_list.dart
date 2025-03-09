@@ -21,27 +21,21 @@ class OrderList extends ConsumerStatefulWidget {
 }
 
 class _OrderListState extends ConsumerState<OrderList> {
-  // Track loading and error states
   bool _isLoading = true;
   String? _errorMessage;
 
-  // Our list of orders for this tab
   List<FoodOrderTransaction> _orders = [];
 
   @override
   void initState() {
     super.initState();
-    // Load orders initially
     _loadOrders();
 
-    // Listen for provider invalidations (for status changes)
     ref.listenManual(getRestaurantFoodTransactionProvider(widget.statusFilter), (previous, next) {
-      // Reload when the provider is invalidated (from status changes)
       _loadOrders();
     });
   }
 
-  // Load orders from the API
   Future<void> _loadOrders() async {
     setState(() {
       _isLoading = true;
@@ -49,12 +43,10 @@ class _OrderListState extends ConsumerState<OrderList> {
     });
 
     try {
-      // Get orders from the provider
       final ordersResult =
           await ref.read(getRestaurantFoodTransactionProvider(widget.statusFilter).future);
 
       setState(() {
-        // Create a new List that we can modify (not unmodifiable)
         _orders = List<FoodOrderTransaction>.from(ordersResult);
         _isLoading = false;
       });
@@ -66,15 +58,12 @@ class _OrderListState extends ConsumerState<OrderList> {
     }
   }
 
-  // Add a new order to the list if it matches our status filter
   void _addNewOrder(FoodOrderTransaction order) {
     if (widget.statusFilter.contains(order.status)) {
-      // Check if order already exists
       final exists = _orders.any((existing) => existing.id == order.id);
 
       if (!exists) {
         setState(() {
-          // Add to beginning of list
           _orders.insert(0, order);
         });
       }
@@ -83,28 +72,20 @@ class _OrderListState extends ConsumerState<OrderList> {
 
   @override
   Widget build(BuildContext context) {
-    // Listen for new order notifications that match this list's status filter
     ref.listen(newOrderNotificationProvider, (previous, next) {
       if (next != null && widget.statusFilter.contains(next.status)) {
-        // Add the new order to our local list
         _addNewOrder(next);
 
-        // Add a subtle animation or highlight to indicate a new order
-        if (mounted && context.mounted) {
-          // This could be enhanced with a more sophisticated animation
-          // or by scrolling to the new item
-        }
+        if (mounted && context.mounted) {}
       }
     });
 
-    // Show a loading indicator while loading
     if (_isLoading) {
       return const Center(
         child: CircularProgressIndicator(),
       );
     }
 
-    // Show an error message if there was an error
     if (_errorMessage != null) {
       return Center(
         child: Column(
@@ -139,7 +120,6 @@ class _OrderListState extends ConsumerState<OrderList> {
       );
     }
 
-    // Show an empty state if there are no orders
     if (_orders.isEmpty) {
       return Center(
         child: Column(
@@ -169,7 +149,6 @@ class _OrderListState extends ConsumerState<OrderList> {
       );
     }
 
-    // Show the list of orders with pull-to-refresh
     return RefreshIndicator(
       onRefresh: _loadOrders,
       child: ListView.builder(

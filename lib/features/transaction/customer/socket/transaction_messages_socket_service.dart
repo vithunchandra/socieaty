@@ -8,18 +8,19 @@ import 'package:socieaty/features/authentication/repository/auth_local_repositor
 import 'package:socieaty/features/transaction/model/food_order_transaction_message.dart';
 import 'package:socket_io_client/socket_io_client.dart';
 
+part 'transaction_messages_socket_service.g.dart';
+
 @Riverpod(keepAlive: true)
-TransactionMessagesSocketService restaurantSocketService(Ref ref) {
+TransactionMessagesSocketService transactionMessagesSocketService(Ref ref) {
   final AuthLocalRepository authLocalRepository = ref.watch(authLocalRepositoryProvider);
   final token = authLocalRepository.getToken();
 
   final service = TransactionMessagesSocketService(
-    socket:
-        ref.watch(websocketClientProvider('${AppConstants.socieatyBackendUrl}food-order', token)),
+    socket: ref.watch(
+        websocketClientProvider('${AppConstants.socieatyBackendUrl}food-order/message', token)),
     notificationService: ref.watch(localNotificationServiceProvider),
   );
 
-  // Register for cleanup when the provider is disposed
   ref.onDispose(() {
     service.disconnect();
   });
@@ -31,6 +32,7 @@ class TransactionMessagesSocketService {
   Socket socket;
   bool _isConnected = false;
   final LocalNotificationService notificationService;
+  Function? onConnected;
 
   TransactionMessagesSocketService({
     required this.socket,
@@ -39,8 +41,11 @@ class TransactionMessagesSocketService {
 
   bool get isConnected => _isConnected;
 
-  initConnection() {
-    if (_isConnected) return;
+  void initConnection() {
+    if (_isConnected) {
+      onConnected?.call();
+      return;
+    }
 
     notificationService.init();
 
@@ -51,12 +56,13 @@ class TransactionMessagesSocketService {
 
     debugPrint('Trying Connection');
     socket.onConnect((_) {
-      debugPrint('Restaurant connected to server');
+      debugPrint('connected to server');
       _isConnected = true;
+      onConnected?.call();
     });
 
     socket.onDisconnect((_) {
-      debugPrint('Restaurant disconnected from server');
+      debugPrint('disconnected from server');
       _isConnected = false;
     });
 
@@ -64,17 +70,31 @@ class TransactionMessagesSocketService {
       debugPrint('Error Is ${_.toString()}');
       _isConnected = false;
     });
+
+    socket.on('welcome', (data) {
+      debugPrint('Welcome: ${data.toString()}');
+    });
   }
 
   void listenNewTransactionMessage(Function(FoodOrderTransactionMessage) onNewTransactionMessage) {
+    if (!_isConnected) {
+      initConnection();
+    }
+
     socket.on('new-transaction-message', (data) {
+      debugPrint('New transaction message: ${data.toString()}');
       final message = FoodOrderTransactionMessage.fromJson(data);
       onNewTransactionMessage(message);
     });
   }
 
+  void removeListener(String eventName) {
+    socket.off(eventName == 'transaction-message' ? 'new-transaction-message' : eventName);
+  }
+
   void disconnect() {
     socket.disconnect();
     _isConnected = false;
+    onConnected = null;
   }
 }

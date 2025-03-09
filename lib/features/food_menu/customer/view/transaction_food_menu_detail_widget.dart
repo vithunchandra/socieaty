@@ -20,13 +20,11 @@ class TransactionFoodMenuDetailWidget extends ConsumerStatefulWidget {
 
 class _TransactionFoodMenuDetailWidgetState extends ConsumerState<TransactionFoodMenuDetailWidget> {
   late FoodMenu _menu;
-  // bool _isAvailable = false;
 
   @override
   void initState() {
     super.initState();
     _menu = widget.restaurantMenu;
-    // _isAvailable = _menu.isStockAvailable;
   }
 
   @override
@@ -37,7 +35,6 @@ class _TransactionFoodMenuDetailWidgetState extends ConsumerState<TransactionFoo
       height: screenHeight * 0.8,
       child: Column(
         children: [
-          // Drag indicator
           Padding(
             padding: const EdgeInsets.symmetric(vertical: 16.0),
             child: Container(
@@ -56,7 +53,6 @@ class _TransactionFoodMenuDetailWidgetState extends ConsumerState<TransactionFoo
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    // Image section
                     Hero(
                       tag: widget.restaurantMenu.id,
                       child: Container(
@@ -88,7 +84,6 @@ class _TransactionFoodMenuDetailWidgetState extends ConsumerState<TransactionFoo
                     ),
                     const SizedBox(height: 24),
 
-                    // Menu information
                     Row(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -170,7 +165,6 @@ class _TransactionFoodMenuDetailWidgetState extends ConsumerState<TransactionFoo
                     ),
                     const SizedBox(height: 24),
 
-                    // Description
                     Text(
                       "Description",
                       style: Theme.of(context).textTheme.titleSmall?.copyWith(

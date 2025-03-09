@@ -23,7 +23,6 @@ class _OtherCustomerProfileScreenState extends ConsumerState<OtherCustomerProfil
   bool _showSmallProfile = false;
   Size? _profileHeaderSize;
 
-  // Add the GlobalKey for your profile header.
   final GlobalKey _profileHeaderKey = GlobalKey();
 
   @override
@@ -32,14 +31,12 @@ class _OtherCustomerProfileScreenState extends ConsumerState<OtherCustomerProfil
     _scrollController = ScrollController();
     _scrollController.addListener(_scrollListener);
 
-    // Retrieve the size after the first frame is rendered.
     WidgetsBinding.instance.addPostFrameCallback((_) {
       _getProfileHeaderSize();
     });
   }
 
   void _getProfileHeaderSize() {
-    // Ensure that our key's context is not null
     if (_profileHeaderKey.currentContext != null) {
       final RenderBox renderBox = _profileHeaderKey.currentContext!.findRenderObject() as RenderBox;
       final size = renderBox.size;
@@ -89,7 +86,7 @@ class _OtherCustomerProfileScreenState extends ConsumerState<OtherCustomerProfil
     });
 
     return DefaultTabController(
-      length: 2, // Three tabs: Grid, Lock, Favorite
+      length: 2,
       child: Scaffold(
         backgroundColor: AppPallete.neutralColor.shade50,
         appBar: AppBar(
@@ -99,7 +96,7 @@ class _OtherCustomerProfileScreenState extends ConsumerState<OtherCustomerProfil
               ? Row(
                   children: [
                     CircleAvatar(
-                      radius: 16, // smaller avatar for the app bar
+                      radius: 16,
                       backgroundColor: AppPallete.neutralColor.shade200,
                       backgroundImage: widget.user.profilePictureUrl != null
                           ? NetworkImage(widget.user.profilePictureUrl!)
@@ -121,14 +118,12 @@ class _OtherCustomerProfileScreenState extends ConsumerState<OtherCustomerProfil
                 controller: _scrollController,
                 headerSliverBuilder: (context, innerBoxIsScrolled) {
                   return [
-                    // Profile header (non-scrolling part)
                     SliverToBoxAdapter(
                       child: Container(
                         key: _profileHeaderKey,
                         child: Column(
                           children: [
                             const SizedBox(height: 20),
-                            // Profile Picture Section
                             PhysicalModel(
                               color: AppPallete.neutralColor.shade50,
                               elevation: 2.0,
@@ -149,7 +144,6 @@ class _OtherCustomerProfileScreenState extends ConsumerState<OtherCustomerProfil
                             Text("@${widget.user.email}",
                                 style: Theme.of(context).textTheme.titleMedium),
                             const SizedBox(height: 20),
-                            // Stats Row
                             Row(
                               mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                               children: [
@@ -187,7 +181,6 @@ class _OtherCustomerProfileScreenState extends ConsumerState<OtherCustomerProfil
                     ),
                   ];
                 },
-                // TabBarView for the selected tab content
                 body: TabBarView(
                   children: [
                     PostGridWidget(authorId: widget.user.id),
@@ -209,7 +202,6 @@ class _OtherCustomerProfileScreenState extends ConsumerState<OtherCustomerProfil
   }
 }
 
-// New SliverPersistentHeader delegate for pinning the TabBar
 class _SliverAppBarDelegate extends SliverPersistentHeaderDelegate {
   final TabBar _tabBar;
   _SliverAppBarDelegate(this._tabBar);
@@ -222,7 +214,6 @@ class _SliverAppBarDelegate extends SliverPersistentHeaderDelegate {
   @override
   Widget build(BuildContext context, double shrinkOffset, bool overlapsContent) {
     return Container(
-      // Use a background color matching the overall design
       color: AppPallete.neutralColor.shade50,
       child: _tabBar,
     );

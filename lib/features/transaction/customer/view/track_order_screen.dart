@@ -32,16 +32,13 @@ class _TrackOrderScreenState extends ConsumerState<TrackOrderScreen> {
   bool _isLoading = true;
   String? _errorMessage;
 
-  // For controlling the scroll behavior
   final ScrollController _scrollController = ScrollController();
 
   @override
   void initState() {
     super.initState();
-    // Initialize socket service
     _socketService = ref.read(customerSocketServiceProvider);
 
-    // Setup socket listeners after the widget is built
     WidgetsBinding.instance.addPostFrameCallback((_) {
       _setupSocketListeners();
     });
@@ -77,7 +74,6 @@ class _TrackOrderScreenState extends ConsumerState<TrackOrderScreen> {
     try {
       final updatedOrder = FoodOrderTransaction.fromJson(data);
 
-      // Only update if this is for our order
       if (updatedOrder.id == widget.orderId) {
         if (mounted) {
           setState(() {
@@ -98,7 +94,6 @@ class _TrackOrderScreenState extends ConsumerState<TrackOrderScreen> {
     }
   }
 
-  // Navigate to map screen
   void _navigateToMapScreen() {
     ScaffoldMessenger.of(context).showSnackBar(
       const SnackBar(
@@ -160,14 +155,11 @@ class _TrackOrderScreenState extends ConsumerState<TrackOrderScreen> {
     );
   }
 
-  /// Builds the appropriate body content based on the current state.
   Widget _buildBodyContent() {
-    // Loading state
     if (_isLoading) {
       return const LoadingView();
     }
 
-    // Error state
     if (_errorMessage != null && _orderData == null) {
       return ErrorView(
         errorMessage: _errorMessage ?? 'Unable to load order data',
@@ -175,14 +167,12 @@ class _TrackOrderScreenState extends ConsumerState<TrackOrderScreen> {
       );
     }
 
-    // Null check for order data
     if (_orderData == null) {
       return GenericErrorView(
         onBackPressed: () => Navigator.of(context).pop(),
       );
     }
 
-    // Return appropriate view based on order status
     switch (_orderData!.status) {
       case TransactionStatus.pending:
       case TransactionStatus.preparing:
