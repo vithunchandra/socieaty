@@ -15,6 +15,7 @@ import 'package:socieaty/features/authentication/viewstate/signup_restaurant_for
 import 'package:socieaty/features/customer/model/socieaty_customer.dart';
 import 'package:socieaty/features/customer/view/update_customer_profile_screen.dart';
 import 'package:socieaty/features/food_menu/customer/view/outlet_food_menu_screen.dart';
+import 'package:socieaty/features/food_order_chat/view/chat_screen.dart';
 import 'package:socieaty/features/home/customer/view/home_screen.dart';
 import 'package:socieaty/features/home/restaurant/view/restaurant_dashboard_screen.dart';
 import 'package:socieaty/features/livestream/view/livestream_home_screen.dart';
@@ -28,6 +29,7 @@ import 'package:socieaty/features/food_menu/restaurant/view/update_food_menu_scr
 import 'package:socieaty/features/shop/customer/view/shop_screen.dart';
 import 'package:socieaty/features/shop/customer/view/shop_search_screen.dart';
 import 'package:socieaty/features/transaction/customer/view/create_transaction_screen.dart';
+import 'package:socieaty/features/transaction/model/food_order_transaction.dart';
 import 'package:socieaty/features/transaction/restaurant/view/restaurant_transaction_screen.dart';
 import 'package:socieaty/features/user/view/profile_loader_screen.dart';
 import 'package:socieaty/shared/widgets/create_screen.dart';
@@ -238,6 +240,12 @@ GoRouter router(Ref ref) {
         path: '/track-order',
         builder: (context, state) => TrackOrderScreen(
           orderId: state.extra as String,
+        ),
+      ),
+      GoRoute(
+        path: '/track-order/message',
+        builder: (context, state) => ChatScreen(
+          order: state.extra as FoodOrderTransaction,
         ),
       ),
       GoRoute(

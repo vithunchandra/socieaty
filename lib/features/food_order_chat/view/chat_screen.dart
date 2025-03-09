@@ -3,11 +3,13 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:socieaty/core/theme/app_pallete.dart';
 import 'package:socieaty/core/enums/user_role.enum.dart';
 import 'package:socieaty/core/utils/show_snackbar.dart';
-import 'package:socieaty/features/transaction/customer/provider/track_food_order_transaction_message_provider.dart';
-import 'package:socieaty/features/transaction/customer/viewmodel/chat_view_model.dart';
+import 'package:socieaty/features/authentication/repository/auth_local_repository.dart';
+import 'package:socieaty/features/food_order_chat/provider/track_food_order_transaction_message_provider.dart';
+import 'package:socieaty/features/food_order_chat/viewmodel/chat_view_model.dart';
 import 'package:socieaty/features/transaction/model/food_order_transaction.dart';
 import 'package:socieaty/features/transaction/model/food_order_transaction_message.dart';
 import 'package:socieaty/features/transaction/customer/socket/transaction_messages_socket_service.dart';
+import 'package:socieaty/features/user/model/socieaty_user.dart';
 
 class ChatScreen extends ConsumerStatefulWidget {
   final FoodOrderTransaction order;
@@ -25,6 +27,7 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
   final TextEditingController _messageController = TextEditingController();
   final ScrollController _scrollController = ScrollController();
   late TransactionMessagesSocketService _transactionMessagesSocketService;
+  SocieatyUser? _currentUser;
 
   List<FoodOrderTransactionMessage> _messages = List.empty(growable: true);
   bool _isLoading = true;
@@ -36,6 +39,7 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
   void initState() {
     super.initState();
     initializeSocketService();
+    _currentUser = ref.read(authLocalRepositoryProvider).getUserData();
   }
 
   @override
@@ -386,10 +390,10 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
       itemCount: _messages.length,
       itemBuilder: (context, index) {
         final message = _messages[index];
-        final isFromRestaurant = message.user.role == UserRole.restaurant;
+        final isFromCurrentUser = message.user.id != _currentUser?.id;
 
         return Align(
-          alignment: isFromRestaurant ? Alignment.centerLeft : Alignment.centerRight,
+          alignment: isFromCurrentUser ? Alignment.centerLeft : Alignment.centerRight,
           child: Container(
             constraints: BoxConstraints(
               maxWidth: MediaQuery.of(context).size.width * 0.75,
@@ -397,10 +401,10 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
             margin: const EdgeInsets.symmetric(vertical: 8),
             padding: const EdgeInsets.all(12),
             decoration: BoxDecoration(
-              color: isFromRestaurant ? Colors.white : AppPallete.primaryColor,
+              color: isFromCurrentUser ? Colors.white : AppPallete.primaryColor,
               borderRadius: BorderRadius.circular(16).copyWith(
-                bottomLeft: isFromRestaurant ? const Radius.circular(0) : null,
-                bottomRight: !isFromRestaurant ? const Radius.circular(0) : null,
+                bottomLeft: isFromCurrentUser ? const Radius.circular(0) : null,
+                bottomRight: !isFromCurrentUser ? const Radius.circular(0) : null,
               ),
               boxShadow: [
                 BoxShadow(
@@ -413,7 +417,7 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                if (isFromRestaurant) ...[
+                if (isFromCurrentUser) ...[
                   Text(
                     message.user.name,
                     style: TextStyle(
@@ -427,7 +431,7 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
                 Text(
                   message.message,
                   style: TextStyle(
-                    color: isFromRestaurant ? Colors.black87 : Colors.white,
+                    color: isFromCurrentUser ? Colors.black87 : Colors.white,
                   ),
                 ),
                 const SizedBox(height: 4),
@@ -437,7 +441,7 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
                     '12:30 PM',
                     style: TextStyle(
                       fontSize: 10,
-                      color: isFromRestaurant ? Colors.grey : Colors.white.withAlpha(180),
+                      color: isFromCurrentUser ? Colors.grey : Colors.white.withAlpha(180),
                     ),
                   ),
                 ),

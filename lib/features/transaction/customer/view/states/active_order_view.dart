@@ -1,10 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 import 'package:socieaty/core/enums/transaction.enum.dart';
 import 'package:socieaty/core/theme/app_pallete.dart';
 import 'package:socieaty/features/transaction/model/food_order_transaction.dart';
 import 'package:socieaty/shared/widgets/dotted_divider.dart';
 import 'package:socieaty/core/utils/custom_extension.dart';
-import 'package:socieaty/features/transaction/customer/view/chat_screen.dart';
+import 'package:socieaty/features/food_order_chat/view/chat_screen.dart';
 
 class ActiveOrderView extends StatefulWidget {
   final FoodOrderTransaction order;
@@ -304,12 +305,7 @@ class _ActiveOrderViewState extends State<ActiveOrderView> {
           ),
           InkWell(
             onTap: () {
-              Navigator.push(
-                context,
-                MaterialPageRoute(
-                  builder: (context) => ChatScreen(order: order),
-                ),
-              );
+              context.push('/track-order/message', extra: order);
             },
             child: Container(
               padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),

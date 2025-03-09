@@ -8,6 +8,7 @@ import 'package:socieaty/features/transaction/model/food_order_transaction.dart'
 import 'package:socieaty/features/transaction/restaurant/provider/get_restaurant_food_transaction_provider.dart';
 import 'package:socieaty/features/transaction/restaurant/viewmodel/update_transaction_status_view_model.dart';
 import 'package:socieaty/shared/view_state.dart';
+import 'package:socieaty/core/theme/app_pallete.dart';
 
 class OrderDetailsSheet extends ConsumerStatefulWidget {
   final FoodOrderTransaction order;
@@ -130,6 +131,33 @@ class _OrderDetailsSheetState extends ConsumerState<OrderDetailsSheet> {
                     style: const TextStyle(
                       fontWeight: FontWeight.w500,
                       fontSize: 16,
+                    ),
+                  ),
+                  trailing: InkWell(
+                    onTap: () {
+                      context.push('/track-order/message', extra: widget.order);
+                    },
+                    child: Container(
+                      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+                      decoration: BoxDecoration(
+                        color: AppPallete.primaryColor.withAlpha(25),
+                        borderRadius: BorderRadius.circular(16),
+                      ),
+                      child: Row(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          Icon(Icons.chat, size: 16, color: AppPallete.primaryColor),
+                          const SizedBox(width: 4),
+                          Text(
+                            'Chat',
+                            style: TextStyle(
+                              color: AppPallete.primaryColor,
+                              fontWeight: FontWeight.bold,
+                              fontSize: 12,
+                            ),
+                          ),
+                        ],
+                      ),
                     ),
                   ),
                 ),
