@@ -79,15 +79,18 @@ class RouteProgressTracker {
     int lastPassedPointIndex,
     int newClosestPointIndex,
   ) {
-    if (newClosestPointIndex <= lastPassedPointIndex) {
-      return currentPassedPoints;
-    }
-
     final List<bool> updatedPoints = List.from(currentPassedPoints);
 
-    // Mark all points up to and including the closest one as passed
-    for (int i = lastPassedPointIndex + 1; i <= newClosestPointIndex; i++) {
-      updatedPoints[i] = true;
+    if (newClosestPointIndex > lastPassedPointIndex) {
+      // Moving forward - Mark all points up to and including the closest one as passed
+      for (int i = lastPassedPointIndex + 1; i <= newClosestPointIndex; i++) {
+        updatedPoints[i] = true;
+      }
+    } else if (newClosestPointIndex < lastPassedPointIndex) {
+      // Moving backward - Mark all points after the closest one as not passed
+      for (int i = newClosestPointIndex + 1; i <= lastPassedPointIndex; i++) {
+        updatedPoints[i] = false;
+      }
     }
 
     return updatedPoints;
@@ -102,44 +105,54 @@ class RouteProgressTracker {
       return [];
     }
 
-    final List<Polyline> polylines = [];
-    final List<List<LatLng>> segments = [];
-    final List<bool> segmentPassed = [];
-
-    bool currentSegmentPassed = passedPoints[0];
-    List<LatLng> currentSegment = [routePoints[0]];
-
-    // Split the route into segments based on passed status
-    for (int i = 1; i < routePoints.length; i++) {
-      if (passedPoints[i] == currentSegmentPassed) {
-        // Continue current segment
-        currentSegment.add(routePoints[i]);
-      } else {
-        // End previous segment and start new one
-        segments.add(currentSegment);
-        segmentPassed.add(currentSegmentPassed);
-
-        currentSegmentPassed = passedPoints[i];
-        currentSegment = [routePoints[i - 1], routePoints[i]]; // Overlap to avoid gaps
+    // Find the transition index (last passed point)
+    int transitionIndex = -1;
+    for (int i = 0; i < passedPoints.length; i++) {
+      if (passedPoints[i]) {
+        transitionIndex = i;
       }
     }
 
-    // Add the last segment
-    if (currentSegment.isNotEmpty) {
-      segments.add(currentSegment);
-      segmentPassed.add(currentSegmentPassed);
+    final List<Polyline> polylines = [];
+
+    // Create passed segment (gray) - only if we have passed points
+    if (transitionIndex >= 0) {
+      List<LatLng> passedSegment = routePoints.sublist(0, transitionIndex + 1);
+
+      if (passedSegment.length > 1) {
+        polylines.add(
+          Polyline(
+            polylineId: const PolylineId('passed_segment'),
+            points: passedSegment,
+            color: Colors.grey,
+            width: 5,
+          ),
+        );
+      }
     }
 
-    // Create polylines for each segment with different colors
-    for (int i = 0; i < segments.length; i++) {
-      polylines.add(
-        Polyline(
-          polylineId: PolylineId('route_segment_$i'),
-          points: segments[i],
-          color: segmentPassed[i] ? Colors.grey : AppPallete.primaryColor,
-          width: 5,
-        ),
-      );
+    // Create not-passed segment (primary color) - only if we have points ahead
+    if (transitionIndex < routePoints.length - 1) {
+      List<LatLng> notPassedSegment = [];
+
+      // Add the transition point to ensure continuity if it exists
+      if (transitionIndex >= 0) {
+        notPassedSegment.add(routePoints[transitionIndex]);
+      }
+
+      // Add all remaining points
+      notPassedSegment.addAll(routePoints.sublist(transitionIndex + 1));
+
+      if (notPassedSegment.length > 1) {
+        polylines.add(
+          Polyline(
+            polylineId: const PolylineId('not_passed_segment'),
+            points: notPassedSegment,
+            color: AppPallete.primaryColor,
+            width: 5,
+          ),
+        );
+      }
     }
 
     return polylines;

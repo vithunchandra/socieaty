@@ -262,12 +262,7 @@ abstract class LocationHandler {
       routeData.points,
     );
 
-    // If we haven't made progress, return original
-    if (closestPointIndex <= lastPassedPointIndex) {
-      return routeData;
-    }
-
-    // Update passed points
+    // Always update route progress, whether moving forward or backward
     final updatedPassedPoints = RouteProgressTracker.updatePassedPoints(
       routeData.passedPoints,
       lastPassedPointIndex,
