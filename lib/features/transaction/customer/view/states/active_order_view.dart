@@ -5,7 +5,6 @@ import 'package:socieaty/core/theme/app_pallete.dart';
 import 'package:socieaty/features/transaction/model/food_order_transaction.dart';
 import 'package:socieaty/shared/widgets/dotted_divider.dart';
 import 'package:socieaty/core/utils/custom_extension.dart';
-import 'package:socieaty/features/food_order_chat/view/chat_screen.dart';
 
 class ActiveOrderView extends StatefulWidget {
   final FoodOrderTransaction order;
@@ -138,7 +137,7 @@ class _ActiveOrderViewState extends State<ActiveOrderView> {
                 ),
                 ElevatedButton.icon(
                   onPressed: widget.navigateToMapScreen,
-                  icon: const Icon(Icons.map, size: 16),
+                  icon: const Icon(Icons.map, size: 16, color: Colors.white),
                   label: const Text('View Map'),
                   style: ElevatedButton.styleFrom(
                     backgroundColor: AppPallete.primaryColor,

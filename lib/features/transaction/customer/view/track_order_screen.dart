@@ -1,9 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
+import 'package:google_maps_flutter/google_maps_flutter.dart';
+import 'package:location/location.dart';
 import 'package:socieaty/core/enums/transaction.enum.dart';
 import 'package:socieaty/core/network/api_result.dart';
 import 'package:socieaty/core/theme/app_pallete.dart';
+import 'package:socieaty/core/utils/location_handler.dart';
+import 'package:socieaty/features/map/view/tracking_map.dart';
 import 'package:socieaty/features/transaction/customer/socket/customer_socket_service.dart';
 import 'package:socieaty/features/transaction/model/food_order_transaction.dart';
 import 'package:socieaty/features/transaction/repository/transaction_repository.dart';
@@ -94,13 +98,49 @@ class _TrackOrderScreenState extends ConsumerState<TrackOrderScreen> {
     }
   }
 
-  void _navigateToMapScreen() {
-    ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(
-        content: Text('Map screen will be implemented separately'),
-        duration: Duration(seconds: 2),
-      ),
-    );
+  void _navigateToMapScreen() async {
+    if (_orderData == null) return;
+
+    try {
+      // Get the restaurant location from the order data
+      // Use fallback coordinates for Jakarta if location not available
+      LatLng restaurantLocation;
+      try {
+        restaurantLocation = _orderData!.restaurant.restaurantData.location;
+      } catch (e) {
+        // Fallback to central Jakarta coordinates
+        restaurantLocation = const LatLng(-6.175110, 106.865036);
+      }
+
+      final String restaurantName = _orderData!.restaurant.name;
+      final String restaurantAddress = "Restaurant Location";
+
+      // Use dummy location data for the customer location
+      // This is approximately 500 meters south of the restaurant location
+      final LatLng customerLocation = LatLng(
+        restaurantLocation.latitude - 0.005,
+        restaurantLocation.longitude - 0.002,
+      );
+
+      // Navigate to the tracking map screen
+      Navigator.of(context).push(
+        MaterialPageRoute(
+          builder: (context) => TrackingMap(
+            customerLocation: customerLocation,
+            targetLocation: restaurantLocation,
+            targetName: restaurantName,
+            targetAddress: restaurantAddress,
+          ),
+        ),
+      );
+    } catch (e) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text('Error opening map: ${e.toString()}'),
+          duration: const Duration(seconds: 2),
+        ),
+      );
+    }
   }
 
   void _handleRetry() {
