@@ -70,7 +70,7 @@ class _PostSliverGridWidgetState extends ConsumerState<PostSliverGridWidget> {
       } catch (error) {
         if (!_isDisposed) {
           _pagingController.error = error;
-          showSnackbar(context, error.toString(), state: SnackbarStates.error);
+          showSnackbar(context, error.toString(), state: SnackbarState.error);
         }
       }
     }
@@ -91,7 +91,9 @@ class _PostSliverGridWidgetState extends ConsumerState<PostSliverGridWidget> {
           return GestureDetector(
             onTap: () {
               ref.read(appThemeProvider.notifier).setTheme(SocieatyAppTheme.darkTheme);
-              ref.read(postsWidgetViewModelProvider(widget.authorId).notifier).addPosts(_pagingController.itemList ?? []);
+              ref
+                  .read(postsWidgetViewModelProvider(widget.authorId).notifier)
+                  .addPosts(_pagingController.itemList ?? []);
               context.push(
                 '/posts',
                 extra: PostScreenArgs(

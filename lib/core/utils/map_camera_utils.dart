@@ -68,7 +68,7 @@ class MapCameraUtils {
     } catch (e) {
       debugPrint('Error applying camera update: $e');
       if (context != null) {
-        showSnackbar(null, 'Failed to update map view', state: SnackbarStates.error);
+        showSnackbar(null, 'Failed to update map view', state: SnackbarState.error);
       }
     }
   }

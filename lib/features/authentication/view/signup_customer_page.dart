@@ -38,7 +38,7 @@ class _SignupCustomerPageState extends ConsumerState<SignupCustomerPage> {
         case SuccessState<SocieatyUser>():
           context.replace('/signin');
         case ErrorState(message: final message):
-          showSnackbar(context, message, state: SnackbarStates.error);
+          showSnackbar(context, message, state: SnackbarState.error);
         case IdleState():
           {}
       }
@@ -61,7 +61,8 @@ class _SignupCustomerPageState extends ConsumerState<SignupCustomerPage> {
                     children: [
                       Container(
                         width: screenWidth,
-                        padding: const EdgeInsets.only(bottom: 48.0, left: 16.0, right: 16.0, top: 24.0),
+                        padding:
+                            const EdgeInsets.only(bottom: 48.0, left: 16.0, right: 16.0, top: 24.0),
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
@@ -78,7 +79,10 @@ class _SignupCustomerPageState extends ConsumerState<SignupCustomerPage> {
                                 Expanded(
                                   child: Text(
                                     "Registrasi Customer",
-                                    style: Theme.of(context).textTheme.headlineSmall?.copyWith(color: AppPallete.darkColorOnSurface),
+                                    style: Theme.of(context)
+                                        .textTheme
+                                        .headlineSmall
+                                        ?.copyWith(color: AppPallete.darkColorOnSurface),
                                   ),
                                 ),
                               ],
@@ -86,7 +90,10 @@ class _SignupCustomerPageState extends ConsumerState<SignupCustomerPage> {
                             const SizedBox(height: 16.0),
                             Text(
                               "Silahkan masukan data yang diperlukan untuk menyelesaikan proses registrasi",
-                              style: Theme.of(context).textTheme.bodyLarge?.copyWith(color: AppPallete.darkColorOnSurface),
+                              style: Theme.of(context)
+                                  .textTheme
+                                  .bodyLarge
+                                  ?.copyWith(color: AppPallete.darkColorOnSurface),
                             ),
                           ],
                         ),
@@ -227,7 +234,9 @@ class _SignupCustomerPageState extends ConsumerState<SignupCustomerPage> {
                     onPressed: () {
                       if (_formKey.currentState != null && _formKey.currentState!.validate()) {
                         _formKey.currentState!.save();
-                        ref.read(signupCustomerViewmodelProvider.notifier).signupCustomer(_formData);
+                        ref
+                            .read(signupCustomerViewmodelProvider.notifier)
+                            .signupCustomer(_formData);
                       }
                     },
                     child: isLoading ? LoadingIndicatorWidget() : const Text("Sign Up"),

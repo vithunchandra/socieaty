@@ -136,7 +136,7 @@ class CreateFoodMenuScreenState extends ConsumerState<CreateFoodMenuScreen> {
         case SuccessState():
           context.pop();
         case ErrorState(message: final message):
-          showSnackbar(context, message, state: SnackbarStates.error);
+          showSnackbar(context, message, state: SnackbarState.error);
         case LoadingState():
         case IdleState():
       }
@@ -234,7 +234,6 @@ class CreateFoodMenuScreenState extends ConsumerState<CreateFoodMenuScreen> {
                 ],
               ),
               const SizedBox(height: 20),
-
               Text(
                 "Tipe Menu",
                 style: Theme.of(context).textTheme.titleSmall,
@@ -283,7 +282,6 @@ class CreateFoodMenuScreenState extends ConsumerState<CreateFoodMenuScreen> {
               const SizedBox(height: 8),
               Text("Pilih tipe menu. Maksimal 3 tipe"),
               SizedBox(height: 20),
-
               Text("Deskripsi", style: Theme.of(context).textTheme.titleSmall),
               SizedBox(height: 8.0),
               CustomTextField(
@@ -302,7 +300,6 @@ class CreateFoodMenuScreenState extends ConsumerState<CreateFoodMenuScreen> {
               const SizedBox(height: 8),
               Text("Pastikan deskripsi menu menjelaskan detail menu kamu"),
               SizedBox(height: 20),
-
               Text("Estimasi waktu (menit)", style: Theme.of(context).textTheme.titleSmall),
               SizedBox(height: 8.0),
               CustomTextField(
@@ -321,7 +318,6 @@ class CreateFoodMenuScreenState extends ConsumerState<CreateFoodMenuScreen> {
               ),
               const SizedBox(height: 8),
               Text("Estimasi waktu pembuatan menu yang akan ditampilkan ke user"),
-
               SizedBox(height: 20),
               Text("Harga", style: Theme.of(context).textTheme.titleSmall),
               SizedBox(height: 8.0),
@@ -341,9 +337,7 @@ class CreateFoodMenuScreenState extends ConsumerState<CreateFoodMenuScreen> {
               ),
               const SizedBox(height: 8),
               Text("Pastikan harga menu kamu sudah sesuai"),
-
               SizedBox(height: 30),
-
               SizedBox(
                 width: double.infinity,
                 child: FilledButton(

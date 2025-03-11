@@ -47,7 +47,7 @@ class _UpdateCustomerProfileScreenState extends ConsumerState<UpdateCustomerProf
           debugPrint("Success: $user");
           context.pop();
         case ErrorState(message: final message):
-          showSnackbar(context, message, state: SnackbarStates.error);
+          showSnackbar(context, message, state: SnackbarState.error);
         case LoadingState<SocieatyCustomer>():
         case IdleState():
       }
@@ -140,7 +140,6 @@ class _UpdateCustomerProfileScreenState extends ConsumerState<UpdateCustomerProf
                       ),
                     ),
                     const SizedBox(height: 32),
-
                     Text(
                       "Nama",
                       style: Theme.of(context).textTheme.titleSmall,
@@ -163,7 +162,6 @@ class _UpdateCustomerProfileScreenState extends ConsumerState<UpdateCustomerProf
                     const SizedBox(height: 8),
                     const Text("Nama yang akan ditampilkan ke user lain"),
                     const SizedBox(height: 20),
-
                     Text(
                       "Nomor Telepon",
                       style: Theme.of(context).textTheme.titleSmall,
@@ -187,7 +185,6 @@ class _UpdateCustomerProfileScreenState extends ConsumerState<UpdateCustomerProf
                     const SizedBox(height: 8),
                     const Text("Nomor telepon untuk kontak"),
                     const SizedBox(height: 20),
-
                     Text(
                       "Bio",
                       style: Theme.of(context).textTheme.titleSmall,

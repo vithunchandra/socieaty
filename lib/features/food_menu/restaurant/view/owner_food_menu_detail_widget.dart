@@ -84,7 +84,7 @@ class _OwnerFoodMenuDetailWidgetState extends ConsumerState<OwnerFoodMenuDetailW
           ref.watch(foodMenuItemWidgetViewModelProvider(_menu.id).notifier).updateMenu(_menu);
           setState(() {});
         case ErrorState(message: final message):
-          showSnackbar(context, message, state: SnackbarStates.error);
+          showSnackbar(context, message, state: SnackbarState.error);
         case LoadingState():
         case IdleState():
       }
@@ -97,7 +97,7 @@ class _OwnerFoodMenuDetailWidgetState extends ConsumerState<OwnerFoodMenuDetailW
           ref.invalidate(foodMenuDetailWidgetViewModelProvider(_menu.id));
           context.pop();
         case ErrorState(message: final message):
-          showSnackbar(context, message, state: SnackbarStates.error);
+          showSnackbar(context, message, state: SnackbarState.error);
         case LoadingState():
         case IdleState():
       }
@@ -157,7 +157,6 @@ class _OwnerFoodMenuDetailWidgetState extends ConsumerState<OwnerFoodMenuDetailW
                       ),
                     ),
                     const SizedBox(height: 24),
-
                     Row(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -238,7 +237,6 @@ class _OwnerFoodMenuDetailWidgetState extends ConsumerState<OwnerFoodMenuDetailW
                       ],
                     ),
                     const SizedBox(height: 24),
-
                     Text(
                       "Description",
                       style: Theme.of(context).textTheme.titleSmall?.copyWith(
@@ -253,9 +251,7 @@ class _OwnerFoodMenuDetailWidgetState extends ConsumerState<OwnerFoodMenuDetailW
                             height: 1.5,
                           ),
                     ),
-
                     const SizedBox(height: 24),
-
                     Container(
                       padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 2),
                       decoration: BoxDecoration(
@@ -312,7 +308,6 @@ class _OwnerFoodMenuDetailWidgetState extends ConsumerState<OwnerFoodMenuDetailW
               ),
             ),
           ),
-
           Container(
             padding: const EdgeInsets.symmetric(vertical: 16, horizontal: 16),
             decoration: BoxDecoration(

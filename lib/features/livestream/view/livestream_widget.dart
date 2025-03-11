@@ -94,7 +94,7 @@ class _LivestreamViewState extends ConsumerState<LivestreamWidget> {
         }
       } catch (error) {
         if (mounted) {
-          showSnackbar(context, error.toString(), state: SnackbarStates.error);
+          showSnackbar(context, error.toString(), state: SnackbarState.error);
         }
       }
       await _room.dispose();
@@ -223,7 +223,7 @@ class _LivestreamViewState extends ConsumerState<LivestreamWidget> {
           _isLiked = data.isLiked;
           setState(() {});
         case ErrorState(message: final message):
-          showSnackbar(context, message, state: SnackbarStates.error);
+          showSnackbar(context, message, state: SnackbarState.error);
         case LoadingState():
         case IdleState():
       }
@@ -274,7 +274,6 @@ class _LivestreamViewState extends ConsumerState<LivestreamWidget> {
                                 fit: RTCVideoViewObjectFit.RTCVideoViewObjectFitCover,
                               ),
                       ),
-
                       Positioned(
                         top: 0,
                         left: 0,
@@ -405,7 +404,6 @@ class _LivestreamViewState extends ConsumerState<LivestreamWidget> {
                           ),
                         ),
                       ),
-
                       Positioned(
                         bottom: 0,
                         left: 0,

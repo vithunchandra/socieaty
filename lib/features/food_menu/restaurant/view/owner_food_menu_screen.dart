@@ -395,7 +395,8 @@ class _OwnerFoodMenuScreenState extends ConsumerState<OwnerFoodMenuScreen> {
                                           .toList(),
                                     ),
                                     error: (error, stacktrace) {
-                                      showSnackbar(context, error.toString(), state: SnackbarStates.error);
+                                      showSnackbar(context, error.toString(),
+                                          state: SnackbarState.error);
                                       return const SizedBox.shrink();
                                     },
                                     loading: () => const SizedBox.shrink(),

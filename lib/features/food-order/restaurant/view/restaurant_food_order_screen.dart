@@ -15,8 +15,7 @@ class RestaurantFoodOrderScreen extends ConsumerStatefulWidget {
   const RestaurantFoodOrderScreen({super.key, this.order});
 
   @override
-  ConsumerState<RestaurantFoodOrderScreen> createState() =>
-      _RestaurantFoodOrderScreenState();
+  ConsumerState<RestaurantFoodOrderScreen> createState() => _RestaurantFoodOrderScreenState();
 }
 
 class _RestaurantFoodOrderScreenState extends ConsumerState<RestaurantFoodOrderScreen>
@@ -32,6 +31,13 @@ class _RestaurantFoodOrderScreenState extends ConsumerState<RestaurantFoodOrderS
       if (widget.order != null) {
         _showHighlightedOrder(widget.order!);
       }
+
+      // Set up the listener once using listenManual
+      ref.listenManual(newOrderNotificationProvider, (previous, next) {
+        if (next != null) {
+          ref.invalidate(getRestaurantFoodOrderProvider([FoodOrderStatus.pending]));
+        }
+      });
     });
   }
 
@@ -68,16 +74,6 @@ class _RestaurantFoodOrderScreenState extends ConsumerState<RestaurantFoodOrderS
 
   @override
   Widget build(BuildContext context) {
-    ref.listen(newOrderNotificationProvider, (previous, next) {
-      if (next != null) {
-        ref.invalidate(getRestaurantFoodOrderProvider([FoodOrderStatus.pending]));
-
-        showSnackbar(context, 'New order received from ${next.customer.name}', state: SnackbarStates.info);
-
-        ref.read(newOrderNotificationProvider.notifier).resetNotification();
-      }
-    });
-
     return Scaffold(
       backgroundColor: Colors.grey[100],
       appBar: AppBar(

@@ -133,7 +133,7 @@ class _TrackOrderScreenState extends ConsumerState<TrackOrderScreen> {
         ),
       );
     } catch (e) {
-      showSnackbar(context, 'Error opening map: ${e.toString()}', state: SnackbarStates.error);
+      showSnackbar(context, 'Error opening map: ${e.toString()}', state: SnackbarState.error);
     }
   }
 
@@ -146,11 +146,13 @@ class _TrackOrderScreenState extends ConsumerState<TrackOrderScreen> {
   }
 
   void _showRateRestaurantDialog() {
-    showSnackbar(context, 'Rate restaurant feature will be implemented separately', state: SnackbarStates.info);
+    showSnackbar(context, 'Rate restaurant feature will be implemented separately',
+        state: SnackbarState.info);
   }
 
   void _showContactSupportDialog() {
-    showSnackbar(context, 'Customer support feature will be implemented separately', state: SnackbarStates.info);
+    showSnackbar(context, 'Customer support feature will be implemented separately',
+        state: SnackbarState.info);
   }
 
   @override

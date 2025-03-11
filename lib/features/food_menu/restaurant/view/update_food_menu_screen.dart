@@ -137,7 +137,8 @@ class UpdateFoodMenuScreenState extends ConsumerState<UpdateFoodMenuScreen> {
                                       .toList();
                                 },
                                 error: (error, stacktrace) {
-                                  showSnackbar(context, error.toString(), state: SnackbarStates.error);
+                                  showSnackbar(context, error.toString(),
+                                      state: SnackbarState.error);
                                   return [];
                                 },
                                 loading: () {
@@ -183,7 +184,7 @@ class UpdateFoodMenuScreenState extends ConsumerState<UpdateFoodMenuScreen> {
           ));
           context.pop(data);
         case ErrorState(message: final message):
-          showSnackbar(context, message, state: SnackbarStates.error);
+          showSnackbar(context, message, state: SnackbarState.error);
         case LoadingState():
         case IdleState():
       }
@@ -283,7 +284,6 @@ class UpdateFoodMenuScreenState extends ConsumerState<UpdateFoodMenuScreen> {
                   ],
                 ),
                 const SizedBox(height: 20),
-
                 Text(
                   "Tipe Menu",
                   style: Theme.of(context).textTheme.titleSmall,
@@ -331,7 +331,6 @@ class UpdateFoodMenuScreenState extends ConsumerState<UpdateFoodMenuScreen> {
                 const SizedBox(height: 8),
                 Text("Pilih tipe menu. Maksimal 3 tipe"),
                 SizedBox(height: 20),
-
                 Text("Deskripsi", style: Theme.of(context).textTheme.titleSmall),
                 SizedBox(height: 8.0),
                 CustomTextField(
@@ -351,7 +350,6 @@ class UpdateFoodMenuScreenState extends ConsumerState<UpdateFoodMenuScreen> {
                 const SizedBox(height: 8),
                 Text("Pastikan deskripsi menu menjelaskan detail menu kamu"),
                 SizedBox(height: 20),
-
                 Text("Estimasi waktu (menit)", style: Theme.of(context).textTheme.titleSmall),
                 SizedBox(height: 8.0),
                 CustomTextField(
@@ -371,7 +369,6 @@ class UpdateFoodMenuScreenState extends ConsumerState<UpdateFoodMenuScreen> {
                 ),
                 const SizedBox(height: 8),
                 Text("Estimasi waktu pembuatan menu yang akan ditampilkan ke user"),
-
                 SizedBox(height: 20),
                 Text("Harga", style: Theme.of(context).textTheme.titleSmall),
                 SizedBox(height: 8.0),
@@ -392,9 +389,7 @@ class UpdateFoodMenuScreenState extends ConsumerState<UpdateFoodMenuScreen> {
                 ),
                 const SizedBox(height: 8),
                 Text("Pastikan harga menu kamu sudah sesuai"),
-
                 SizedBox(height: 30),
-
                 SizedBox(
                   width: double.infinity,
                   child: FilledButton(
@@ -406,7 +401,8 @@ class UpdateFoodMenuScreenState extends ConsumerState<UpdateFoodMenuScreen> {
                                 _selectedCategories.map((category) => category.id).toList());
                       }
                       ref
-                          .read(updateFoodMenuViewModelProvider(widget.args.restaurantMenu.id).notifier)
+                          .read(updateFoodMenuViewModelProvider(widget.args.restaurantMenu.id)
+                              .notifier)
                           .updateFoodMenu(_formData, _selectedMenuImage);
                     },
                     child: Padding(

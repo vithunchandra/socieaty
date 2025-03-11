@@ -70,7 +70,7 @@ class _PostGridWidgetState extends ConsumerState<PostGridWidget> {
       } catch (error) {
         if (!_isDisposed) {
           _pagingController.error = error;
-          showSnackbar(context, error.toString(), state: SnackbarStates.error);
+          showSnackbar(context, error.toString(), state: SnackbarState.error);
         }
       }
     }
@@ -91,14 +91,15 @@ class _PostGridWidgetState extends ConsumerState<PostGridWidget> {
           return GestureDetector(
             onTap: () {
               ref.read(appThemeProvider.notifier).setTheme(SocieatyAppTheme.darkTheme);
-              ref.read(postsWidgetViewModelProvider(widget.authorId).notifier).addPosts(_pagingController.itemList ?? []);
+              ref
+                  .read(postsWidgetViewModelProvider(widget.authorId).notifier)
+                  .addPosts(_pagingController.itemList ?? []);
               context.push(
                 '/posts',
                 extra: PostScreenArgs(
                   previousTheme: SocieatyAppTheme.lightTheme,
                   paginatePostQuery: PaginatePostQuery(authorId: widget.authorId, offset: index),
                   posts: _pagingController.itemList,
-                  
                 ),
               );
             },

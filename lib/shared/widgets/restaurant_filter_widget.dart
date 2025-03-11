@@ -248,7 +248,7 @@ class _RestaurantFilterWidgetState extends ConsumerState<RestaurantFilterWidget>
                                 }).toList();
                               },
                               error: (error, stacktrace) {
-                                showSnackbar(context, error.toString(), state: SnackbarStates.error);
+                                showSnackbar(context, error.toString(), state: SnackbarState.error);
                                 return [];
                               },
                               loading: () {
@@ -293,7 +293,7 @@ class _RestaurantFilterWidgetState extends ConsumerState<RestaurantFilterWidget>
                                 }).toList();
                               },
                               error: (error, stacktrace) {
-                                showSnackbar(context, error.toString(), state: SnackbarStates.error);
+                                showSnackbar(context, error.toString(), state: SnackbarState.error);
                                 return [];
                               },
                               loading: () {

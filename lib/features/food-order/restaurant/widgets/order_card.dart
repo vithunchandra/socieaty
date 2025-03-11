@@ -67,7 +67,7 @@ class OrderCard extends ConsumerWidget {
             ref.invalidate(getRestaurantFoodOrderProvider(statusFilter));
           }
         case ErrorState(message: var message):
-          showSnackbar(context, message, state: SnackbarStates.error);
+          showSnackbar(context, message, state: SnackbarState.error);
         case LoadingState<FoodOrderTransaction>():
         case IdleState():
       }

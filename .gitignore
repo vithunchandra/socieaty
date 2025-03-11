@@ -12,6 +12,7 @@
 *.freezed.dart
 *.g.dart
 migrate_working_dir/
+.cursor
 
 # IntelliJ related
 *.iml

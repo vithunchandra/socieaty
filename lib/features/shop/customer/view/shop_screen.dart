@@ -43,7 +43,7 @@ class _ShopScreenState extends ConsumerState<ShopScreen> {
           debugPrint('data: $data');
           _menuCategories = data;
         case AsyncError<List<MenuCategory>>(error: final error):
-          showSnackbar(context, error.toString(), state: SnackbarStates.error);
+          showSnackbar(context, error.toString(), state: SnackbarState.error);
         default:
       }
       setState(() {});

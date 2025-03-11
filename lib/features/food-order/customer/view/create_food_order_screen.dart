@@ -76,7 +76,7 @@ class _CreateFoodOrderScreenState extends ConsumerState<CreateFoodOrderScreen> {
 
   void createTransaction(List<MenuCart> cartItems) {
     if (cartItems.isEmpty) {
-      showSnackbar(context, "Cart is empty", state: SnackbarStates.error);
+      showSnackbar(context, "Cart is empty", state: SnackbarState.error);
       return;
     }
     _formState = _formState.copyWith(
@@ -173,7 +173,7 @@ class _CreateFoodOrderScreenState extends ConsumerState<CreateFoodOrderScreen> {
           ref.read(menuCartViewModelProvider(widget.restaurant.id).notifier).clearCart();
           context.push('/track-order', extra: data.orderId);
         case ErrorState(message: final message):
-          showSnackbar(context, message, state: SnackbarStates.error);
+          showSnackbar(context, message, state: SnackbarState.error);
         case LoadingState():
         case IdleState():
       }

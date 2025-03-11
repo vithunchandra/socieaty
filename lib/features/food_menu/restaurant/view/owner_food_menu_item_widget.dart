@@ -73,7 +73,7 @@ class _OwnerFoodMenuItemWidgetState extends ConsumerState<OwnerFoodMenuItemWidge
             _isAvailable = _menu.isStockAvailable;
           });
         case ErrorState(message: final message):
-          showSnackbar(context, message, state: SnackbarStates.error);
+          showSnackbar(context, message, state: SnackbarState.error);
         case LoadingState():
         case IdleState():
       }

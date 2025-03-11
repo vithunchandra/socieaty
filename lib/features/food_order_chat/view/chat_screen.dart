@@ -121,7 +121,8 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
 
   @override
   Widget build(BuildContext context) {
-    ref.listen(trackFoodOrderTransactionMessageProvider(widget.order.transactionId), (previous, next) {
+    ref.listen(trackFoodOrderTransactionMessageProvider(widget.order.transactionId),
+        (previous, next) {
       switch (next) {
         case AsyncData(value: final data):
           setState(() {
@@ -136,7 +137,7 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
             _hasError = true;
             _errorMessage = error.toString();
           });
-          showSnackbar(context, error.toString(), state: SnackbarStates.error);
+          showSnackbar(context, error.toString(), state: SnackbarState.error);
         case AsyncLoading():
           setState(() {
             _isLoading = true;

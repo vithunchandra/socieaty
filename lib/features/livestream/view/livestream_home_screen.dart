@@ -38,7 +38,7 @@ class _LivestreamHomeScreenState extends ConsumerState<LivestreamHomeScreen> {
           _rooms = value;
           debugPrint('rooms: $_rooms');
         case AsyncError(error: final error):
-          showSnackbar(context, error.toString(), state: SnackbarStates.error);
+          showSnackbar(context, error.toString(), state: SnackbarState.error);
       }
     });
 

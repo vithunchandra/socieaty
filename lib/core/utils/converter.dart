@@ -112,6 +112,37 @@ class TransactionStatusConverter implements JsonConverter<TransactionStatus, Str
   }
 }
 
+class SocieatyRestaurantConverter
+    implements JsonConverter<SocieatyRestaurant, Map<String, dynamic>> {
+  const SocieatyRestaurantConverter();
+
+  @override
+  SocieatyRestaurant fromJson(Map<String, dynamic> json) {
+    final SocieatyUser user = SocieatyUser.fromJson(json);
+    return UserConverter.userToRestaurant(user);
+  }
+
+  @override
+  Map<String, dynamic> toJson(SocieatyRestaurant object) {
+    return object.toJson();
+  }
+}
+
+class SocieatyCustomerConverter implements JsonConverter<SocieatyCustomer, Map<String, dynamic>> {
+  const SocieatyCustomerConverter();
+
+  @override
+  SocieatyCustomer fromJson(Map<String, dynamic> json) {
+    final SocieatyUser user = SocieatyUser.fromJson(json);
+    return UserConverter.userToCustomer(user);
+  }
+
+  @override
+  Map<String, dynamic> toJson(SocieatyCustomer object) {
+    return object.toJson();
+  }
+}
+
 class UserConverter {
   static SocieatyCustomer userToCustomer(SocieatyUser user) {
     return SocieatyCustomer(

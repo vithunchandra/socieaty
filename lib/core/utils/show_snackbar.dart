@@ -4,7 +4,7 @@ import 'package:toastification/toastification.dart';
 void showSnackbar(
   BuildContext? context,
   String content, {
-  SnackbarStates state = SnackbarStates.success,
+  SnackbarState state = SnackbarState.success,
   ToastificationStyle? style,
 }) {
   final colors = {
@@ -45,7 +45,7 @@ void showSnackbar(
   );
 }
 
-enum SnackbarStates {
+enum SnackbarState {
   success,
   error,
   info,

@@ -31,6 +31,7 @@ import 'package:socieaty/features/shop/customer/view/shop_search_screen.dart';
 import 'package:socieaty/features/food-order/customer/view/create_food_order_screen.dart';
 import 'package:socieaty/features/food-order/model/food_order_transaction.dart';
 import 'package:socieaty/features/food-order/restaurant/view/restaurant_food_order_screen.dart';
+import 'package:socieaty/features/transaction_review/view/restaurant_rating_screen.dart';
 import 'package:socieaty/features/user/view/profile_loader_screen.dart';
 import 'package:socieaty/shared/widgets/create_screen.dart';
 import 'package:socieaty/features/customer/view/customer_scaffold_with_navbar.dart';
@@ -241,6 +242,14 @@ GoRouter router(Ref ref) {
         builder: (context, state) => TrackOrderScreen(
           orderId: state.extra as String,
         ),
+        routes: [
+          GoRoute(
+            path: 'review',
+            builder: (context, state) => RestaurantRatingScreen(
+              transaction: state.extra as FoodOrderTransaction,
+            )
+          ),
+        ],
       ),
       GoRoute(
         path: '/track-order/message',

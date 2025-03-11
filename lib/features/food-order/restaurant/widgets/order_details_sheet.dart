@@ -50,7 +50,7 @@ class _OrderDetailsSheetState extends ConsumerState<OrderDetailsSheet> {
           context.pop();
 
         case ErrorState(message: var message):
-          showSnackbar(context, message, state: SnackbarStates.error);
+          showSnackbar(context, message, state: SnackbarState.error);
         case LoadingState<FoodOrderTransaction>():
         case IdleState():
       }

@@ -51,7 +51,7 @@ class _CreatePostScreenState extends ConsumerState<CreatePostScreen> {
             context.pop();
           }
         case ErrorState(message: final message):
-          showSnackbar(context, message, state: SnackbarStates.error);
+          showSnackbar(context, message, state: SnackbarState.error);
         case LoadingState():
         case IdleState():
       }
@@ -110,14 +110,16 @@ class _CreatePostScreenState extends ConsumerState<CreatePostScreen> {
                                       color: Colors.grey[200],
                                     ),
                                     child: Center(
-                                      child: Icon(Icons.add, size: 50, color: AppPallete.neutralColor.shade400),
+                                      child: Icon(Icons.add,
+                                          size: 50, color: AppPallete.neutralColor.shade400),
                                     ),
                                   ),
                                 ),
                               );
                             }
                             final file = files[index];
-                            if (RegExp(r'\.(mp4|mov|avi|wmv|flv|mkv|webm)$', caseSensitive: false).hasMatch(file.path)) {
+                            if (RegExp(r'\.(mp4|mov|avi|wmv|flv|mkv|webm)$', caseSensitive: false)
+                                .hasMatch(file.path)) {
                               return VideoThumbailWidget(
                                 size: Size(100, 100),
                                 videoPath: file.path,
@@ -156,7 +158,10 @@ class _CreatePostScreenState extends ConsumerState<CreatePostScreen> {
                                 style: Theme.of(context).textTheme.titleLarge,
                                 decoration: InputDecoration.collapsed(
                                   hintText: "Judul post kamu...",
-                                  hintStyle: Theme.of(context).textTheme.titleLarge?.copyWith(color: AppPallete.neutralColor.shade400),
+                                  hintStyle: Theme.of(context)
+                                      .textTheme
+                                      .titleLarge
+                                      ?.copyWith(color: AppPallete.neutralColor.shade400),
                                   border: InputBorder.none,
                                 ),
                               ),
@@ -176,8 +181,12 @@ class _CreatePostScreenState extends ConsumerState<CreatePostScreen> {
                                 },
                                 style: Theme.of(context).textTheme.bodyMedium,
                                 decoration: InputDecoration.collapsed(
-                                  hintText: "Tulis caption kamu disini. Buat caption yang menarik untuk post kamu",
-                                  hintStyle: Theme.of(context).textTheme.bodyMedium?.copyWith(color: AppPallete.neutralColor.shade400),
+                                  hintText:
+                                      "Tulis caption kamu disini. Buat caption yang menarik untuk post kamu",
+                                  hintStyle: Theme.of(context)
+                                      .textTheme
+                                      .bodyMedium
+                                      ?.copyWith(color: AppPallete.neutralColor.shade400),
                                   border: InputBorder.none,
                                 ),
                                 minLines: 5,
@@ -203,7 +212,8 @@ class _CreatePostScreenState extends ConsumerState<CreatePostScreen> {
                                       mainAxisAlignment: MainAxisAlignment.center,
                                       crossAxisAlignment: CrossAxisAlignment.start,
                                       children: [
-                                        Text("Hashtags", style: Theme.of(context).textTheme.titleLarge),
+                                        Text("Hashtags",
+                                            style: Theme.of(context).textTheme.titleLarge),
                                         SizedBox(height: 16),
                                         CustomTextField(
                                           controller: hashtagsController,
@@ -241,7 +251,9 @@ class _CreatePostScreenState extends ConsumerState<CreatePostScreen> {
                                 );
                               });
                         },
-                        child: FormItemWidget(itemIcon: Icons.tag, itemTitle: hashtagsText.isEmpty ? "Hashtags" : hashtagsText),
+                        child: FormItemWidget(
+                            itemIcon: Icons.tag,
+                            itemTitle: hashtagsText.isEmpty ? "Hashtags" : hashtagsText),
                       ),
                       GestureDetector(
                         onTap: () {

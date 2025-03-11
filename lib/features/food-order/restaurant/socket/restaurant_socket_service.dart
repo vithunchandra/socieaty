@@ -87,13 +87,8 @@ class RestaurantSocketService {
     if (_hasNewOrderListener) return;
 
     socket.on('new-order', (data) {
-      debugPrint('New Order Received: $data');
-
       try {
         final FoodOrderTransaction orderData = FoodOrderTransaction.fromJson(data);
-
-        showNewOrderDialog(orderData);
-
         final formattedTotal = _formatCurrency(orderData.grossAmount + orderData.serviceFee);
 
         final customerName = orderData.customer.name;
@@ -120,6 +115,7 @@ class RestaurantSocketService {
         );
 
         if (_onNewOrderCallback != null) {
+          debugPrint("Calling onNewOrderCallback");
           _onNewOrderCallback!(orderData);
         }
       } catch (e) {

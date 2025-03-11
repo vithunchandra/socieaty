@@ -26,12 +26,8 @@ class _RestaurantDashboardScreenState extends ConsumerState<RestaurantDashboardS
   @override
   void initState() {
     super.initState();
-
-    debugPrint("Initializing socket connection");
     initializeSocketConnection();
-
     setupNotificationTapHandling();
-
     requestNotificationPermissions();
   }
 
@@ -80,7 +76,7 @@ class _RestaurantDashboardScreenState extends ConsumerState<RestaurantDashboardS
         showSnackbar(
           context,
           'Notification permissions are required to receive order alerts.',
-          state: SnackbarStates.success,
+          state: SnackbarState.success,
           style: ToastificationStyle.fillColored,
         );
       }
