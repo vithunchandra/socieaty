@@ -1,5 +1,5 @@
 import 'package:freezed_annotation/freezed_annotation.dart';
-import 'package:socieaty/features/transaction/model/food_order_transaction_message.dart';
+import 'package:socieaty/features/food-order/model/food_order_transaction_message.dart';
 import 'package:socieaty/shared/view_state.dart';
 
 part 'chat_view_state.freezed.dart';

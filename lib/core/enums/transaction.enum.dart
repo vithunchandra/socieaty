@@ -7,7 +7,7 @@ enum TransactionServiceType {
   const TransactionServiceType(this.value);
 }
 
-enum TransactionStatus {
+enum FoodOrderStatus {
   pending,
   rejected,
   preparing,
@@ -15,4 +15,9 @@ enum TransactionStatus {
   completed
 }
 
-
+enum TransactionStatus{
+  success,
+  failed,
+  ongoing,
+  refunded,
+}

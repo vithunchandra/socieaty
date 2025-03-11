@@ -4,7 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
-import 'package:socieaty/features/transaction/model/food_order_transaction.dart';
+import 'package:socieaty/features/food-order/model/food_order_transaction.dart';
 
 part 'local_notification_service.g.dart';
 

@@ -38,7 +38,7 @@ class _SignupCustomerPageState extends ConsumerState<SignupCustomerPage> {
         case SuccessState<SocieatyUser>():
           context.replace('/signin');
         case ErrorState(message: final message):
-          showSnackbar(context, message, isError: true);
+          showSnackbar(context, message, state: SnackbarStates.error);
         case IdleState():
           {}
       }

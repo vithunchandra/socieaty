@@ -28,14 +28,14 @@ import 'package:socieaty/features/food_menu/restaurant/view/owner_food_menu_scre
 import 'package:socieaty/features/food_menu/restaurant/view/update_food_menu_screen.dart';
 import 'package:socieaty/features/shop/customer/view/shop_screen.dart';
 import 'package:socieaty/features/shop/customer/view/shop_search_screen.dart';
-import 'package:socieaty/features/transaction/customer/view/create_transaction_screen.dart';
-import 'package:socieaty/features/transaction/model/food_order_transaction.dart';
-import 'package:socieaty/features/transaction/restaurant/view/restaurant_transaction_screen.dart';
+import 'package:socieaty/features/food-order/customer/view/create_food_order_screen.dart';
+import 'package:socieaty/features/food-order/model/food_order_transaction.dart';
+import 'package:socieaty/features/food-order/restaurant/view/restaurant_food_order_screen.dart';
 import 'package:socieaty/features/user/view/profile_loader_screen.dart';
 import 'package:socieaty/shared/widgets/create_screen.dart';
 import 'package:socieaty/features/customer/view/customer_scaffold_with_navbar.dart';
-import 'package:socieaty/features/transaction/customer/view/track_order_screen.dart';
-import 'package:socieaty/features/transaction/restaurant/view/restaurant_transaction_history_screen.dart';
+import 'package:socieaty/features/food-order/customer/view/track_order_screen.dart';
+import 'package:socieaty/features/food-order/restaurant/view/restaurant_food_order_history_screen.dart';
 
 part 'routes.g.dart';
 
@@ -211,13 +211,13 @@ GoRouter router(Ref ref) {
               GoRoute(
                 path: '/restaurant/transaksi',
                 pageBuilder: (context, state) => const NoTransitionPage(
-                  child: RestaurantTransactionScreen(),
+                  child: RestaurantFoodOrderScreen(),
                 ),
                 routes: [
                   GoRoute(
                     path: 'history',
                     pageBuilder: (context, state) => const NoTransitionPage(
-                      child: RestaurantTransactionHistoryScreen(),
+                      child: RestaurantFoodOrderHistoryScreen(),
                     ),
                   ),
                 ],
@@ -261,7 +261,7 @@ GoRouter router(Ref ref) {
             routes: [
               GoRoute(
                 path: 'order',
-                builder: (context, state) => CreateTransactionScreen(
+                builder: (context, state) => CreateFoodOrderScreen(
                   restaurant: state.extra as SocieatyRestaurant,
                 ),
               ),

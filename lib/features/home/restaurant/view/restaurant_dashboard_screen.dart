@@ -4,14 +4,16 @@ import 'package:go_router/go_router.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:socieaty/core/notifications/local_notification_service.dart';
 import 'package:socieaty/core/theme/app_pallete.dart';
+import 'package:socieaty/core/utils/show_snackbar.dart';
 import 'package:socieaty/features/authentication/repository/auth_local_repository.dart';
 import 'package:socieaty/features/home/restaurant/view/grid_menu_button_widget.dart';
 import 'package:socieaty/features/home/restaurant/view/recent_reservation_widget.dart';
 import 'package:socieaty/features/home/restaurant/view/statistic_summary_widget.dart';
-import 'package:socieaty/features/transaction/restaurant/socket/restaurant_socket_service.dart';
+import 'package:socieaty/features/food-order/restaurant/socket/restaurant_socket_service.dart';
 import 'package:socieaty/features/restaurant/view/restaurant_scaffold_with_navbar.dart';
-import 'package:socieaty/features/transaction/restaurant/view/transaction_item_summary_widget.dart';
-import 'package:socieaty/features/transaction/restaurant/provider/new_order_notification_provider.dart';
+import 'package:socieaty/features/food-order/restaurant/view/food_order_item_summary_widget.dart';
+import 'package:socieaty/features/food-order/restaurant/provider/new_order_notification_provider.dart';
+import 'package:toastification/toastification.dart';
 
 class RestaurantDashboardScreen extends ConsumerStatefulWidget {
   const RestaurantDashboardScreen({super.key});
@@ -38,7 +40,6 @@ class _RestaurantDashboardScreenState extends ConsumerState<RestaurantDashboardS
     socketService.initConnection();
 
     socketService.listenNewOrder((order) {
-      debugPrint('Order received in dashboard: ${order.id}');
       ref.read(newOrderNotificationProvider.notifier).setNewOrder(order);
     });
   }
@@ -76,15 +77,11 @@ class _RestaurantDashboardScreenState extends ConsumerState<RestaurantDashboardS
       final bool granted = await notificationService.requestPermissions();
 
       if (!granted && mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: const Text('Notification permissions are required to receive order alerts.'),
-            duration: const Duration(seconds: 5),
-            action: SnackBarAction(
-              label: 'Settings',
-              onPressed: () => openAppSettings(),
-            ),
-          ),
+        showSnackbar(
+          context,
+          'Notification permissions are required to receive order alerts.',
+          state: SnackbarStates.success,
+          style: ToastificationStyle.fillColored,
         );
       }
     });
@@ -281,7 +278,7 @@ class _RestaurantDashboardScreenState extends ConsumerState<RestaurantDashboardS
                         ],
                       ),
                       const SizedBox(height: 12),
-                      TransactionItemSummaryWidget(
+                      FoodOrderItemSummaryWidget(
                         customerName: 'John Doe',
                         time: '2 hours ago',
                         amount: 'Rp 150.000',

@@ -43,7 +43,7 @@ class _SignInPageState extends ConsumerState<SignInPage> {
           }
           isLoading = false;
         case ErrorState(message: final message):
-          showSnackbar(context, message, isError: true);
+          showSnackbar(context, message, state: SnackbarStates.error);
           isLoading = false;
         case LoadingState():
           isLoading = true;

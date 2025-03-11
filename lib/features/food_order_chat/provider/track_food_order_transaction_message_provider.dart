@@ -3,7 +3,7 @@ import 'package:riverpod_annotation/riverpod_annotation.dart';
 import 'package:socieaty/core/network/api_result.dart';
 import 'package:socieaty/features/food_order_chat/repository/food_order_chat_repository.dart';
 import 'package:socieaty/features/food_order_chat/repository/response/track_food_order_transaction_message_response.dart';
-import 'package:socieaty/features/transaction/model/food_order_transaction_message.dart';
+import 'package:socieaty/features/food-order/model/food_order_transaction_message.dart';
 
 part 'track_food_order_transaction_message_provider.g.dart';
 

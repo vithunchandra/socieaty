@@ -1,4 +1,3 @@
-import 'package:flutter/foundation.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:socieaty/core/enums/bank.enum.dart';
@@ -85,13 +84,25 @@ class TransactionServiceTypeConverter implements JsonConverter<TransactionServic
   }
 }
 
+class FoodOrderStatusConverter implements JsonConverter<FoodOrderStatus, String> {
+  const FoodOrderStatusConverter();
+
+  @override
+  FoodOrderStatus fromJson(String json) {
+    return FoodOrderStatus.values.firstWhere((element) => element.name == json);
+  }
+
+  @override
+  String toJson(FoodOrderStatus object) {
+    return object.name;
+  }
+}
+
 class TransactionStatusConverter implements JsonConverter<TransactionStatus, String> {
   const TransactionStatusConverter();
 
   @override
   TransactionStatus fromJson(String json) {
-    debugPrint('json: $json');
-    debugPrint('TransactionStatus.values: ${TransactionStatus.values.first.name}');
     return TransactionStatus.values.firstWhere((element) => element.name == json);
   }
 

@@ -1,0 +1,127 @@
+import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
+import 'package:socieaty/core/enums/transaction.enum.dart';
+import 'package:socieaty/core/utils/show_snackbar.dart';
+import 'package:socieaty/features/food-order/model/food_order_transaction.dart';
+import 'package:socieaty/features/food-order/restaurant/provider/get_restaurant_food_order_provider.dart';
+import 'package:socieaty/features/food-order/restaurant/provider/new_order_notification_provider.dart';
+import 'package:socieaty/features/food-order/restaurant/widgets/order_details_sheet.dart';
+import 'package:socieaty/features/food-order/restaurant/widgets/order_list.dart';
+
+class RestaurantFoodOrderScreen extends ConsumerStatefulWidget {
+  final FoodOrderTransaction? order;
+
+  const RestaurantFoodOrderScreen({super.key, this.order});
+
+  @override
+  ConsumerState<RestaurantFoodOrderScreen> createState() =>
+      _RestaurantFoodOrderScreenState();
+}
+
+class _RestaurantFoodOrderScreenState extends ConsumerState<RestaurantFoodOrderScreen>
+    with SingleTickerProviderStateMixin {
+  late TabController _tabController;
+
+  @override
+  void initState() {
+    super.initState();
+    _tabController = TabController(length: 3, vsync: this);
+
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (widget.order != null) {
+        _showHighlightedOrder(widget.order!);
+      }
+    });
+  }
+
+  @override
+  void dispose() {
+    _tabController.dispose();
+    super.dispose();
+  }
+
+  void _showHighlightedOrder(FoodOrderTransaction order) {
+    showModalBottomSheet(
+      context: context,
+      isScrollControlled: true,
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(top: Radius.circular(16)),
+      ),
+      builder: (context) => DraggableScrollableSheet(
+        initialChildSize: 0.8,
+        maxChildSize: 0.9,
+        minChildSize: 0.5,
+        expand: false,
+        builder: (_, scrollController) => OrderDetailsSheet(
+          order: order,
+          statusFilter: [FoodOrderStatus.pending],
+          scrollController: scrollController,
+        ),
+      ),
+    );
+  }
+
+  void _navigateToHistory() {
+    context.push('/restaurant/transaksi/history');
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    ref.listen(newOrderNotificationProvider, (previous, next) {
+      if (next != null) {
+        ref.invalidate(getRestaurantFoodOrderProvider([FoodOrderStatus.pending]));
+
+        showSnackbar(context, 'New order received from ${next.customer.name}', state: SnackbarStates.info);
+
+        ref.read(newOrderNotificationProvider.notifier).resetNotification();
+      }
+    });
+
+    return Scaffold(
+      backgroundColor: Colors.grey[100],
+      appBar: AppBar(
+        elevation: 0,
+        title: const Text(
+          'Transaksi',
+          style: TextStyle(fontWeight: FontWeight.bold),
+        ),
+        backgroundColor: Theme.of(context).primaryColor,
+        foregroundColor: Colors.white,
+        actions: [
+          IconButton(
+            icon: const Icon(Icons.history),
+            tooltip: 'Riwayat Transaksi',
+            onPressed: _navigateToHistory,
+          ),
+        ],
+        bottom: TabBar(
+          controller: _tabController,
+          indicatorColor: Colors.white,
+          indicatorWeight: 3,
+          labelColor: Colors.white,
+          unselectedLabelColor: Colors.white.withAlpha(178),
+          tabs: const [
+            Tab(text: 'Baru'),
+            Tab(text: 'Berlangsung'),
+            Tab(text: 'Siap'),
+          ],
+        ),
+      ),
+      body: TabBarView(
+        controller: _tabController,
+        children: const [
+          OrderList(
+            statusFilter: [FoodOrderStatus.pending],
+          ),
+          OrderList(
+            statusFilter: [FoodOrderStatus.preparing],
+          ),
+          OrderList(
+            statusFilter: [FoodOrderStatus.ready],
+          ),
+        ],
+      ),
+    );
+  }
+}

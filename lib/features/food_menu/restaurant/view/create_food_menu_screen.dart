@@ -136,7 +136,7 @@ class CreateFoodMenuScreenState extends ConsumerState<CreateFoodMenuScreen> {
         case SuccessState():
           context.pop();
         case ErrorState(message: final message):
-          showSnackbar(context, message, isError: true);
+          showSnackbar(context, message, state: SnackbarStates.error);
         case LoadingState():
         case IdleState():
       }

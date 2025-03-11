@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:socieaty/features/transaction/customer/socket/customer_socket_service.dart';
+import 'package:socieaty/features/food-order/customer/socket/customer_socket_service.dart';
 import 'package:socieaty/features/home/customer/provider/all_post_provider.dart';
 import 'package:socieaty/features/post/post/view/posts_widget.dart';
 

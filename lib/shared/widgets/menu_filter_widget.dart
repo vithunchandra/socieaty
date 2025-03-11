@@ -247,7 +247,7 @@ class _MenuFilterWidgetState extends ConsumerState<MenuFilterWidget> {
                                 }).toList();
                               },
                               error: (error, stacktrace) {
-                                showSnackbar(context, error.toString(), isError: true);
+                                showSnackbar(context, error.toString(), state: SnackbarStates.error);
                                 return [];
                               },
                               loading: () {

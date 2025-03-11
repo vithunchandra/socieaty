@@ -6,6 +6,7 @@ import 'package:socieaty/core/notifications/local_notification_service.dart';
 import 'package:socieaty/core/routes/routes.dart';
 import 'package:socieaty/core/theme/theme.dart';
 import 'package:socieaty/features/authentication/repository/auth_local_repository.dart';
+import 'package:toastification/toastification.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -64,11 +65,13 @@ class _AppState extends ConsumerState<App> {
       _updateSystemChrome(next);
     });
 
-    return MaterialApp.router(
-      key: rootNavigatorKey,
-      theme: ref.watch(appThemeProvider),
-      themeAnimationDuration: const Duration(milliseconds: 0),
-      routerConfig: ref.watch(routerProvider),
+    return ToastificationWrapper(
+      child: MaterialApp.router(
+        key: rootNavigatorKey,
+        theme: ref.watch(appThemeProvider),
+        themeAnimationDuration: const Duration(milliseconds: 0),
+        routerConfig: ref.watch(routerProvider),
+      ),
     );
   }
 }

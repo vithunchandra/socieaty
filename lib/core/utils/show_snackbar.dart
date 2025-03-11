@@ -1,46 +1,53 @@
 import 'package:flutter/material.dart';
+import 'package:toastification/toastification.dart';
 
-void showSnackbar(BuildContext context, String content, {bool isError = false}) {
-  final snackBar = SnackBar(
-    content: Row(
-      children: [
-        Icon(
-          isError ? Icons.error_outline : Icons.info_outline,
-          color: Colors.white,
-        ),
-        const SizedBox(width: 12),
-        Expanded(
-          child: Text(
-            content,
-            style: const TextStyle(
-              color: Colors.white,
-              fontSize: 14,
-              fontWeight: FontWeight.w500,
-            ),
-          ),
-        ),
-      ],
-    ),
-    behavior: SnackBarBehavior.floating,
-    backgroundColor: isError ? Colors.red.shade800 : Colors.black87,
-    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-    margin: const EdgeInsets.all(16),
-    duration: const Duration(seconds: 4),
-    animation: CurvedAnimation(
-      parent: const AlwaysStoppedAnimation(1),
-      curve: Curves.easeOutCirc,
-    ),
-    dismissDirection: DismissDirection.horizontal,
-    action: SnackBarAction(
-      label: 'Dismiss',
-      textColor: Colors.white,
-      onPressed: () {
-        ScaffoldMessenger.of(context).hideCurrentSnackBar();
-      },
-    ),
+void showSnackbar(
+  BuildContext? context,
+  String content, {
+  SnackbarStates state = SnackbarStates.success,
+  ToastificationStyle? style,
+}) {
+  final colors = {
+    'success': Color(0xFFEB7317),
+    'error': Colors.red.shade800,
+    'info': Color(0xFF0F8BFF),
+    'warning': Color(0xFFF19809),
+  };
+
+  final type = {
+    'success': ToastificationType.success,
+    'error': ToastificationType.error,
+    'info': ToastificationType.info,
+    'warning': ToastificationType.warning,
+  };
+
+  final defaultStyle = {
+    'success': ToastificationStyle.flatColored,
+    'error': ToastificationStyle.fillColored,
+    'info': ToastificationStyle.flatColored,
+    'warning': ToastificationStyle.flatColored,
+  };
+
+  toastification.show(
+    context: context,
+    type: type[state.name],
+    style: style ?? defaultStyle[state.name],
+    title: Text(content),
+    alignment: Alignment.bottomCenter,
+    autoCloseDuration: const Duration(seconds: 5),
+    primaryColor: colors[state.name],
+    backgroundColor: Colors.white,
+    borderRadius: BorderRadius.circular(12.0),
+    dragToClose: true,
+    showProgressBar: false,
+    applyBlurEffect: true,
+    closeButton: ToastCloseButton(showType: CloseButtonShowType.none),
   );
+}
 
-  ScaffoldMessenger.of(context)
-    ..hideCurrentSnackBar()
-    ..showSnackBar(snackBar);
+enum SnackbarStates {
+  success,
+  error,
+  info,
+  warning,
 }

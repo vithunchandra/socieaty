@@ -3,7 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:socieaty/features/account/customer/viewmodel/account_view_model.dart';
 import 'package:socieaty/features/authentication/provider/session_provider.dart';
-import 'package:socieaty/features/transaction/restaurant/socket/restaurant_socket_service.dart';
+import 'package:socieaty/features/food-order/restaurant/socket/restaurant_socket_service.dart';
 import 'package:socieaty/shared/view_state.dart';
 import 'package:socieaty/shared/widgets/loading_indicator_widget.dart';
 

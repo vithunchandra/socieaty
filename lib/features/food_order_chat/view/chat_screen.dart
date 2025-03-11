@@ -4,10 +4,10 @@ import 'package:socieaty/core/theme/app_pallete.dart';
 import 'package:socieaty/core/utils/show_snackbar.dart';
 import 'package:socieaty/features/authentication/repository/auth_local_repository.dart';
 import 'package:socieaty/features/food_order_chat/provider/track_food_order_transaction_message_provider.dart';
+import 'package:socieaty/features/food_order_chat/socket/transaction_messages_socket_service.dart';
 import 'package:socieaty/features/food_order_chat/viewmodel/chat_view_model.dart';
-import 'package:socieaty/features/transaction/model/food_order_transaction.dart';
-import 'package:socieaty/features/transaction/model/food_order_transaction_message.dart';
-import 'package:socieaty/features/transaction/customer/socket/transaction_messages_socket_service.dart';
+import 'package:socieaty/features/food-order/model/food_order_transaction.dart';
+import 'package:socieaty/features/food-order/model/food_order_transaction_message.dart';
 import 'package:socieaty/features/user/model/socieaty_user.dart';
 
 class ChatScreen extends ConsumerStatefulWidget {
@@ -55,7 +55,7 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
     _transactionMessagesSocketService = ref.read(transactionMessagesSocketServiceProvider);
 
     _transactionMessagesSocketService.onConnected = () {
-      debugPrint('Socket connected! Now loading messages for order: ${widget.order.id}');
+      debugPrint('Socket connected! Now loading messages for order: ${widget.order.transactionId}');
       if (mounted) {
         setState(() {
           _socketConnected = true;
@@ -69,7 +69,7 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
 
     _transactionMessagesSocketService.listenNewTransactionMessage((message) {
       debugPrint('New transaction message: ${message.toString()}');
-      if (message.transactionId == widget.order.id) {
+      if (message.transactionId == widget.order.transactionId) {
         if (mounted) {
           setState(() {
             _messages.add(message);
@@ -82,7 +82,7 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
   }
 
   void _loadMessages() {
-    ref.invalidate(trackFoodOrderTransactionMessageProvider(widget.order.id));
+    ref.invalidate(trackFoodOrderTransactionMessageProvider(widget.order.transactionId));
   }
 
   void _scrollToBottom() {
@@ -102,7 +102,7 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
 
     ref
         .read(chatViewModelProvider.notifier)
-        .createMessage(widget.order.id, _messageController.text);
+        .createMessage(widget.order.transactionId, _messageController.text);
     _messageController.clear();
   }
 
@@ -121,7 +121,7 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
 
   @override
   Widget build(BuildContext context) {
-    ref.listen(trackFoodOrderTransactionMessageProvider(widget.order.id), (previous, next) {
+    ref.listen(trackFoodOrderTransactionMessageProvider(widget.order.transactionId), (previous, next) {
       switch (next) {
         case AsyncData(value: final data):
           setState(() {
@@ -136,7 +136,7 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
             _hasError = true;
             _errorMessage = error.toString();
           });
-          showSnackbar(context, error.toString(), isError: true);
+          showSnackbar(context, error.toString(), state: SnackbarStates.error);
         case AsyncLoading():
           setState(() {
             _isLoading = true;
@@ -172,7 +172,7 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
                     overflow: TextOverflow.ellipsis,
                   ),
                   Text(
-                    'Order #${widget.order.id.substring(0, 8)}',
+                    'Order #${widget.order.orderId.substring(0, 8)}',
                     style: TextStyle(
                       fontSize: 12,
                       color: Colors.white.withAlpha(200),

@@ -84,7 +84,7 @@ class _OwnerFoodMenuDetailWidgetState extends ConsumerState<OwnerFoodMenuDetailW
           ref.watch(foodMenuItemWidgetViewModelProvider(_menu.id).notifier).updateMenu(_menu);
           setState(() {});
         case ErrorState(message: final message):
-          showSnackbar(context, message, isError: true);
+          showSnackbar(context, message, state: SnackbarStates.error);
         case LoadingState():
         case IdleState():
       }
@@ -97,7 +97,7 @@ class _OwnerFoodMenuDetailWidgetState extends ConsumerState<OwnerFoodMenuDetailW
           ref.invalidate(foodMenuDetailWidgetViewModelProvider(_menu.id));
           context.pop();
         case ErrorState(message: final message):
-          showSnackbar(context, message, isError: true);
+          showSnackbar(context, message, state: SnackbarStates.error);
         case LoadingState():
         case IdleState():
       }

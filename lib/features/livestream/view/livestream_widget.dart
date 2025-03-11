@@ -94,7 +94,7 @@ class _LivestreamViewState extends ConsumerState<LivestreamWidget> {
         }
       } catch (error) {
         if (mounted) {
-          showSnackbar(context, error.toString(), isError: true);
+          showSnackbar(context, error.toString(), state: SnackbarStates.error);
         }
       }
       await _room.dispose();
@@ -223,7 +223,7 @@ class _LivestreamViewState extends ConsumerState<LivestreamWidget> {
           _isLiked = data.isLiked;
           setState(() {});
         case ErrorState(message: final message):
-          showSnackbar(context, message, isError: true);
+          showSnackbar(context, message, state: SnackbarStates.error);
         case LoadingState():
         case IdleState():
       }

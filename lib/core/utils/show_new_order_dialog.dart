@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:socieaty/features/transaction/model/food_order_transaction.dart';
+import 'package:socieaty/features/food-order/model/food_order_transaction.dart';
 import 'package:socieaty/main.dart';
 import 'package:socieaty/core/utils/color_extension.dart';
 
@@ -62,7 +62,7 @@ void showNewOrderDialog(FoodOrderTransaction order) {
                 ),
                 const Divider(),
                 const SizedBox(height: 10),
-                _buildInfoRow('Order ID', order.id),
+                _buildInfoRow('Order ID', order.orderId),
                 _buildInfoRow('Service', order.serviceType.toString().split('.').last),
                 _buildInfoRow('Total', '\$$total'),
                 _buildInfoRow('Status', order.status.toString().split('.').last),

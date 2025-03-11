@@ -47,7 +47,7 @@ class _UpdateCustomerProfileScreenState extends ConsumerState<UpdateCustomerProf
           debugPrint("Success: $user");
           context.pop();
         case ErrorState(message: final message):
-          showSnackbar(context, message, isError: true);
+          showSnackbar(context, message, state: SnackbarStates.error);
         case LoadingState<SocieatyCustomer>():
         case IdleState():
       }

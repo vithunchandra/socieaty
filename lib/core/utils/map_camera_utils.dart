@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:socieaty/core/utils/route_utils.dart';
+import 'package:socieaty/core/utils/show_snackbar.dart';
 
 /// Utility class to handle Google Maps camera positioning and movement
 class MapCameraUtils {
@@ -67,9 +68,7 @@ class MapCameraUtils {
     } catch (e) {
       debugPrint('Error applying camera update: $e');
       if (context != null) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('Failed to update map view')),
-        );
+        showSnackbar(null, 'Failed to update map view', state: SnackbarStates.error);
       }
     }
   }

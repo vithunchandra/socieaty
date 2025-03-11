@@ -365,7 +365,7 @@ class _OutletFoodMenuScreenState extends ConsumerState<OutletFoodMenuScreen> {
                                           .toList(),
                                     ),
                                     error: (error, stacktrace) {
-                                      showSnackbar(context, error.toString(), isError: true);
+                                      showSnackbar(context, error.toString(), state: SnackbarStates.error);
                                       return const SizedBox.shrink();
                                     },
                                     loading: () => const SizedBox.shrink(),

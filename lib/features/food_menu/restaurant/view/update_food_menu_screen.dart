@@ -137,7 +137,7 @@ class UpdateFoodMenuScreenState extends ConsumerState<UpdateFoodMenuScreen> {
                                       .toList();
                                 },
                                 error: (error, stacktrace) {
-                                  showSnackbar(context, error.toString(), isError: true);
+                                  showSnackbar(context, error.toString(), state: SnackbarStates.error);
                                   return [];
                                 },
                                 loading: () {
@@ -183,7 +183,7 @@ class UpdateFoodMenuScreenState extends ConsumerState<UpdateFoodMenuScreen> {
           ));
           context.pop(data);
         case ErrorState(message: final message):
-          showSnackbar(context, message, isError: true);
+          showSnackbar(context, message, state: SnackbarStates.error);
         case LoadingState():
         case IdleState():
       }

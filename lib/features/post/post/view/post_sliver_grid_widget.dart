@@ -70,7 +70,7 @@ class _PostSliverGridWidgetState extends ConsumerState<PostSliverGridWidget> {
       } catch (error) {
         if (!_isDisposed) {
           _pagingController.error = error;
-          showSnackbar(context, error.toString(), isError: true);
+          showSnackbar(context, error.toString(), state: SnackbarStates.error);
         }
       }
     }

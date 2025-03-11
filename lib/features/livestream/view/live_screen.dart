@@ -76,7 +76,7 @@ class _LiveScreenState extends ConsumerState<LiveScreen> {
         }
       } catch (error) {
         if (mounted) {
-          showSnackbar(context, error.toString(), isError: true);
+          showSnackbar(context, error.toString(), state: SnackbarStates.error);
         }
       }
       await _room?.dispose();
