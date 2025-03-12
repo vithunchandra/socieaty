@@ -333,7 +333,12 @@ class _ShopDetailsHeader extends StatelessWidget {
             ],
           ),
           const Spacer(),
-          const Icon(Icons.history, color: AppPallete.primaryColor, size: 28),
+          InkWell(
+            onTap: () {
+              context.push('/customer/shop/history');
+            },
+            child: const Icon(Icons.history, color: AppPallete.primaryColor, size: 28),
+          ),
         ],
       ),
     );

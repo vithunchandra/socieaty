@@ -37,6 +37,7 @@ import 'package:socieaty/shared/widgets/create_screen.dart';
 import 'package:socieaty/features/customer/view/customer_scaffold_with_navbar.dart';
 import 'package:socieaty/features/food-order/customer/view/track_order_screen.dart';
 import 'package:socieaty/features/food-order/restaurant/view/restaurant_food_order_history_screen.dart';
+import 'package:socieaty/features/food-order/customer/view/order_history_screen.dart';
 
 part 'routes.g.dart';
 
@@ -128,6 +129,12 @@ GoRouter router(Ref ref) {
                     path: 'search',
                     pageBuilder: (context, state) => const NoTransitionPage(
                       child: ShopSearchScreen(),
+                    ),
+                  ),
+                  GoRoute(
+                    path: 'history',
+                    pageBuilder: (context, state) => const NoTransitionPage(
+                      child: OrderHistoryScreen(),
                     ),
                   ),
                 ],
@@ -247,7 +254,7 @@ GoRouter router(Ref ref) {
             path: 'review',
             builder: (context, state) => RestaurantRatingScreen(
               transaction: state.extra as FoodOrderTransaction,
-            )
+            ),
           ),
         ],
       ),

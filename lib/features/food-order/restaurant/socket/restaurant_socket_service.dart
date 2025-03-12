@@ -4,7 +4,6 @@ import 'package:riverpod_annotation/riverpod_annotation.dart';
 import 'package:socieaty/core/constants.dart';
 import 'package:socieaty/core/network/websocket_client.dart';
 import 'package:socieaty/core/notifications/local_notification_service.dart';
-import 'package:socieaty/core/utils/show_new_order_dialog.dart';
 import 'package:socieaty/features/authentication/repository/auth_local_repository.dart';
 import 'package:socieaty/features/food-order/model/food_order_transaction.dart';
 import 'package:socket_io_client/socket_io_client.dart';

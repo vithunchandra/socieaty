@@ -11,6 +11,7 @@ import 'package:socieaty/features/authentication/repository/auth_local_repositor
 import 'package:socieaty/features/food-order/customer/viewstate/create_food_order_form_state.dart';
 import 'package:socieaty/features/food-order/model/food_order_transaction.dart';
 import 'package:socieaty/features/food-order/repository/response/create_order_transaction_response.dart';
+import 'package:socieaty/features/food-order/repository/response/get_customer_food_order_transaction_response.dart';
 import 'package:socieaty/features/food-order/repository/response/get_restaurant_food_transaction_response.dart';
 import 'package:socieaty/features/food-order/repository/response/track_order_transaction_response.dart';
 import 'package:socieaty/features/food-order/repository/response/update_order_transaction_response.dart';
@@ -54,6 +55,16 @@ class FoodOrderRepository {
     return executeRequest<TrackOrderTransactionResponse>(
       requestFunction: () => _dio.get('food-orders/$id/track'),
       successParser: (data) => TrackOrderTransactionResponse.fromJson(data),
+    );
+  }
+
+  Future<ApiResult<GetCustomerFoodOrderTransactionResponse>> getAllCustomerFoodOrderTransaction(
+      List<FoodOrderStatus> status) async {
+    return executeRequest<GetCustomerFoodOrderTransactionResponse>(
+      requestFunction: () => _dio.get('food-orders/customer', queryParameters: {
+        'status[]': List.generate(status.length, (index) => status[index].name),
+      }),
+      successParser: (data) => GetCustomerFoodOrderTransactionResponse.fromJson(data),
     );
   }
 
