@@ -23,14 +23,13 @@ class RestaurantRatingScreenViewModel extends _$RestaurantRatingScreenViewModel 
   Future<void> createReview(CreateTransactionReviewFormState data) async {
     state = state.copyWith(createReviewState: LoadingState());
     final result = await _transactionReviewRepository.createTransactionReview(
-      state.transactionId,
       data,
     );
     switch (result) {
       case Success(data: final data):
         state = state.copyWith(createReviewState: SuccessState(data: data.review));
       case Error(error: final error):
-        state = state.copyWith(createReviewState: ErrorState(message: error.toString()));
+        state = state.copyWith(createReviewState: ErrorState(message: error.message));
     }
   }
 }

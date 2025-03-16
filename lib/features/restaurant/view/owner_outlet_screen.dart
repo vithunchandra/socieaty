@@ -2,12 +2,19 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
+import 'package:socieaty/app_theme_provider.dart';
 import 'package:socieaty/core/theme/app_pallete.dart';
+import 'package:socieaty/core/theme/theme.dart';
 import 'package:socieaty/core/utils/custom_extension.dart';
 import 'package:socieaty/core/utils/time_utils.dart';
+import 'package:socieaty/features/food_menu/customer/view/outlet_food_menu_screen.dart';
+import 'package:socieaty/features/food_menu/restaurant/view/owner_food_menu_screen.dart';
 import 'package:socieaty/features/post/post/view/post_sliver_grid_widget.dart';
 import 'package:socieaty/features/restaurant/model/socieaty_restaurant.dart';
 import 'package:socieaty/features/restaurant/view/outlet_home_widget.dart';
+import 'package:socieaty/features/transaction_review/provider/get_all_restaurant_reviews_provider.dart';
+import 'package:socieaty/features/transaction_review/view/widgets/restaurant_reviews_widget.dart';
+import 'package:socieaty/shared/widgets/create_screen.dart';
 import 'package:socieaty/shared/widgets/header_icon_widget.dart';
 
 class OwnerOutletScreen extends ConsumerStatefulWidget {
@@ -77,22 +84,30 @@ class _OwnerOutletScreenState extends ConsumerState<OwnerOutletScreen>
     final isOpen = isNowBetween(widget.restaurant.restaurantData.openTime.toTimeOfDay(),
         widget.restaurant.restaurantData.closeTime.toTimeOfDay());
 
+    final reviewsAsync =
+        ref.watch(getAllRestaurantReviewsProvider(widget.restaurant.restaurantData.id, null));
+
     final List<OutletTabs> tabs = [
       OutletTabs(
         title: "Home",
         icon: Icons.home_outlined,
         widget: OutletHomeWidget(
           restaurant: widget.restaurant,
-          onMenuCarouselItemTapped: () {
+          onMenuCarouselItemTapped: (String menuId) {
             context.push(
               '/restaurant/dashboard/outlet/menu',
-              extra: widget.restaurant,
+              extra: OwnerFoodMenuScreenArgs(
+                restaurant: widget.restaurant,
+                menuId: menuId,
+              ),
             );
           },
           onPostCarouselItemTapped: () {
             DefaultTabController.of(context).animateTo(1);
           },
-          onReviewCarouselItemTapped: () {},
+          onReviewCarouselItemTapped: () {
+            DefaultTabController.of(context).animateTo(2);
+          },
         ),
       ),
       OutletTabs(
@@ -102,7 +117,15 @@ class _OwnerOutletScreenState extends ConsumerState<OwnerOutletScreen>
           authorId: widget.restaurant.id,
         ),
       ),
-      OutletTabs(title: "Reviews", icon: Icons.reviews_outlined, widget: Container()),
+      OutletTabs(
+        title: "Reviews",
+        icon: Icons.reviews_outlined,
+        widget: SliverRestaurantReviewsWidget(
+          restaurantId: widget.restaurant.restaurantData.id,
+          showHeader: false,
+          showRatingSummary: false,
+        ),
+      ),
     ];
     final screenHeight = MediaQuery.of(context).size.height;
 
@@ -160,7 +183,6 @@ class _OwnerOutletScreenState extends ConsumerState<OwnerOutletScreen>
                             ),
                           ],
                         ),
-
                         Positioned(
                           left: 16,
                           right: 16,
@@ -213,53 +235,133 @@ class _OwnerOutletScreenState extends ConsumerState<OwnerOutletScreen>
                                   ],
                                 ),
                               ),
-                              ClipRRect(
-                                borderRadius: BorderRadius.circular(12),
-                                child: SizedBox(
-                                  width: 68,
-                                  child: Column(
-                                    crossAxisAlignment: CrossAxisAlignment.stretch,
-                                    children: [
-                                      Container(
-                                        padding: const EdgeInsets.all(2),
-                                        color: AppPallete.successColor,
-                                        child: Row(
-                                          mainAxisAlignment: MainAxisAlignment.center,
-                                          children: [
-                                            Text(
-                                              "4.6",
-                                              style:
-                                                  Theme.of(context).textTheme.titleMedium?.copyWith(
+                              reviewsAsync.when(
+                                data: (reviews) {
+                                  final reviewCount = reviews.length;
+                                  final averageRating = reviewCount > 0
+                                      ? reviews.map((r) => r.rating).reduce((a, b) => a + b) /
+                                          reviewCount
+                                      : 0.0;
+
+                                  return ClipRRect(
+                                    borderRadius: BorderRadius.circular(12),
+                                    child: SizedBox(
+                                      width: 68,
+                                      child: Column(
+                                        crossAxisAlignment: CrossAxisAlignment.stretch,
+                                        children: [
+                                          Container(
+                                            padding: const EdgeInsets.all(2),
+                                            color: AppPallete.successColor,
+                                            child: Row(
+                                              mainAxisAlignment: MainAxisAlignment.center,
+                                              children: [
+                                                Text(
+                                                  averageRating > 0
+                                                      ? averageRating.toStringAsFixed(1)
+                                                      : "-",
+                                                  style: Theme.of(context)
+                                                      .textTheme
+                                                      .titleMedium
+                                                      ?.copyWith(
                                                         color: Colors.white,
                                                         fontWeight: FontWeight.bold,
                                                       ),
+                                                ),
+                                                const SizedBox(width: 4),
+                                                Icon(Icons.star, color: Colors.white, size: 20),
+                                              ],
                                             ),
-                                            const SizedBox(width: 4),
-                                            Icon(Icons.star, color: Colors.white, size: 20),
-                                          ],
-                                        ),
-                                      ),
-                                      Container(
-                                        padding: const EdgeInsets.all(2),
-                                        color: Colors.white,
-                                        child: Column(
-                                          mainAxisAlignment: MainAxisAlignment.center,
-                                          children: [
-                                            Text(
-                                              "9403",
-                                              style:
-                                                  Theme.of(context).textTheme.bodyLarge?.copyWith(
+                                          ),
+                                          Container(
+                                            padding: const EdgeInsets.all(2),
+                                            color: Colors.white,
+                                            child: Column(
+                                              mainAxisAlignment: MainAxisAlignment.center,
+                                              children: [
+                                                Text(
+                                                  "$reviewCount",
+                                                  style: Theme.of(context)
+                                                      .textTheme
+                                                      .bodyLarge
+                                                      ?.copyWith(
                                                         fontWeight: FontWeight.bold,
                                                       ),
+                                                ),
+                                                Text(
+                                                  reviewCount == 1 ? "Review" : "Reviews",
+                                                  style: Theme.of(context).textTheme.bodyMedium,
+                                                ),
+                                              ],
                                             ),
-                                            Text(
-                                              "Reviews",
-                                              style: Theme.of(context).textTheme.bodyMedium,
-                                            ),
-                                          ],
-                                        ),
+                                          ),
+                                        ],
                                       ),
-                                    ],
+                                    ),
+                                  );
+                                },
+                                loading: () => SizedBox(
+                                  width: 68,
+                                  height: 64,
+                                  child: Center(
+                                    child: SizedBox(
+                                      width: 20,
+                                      height: 20,
+                                      child: CircularProgressIndicator(
+                                        strokeWidth: 2,
+                                        color: Colors.white,
+                                      ),
+                                    ),
+                                  ),
+                                ),
+                                error: (_, __) => ClipRRect(
+                                  borderRadius: BorderRadius.circular(12),
+                                  child: SizedBox(
+                                    width: 68,
+                                    child: Column(
+                                      crossAxisAlignment: CrossAxisAlignment.stretch,
+                                      children: [
+                                        Container(
+                                          padding: const EdgeInsets.all(2),
+                                          color: AppPallete.successColor,
+                                          child: Row(
+                                            mainAxisAlignment: MainAxisAlignment.center,
+                                            children: [
+                                              Text(
+                                                "-",
+                                                style: Theme.of(context)
+                                                    .textTheme
+                                                    .titleMedium
+                                                    ?.copyWith(
+                                                      color: Colors.white,
+                                                      fontWeight: FontWeight.bold,
+                                                    ),
+                                              ),
+                                              const SizedBox(width: 4),
+                                              Icon(Icons.star, color: Colors.white, size: 20),
+                                            ],
+                                          ),
+                                        ),
+                                        Container(
+                                          padding: const EdgeInsets.all(2),
+                                          color: Colors.white,
+                                          child: Column(
+                                            mainAxisAlignment: MainAxisAlignment.center,
+                                            children: [
+                                              Icon(
+                                                Icons.error_outline,
+                                                color: AppPallete.errorColor,
+                                                size: 16,
+                                              ),
+                                              Text(
+                                                "Error",
+                                                style: Theme.of(context).textTheme.bodySmall,
+                                              ),
+                                            ],
+                                          ),
+                                        ),
+                                      ],
+                                    ),
                                   ),
                                 ),
                               ),
@@ -282,7 +384,10 @@ class _OwnerOutletScreenState extends ConsumerState<OwnerOutletScreen>
                                       onPressed: () {
                                         context.push(
                                           '/restaurant/dashboard/outlet/menu',
-                                          extra: widget.restaurant,
+                                          extra: OwnerFoodMenuScreenArgs(
+                                            restaurant: widget.restaurant,
+                                            menuId: null,
+                                          ),
                                         );
                                       },
                                       child: Padding(
@@ -303,7 +408,13 @@ class _OwnerOutletScreenState extends ConsumerState<OwnerOutletScreen>
                                   ),
                                   const SizedBox(width: 8),
                                   FilledButton(
-                                    onPressed: () {},
+                                    onPressed: () {
+                                      context.push('/create_content', extra: CreateScreenArgs(
+                                        onPop: (bool value, Object? object) {
+                                          ref.read(appThemeProvider.notifier).setTheme(SocieatyAppTheme.lightTheme);
+                                        },
+                                      ));
+                                    },
                                     child: Padding(
                                       padding:
                                           const EdgeInsets.symmetric(vertical: 4, horizontal: 16.0),
@@ -383,19 +494,25 @@ class _OwnerOutletScreenState extends ConsumerState<OwnerOutletScreen>
                           SliverToBoxAdapter(
                             child: OutletHomeWidget(
                               restaurant: widget.restaurant,
-                              onMenuCarouselItemTapped: () {
+                              onMenuCarouselItemTapped: (String menuId) {
                                 context.push(
                                   '/restaurant/dashboard/outlet/menu',
-                                  extra: widget.restaurant,
+                                  extra: OwnerFoodMenuScreenArgs(
+                                    restaurant: widget.restaurant,
+                                    menuId: menuId,
+                                  ),
                                 );
                               },
                               onPostCarouselItemTapped: () {
                                 DefaultTabController.of(context).animateTo(1);
                               },
-                              onReviewCarouselItemTapped: () {},
+                              onReviewCarouselItemTapped: () {
+                                DefaultTabController.of(context).animateTo(2);
+                              },
                             ),
                           ),
-                        if (tab.title == "Post") tab.widget
+                        if (tab.title == "Post") tab.widget,
+                        if (tab.title == "Reviews") tab.widget
                       ],
                     );
                   },

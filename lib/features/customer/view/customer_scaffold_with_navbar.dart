@@ -6,6 +6,7 @@ import 'package:socieaty/core/theme/theme.dart';
 import 'package:socieaty/features/home/customer/provider/all_post_provider.dart';
 import 'package:socieaty/shared/provider/navigation_provider.dart';
 import 'package:socieaty/features/customer/view/customer_navbar.dart';
+import 'package:socieaty/shared/widgets/create_screen.dart';
 
 class CustomerScaffoldWithNavbar extends ConsumerStatefulWidget {
   const CustomerScaffoldWithNavbar({
@@ -34,7 +35,22 @@ class _CustomerScaffoldWithNavbarState extends ConsumerState<CustomerScaffoldWit
       ref.read(appThemeProvider.notifier).setTheme(SocieatyAppTheme.lightTheme);
     }
     if (index == 2) {
-      context.push('/create_content');
+      context.push(
+        '/create_content',
+        extra: CreateScreenArgs(
+          onPop: (bool value, Object? object) {
+            if (ref.watch(navigationIndexProvider).length > 1) {
+              ref.read(navigationIndexProvider.notifier).removeLastIndex();
+              final previousIndex = ref.watch(navigationIndexProvider).last;
+              if (previousIndex == 0 || previousIndex == 1) {
+                ref.read(appThemeProvider.notifier).setTheme(SocieatyAppTheme.darkTheme);
+              } else if (previousIndex == 3 || previousIndex == 4) {
+                ref.read(appThemeProvider.notifier).setTheme(SocieatyAppTheme.lightTheme);
+              }
+            }
+          },
+        ),
+      );
     } else if (index == 1) {
       context.push('/livestreams');
     } else {

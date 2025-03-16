@@ -221,8 +221,8 @@ class _ActiveOrderViewState extends State<ActiveOrderView> {
                   padding: const EdgeInsets.only(top: 4),
                   child: Text(
                     order.foodOrderStatus == FoodOrderStatus.ready
-                        ? 'Please proceed to the restaurant to pick up your order'
-                        : 'Please wait while we process your order',
+                        ? 'Silakan ambil pesanan Anda'
+                        : 'Pesanan sedang diproses',
                     style: TextStyle(
                       fontSize: 12,
                       color: Colors.grey[600],
@@ -679,11 +679,11 @@ class _ActiveOrderViewState extends State<ActiveOrderView> {
   String _getStatusMessage(FoodOrderStatus status) {
     switch (status) {
       case FoodOrderStatus.pending:
-        return 'Restaurant is reviewing your order';
+        return 'Menunggu konfirmasi restoran';
       case FoodOrderStatus.preparing:
-        return 'Your food is being prepared';
+        return 'Makanan sedang disiapkan';
       case FoodOrderStatus.ready:
-        return 'Your order is ready for pickup';
+        return 'Pesanan siap diambil';
       default:
         return '';
     }
@@ -692,11 +692,11 @@ class _ActiveOrderViewState extends State<ActiveOrderView> {
   String _getCurrentStepDescription(FoodOrderStatus status) {
     switch (status) {
       case FoodOrderStatus.pending:
-        return 'Restaurant is reviewing your order';
+        return 'Restoran sedang meninjau pesanan Anda';
       case FoodOrderStatus.preparing:
-        return 'Your food is being prepared by the chef';
+        return 'Makanan Anda sedang dipersiapkan oleh koki';
       case FoodOrderStatus.ready:
-        return 'Your food is ready! Please pick up your order.';
+        return 'Makanan Anda siap! Silakan ambil pesanan Anda.';
       default:
         return '';
     }

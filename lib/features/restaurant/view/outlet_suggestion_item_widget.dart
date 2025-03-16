@@ -143,16 +143,18 @@ class _OutletSuggestionItemWidgetState extends State<OutletSuggestionItemWidget>
                             color: AppPallete.primaryColor,
                           ),
                           const SizedBox(width: 4),
-                          Text(
-                            widget.restaurant.restaurantData.themes
-                                .map((theme) => theme.name)
-                                .join(', '),
-                            style: TextStyle(
-                              fontSize: 13,
-                              color: Colors.grey.shade600,
+                          Expanded(
+                            child: Text(
+                              widget.restaurant.restaurantData.themes
+                                  .map((theme) => theme.name)
+                                  .join(', '),
+                              style: TextStyle(
+                                fontSize: 13,
+                                color: Colors.grey.shade600,
+                              ),
+                              maxLines: 1,
+                              overflow: TextOverflow.ellipsis,
                             ),
-                            maxLines: 1,
-                            overflow: TextOverflow.ellipsis,
                           ),
                         ],
                       ),

@@ -134,8 +134,8 @@ class OrderCard extends StatelessWidget {
                     if (!isActive) const SizedBox(width: 6),
                     Text(
                       isActive
-                          ? 'Order #${_getOrderIdSubstring()}'
-                          : '• Order #${_getOrderIdSubstring()}',
+                          ? 'Pesanan #${_getOrderIdSubstring()}'
+                          : '• Pesanan #${_getOrderIdSubstring()}',
                       style: textTheme.bodySmall?.copyWith(
                         color: AppPallete.neutralColor.shade600,
                       ),
@@ -370,7 +370,7 @@ class OrderCard extends StatelessWidget {
             ),
           ),
           child: Text(
-            'Track Order',
+            'Lacak Pesanan',
             style: textTheme.labelLarge?.copyWith(
               fontWeight: FontWeight.w600,
               color: Colors.white,
@@ -393,7 +393,7 @@ class OrderCard extends StatelessWidget {
             ),
             const SizedBox(width: 8),
             Text(
-              isCompleted ? 'Order was completed' : 'Order was cancelled',
+              isCompleted ? 'Pesanan telah selesai' : 'Pesanan dibatalkan',
               style: textTheme.bodyMedium?.copyWith(
                 fontWeight: FontWeight.w500,
                 color: statusColor,
@@ -413,7 +413,7 @@ class OrderCard extends StatelessWidget {
                   fontWeight: FontWeight.w500,
                 ),
               ),
-              child: const Text('Details'),
+              child: const Text('Detail'),
             ),
           ],
         ),
@@ -439,15 +439,15 @@ class OrderCard extends StatelessWidget {
   String _getStatusText(FoodOrderStatus status) {
     switch (status) {
       case FoodOrderStatus.pending:
-        return 'Order Placed';
+        return 'Pesanan Baru';
       case FoodOrderStatus.preparing:
-        return 'Preparing';
+        return 'Diproses';
       case FoodOrderStatus.ready:
-        return 'Ready';
+        return 'Siap';
       case FoodOrderStatus.completed:
-        return 'Completed';
+        return 'Selesai';
       case FoodOrderStatus.rejected:
-        return 'Cancelled';
+        return 'Dibatalkan';
     }
   }
 }

@@ -12,15 +12,23 @@ import 'package:socieaty/core/utils/time_utils.dart';
 import 'package:socieaty/features/food_menu/model/food_menu.dart';
 import 'package:socieaty/features/food_menu/provider/get_all_food_menu_categories_provider.dart';
 import 'package:socieaty/features/food_menu/provider/get_food_menu_provider.dart';
+import 'package:socieaty/features/food_menu/provider/get_single_food_menu_provider.dart';
+import 'package:socieaty/features/food_menu/restaurant/view/owner_food_menu_detail_widget.dart';
 import 'package:socieaty/features/food_menu/restaurant/view/owner_food_menu_item_widget.dart';
 import 'package:socieaty/features/restaurant/model/socieaty_restaurant.dart';
 import 'package:socieaty/shared/widgets/custom_error_widget.dart';
 import 'package:socieaty/shared/widgets/dotted_divider.dart';
 import 'package:socieaty/shared/widgets/menu_filter_widget.dart';
 
-class OwnerFoodMenuScreen extends ConsumerStatefulWidget {
+class OwnerFoodMenuScreenArgs {
   final SocieatyRestaurant restaurant;
-  const OwnerFoodMenuScreen({super.key, required this.restaurant});
+  final String? menuId;
+  const OwnerFoodMenuScreenArgs({required this.restaurant, this.menuId});
+}
+
+class OwnerFoodMenuScreen extends ConsumerStatefulWidget {
+  final OwnerFoodMenuScreenArgs args;
+  const OwnerFoodMenuScreen({super.key, required this.args});
 
   @override
   ConsumerState<OwnerFoodMenuScreen> createState() => _OwnerFoodMenuScreenState();
@@ -42,16 +50,43 @@ class _OwnerFoodMenuScreenState extends ConsumerState<OwnerFoodMenuScreen> {
 
   @override
   void initState() {
+    super.initState();
     getLocationName();
     _scrollController.addListener(_onScroll);
-    SchedulerBinding.instance.addPostFrameCallback((_) {
+    WidgetsBinding.instance.addPostFrameCallback((_) {
       final RenderBox? renderBox = _sliverKey.currentContext?.findRenderObject() as RenderBox?;
       final size = renderBox?.size;
       if (size != null) {
         _sliverHeight = size.height;
       }
+
+      // Show menu detail if menuId is provided
+      if (widget.args.menuId != null) {
+        _showMenuDetail(widget.args.menuId!);
+      }
     });
-    super.initState();
+  }
+
+  void _showMenuDetail(String menuId) async {
+    try {
+      final menu = await ref.read(getSingleFoodMenuProvider(menuId).future);
+      if (mounted) {
+        showModalBottomSheet(
+          context: context,
+          backgroundColor: AppPallete.neutralColor.shade50,
+          enableDrag: true,
+          useRootNavigator: true,
+          isScrollControlled: true,
+          useSafeArea: true,
+          builder: (context) => OwnerFoodMenuDetailWidget(
+            restaurantId: widget.args.restaurant.restaurantData.id,
+            restaurantMenu: menu,
+          ),
+        );
+      }
+    } catch (e) {
+      showSnackbar(context, "Failed to load menu: $e", state: SnackbarState.error);
+    }
   }
 
   @override
@@ -63,7 +98,7 @@ class _OwnerFoodMenuScreenState extends ConsumerState<OwnerFoodMenuScreen> {
 
   void getLocationName() async {
     var location =
-        await LocationHandler.getAddressFromLatLng(widget.restaurant.restaurantData.location);
+        await LocationHandler.getAddressFromLatLng(widget.args.restaurant.restaurantData.location);
     _locationName = "${location?.street}";
     if (mounted) {
       setState(() {});
@@ -110,12 +145,12 @@ class _OwnerFoodMenuScreenState extends ConsumerState<OwnerFoodMenuScreen> {
   @override
   Widget build(BuildContext context) {
     final restaurantMenus = ref.watch(getFoodMenusProvider(
-      restaurantId: widget.restaurant.restaurantData.id,
+      restaurantId: widget.args.restaurant.restaurantData.id,
       query: _menuFilterFormState,
     ));
 
-    _isOpen = isNowBetween(widget.restaurant.restaurantData.openTime.toTimeOfDay(),
-        widget.restaurant.restaurantData.closeTime.toTimeOfDay());
+    _isOpen = isNowBetween(widget.args.restaurant.restaurantData.openTime.toTimeOfDay(),
+        widget.args.restaurant.restaurantData.closeTime.toTimeOfDay());
 
     final menuCategories = ref.watch(getAllFoodMenuCategoriesProvider);
 
@@ -124,7 +159,7 @@ class _OwnerFoodMenuScreenState extends ConsumerState<OwnerFoodMenuScreen> {
         appBar: AppBar(
           backgroundColor: AppPallete.neutralColor.shade50,
           surfaceTintColor: Colors.transparent,
-          title: _isAlmostCollapsed ? Text(widget.restaurant.name) : null,
+          title: _isAlmostCollapsed ? Text(widget.args.restaurant.name) : null,
           leading: IconButton(
             icon: const Icon(Icons.arrow_back),
             onPressed: () => context.pop(),
@@ -152,7 +187,7 @@ class _OwnerFoodMenuScreenState extends ConsumerState<OwnerFoodMenuScreen> {
                                   mainAxisSize: MainAxisSize.min,
                                   crossAxisAlignment: CrossAxisAlignment.start,
                                   children: [
-                                    Text(widget.restaurant.name.toCapitalized(),
+                                    Text(widget.args.restaurant.name.toCapitalized(),
                                         style: Theme.of(context).textTheme.headlineMedium),
                                     const SizedBox(height: 12),
                                     Row(
@@ -177,7 +212,7 @@ class _OwnerFoodMenuScreenState extends ConsumerState<OwnerFoodMenuScreen> {
                                           Icon(Icons.check_circle, color: Colors.white, size: 16),
                                           const SizedBox(width: 4),
                                           Text(
-                                              "${_isOpen ? "Buka" : "Tutup"} | ${widget.restaurant.restaurantData.openTime} - ${widget.restaurant.restaurantData.closeTime}",
+                                              "${_isOpen ? "Buka" : "Tutup"} | ${widget.args.restaurant.restaurantData.openTime} - ${widget.args.restaurant.restaurantData.closeTime}",
                                               style: Theme.of(context)
                                                   .textTheme
                                                   .bodyMedium
@@ -259,7 +294,7 @@ class _OwnerFoodMenuScreenState extends ConsumerState<OwnerFoodMenuScreen> {
                             child: Row(
                               mainAxisAlignment: MainAxisAlignment.start,
                               children: [
-                                ...widget.restaurant.restaurantData.themes.map((theme) {
+                                ...widget.args.restaurant.restaurantData.themes.map((theme) {
                                   return Padding(
                                     padding: const EdgeInsets.only(right: 4),
                                     child: Chip(
@@ -436,7 +471,7 @@ class _OwnerFoodMenuScreenState extends ConsumerState<OwnerFoodMenuScreen> {
                                 if (index != 0)
                                   Divider(color: AppPallete.neutralColor, height: 0.5),
                                 OwnerFoodMenuItemWidget(
-                                  restaurantId: widget.restaurant.id,
+                                  restaurantId: widget.args.restaurant.id,
                                   restaurantMenu: data[index],
                                 ),
                               ],
@@ -450,7 +485,7 @@ class _OwnerFoodMenuScreenState extends ConsumerState<OwnerFoodMenuScreen> {
                           error: error.toString(),
                           onPressed: () {
                             ref.invalidate(getFoodMenusProvider(
-                              restaurantId: widget.restaurant.restaurantData.id,
+                              restaurantId: widget.args.restaurant.restaurantData.id,
                               query: _menuFilterFormState,
                             ));
                           },

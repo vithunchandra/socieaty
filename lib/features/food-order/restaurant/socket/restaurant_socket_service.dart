@@ -4,6 +4,7 @@ import 'package:riverpod_annotation/riverpod_annotation.dart';
 import 'package:socieaty/core/constants.dart';
 import 'package:socieaty/core/network/websocket_client.dart';
 import 'package:socieaty/core/notifications/local_notification_service.dart';
+import 'package:socieaty/core/utils/custom_extension.dart';
 import 'package:socieaty/features/authentication/repository/auth_local_repository.dart';
 import 'package:socieaty/features/food-order/model/food_order_transaction.dart';
 import 'package:socket_io_client/socket_io_client.dart';
@@ -88,23 +89,19 @@ class RestaurantSocketService {
     socket.on('new-order', (data) {
       try {
         final FoodOrderTransaction orderData = FoodOrderTransaction.fromJson(data);
-        final formattedTotal = _formatCurrency(orderData.grossAmount + orderData.serviceFee);
+        final formattedTotal = (orderData.grossAmount + orderData.serviceFee).toIDRFormat();
 
         final customerName = orderData.customer.name;
 
         final int itemCount = orderData.menuItems.length;
         final String itemsText = _getItemsDescription(orderData);
 
-        String notificationTitle = '💰 New Order #${orderData.orderId.substring(0, 8)}';
+        String notificationTitle = 'New Order #${orderData.orderId.substring(0, 8)}';
 
-        String notificationBody = '''
-          <b>$customerName</b> placed a new order
-          💵 <b>Total:</b> \$$formattedTotal
-          🍽️ <b>Items:</b> $itemCount item${itemCount != 1 ? 's' : ''}
-          $itemsText
-
-          <i>Tap to view order details</i>
-        ''';
+        String notificationBody = 'Order from $customerName\n'
+            'Total: \$$formattedTotal\n'
+            'Items: $itemCount\n'
+            '$itemsText';
 
         notificationService.showNewOrderNotification(
           title: notificationTitle,
@@ -121,7 +118,7 @@ class RestaurantSocketService {
         debugPrint('Error processing new order: $e');
 
         notificationService.showNewOrderNotification(
-          title: '💰 New Restaurant Order',
+          title: 'New Restaurant Order',
           body: 'You have received a new order. Tap to view details.',
         );
       }
@@ -138,16 +135,6 @@ class RestaurantSocketService {
     } else if (!_hasNewOrderListener) {
       _setupNewOrderListener();
     }
-  }
-
-  String _formatCurrency(int amount) {
-    final double value = amount / 100;
-
-    final String formatted = value
-        .toStringAsFixed(2)
-        .replaceAllMapped(RegExp(r'(\d)(?=(\d{3})+(?!\d))'), (Match m) => '${m[1]},');
-
-    return formatted;
   }
 
   String _getItemsDescription(FoodOrderTransaction order) {

@@ -66,9 +66,12 @@ GoRouter router(Ref ref) {
       GoRoute(path: '/select_location', builder: (context, state) => const SelectLocation()),
       GoRoute(
         path: '/create_content',
-        pageBuilder: (context, state) => const NoTransitionPage(
-          child: CreateScreen(),
-        ),
+        pageBuilder: (context, state) {
+          final args = state.extra as CreateScreenArgs?;
+          return NoTransitionPage(
+            child: CreateScreen(args: args),
+          );
+        },
       ),
       GoRoute(
         path: '/livestreams',
@@ -193,8 +196,9 @@ GoRouter router(Ref ref) {
                   GoRoute(
                     path: "/outlet/menu",
                     parentNavigatorKey: rootNavigatorKey,
-                    builder: (context, state) =>
-                        OwnerFoodMenuScreen(restaurant: state.extra as SocieatyRestaurant),
+                    builder: (context, state) => OwnerFoodMenuScreen(
+                      args: state.extra as OwnerFoodMenuScreenArgs,
+                    ),
                     routes: [
                       GoRoute(
                         path: '/create',
@@ -272,7 +276,7 @@ GoRouter router(Ref ref) {
           GoRoute(
             path: 'shop',
             builder: (context, state) => OutletFoodMenuScreen(
-              restaurant: state.extra as SocieatyRestaurant,
+              args: state.extra as OutletFoodMenuScreenArgs,
             ),
             routes: [
               GoRoute(

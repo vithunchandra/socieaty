@@ -126,7 +126,7 @@ class _SelectLocationState extends State<SelectLocation> {
                       backgroundColor: WidgetStateProperty.all(AppPallete.neutralColor.shade100),
                       leading: const Icon(Icons.location_on),
                       trailing: const [Icon(Icons.search)],
-                      hintText: "Search your address here...",
+                      hintText: "Cari alamat...",
                       onTap: () {
                         controller.openView();
                       },
@@ -236,7 +236,8 @@ class _SelectLocationState extends State<SelectLocation> {
                     width: screenWidth,
                     child: FilledButton(
                       onPressed: () {
-                        context.pop(MyLocationData(latlng: myCurrentLocation, address: myCurrentLocationAddress));
+                        context.pop(MyLocationData(
+                            latlng: myCurrentLocation, address: myCurrentLocationAddress));
                       },
                       child: Text("Konfirmasi"),
                     ),

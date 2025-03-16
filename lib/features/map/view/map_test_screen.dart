@@ -307,7 +307,7 @@ class MapTestScreen extends StatelessWidget {
             child: ElevatedButton.icon(
               onPressed: () => _showApiKeyInfo(context),
               icon: const Icon(Icons.help_outline, size: 16),
-              label: const Text("API Setup Help"),
+              label: const Text("Bantuan API"),
               style: ElevatedButton.styleFrom(
                 backgroundColor: AppPallete.primaryColor,
                 foregroundColor: Colors.white,
@@ -459,44 +459,44 @@ class MapTestScreen extends StatelessWidget {
     showDialog(
       context: context,
       builder: (context) => AlertDialog(
-        title: const Text('Google Maps API Setup'),
+        title: const Text('Pengaturan Google Maps API'),
         content: const SingleChildScrollView(
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             mainAxisSize: MainAxisSize.min,
             children: [
               Text(
-                'To make the route tracking work properly, you need:',
+                'Untuk rute yang berfungsi baik, diperlukan:',
                 style: TextStyle(fontWeight: FontWeight.bold),
               ),
               SizedBox(height: 12),
-              Text('1. A valid Google Maps API key with billing enabled'),
+              Text('1. Kunci API Google Maps yang valid dengan penagihan diaktifkan'),
               SizedBox(height: 4),
-              Text('2. The Directions API enabled for your project'),
+              Text('2. API Directions diaktifkan untuk proyek Anda'),
               SizedBox(height: 4),
-              Text('3. The API key configured in your env.dart file'),
+              Text('3. Kunci API dikonfigurasi dalam file env.dart'),
               SizedBox(height: 12),
               Text(
-                'Common API Issues:',
+                'Masalah API Umum:',
                 style: TextStyle(fontWeight: FontWeight.bold),
               ),
               SizedBox(height: 8),
-              Text('• API key restrictions (make sure it allows Directions API)'),
+              Text('• Pembatasan kunci API (pastikan itu mengizinkan API Directions)'),
               SizedBox(height: 4),
-              Text('• Billing not enabled on Google Cloud account'),
+              Text('• Penagihan tidak diaktifkan pada akun Google Cloud'),
               SizedBox(height: 4),
-              Text('• Daily quota exceeded'),
+              Text('• Kuota harian terlampaui'),
               SizedBox(height: 12),
               Text(
-                'Performance Optimization Tips:',
+                'Tips Optimasi:',
                 style: TextStyle(fontWeight: FontWeight.bold),
               ),
               SizedBox(height: 8),
-              Text('• Track API calls to identify potential bottlenecks'),
+              Text('• Lacak panggilan API untuk mengidentifikasi kemungkinan bottleneck'),
               SizedBox(height: 4),
-              Text('• Consider less frequent route recalculations'),
+              Text('• Pertimbangkan penghitungan ulang rute yang lebih jarang'),
               SizedBox(height: 4),
-              Text('• Cache results for similar routes when appropriate'),
+              Text('• Cache hasil untuk rute serupa bila sesuai'),
               SizedBox(height: 12),
               Text(
                 'Check simulation logs for detailed performance metrics.',

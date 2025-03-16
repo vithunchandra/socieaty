@@ -14,6 +14,7 @@ import 'package:socieaty/features/food_menu/repository/response/delete_food_menu
 import 'package:socieaty/features/food_menu/repository/response/get_all_menu_categories_response.dart';
 import 'package:socieaty/features/food_menu/repository/response/get_all_food_menu_response.dart';
 import 'package:socieaty/features/food_menu/repository/response/get_food_menu_response.dart';
+import 'package:socieaty/features/food_menu/repository/response/get_menu_categories_by_popularity_response.dart';
 import 'package:socieaty/features/food_menu/repository/response/paginate_food_menu_response.dart';
 import 'package:socieaty/features/food_menu/repository/response/update_food_menu_response.dart';
 import 'package:socieaty/features/food_menu/repository/response/update_food_menu_stock_availablity.dart';
@@ -137,7 +138,7 @@ class FoodMenuRepository {
 
   Future<ApiResult<GetFoodMenuResponse>> getFoodMenu(String menuId) {
     return executeRequest<GetFoodMenuResponse>(
-      requestFunction: () => dio.get('menu/$menuId'),
+      requestFunction: () => dio.get('menu/single/$menuId'),
       successParser: (data) => GetFoodMenuResponse.fromJson(data),
     );
   }
@@ -146,9 +147,15 @@ class FoodMenuRepository {
     return executeRequest<GetAllMenuCategoriesResponse>(
       requestFunction: () => dio.get('menu/categories'),
       successParser: (data) {
-        debugPrint('categories: $data');
         return GetAllMenuCategoriesResponse.fromJson(data);
       },
+    );
+  }
+
+  Future<ApiResult<GetMenuCategoriesByPopularityResponse>> getMenuCategoriesByPopularity() {
+    return executeRequest<GetMenuCategoriesByPopularityResponse>(
+      requestFunction: () => dio.get('menu/categories/popular'),
+      successParser: (data) => GetMenuCategoriesByPopularityResponse.fromJson(data),
     );
   }
 }

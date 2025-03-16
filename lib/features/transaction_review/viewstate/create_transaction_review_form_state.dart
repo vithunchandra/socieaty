@@ -8,6 +8,7 @@ class CreateTransactionReviewFormState with _$CreateTransactionReviewFormState {
   const factory CreateTransactionReviewFormState({
     @Default(0) int rating,
     @Default('') String review,
+    required String transactionId,
   }) = _CreateTransactionReviewFormState;
 
   factory CreateTransactionReviewFormState.fromJson(Map<String, dynamic> json) =>

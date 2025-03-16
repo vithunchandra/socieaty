@@ -2,6 +2,7 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
+import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:socieaty/core/enums/transaction.enum.dart';
 import 'package:socieaty/core/theme/app_pallete.dart';
 import 'package:socieaty/core/utils/custom_extension.dart';
@@ -14,9 +15,11 @@ import 'package:socieaty/features/food-order/customer/viewmodel/create_transacti
 import 'package:socieaty/features/food-order/customer/viewstate/create_food_order_form_state.dart';
 import 'package:socieaty/features/food-order/customer/viewstate/order_menu_item.dart';
 import 'package:socieaty/features/food-order/model/food_order_transaction.dart';
+import 'package:socieaty/features/map/view/tracking_map.dart';
 import 'package:socieaty/shared/view_state.dart';
 import 'package:socieaty/shared/widgets/custom_text_field.dart';
 import 'package:socieaty/shared/widgets/dotted_divider.dart';
+import 'package:socieaty/core/utils/location_handler.dart';
 
 class CreateFoodOrderScreen extends ConsumerStatefulWidget {
   final SocieatyRestaurant restaurant;
@@ -150,6 +153,46 @@ class _CreateFoodOrderScreenState extends ConsumerState<CreateFoodOrderScreen> {
         );
       },
     );
+  }
+
+  void _navigateToMapScreen() async {
+    try {
+      // Get the restaurant location
+      final LatLng restaurantLocation = widget.restaurant.restaurantData.location;
+      final String restaurantName = widget.restaurant.name;
+      // Use a more descriptive address based on what's shown in the UI
+      final String restaurantAddress = "123 Dummy Street, Jakarta";
+
+      // Request location permission and get current location
+      final locationData = await LocationHandler.getCurrentPosition();
+
+      if (locationData == null) {
+        showSnackbar(context,
+            'Unable to get your current location. Please check your location permission settings.',
+            state: SnackbarState.error);
+        return;
+      }
+
+      // Use the user's actual location
+      final LatLng customerLocation = LatLng(
+        locationData.latitude!,
+        locationData.longitude!,
+      );
+
+      // Navigate to the tracking map screen
+      Navigator.of(context).push(
+        MaterialPageRoute(
+          builder: (context) => TrackingMap(
+            customerLocation: customerLocation,
+            targetLocation: restaurantLocation,
+            targetName: restaurantName,
+            targetAddress: restaurantAddress,
+          ),
+        ),
+      );
+    } catch (e) {
+      showSnackbar(context, 'Error opening map: ${e.toString()}', state: SnackbarState.error);
+    }
   }
 
   @override
@@ -393,14 +436,14 @@ class _CreateFoodOrderScreenState extends ConsumerState<CreateFoodOrderScreen> {
                         SizedBox(
                           width: double.infinity,
                           child: OutlinedButton.icon(
-                            onPressed: () {},
+                            onPressed: _navigateToMapScreen,
                             icon: Icon(
                               Icons.my_location,
                               size: 16,
                               color: AppPallete.primaryColor,
                             ),
                             label: Text(
-                              "Update My Location",
+                              "Look on Map",
                               style: Theme.of(context).textTheme.labelMedium?.copyWith(
                                     color: AppPallete.primaryColor,
                                     fontWeight: FontWeight.w500,
@@ -428,7 +471,7 @@ class _CreateFoodOrderScreenState extends ConsumerState<CreateFoodOrderScreen> {
                       ),
                       const SizedBox(width: 8),
                       Text(
-                        "Order Details",
+                        "Detail Pesanan",
                         style: Theme.of(context).textTheme.titleLarge?.copyWith(
                               fontWeight: FontWeight.bold,
                               fontSize: 18,
@@ -575,7 +618,7 @@ class _CreateFoodOrderScreenState extends ConsumerState<CreateFoodOrderScreen> {
                                       color: AppPallete.primaryColor,
                                     ),
                                     label: Text(
-                                      "Edit Note",
+                                      "Edit Catatan",
                                       style: TextStyle(
                                         color: AppPallete.primaryColor,
                                         fontSize: 12,
@@ -640,14 +683,14 @@ class _CreateFoodOrderScreenState extends ConsumerState<CreateFoodOrderScreen> {
                             ),
                             const SizedBox(width: 8),
                             Text(
-                              'Order Summary',
+                              'Ringkasan Pesanan',
                               style: Theme.of(context).textTheme.titleMedium?.copyWith(
                                     fontWeight: FontWeight.bold,
                                   ),
                             ),
                             const Spacer(),
                             Text(
-                              '${cartItems.length} items',
+                              '${cartItems.length} item',
                               style: TextStyle(
                                 fontSize: 12,
                                 color: Colors.grey[600],

@@ -179,7 +179,9 @@ class _ShopScreenState extends ConsumerState<ShopScreen> {
                     ),
                     items: partialData.map((restaurant) {
                       return GestureDetector(
-                        onTap: () {},
+                        onTap: () {
+                          context.push('/${restaurant.id}');
+                        },
                         child: SizedBox(
                           height: 250,
                           width: double.infinity,
@@ -250,7 +252,10 @@ class _ShopScreenState extends ConsumerState<ShopScreen> {
                                 ),
                               ],
                             ),
-                            child: FoodMenuHighlightItemWidget(restaurantMenu: menu),
+                            child: GestureDetector(
+                              onTap: () {},
+                              child: FoodMenuHighlightItemWidget(restaurantMenu: menu),
+                            ),
                           ),
                         );
                       }).toList(),
@@ -275,8 +280,13 @@ class _ShopScreenState extends ConsumerState<ShopScreen> {
                   return SliverList(
                     delegate: SliverChildBuilderDelegate(
                       (context, index) {
-                        return OutletCardWidget(
-                          restaurant: restaurants[index],
+                        return GestureDetector(
+                          onTap: () {
+                            context.push('/${restaurants[index].id}');
+                          },
+                          child: OutletCardWidget(
+                            restaurant: restaurants[index],
+                          ),
                         );
                       },
                       childCount: restaurants.length,

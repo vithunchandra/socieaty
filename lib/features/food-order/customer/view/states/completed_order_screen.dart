@@ -209,14 +209,14 @@ class _CompletedOrderScreenState extends State<CompletedOrderScreen>
                           ),
                           const SizedBox(width: 8),
                           Text(
-                            'Order Summary',
+                            'Ringkasan Pesanan',
                             style: Theme.of(context).textTheme.titleMedium?.copyWith(
                                   fontWeight: FontWeight.bold,
                                 ),
                           ),
                           const Spacer(),
                           Text(
-                            '${widget.order.menuItems.length} items',
+                            '${widget.order.menuItems.length} item',
                             style: TextStyle(
                               fontSize: 12,
                               color: Colors.grey[600],

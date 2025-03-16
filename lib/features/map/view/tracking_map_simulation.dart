@@ -664,7 +664,7 @@ class _TrackingMapSimulationState extends State<TrackingMapSimulation> {
                                     const Icon(Icons.route, size: 14, color: Colors.blue),
                                     const SizedBox(width: 4),
                                     Text(
-                                      "Distance: ${_distance > 0 ? "${(_distance / 1000).toStringAsFixed(1)} km" : "..."}",
+                                      "Jarak: ${_distance > 0 ? "${(_distance / 1000).toStringAsFixed(1)} km" : "..."}",
                                       style: const TextStyle(
                                         fontWeight: FontWeight.bold,
                                         fontSize: 12,
@@ -677,7 +677,7 @@ class _TrackingMapSimulationState extends State<TrackingMapSimulation> {
                                     const Icon(Icons.timer, size: 14, color: Colors.orange),
                                     const SizedBox(width: 4),
                                     Text(
-                                      "Duration: ${_duration.isNotEmpty ? _duration : "..."}",
+                                      "Durasi: ${_duration.isNotEmpty ? _duration : "..."}",
                                       style: const TextStyle(
                                         fontWeight: FontWeight.bold,
                                         fontSize: 12,

@@ -33,7 +33,9 @@ class _RestaurantRatingScreenState extends ConsumerState<RestaurantRatingScreen>
 
   int _selectedRating = 5;
   final _formKey = GlobalKey<FormState>();
-  CreateTransactionReviewFormState _formData = CreateTransactionReviewFormState();
+  CreateTransactionReviewFormState _formData = CreateTransactionReviewFormState(
+    transactionId: '',
+  );
 
   @override
   void initState() {
@@ -54,6 +56,7 @@ class _RestaurantRatingScreenState extends ConsumerState<RestaurantRatingScreen>
     );
 
     _animationController.forward();
+    _formData = _formData.copyWith(transactionId: widget.transaction.transactionId);
   }
 
   @override

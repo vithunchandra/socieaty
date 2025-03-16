@@ -184,11 +184,11 @@ class _OrderListState extends ConsumerState<OrderList> {
     if (status == FoodOrderStatus.completed) {
       return 'Tidak Ada Pesanan Selesai';
     } else if (status == FoodOrderStatus.rejected) {
-      return 'Tidak Ada Pesanan Ditolak';
+      return 'Tidak Ada Pesanan Batal';
     } else if (status == FoodOrderStatus.ready) {
       return 'Tidak Ada Pesanan Siap';
     } else if (status == FoodOrderStatus.preparing) {
-      return 'Tidak Ada Pesanan Berlangsung';
+      return 'Tidak Ada Pesanan Proses';
     } else {
       return 'Tidak Ada Pesanan Baru';
     }
@@ -198,13 +198,13 @@ class _OrderListState extends ConsumerState<OrderList> {
     if (status == FoodOrderStatus.completed) {
       return 'Pesanan yang telah selesai akan muncul di sini';
     } else if (status == FoodOrderStatus.rejected) {
-      return 'Pesanan yang ditolak akan muncul di sini';
+      return 'Pesanan yang dibatalkan akan muncul di sini';
     } else if (status == FoodOrderStatus.ready) {
       return 'Pesanan yang siap diambil akan muncul di sini';
     } else if (status == FoodOrderStatus.preparing) {
       return 'Pesanan yang sedang diproses akan muncul di sini';
     } else {
-      return 'Pesanan baru yang menunggu konfirmasi akan muncul di sini';
+      return 'Pesanan baru akan muncul di sini';
     }
   }
 }

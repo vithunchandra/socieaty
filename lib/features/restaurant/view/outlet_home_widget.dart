@@ -14,7 +14,7 @@ import 'package:socieaty/shared/widgets/menu_filter_widget.dart';
 
 class OutletHomeWidget extends ConsumerStatefulWidget {
   final SocieatyRestaurant restaurant;
-  final VoidCallback onMenuCarouselItemTapped;
+  final Function(String) onMenuCarouselItemTapped;
   final VoidCallback onPostCarouselItemTapped;
   final VoidCallback onReviewCarouselItemTapped;
   const OutletHomeWidget({
@@ -85,7 +85,7 @@ class _OutletHomeWidgetState extends ConsumerState<OutletHomeWidget> {
                 items: partialData.map((menu) {
                   return GestureDetector(
                     onTap: () {
-                      widget.onMenuCarouselItemTapped();
+                      widget.onMenuCarouselItemTapped(menu.id);
                     },
                     child: Container(
                       clipBehavior: Clip.none,

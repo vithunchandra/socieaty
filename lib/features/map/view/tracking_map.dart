@@ -401,7 +401,7 @@ class _TrackingMapState extends State<TrackingMap> {
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
                       Text(
-                        "Route Information",
+                        "Informasi Rute",
                         style: Theme.of(context).textTheme.headlineSmall,
                       ),
                       _isLoadingRoute
@@ -435,7 +435,7 @@ class _TrackingMapState extends State<TrackingMap> {
                             Text(
                               _distance > 0
                                   ? "${(_distance / 1000).toStringAsFixed(1)} km"
-                                  : "Calculating...",
+                                  : "Menghitung...",
                               style: TextStyle(
                                 fontWeight: FontWeight.bold,
                                 color: AppPallete.primaryColor,
@@ -460,7 +460,7 @@ class _TrackingMapState extends State<TrackingMap> {
                             ),
                             const SizedBox(width: 4),
                             Text(
-                              _duration.isNotEmpty ? _duration : "Calculating...",
+                              _duration.isNotEmpty ? _duration : "Menghitung...",
                               style: TextStyle(
                                 fontWeight: FontWeight.bold,
                                 color: AppPallete.primaryColor,

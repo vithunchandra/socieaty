@@ -70,7 +70,7 @@ class OrderList extends ConsumerWidget {
             ),
             const SizedBox(height: 24),
             Text(
-              isActiveTab ? 'No Active Orders' : 'No Past Orders',
+              isActiveTab ? 'Tidak Ada Pesanan Aktif' : 'Tidak Ada Riwayat Pesanan',
               style: textTheme.headlineSmall?.copyWith(
                 fontWeight: FontWeight.w600,
                 color: AppPallete.neutralColor.shade800,
@@ -79,8 +79,8 @@ class OrderList extends ConsumerWidget {
             const SizedBox(height: 12),
             Text(
               isActiveTab
-                  ? 'Your active orders will appear here'
-                  : 'Your order history will appear here',
+                  ? 'Pesanan aktif Anda akan muncul di sini'
+                  : 'Riwayat pesanan Anda akan muncul di sini',
               textAlign: TextAlign.center,
               style: textTheme.bodyMedium?.copyWith(
                 color: AppPallete.neutralColor.shade600,
@@ -94,7 +94,7 @@ class OrderList extends ConsumerWidget {
                   context.push('/customer/shop');
                 },
                 icon: const Icon(Icons.restaurant_menu, size: 18),
-                label: const Text('Order Food'),
+                label: const Text('Pesan Makanan'),
                 style: ElevatedButton.styleFrom(
                   backgroundColor: AppPallete.primaryColor,
                   foregroundColor: Colors.white,
