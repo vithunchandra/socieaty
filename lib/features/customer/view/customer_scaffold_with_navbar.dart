@@ -69,7 +69,10 @@ class _CustomerScaffoldWithNavbarState extends ConsumerState<CustomerScaffoldWit
     return PopScope(
       canPop: ref.watch(navigationIndexProvider).length < 2,
       onPopInvokedWithResult: (didPop, object) {
-        if (didPop) return;
+        if (didPop) {
+          ref.read(appThemeProvider.notifier).setTheme(SocieatyAppTheme.lightTheme);
+          return;
+        }
 
         if (ref.watch(navigationIndexProvider).length > 1) {
           ref.read(navigationIndexProvider.notifier).removeLastIndex();

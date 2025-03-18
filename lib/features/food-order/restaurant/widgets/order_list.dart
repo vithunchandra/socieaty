@@ -98,7 +98,7 @@ class _OrderListState extends ConsumerState<OrderList> {
             ),
             const SizedBox(height: 16),
             const Text(
-              'Error Loading Orders',
+              'Gagal Memuat Pesanan',
               style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
             ),
             const SizedBox(height: 8),
@@ -113,7 +113,7 @@ class _OrderListState extends ConsumerState<OrderList> {
             const SizedBox(height: 16),
             ElevatedButton(
               onPressed: _loadOrders,
-              child: const Text('Retry'),
+              child: const Text('Coba Lagi'),
             ),
           ],
         ),

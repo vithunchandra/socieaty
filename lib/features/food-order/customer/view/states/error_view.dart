@@ -26,7 +26,7 @@ class ErrorView extends StatelessWidget {
             ),
             const SizedBox(height: 20),
             Text(
-              'Error Loading Order',
+              'Gagal Memuat Pesanan',
               style: Theme.of(context).textTheme.titleLarge?.copyWith(
                     fontWeight: FontWeight.bold,
                     color: AppPallete.neutralColor.shade900,
@@ -45,7 +45,7 @@ class ErrorView extends StatelessWidget {
             ElevatedButton.icon(
               onPressed: onRetry,
               icon: const Icon(Icons.refresh),
-              label: const Text('Retry'),
+              label: const Text('Coba Lagi'),
               style: ElevatedButton.styleFrom(
                 backgroundColor: AppPallete.primaryColor,
                 foregroundColor: Colors.white,
@@ -59,7 +59,7 @@ class ErrorView extends StatelessWidget {
             TextButton(
               onPressed: () => Navigator.of(context).pop(),
               child: Text(
-                'Go Back',
+                'Kembali',
                 style: TextStyle(
                   color: AppPallete.primaryColor,
                   fontWeight: FontWeight.w500,

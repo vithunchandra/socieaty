@@ -188,7 +188,7 @@ class OrderCard extends ConsumerWidget {
                                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                                 children: [
                                   Text(
-                                    '${order.menuItems.length} total item',
+                                    '${order.menuItems.length} item total',
                                     style: TextStyle(color: Colors.grey[600], fontSize: 13),
                                   ),
                                   Text(

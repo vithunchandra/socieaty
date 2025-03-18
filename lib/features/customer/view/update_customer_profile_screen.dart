@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:socieaty/core/theme/app_pallete.dart';
+import 'package:socieaty/core/utils/converter.dart';
 import 'package:socieaty/core/utils/show_picker_modal.dart';
 import 'package:socieaty/core/utils/show_snackbar.dart';
 import 'package:socieaty/features/customer/model/socieaty_customer.dart';
@@ -13,6 +14,7 @@ import 'package:socieaty/shared/view_state.dart';
 import 'package:socieaty/shared/widgets/custom_text_field.dart';
 import 'package:socieaty/shared/widgets/loading_indicator_widget.dart';
 import 'package:socieaty/shared/widgets/profile_avatar_placeholder_widget.dart';
+import 'package:socieaty/shared/widgets/profile_picture_widget.dart';
 
 class UpdateCustomerProfileScreen extends ConsumerStatefulWidget {
   final SocieatyCustomer user;
@@ -102,17 +104,9 @@ class _UpdateCustomerProfileScreenState extends ConsumerState<UpdateCustomerProf
                               elevation: 2.0,
                               shadowColor: AppPallete.neutralColor,
                               borderRadius: BorderRadius.circular(50),
-                              child: CircleAvatar(
+                              child: ProfilePictureWidget(
                                 radius: 50,
-                                backgroundColor: AppPallete.neutralColor.shade200,
-                                backgroundImage: _selectedProfilePicture != null
-                                    ? FileImage(_selectedProfilePicture!)
-                                    : widget.user.profilePictureUrl != null
-                                        ? NetworkImage(widget.user.profilePictureUrl!)
-                                        : null,
-                                child: widget.user.profilePictureUrl == null
-                                    ? ProfileAvatarPlaceholderWidget(name: widget.user.name)
-                                    : null,
+                                user: UserConverter.customerToUser(widget.user),
                               ),
                             ),
                             Positioned(

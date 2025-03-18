@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:socieaty/core/theme/app_pallete.dart';
+import 'package:socieaty/core/utils/converter.dart';
 import 'package:socieaty/features/account/customer/viewmodel/account_view_model.dart';
 import 'package:socieaty/features/authentication/provider/session_provider.dart';
 import 'package:socieaty/features/customer/model/socieaty_customer.dart';
@@ -9,6 +10,7 @@ import 'package:socieaty/features/post/post/view/post_grid_widget.dart';
 import 'package:socieaty/shared/view_state.dart';
 import 'package:socieaty/shared/widgets/loading_indicator_widget.dart';
 import 'package:socieaty/shared/widgets/profile_avatar_placeholder_widget.dart';
+import 'package:socieaty/shared/widgets/profile_picture_widget.dart';
 
 class OtherCustomerProfileScreen extends ConsumerStatefulWidget {
   final SocieatyCustomer user;
@@ -95,15 +97,9 @@ class _OtherCustomerProfileScreenState extends ConsumerState<OtherCustomerProfil
           title: _showSmallProfile
               ? Row(
                   children: [
-                    CircleAvatar(
+                    ProfilePictureWidget(
                       radius: 16,
-                      backgroundColor: AppPallete.neutralColor.shade200,
-                      backgroundImage: widget.user.profilePictureUrl != null
-                          ? NetworkImage(widget.user.profilePictureUrl!)
-                          : null,
-                      child: widget.user.profilePictureUrl == null
-                          ? ProfileAvatarPlaceholderWidget(name: widget.user.name)
-                          : null,
+                      user: UserConverter.customerToUser(widget.user),
                     ),
                     const SizedBox(width: 8),
                     Text(widget.user.name),
@@ -129,15 +125,9 @@ class _OtherCustomerProfileScreenState extends ConsumerState<OtherCustomerProfil
                               elevation: 2.0,
                               shadowColor: AppPallete.neutralColor,
                               borderRadius: BorderRadius.circular(50),
-                              child: CircleAvatar(
+                              child: ProfilePictureWidget(
                                 radius: 50,
-                                backgroundColor: AppPallete.neutralColor.shade200,
-                                backgroundImage: widget.user.profilePictureUrl != null
-                                    ? NetworkImage(widget.user.profilePictureUrl!)
-                                    : null,
-                                child: widget.user.profilePictureUrl == null
-                                    ? ProfileAvatarPlaceholderWidget(name: widget.user.name)
-                                    : null,
+                                user: UserConverter.customerToUser(widget.user),
                               ),
                             ),
                             const SizedBox(height: 8),

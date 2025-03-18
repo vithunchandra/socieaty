@@ -4,7 +4,6 @@ import 'package:socieaty/app_theme_provider.dart';
 import 'package:socieaty/core/theme/theme.dart';
 import 'package:socieaty/features/livestream/view/setup_livestream_screen.dart';
 import 'package:socieaty/features/post/post/view/create_post_screen.dart';
-import 'package:socieaty/shared/provider/navigation_provider.dart';
 import 'package:socieaty/shared/widgets/custom_scroll_physics.dart';
 
 class CreateScreenArgs {

@@ -94,7 +94,7 @@ class _CompletedOrderScreenState extends State<CompletedOrderScreen>
             FadeTransition(
               opacity: _fadeAnimation,
               child: Text(
-                'Order Completed!',
+                'Pesanan Selesai!',
                 style: Theme.of(context).textTheme.headlineSmall?.copyWith(
                       fontWeight: FontWeight.bold,
                       color: AppPallete.primaryColor,
@@ -108,7 +108,7 @@ class _CompletedOrderScreenState extends State<CompletedOrderScreen>
               child: Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 16.0),
                 child: Text(
-                  'Your order has been successfully completed. Thank you for using our service.',
+                  'Pesanan Anda telah berhasil diselesaikan. Terima kasih telah menggunakan layanan kami.',
                   textAlign: TextAlign.center,
                   style: TextStyle(
                     fontSize: 16,
@@ -147,7 +147,7 @@ class _CompletedOrderScreenState extends State<CompletedOrderScreen>
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
                           Text(
-                            'Order #${widget.order.orderId.substring(0, 8)}',
+                            'Pesanan #${widget.order.orderId.substring(0, 8)}',
                             style: const TextStyle(
                               fontWeight: FontWeight.bold,
                               fontSize: 18,
@@ -164,11 +164,11 @@ class _CompletedOrderScreenState extends State<CompletedOrderScreen>
                         ],
                       ),
                       const SizedBox(height: 16),
-                      _buildOrderDetailRow('Date', DateTime.now().toString().substring(0, 16)),
+                      _buildOrderDetailRow('Tanggal', DateTime.now().toString().substring(0, 16)),
                       const SizedBox(height: 8),
-                      _buildOrderDetailRow('Restaurant', widget.order.restaurant.name),
+                      _buildOrderDetailRow('Restoran', widget.order.restaurant.name),
                       const SizedBox(height: 8),
-                      _buildOrderDetailRow('Status', 'Completed'),
+                      _buildOrderDetailRow('Status', 'Selesai'),
                     ],
                   ),
                 ),
@@ -301,7 +301,7 @@ class _CompletedOrderScreenState extends State<CompletedOrderScreen>
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
                           Text(
-                            'Service Fee',
+                            'Biaya Layanan',
                             style: Theme.of(context).textTheme.bodyMedium,
                           ),
                           Text(
@@ -323,7 +323,7 @@ class _CompletedOrderScreenState extends State<CompletedOrderScreen>
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
                           Text(
-                            'Total Payment',
+                            'Total Pembayaran',
                             style: Theme.of(context).textTheme.titleSmall?.copyWith(
                                   fontWeight: FontWeight.bold,
                                 ),
@@ -340,7 +340,7 @@ class _CompletedOrderScreenState extends State<CompletedOrderScreen>
                       if (widget.order.note.isNotEmpty) ...[
                         const SizedBox(height: 16),
                         Text(
-                          'Additional Notes',
+                          'Catatan Tambahan',
                           style: Theme.of(context).textTheme.titleSmall?.copyWith(
                                 fontWeight: FontWeight.bold,
                               ),
@@ -402,7 +402,7 @@ class _CompletedOrderScreenState extends State<CompletedOrderScreen>
                           padding: const EdgeInsets.symmetric(vertical: 16),
                         ),
                         child: const Text(
-                          'Back to Home',
+                          'Kembali',
                           style: TextStyle(
                             fontSize: 16,
                             fontWeight: FontWeight.bold,
@@ -423,7 +423,7 @@ class _CompletedOrderScreenState extends State<CompletedOrderScreen>
                           padding: const EdgeInsets.symmetric(vertical: 16),
                         ),
                         child: const Text(
-                          'Rate Restaurant',
+                          'Beri Review',
                           style: TextStyle(
                             fontSize: 16,
                             fontWeight: FontWeight.bold,

@@ -24,7 +24,7 @@ class NotTrackedView extends StatelessWidget {
             ),
             const SizedBox(height: 20),
             Text(
-              'Order Not Being Tracked',
+              'Pesanan Tidak Dilacak',
               style: Theme.of(context).textTheme.titleLarge?.copyWith(
                     fontWeight: FontWeight.bold,
                     color: AppPallete.neutralColor.shade900,
@@ -33,7 +33,7 @@ class NotTrackedView extends StatelessWidget {
             ),
             const SizedBox(height: 12),
             Text(
-              'This order is no longer being tracked. It may have been completed, canceled, or expired.',
+              'Pesanan ini tidak lagi dilacak. Mungkin telah selesai, dibatalkan, atau kedaluwarsa.',
               style: TextStyle(
                 fontSize: 14,
                 color: AppPallete.neutralColor.shade600,
@@ -51,7 +51,7 @@ class NotTrackedView extends StatelessWidget {
                   borderRadius: BorderRadius.circular(8),
                 ),
               ),
-              child: const Text('Back to Home'),
+              child: const Text('Kembali ke Beranda'),
             ),
           ],
         ),

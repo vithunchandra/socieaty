@@ -7,7 +7,6 @@ import 'package:socieaty/features/restaurant/provider/paginate_restaurant_provid
 import 'package:socieaty/features/restaurant/view/outlet_suggestion_item_widget.dart';
 import 'package:socieaty/features/restaurant/viewstate/paginate_restaurant_query_state.dart';
 import 'package:socieaty/features/shop/customer/provider/recent_searches_provider.dart';
-import 'package:socieaty/features/shop/customer/repository/search_local_repository.dart';
 import 'package:socieaty/shared/widgets/custom_error_widget.dart';
 import 'package:socieaty/shared/widgets/restaurant_filter_widget.dart';
 

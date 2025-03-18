@@ -119,14 +119,14 @@ class _ActiveOrderViewState extends State<ActiveOrderView> {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text(
-                        'Estimated Delivery',
+                        'Estimasi Pengantaran',
                         style: TextStyle(
                           color: Colors.grey[600],
                           fontSize: 12,
                         ),
                       ),
                       const Text(
-                        '15-20 minutes',
+                        '15-20 menit',
                         style: TextStyle(
                           fontWeight: FontWeight.bold,
                           fontSize: 16,
@@ -138,7 +138,7 @@ class _ActiveOrderViewState extends State<ActiveOrderView> {
                 ElevatedButton.icon(
                   onPressed: widget.navigateToMapScreen,
                   icon: const Icon(Icons.map, size: 16, color: Colors.white),
-                  label: const Text('View Map'),
+                  label: const Text('Lihat Peta'),
                   style: ElevatedButton.styleFrom(
                     backgroundColor: AppPallete.primaryColor,
                     foregroundColor: Colors.white,
@@ -289,7 +289,7 @@ class _ActiveOrderViewState extends State<ActiveOrderView> {
                     const SizedBox(width: 4),
                     Expanded(
                       child: Text(
-                        "Restaurant Location",
+                        "Lokasi Restoran",
                         style: Theme.of(context).textTheme.bodySmall?.copyWith(
                               color: AppPallete.neutralColor.shade600,
                             ),
@@ -361,14 +361,14 @@ class _ActiveOrderViewState extends State<ActiveOrderView> {
               ),
               const SizedBox(width: 8),
               Text(
-                'Order Summary',
+                'Ringkasan Pesanan',
                 style: Theme.of(context).textTheme.titleMedium?.copyWith(
                       fontWeight: FontWeight.bold,
                     ),
               ),
               const Spacer(),
               Text(
-                '${order.menuItems.length} items',
+                '${order.menuItems.length} item',
                 style: TextStyle(
                   fontSize: 12,
                   color: Colors.grey[600],
@@ -453,7 +453,7 @@ class _ActiveOrderViewState extends State<ActiveOrderView> {
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               Text(
-                'Service Fee',
+                'Biaya Layanan',
                 style: Theme.of(context).textTheme.bodyMedium,
               ),
               Text(
@@ -475,7 +475,7 @@ class _ActiveOrderViewState extends State<ActiveOrderView> {
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               Text(
-                'Total Payment',
+                'Total Pembayaran',
                 style: Theme.of(context).textTheme.titleSmall?.copyWith(
                       fontWeight: FontWeight.bold,
                     ),
@@ -492,7 +492,7 @@ class _ActiveOrderViewState extends State<ActiveOrderView> {
           if (order.note.isNotEmpty) ...[
             const SizedBox(height: 16),
             Text(
-              'Additional Notes',
+              'Catatan Tambahan',
               style: Theme.of(context).textTheme.titleSmall?.copyWith(
                     fontWeight: FontWeight.bold,
                   ),
@@ -541,7 +541,7 @@ class _ActiveOrderViewState extends State<ActiveOrderView> {
           mainAxisAlignment: MainAxisAlignment.spaceEvenly,
           children: [
             _buildTimelineStep(
-              title: 'Confirmed',
+              title: 'Dikonfirmasi',
               isActive: true,
               isCompleted: isPreparing || isReady,
               icon: Icons.receipt_long,
@@ -550,7 +550,7 @@ class _ActiveOrderViewState extends State<ActiveOrderView> {
               isActive: isPreparing || isReady,
             ),
             _buildTimelineStep(
-              title: 'Preparing',
+              title: 'Diproses',
               isActive: isPreparing || isReady,
               isCompleted: isReady,
               icon: Icons.restaurant,
@@ -559,7 +559,7 @@ class _ActiveOrderViewState extends State<ActiveOrderView> {
               isActive: isReady,
             ),
             _buildTimelineStep(
-              title: 'Ready',
+              title: 'Siap',
               isActive: isReady,
               isCompleted: false,
               icon: Icons.delivery_dining,
@@ -696,7 +696,7 @@ class _ActiveOrderViewState extends State<ActiveOrderView> {
       case FoodOrderStatus.preparing:
         return 'Makanan Anda sedang dipersiapkan oleh koki';
       case FoodOrderStatus.ready:
-        return 'Makanan Anda siap! Silakan ambil pesanan Anda.';
+        return 'Makanan siap! Silakan ambil pesanan Anda.';
       default:
         return '';
     }

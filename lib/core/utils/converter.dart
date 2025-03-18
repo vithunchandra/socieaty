@@ -167,4 +167,28 @@ class UserConverter {
       restaurantData: user.restaurantData!,
     );
   }
+
+  static SocieatyUser customerToUser(SocieatyCustomer customer) {
+    return SocieatyUser(
+      id: customer.id,
+      name: customer.name,
+      email: customer.email,
+      phoneNumber: customer.phoneNumber,
+      profilePictureUrl: customer.profilePictureUrl,
+      role: UserRole.customer,
+      customerData: customer.customerData,
+    );
+  }
+
+  static SocieatyUser restaurantToUser(SocieatyRestaurant restaurant) {
+    return SocieatyUser(
+      id: restaurant.id,
+      name: restaurant.name,
+      email: restaurant.email,
+      phoneNumber: restaurant.phoneNumber,
+      profilePictureUrl: restaurant.profilePictureUrl,
+      role: UserRole.restaurant,
+      restaurantData: restaurant.restaurantData,
+    );
+  }
 }

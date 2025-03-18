@@ -95,10 +95,10 @@ class _OrderHistoryScreenState extends ConsumerState<OrderHistoryScreen>
               padding: const EdgeInsets.symmetric(horizontal: 8),
               tabs: const [
                 Tab(
-                  text: 'Active Orders',
+                  text: 'Pesanan Aktif',
                 ),
                 Tab(
-                  text: 'Order History',
+                  text: 'Riwayat Pesanan',
                 ),
               ],
             ),

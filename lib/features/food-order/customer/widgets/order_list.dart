@@ -70,11 +70,12 @@ class OrderList extends ConsumerWidget {
             ),
             const SizedBox(height: 24),
             Text(
-              isActiveTab ? 'Tidak Ada Pesanan Aktif' : 'Tidak Ada Riwayat Pesanan',
+              isActiveTab ? 'Pesanan Aktif Kosong' : 'Riwayat Pesanan Kosong',
               style: textTheme.headlineSmall?.copyWith(
                 fontWeight: FontWeight.w600,
                 color: AppPallete.neutralColor.shade800,
               ),
+              textAlign: TextAlign.center,
             ),
             const SizedBox(height: 12),
             Text(
@@ -91,9 +92,13 @@ class OrderList extends ConsumerWidget {
               const SizedBox(height: 32),
               ElevatedButton.icon(
                 onPressed: () {
-                  context.push('/customer/shop');
+                  context.pop();
                 },
-                icon: const Icon(Icons.restaurant_menu, size: 18),
+                icon: const Icon(
+                  Icons.restaurant_menu,
+                  size: 18,
+                  color: Colors.white,
+                ),
                 label: const Text('Pesan Makanan'),
                 style: ElevatedButton.styleFrom(
                   backgroundColor: AppPallete.primaryColor,

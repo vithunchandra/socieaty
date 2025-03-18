@@ -24,7 +24,7 @@ class GenericErrorView extends StatelessWidget {
             ),
             const SizedBox(height: 20),
             Text(
-              'Unable to load order information',
+              'Tidak dapat memuat informasi pesanan',
               style: Theme.of(context).textTheme.titleLarge?.copyWith(
                     fontWeight: FontWeight.bold,
                     color: AppPallete.neutralColor.shade900,
@@ -33,7 +33,7 @@ class GenericErrorView extends StatelessWidget {
             ),
             const SizedBox(height: 12),
             Text(
-              'We couldn\'t load the order details. Please try again later.',
+              'Kami tidak dapat memuat detail pesanan. Silakan coba lagi nanti.',
               style: TextStyle(
                 fontSize: 14,
                 color: AppPallete.neutralColor.shade600,
@@ -51,7 +51,7 @@ class GenericErrorView extends StatelessWidget {
                   borderRadius: BorderRadius.circular(8),
                 ),
               ),
-              child: const Text('Back to Home'),
+              child: const Text('Kembali ke Beranda'),
             ),
           ],
         ),

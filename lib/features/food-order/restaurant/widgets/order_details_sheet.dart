@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:socieaty/core/enums/transaction.enum.dart';
+import 'package:socieaty/core/utils/converter.dart';
 import 'package:socieaty/core/utils/custom_extension.dart';
 import 'package:socieaty/core/utils/show_snackbar.dart';
 import 'package:socieaty/features/food-order/model/food_order_transaction.dart';
@@ -9,6 +10,7 @@ import 'package:socieaty/features/food-order/restaurant/provider/get_restaurant_
 import 'package:socieaty/features/food-order/restaurant/viewmodel/update_food_order_status_view_model.dart';
 import 'package:socieaty/shared/view_state.dart';
 import 'package:socieaty/core/theme/app_pallete.dart';
+import 'package:socieaty/shared/widgets/profile_picture_widget.dart';
 
 class OrderDetailsSheet extends ConsumerStatefulWidget {
   final FoodOrderTransaction order;
@@ -117,14 +119,9 @@ class _OrderDetailsSheetState extends ConsumerState<OrderDetailsSheet> {
                 const SizedBox(height: 12),
                 ListTile(
                   contentPadding: EdgeInsets.zero,
-                  leading: CircleAvatar(
-                    backgroundImage: widget.order.customer.profilePictureUrl != null
-                        ? NetworkImage(widget.order.customer.profilePictureUrl!)
-                        : null,
+                  leading: ProfilePictureWidget(
                     radius: 20,
-                    child: widget.order.customer.profilePictureUrl == null
-                        ? Text(widget.order.customer.name[0])
-                        : null,
+                    user: UserConverter.customerToUser(widget.order.customer),
                   ),
                   title: Text(
                     widget.order.customer.name,

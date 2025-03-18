@@ -5,8 +5,8 @@ import 'package:socieaty/features/authentication/repository/auth_local_repositor
 import 'package:socieaty/features/post/post_comment/view/post_comment_item_widget.dart';
 import 'package:socieaty/features/post/post_comment/viewmodel/post_comments_view_model.dart';
 import 'package:socieaty/features/post/post_comment/viewstate/post_comments_form_state.dart';
-import 'package:socieaty/shared/widgets/custom_circle_avatar_widget.dart';
 import 'package:socieaty/shared/widgets/loading_indicator_widget.dart';
+import 'package:socieaty/shared/widgets/profile_picture_widget.dart';
 
 class PostCommentsWidget extends ConsumerStatefulWidget {
   final String postId;
@@ -23,6 +23,7 @@ class _PostCommentsWidgetState extends ConsumerState<PostCommentsWidget> {
   Widget build(BuildContext context) {
     final screenWidth = MediaQuery.of(context).size.width;
     PostCommentsFormState postCommentsFormState = PostCommentsFormState(text: "");
+    final user = ref.watch(authLocalRepositoryProvider).getUserData();
 
     var postComments = ref.watch(postCommentsProvider(widget.postId));
 
@@ -112,8 +113,10 @@ class _PostCommentsWidgetState extends ConsumerState<PostCommentsWidget> {
                 key: _formKey,
                 child: Row(
                   children: [
-                    CustomCircleAvatarWidget(
-                        radius: 20, imageUrl: "assets/images/person_dummy.jpg"),
+                    ProfilePictureWidget(
+                      radius: 20,
+                      user: user!,
+                    ),
                     SizedBox(width: 12),
                     Expanded(
                       child: Padding(

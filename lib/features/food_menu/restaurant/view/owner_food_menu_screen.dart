@@ -1,7 +1,6 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
-import 'package:flutter/scheduler.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:socieaty/core/theme/app_pallete.dart';
@@ -85,7 +84,7 @@ class _OwnerFoodMenuScreenState extends ConsumerState<OwnerFoodMenuScreen> {
         );
       }
     } catch (e) {
-      showSnackbar(context, "Failed to load menu: $e", state: SnackbarState.error);
+      showSnackbar(null, "Failed to load menu: $e", state: SnackbarState.error);
     }
   }
 

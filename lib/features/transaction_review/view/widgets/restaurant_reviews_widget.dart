@@ -318,42 +318,42 @@ class _SliverRestaurantReviewsWidgetState extends ConsumerState<SliverRestaurant
             setState(() {
               _currentQuery = null;
             });
-            ref.refresh(getAllRestaurantReviewsProvider(widget.restaurantId, null));
+            ref.invalidate(getAllRestaurantReviewsProvider(widget.restaurantId, null));
           }),
           _buildFilterChip(context, '5 Star', _currentQuery != null && _currentQuery!.rating == 5,
               () {
             setState(() {
               _currentQuery = const GetRestaurantReviewsQuery(rating: 5);
             });
-            ref.refresh(getAllRestaurantReviewsProvider(widget.restaurantId, _currentQuery));
+            ref.invalidate(getAllRestaurantReviewsProvider(widget.restaurantId, _currentQuery));
           }),
           _buildFilterChip(context, '4 Star', _currentQuery != null && _currentQuery!.rating == 4,
               () {
             setState(() {
               _currentQuery = const GetRestaurantReviewsQuery(rating: 4);
             });
-            ref.refresh(getAllRestaurantReviewsProvider(widget.restaurantId, _currentQuery));
+            ref.invalidate(getAllRestaurantReviewsProvider(widget.restaurantId, _currentQuery));
           }),
           _buildFilterChip(context, '3 Star', _currentQuery != null && _currentQuery!.rating == 3,
               () {
             setState(() {
               _currentQuery = const GetRestaurantReviewsQuery(rating: 3);
             });
-            ref.refresh(getAllRestaurantReviewsProvider(widget.restaurantId, _currentQuery));
+            ref.invalidate(getAllRestaurantReviewsProvider(widget.restaurantId, _currentQuery));
           }),
           _buildFilterChip(context, '2 Star', _currentQuery != null && _currentQuery!.rating == 2,
               () {
             setState(() {
               _currentQuery = const GetRestaurantReviewsQuery(rating: 2);
             });
-            ref.refresh(getAllRestaurantReviewsProvider(widget.restaurantId, _currentQuery));
+            ref.invalidate(getAllRestaurantReviewsProvider(widget.restaurantId, _currentQuery));
           }),
           _buildFilterChip(context, '1 Star', _currentQuery != null && _currentQuery!.rating == 1,
               () {
             setState(() {
               _currentQuery = const GetRestaurantReviewsQuery(rating: 1);
             });
-            ref.refresh(getAllRestaurantReviewsProvider(widget.restaurantId, _currentQuery));
+            ref.invalidate(getAllRestaurantReviewsProvider(widget.restaurantId, _currentQuery));
           }),
         ],
       ),

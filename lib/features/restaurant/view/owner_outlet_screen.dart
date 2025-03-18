@@ -7,7 +7,6 @@ import 'package:socieaty/core/theme/app_pallete.dart';
 import 'package:socieaty/core/theme/theme.dart';
 import 'package:socieaty/core/utils/custom_extension.dart';
 import 'package:socieaty/core/utils/time_utils.dart';
-import 'package:socieaty/features/food_menu/customer/view/outlet_food_menu_screen.dart';
 import 'package:socieaty/features/food_menu/restaurant/view/owner_food_menu_screen.dart';
 import 'package:socieaty/features/post/post/view/post_sliver_grid_widget.dart';
 import 'package:socieaty/features/restaurant/model/socieaty_restaurant.dart';

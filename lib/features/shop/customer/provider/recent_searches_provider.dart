@@ -5,7 +5,7 @@ import 'package:socieaty/features/shop/customer/repository/search_local_reposito
 part 'recent_searches_provider.g.dart';
 
 @riverpod
-Future<List<String>> recentSearches(RecentSearchesRef ref) async {
+Future<List<String>> recentSearches(Ref ref) async {
   final repository = ref.watch(searchLocalRepositoryProvider);
   return await repository.getRecentSearches();
 }

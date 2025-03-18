@@ -112,7 +112,7 @@ class _TrackOrderScreenState extends ConsumerState<TrackOrderScreen> {
       }
 
       final String restaurantName = _orderData!.restaurant.name;
-      final String restaurantAddress = "Restaurant Location";
+      final String restaurantAddress = "Lokasi Restoran";
 
       // Use dummy location data for the customer location
       // This is approximately 500 meters south of the restaurant location
@@ -146,12 +146,12 @@ class _TrackOrderScreenState extends ConsumerState<TrackOrderScreen> {
   }
 
   void _showRateRestaurantDialog() {
-    showSnackbar(context, 'Rate restaurant feature will be implemented separately',
+    showSnackbar(context, 'Fitur penilaian restoran akan diimplementasikan secara terpisah',
         state: SnackbarState.info);
   }
 
   void _showContactSupportDialog() {
-    showSnackbar(context, 'Customer support feature will be implemented separately',
+    showSnackbar(context, 'Fitur layanan pelanggan akan diimplementasikan secara terpisah',
         state: SnackbarState.info);
   }
 
@@ -164,7 +164,7 @@ class _TrackOrderScreenState extends ConsumerState<TrackOrderScreen> {
         foregroundColor: Colors.white,
         elevation: 0,
         title: Text(
-          'Track Order #${widget.orderId.substring(0, 8)}',
+          'Lacak Pesanan #${widget.orderId.substring(0, 8)}',
           style: const TextStyle(
             fontWeight: FontWeight.bold,
             fontSize: 16,
@@ -188,7 +188,7 @@ class _TrackOrderScreenState extends ConsumerState<TrackOrderScreen> {
 
     if (_errorMessage != null && _orderData == null) {
       return ErrorView(
-        errorMessage: _errorMessage ?? 'Unable to load order data',
+        errorMessage: _errorMessage ?? 'Tidak dapat memuat data pesanan',
         onRetry: _handleRetry,
       );
     }

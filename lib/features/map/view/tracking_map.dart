@@ -290,7 +290,7 @@ class _TrackingMapState extends State<TrackingMap> {
                     ),
                     SizedBox(width: 12),
                     Text(
-                      'Recalculating route...',
+                      'Menghitung ulang rute...',
                       style: TextStyle(
                         color: Colors.white,
                         fontWeight: FontWeight.bold,

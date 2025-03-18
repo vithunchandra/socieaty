@@ -3,8 +3,8 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:socieaty/core/network/api_result.dart';
 import 'package:socieaty/features/authentication/provider/session_provider.dart';
 import 'package:socieaty/features/user/model/socieaty_user.dart';
-import 'package:socieaty/shared/widgets/custom_circle_avatar_widget.dart';
 import 'package:socieaty/shared/widgets/loading_indicator_widget.dart';
+import 'package:socieaty/shared/widgets/profile_picture_widget.dart';
 
 class ProfileCardWidget extends ConsumerStatefulWidget {
   const ProfileCardWidget({super.key});
@@ -23,7 +23,7 @@ class _ProfileCardState extends ConsumerState<ProfileCardWidget> {
             return Row(
               mainAxisAlignment: MainAxisAlignment.start,
               children: [
-                CustomCircleAvatarWidget(radius: 22.5, imageUrl: "assets/images/person_dummy.jpg"),
+                ProfilePictureWidget(radius: 22.5, user: user),
                 SizedBox(width: 12),
                 Column(
                   mainAxisAlignment: MainAxisAlignment.start,

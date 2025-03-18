@@ -49,13 +49,13 @@ class OrderCard extends StatelessWidget {
 
     switch (order.foodOrderStatus) {
       case FoodOrderStatus.pending:
-        statusText = 'Order Placed';
+        statusText = 'Pesanan Dibuat';
         bgColor = Colors.blue.shade700;
       case FoodOrderStatus.preparing:
-        statusText = 'Preparing';
+        statusText = 'Sedang Diproses';
         bgColor = Colors.orange.shade700;
       case FoodOrderStatus.ready:
-        statusText = 'Ready for Pickup';
+        statusText = 'Siap Diambil';
         bgColor = Colors.green.shade700;
       default:
         return const SizedBox.shrink();
@@ -170,7 +170,7 @@ class OrderCard extends StatelessWidget {
         return const SizedBox.shrink();
     }
 
-    final labels = ['Order Placed', 'Preparing', 'Ready'];
+    const labels = ['Diterima', 'Diproses', 'Siap'];
     final textTheme = Theme.of(context).textTheme;
 
     return Container(
@@ -308,7 +308,7 @@ class OrderCard extends StatelessWidget {
             Padding(
               padding: const EdgeInsets.only(top: 2, bottom: 10),
               child: Text(
-                "+ ${menuItems.length - 2} more items",
+                '${menuItems.length - 2} item lainnya',
                 style: textTheme.bodySmall?.copyWith(
                   color: AppPallete.primaryColor,
                   fontWeight: FontWeight.w500,

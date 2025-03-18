@@ -5,6 +5,7 @@ import 'package:go_router/go_router.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:socieaty/core/enums/transaction.enum.dart';
 import 'package:socieaty/core/theme/app_pallete.dart';
+import 'package:socieaty/core/utils/converter.dart';
 import 'package:socieaty/core/utils/custom_extension.dart';
 import 'package:socieaty/core/utils/show_snackbar.dart';
 import 'package:socieaty/features/food_menu/customer/view/transaction_food_menu_item_widget.dart';
@@ -20,6 +21,7 @@ import 'package:socieaty/shared/view_state.dart';
 import 'package:socieaty/shared/widgets/custom_text_field.dart';
 import 'package:socieaty/shared/widgets/dotted_divider.dart';
 import 'package:socieaty/core/utils/location_handler.dart';
+import 'package:socieaty/shared/widgets/profile_picture_widget.dart';
 
 class CreateFoodOrderScreen extends ConsumerStatefulWidget {
   final SocieatyRestaurant restaurant;
@@ -79,7 +81,7 @@ class _CreateFoodOrderScreenState extends ConsumerState<CreateFoodOrderScreen> {
 
   void createTransaction(List<MenuCart> cartItems) {
     if (cartItems.isEmpty) {
-      showSnackbar(context, "Cart is empty", state: SnackbarState.error);
+      showSnackbar(context, "Keranjang kosong", state: SnackbarState.error);
       return;
     }
     _formState = _formState.copyWith(
@@ -144,7 +146,7 @@ class _CreateFoodOrderScreenState extends ConsumerState<CreateFoodOrderScreen> {
                     });
                     Navigator.of(context).pop();
                   },
-                  child: const Text("Save Note"),
+                  child: const Text("Simpan Catatan"),
                 ),
               ),
               const SizedBox(height: 16),
@@ -161,14 +163,14 @@ class _CreateFoodOrderScreenState extends ConsumerState<CreateFoodOrderScreen> {
       final LatLng restaurantLocation = widget.restaurant.restaurantData.location;
       final String restaurantName = widget.restaurant.name;
       // Use a more descriptive address based on what's shown in the UI
-      final String restaurantAddress = "123 Dummy Street, Jakarta";
+      final String restaurantAddress = "Jl. Dummy 123, Jakarta";
 
       // Request location permission and get current location
       final locationData = await LocationHandler.getCurrentPosition();
 
       if (locationData == null) {
-        showSnackbar(context,
-            'Unable to get your current location. Please check your location permission settings.',
+        showSnackbar(
+            null, 'Gagal mengambil lokasi Anda. Silakan cek pengaturan izin lokasi Anda.',
             state: SnackbarState.error);
         return;
       }
@@ -191,7 +193,7 @@ class _CreateFoodOrderScreenState extends ConsumerState<CreateFoodOrderScreen> {
         ),
       );
     } catch (e) {
-      showSnackbar(context, 'Error opening map: ${e.toString()}', state: SnackbarState.error);
+      showSnackbar(null, 'Gagal membuka peta: ${e.toString()}', state: SnackbarState.error);
     }
   }
 
@@ -234,11 +236,9 @@ class _CreateFoodOrderScreenState extends ConsumerState<CreateFoodOrderScreen> {
         title: _isCollapsed
             ? Row(
                 children: [
-                  CircleAvatar(
-                    backgroundImage: CachedNetworkImageProvider(
-                      widget.restaurant.restaurantData.restaurantBannerUrl,
-                    ),
+                  ProfilePictureWidget(
                     radius: 16,
+                    user: UserConverter.restaurantToUser(widget.restaurant),
                   ),
                   const SizedBox(width: 8),
                   Expanded(
@@ -250,12 +250,12 @@ class _CreateFoodOrderScreenState extends ConsumerState<CreateFoodOrderScreen> {
                   )
                 ],
               )
-            : Text("Order Food"),
+            : Text("Pesan Makanan"),
       ),
       body: cartItems.isEmpty
           ? Center(
               child: Text(
-                "Your cart is empty",
+                "Keranjang kosong",
                 style: Theme.of(context).textTheme.titleMedium?.copyWith(fontSize: 14),
               ),
             )
@@ -335,7 +335,7 @@ class _CreateFoodOrderScreenState extends ConsumerState<CreateFoodOrderScreen> {
                                       const SizedBox(width: 4),
                                       Expanded(
                                         child: Text(
-                                          "123 Dummy Street, Jakarta",
+                                          "Jl. Dummy 123, Jakarta",
                                           style: Theme.of(context).textTheme.bodySmall?.copyWith(
                                                 color: Colors.grey[600],
                                               ),
@@ -376,13 +376,13 @@ class _CreateFoodOrderScreenState extends ConsumerState<CreateFoodOrderScreen> {
                                     crossAxisAlignment: CrossAxisAlignment.start,
                                     children: [
                                       Text(
-                                        "Delivery Time",
+                                        "Waktu Perjalanan",
                                         style: Theme.of(context).textTheme.labelSmall?.copyWith(
                                               color: Colors.grey[500],
                                             ),
                                       ),
                                       Text(
-                                        "15-20 mins",
+                                        "15 menit",
                                         style: Theme.of(context).textTheme.bodySmall?.copyWith(
                                               fontWeight: FontWeight.w600,
                                               color: Colors.grey[800],
@@ -413,13 +413,13 @@ class _CreateFoodOrderScreenState extends ConsumerState<CreateFoodOrderScreen> {
                                     crossAxisAlignment: CrossAxisAlignment.start,
                                     children: [
                                       Text(
-                                        "Distance",
+                                        "Jarak",
                                         style: Theme.of(context).textTheme.labelSmall?.copyWith(
                                               color: Colors.grey[500],
                                             ),
                                       ),
                                       Text(
-                                        "2 km away",
+                                        "2 km",
                                         style: Theme.of(context).textTheme.bodySmall?.copyWith(
                                               fontWeight: FontWeight.w600,
                                               color: Colors.grey[800],
@@ -443,7 +443,7 @@ class _CreateFoodOrderScreenState extends ConsumerState<CreateFoodOrderScreen> {
                               color: AppPallete.primaryColor,
                             ),
                             label: Text(
-                              "Look on Map",
+                              "Lihat di Map",
                               style: Theme.of(context).textTheme.labelMedium?.copyWith(
                                     color: AppPallete.primaryColor,
                                     fontWeight: FontWeight.w500,
@@ -549,7 +549,7 @@ class _CreateFoodOrderScreenState extends ConsumerState<CreateFoodOrderScreen> {
                             ),
                             const SizedBox(width: 8),
                             Text(
-                              "Additional Notes",
+                              "Catatan Tambahan",
                               style: Theme.of(context).textTheme.titleMedium?.copyWith(
                                     fontWeight: FontWeight.bold,
                                   ),
@@ -573,7 +573,7 @@ class _CreateFoodOrderScreenState extends ConsumerState<CreateFoodOrderScreen> {
                                   size: 16,
                                 ),
                                 label: Text(
-                                  "Add Note",
+                                  "Tambah Catatan",
                                   style: TextStyle(
                                     color: AppPallete.primaryColor,
                                     fontWeight: FontWeight.w500,
@@ -648,7 +648,7 @@ class _CreateFoodOrderScreenState extends ConsumerState<CreateFoodOrderScreen> {
                       ),
                       const SizedBox(width: 8),
                       Text(
-                        "Payment Details",
+                        "Detail Pembayaran",
                         style: Theme.of(context).textTheme.titleLarge?.copyWith(
                               fontWeight: FontWeight.bold,
                               fontSize: 18,
@@ -775,7 +775,7 @@ class _CreateFoodOrderScreenState extends ConsumerState<CreateFoodOrderScreen> {
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
                             Text(
-                              'Application Fee',
+                              'Biaya Aplikasi',
                               style: Theme.of(context).textTheme.bodyMedium,
                             ),
                             Text(
@@ -797,7 +797,7 @@ class _CreateFoodOrderScreenState extends ConsumerState<CreateFoodOrderScreen> {
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
                             Text(
-                              'Total Payment',
+                              'Total Pembayaran',
                               style: Theme.of(context).textTheme.titleSmall?.copyWith(
                                     fontWeight: FontWeight.bold,
                                   ),
@@ -840,11 +840,8 @@ class _CreateFoodOrderScreenState extends ConsumerState<CreateFoodOrderScreen> {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Text(
-                          "Total Payment",
-                          style: TextStyle(
-                            fontSize: 12,
-                            color: Colors.grey[600],
-                          ),
+                          "Total Biaya",
+                          style: Theme.of(context).textTheme.labelLarge,
                         ),
                         Text(
                           grandTotal.toIDRFormat(),
@@ -874,7 +871,7 @@ class _CreateFoodOrderScreenState extends ConsumerState<CreateFoodOrderScreen> {
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: [
                             const Text(
-                              "Order Now",
+                              "Pesan Sekarang",
                               style: TextStyle(
                                 fontWeight: FontWeight.bold,
                                 fontSize: 16,

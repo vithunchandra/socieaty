@@ -13,7 +13,7 @@ class MapTestScreen extends StatelessWidget {
     return Scaffold(
       backgroundColor: Colors.grey.shade50,
       appBar: AppBar(
-        title: const Text('Map Route Testing'),
+        title: const Text('Uji Rute Peta'),
         backgroundColor: AppPallete.primaryColor,
         foregroundColor: Colors.white,
       ),
@@ -27,7 +27,7 @@ class MapTestScreen extends StatelessWidget {
               Padding(
                 padding: const EdgeInsets.only(bottom: 8.0),
                 child: Text(
-                  'Route Tracking Test',
+                  'Uji Pelacakan Rute',
                   style: Theme.of(context).textTheme.headlineMedium?.copyWith(
                         fontWeight: FontWeight.bold,
                         color: AppPallete.primaryColor,
@@ -35,7 +35,7 @@ class MapTestScreen extends StatelessWidget {
                 ),
               ),
               const Text(
-                'Test route tracking functionality with simulation and pre-defined locations.',
+                'Uji fungsionalitas pelacakan rute dengan simulasi dan lokasi yang telah ditentukan.',
                 style: TextStyle(fontSize: 14),
               ),
               const SizedBox(height: 16),
@@ -46,14 +46,14 @@ class MapTestScreen extends StatelessWidget {
 
               // Main content sections in a card-based layout
               _buildSectionCard(
-                'Features',
+                'Fitur',
                 Column(
                   children: [
                     _buildFeatureBox([
-                      'Auto re-routing when 20+ meters off-route',
-                      'Route progress tracking with completed segments',
-                      'API call tracking with performance metrics',
-                      'Interactive simulation with deviation control',
+                      'Re-routing otomatis saat 20+ meter keluar rute',
+                      'Pelacakan kemajuan rute dengan segmen yang telah diselesaikan',
+                      'Pelacakan panggilan API dengan metrik kinerja',
+                      'Simulasi interaktif dengan kontrol penyimpangan',
                     ]),
                     const SizedBox(height: 12),
                     _buildApiInfoSection(context),
@@ -63,36 +63,36 @@ class MapTestScreen extends StatelessWidget {
               const SizedBox(height: 16),
 
               _buildSectionCard(
-                'Test Routes',
+                'Rute Uji',
                 Column(
                   children: [
                     _buildTestButton(
                       context,
-                      'Jakarta Route',
-                      'Central Jakarta area (500m distance)',
+                      'Rute Jakarta',
+                      'Area Jakarta Pusat (jarak 500m)',
                       const LatLng(-6.180110, 106.863036),
                       const LatLng(-6.175110, 106.865036),
-                      'Test Restaurant Jakarta',
+                      'Restoran Test Jakarta',
                       'Jl. Test Restaurant, Jakarta Pusat',
                     ),
                     const SizedBox(height: 12),
                     _buildTestButton(
                       context,
-                      'Bandung Route',
-                      'City center area (1km distance)',
+                      'Rute Bandung',
+                      'Area pusat kota (jarak 1km)',
                       const LatLng(-6.914744, 107.609810),
                       const LatLng(-6.905744, 107.613810),
-                      'Bandung Restaurant',
+                      'Restoran Bandung',
                       'Jl. Test Restaurant, Bandung',
                     ),
                     const SizedBox(height: 12),
                     _buildTestButton(
                       context,
-                      'Surabaya Route',
-                      'City center area (800m distance)',
+                      'Rute Surabaya',
+                      'Area pusat kota (jarak 800m)',
                       const LatLng(-7.257472, 112.745028),
                       const LatLng(-7.262472, 112.750028),
-                      'Surabaya Restaurant',
+                      'Restoran Surabaya',
                       'Jl. Test Restaurant, Surabaya',
                     ),
                   ],
@@ -101,14 +101,14 @@ class MapTestScreen extends StatelessWidget {
               const SizedBox(height: 16),
 
               _buildSectionCard(
-                'API Information',
+                'Informasi API',
                 Column(
                   children: [
-                    _buildInfoBox('For the route tracking to work properly:', [
-                      'A valid Google Maps API key with billing enabled',
-                      'Directions API must be enabled in your Google Cloud Console',
-                      'API key must be configured in env.dart file',
-                      'Check console logs for detailed error messages',
+                    _buildInfoBox('Agar pelacakan rute berfungsi dengan baik:', [
+                      'Kunci API Google Maps yang valid dengan penagihan diaktifkan',
+                      'API Directions harus diaktifkan di Google Cloud Console Anda',
+                      'Kunci API harus dikonfigurasi dalam file env.dart',
+                      'Periksa log konsol untuk pesan kesalahan yang detail',
                     ]),
                     const SizedBox(height: 12),
                     Center(
@@ -222,7 +222,7 @@ class MapTestScreen extends StatelessWidget {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         const Text(
-                          'Interactive Simulation',
+                          'Simulasi Interaktif',
                           style: TextStyle(
                             color: Colors.white,
                             fontWeight: FontWeight.bold,
@@ -231,7 +231,7 @@ class MapTestScreen extends StatelessWidget {
                         ),
                         const SizedBox(height: 8),
                         Text(
-                          'Test re-routing, progress tracking, and monitor API performance',
+                          'Uji pelacakan rute, kemajuan rute, dan pantau kinerja API',
                           style: TextStyle(
                             color: Colors.white.withAlpha(220),
                             fontSize: 14,
@@ -260,7 +260,7 @@ class MapTestScreen extends StatelessWidget {
         builder: (context) => const TrackingMapSimulation(
           startLocation: LatLng(-6.180110, 106.863036),
           targetLocation: LatLng(-6.175110, 106.865036),
-          targetName: "Jakarta Restaurant Simulation",
+          targetName: "Simulasi Restoran Jakarta",
         ),
       ),
     );
@@ -287,7 +287,7 @@ class MapTestScreen extends StatelessWidget {
               const SizedBox(width: 8),
               const Expanded(
                 child: Text(
-                  "Using flutter_polyline_points",
+                  'Menggunakan flutter_polyline_points',
                   style: TextStyle(
                     fontSize: 16,
                     fontWeight: FontWeight.bold,
@@ -298,7 +298,7 @@ class MapTestScreen extends StatelessWidget {
           ),
           const SizedBox(height: 8),
           const Text(
-            "This implementation uses flutter_polyline_points package to efficiently decode route information from the Google Maps Directions API.",
+            'Implementasi ini menggunakan paket flutter_polyline_points untuk mendekode informasi rute dari Google Maps Directions API secara efisien.',
             style: TextStyle(fontSize: 14),
           ),
           const SizedBox(height: 12),
@@ -499,7 +499,7 @@ class MapTestScreen extends StatelessWidget {
               Text('• Cache hasil untuk rute serupa bila sesuai'),
               SizedBox(height: 12),
               Text(
-                'Check simulation logs for detailed performance metrics.',
+                'Periksa log simulasi untuk metrik kinerja yang detail.',
                 style: TextStyle(fontStyle: FontStyle.italic),
               ),
             ],
@@ -508,7 +508,7 @@ class MapTestScreen extends StatelessWidget {
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(context),
-            child: const Text('Close'),
+            child: const Text('Tutup'),
           ),
         ],
       ),
