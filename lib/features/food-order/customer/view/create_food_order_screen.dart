@@ -11,10 +11,10 @@ import 'package:socieaty/core/utils/show_snackbar.dart';
 import 'package:socieaty/features/food_menu/customer/view/transaction_food_menu_item_widget.dart';
 import 'package:socieaty/features/food_menu/model/menu_cart.dart';
 import 'package:socieaty/features/food_menu/provider/menu_cart_view_model.dart';
+import 'package:socieaty/features/menu_item/model/menu_cart_item.dart';
 import 'package:socieaty/features/restaurant/model/socieaty_restaurant.dart';
 import 'package:socieaty/features/food-order/customer/viewmodel/create_transaction_view_model.dart';
 import 'package:socieaty/features/food-order/customer/viewstate/create_food_order_form_state.dart';
-import 'package:socieaty/features/food-order/customer/viewstate/order_menu_item.dart';
 import 'package:socieaty/features/food-order/model/food_order_transaction.dart';
 import 'package:socieaty/features/map/view/tracking_map.dart';
 import 'package:socieaty/shared/view_state.dart';
@@ -86,7 +86,7 @@ class _CreateFoodOrderScreenState extends ConsumerState<CreateFoodOrderScreen> {
     }
     _formState = _formState.copyWith(
       menuItems: cartItems
-          .map((e) => OrderMenuItem(
+          .map((e) => MenuCartItem(
                 menuId: e.menuItem.id,
                 quantity: e.quantity,
               ))

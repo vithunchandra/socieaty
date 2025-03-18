@@ -18,6 +18,7 @@ class RestaurantData with _$RestaurantData {
     required String accountNumber,
     required String openTime,
     required String closeTime,
+    required bool isReservationAvailable,
   }) = _RestaurantData;
 
   factory RestaurantData.fromJson(Map<String, dynamic> json) => _$RestaurantDataFromJson(json);

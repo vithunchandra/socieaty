@@ -13,6 +13,7 @@ import 'package:socieaty/features/food-order/restaurant/socket/restaurant_socket
 import 'package:socieaty/features/restaurant/view/restaurant_scaffold_with_navbar.dart';
 import 'package:socieaty/features/food-order/restaurant/view/food_order_item_summary_widget.dart';
 import 'package:socieaty/features/food-order/restaurant/provider/new_order_notification_provider.dart';
+import 'package:socieaty/shared/widgets/profile_picture_widget.dart';
 import 'package:toastification/toastification.dart';
 
 class RestaurantDashboardScreen extends ConsumerStatefulWidget {
@@ -120,10 +121,9 @@ class _RestaurantDashboardScreenState extends ConsumerState<RestaurantDashboardS
                                 color: Colors.white,
                                 borderRadius: BorderRadius.circular(50),
                               ),
-                              child: CircleAvatar(
+                              child: ProfilePictureWidget(
+                                user: user!,
                                 radius: 35,
-                                backgroundColor: Colors.grey[200],
-                                backgroundImage: const AssetImage('assets/images/person_dummy.jpg'),
                               ),
                             ),
                             const SizedBox(width: 16),
@@ -132,7 +132,7 @@ class _RestaurantDashboardScreenState extends ConsumerState<RestaurantDashboardS
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
                                   Text(
-                                    user!.name,
+                                    user.name,
                                     style: Theme.of(context).textTheme.headlineSmall?.copyWith(
                                           color: Colors.white,
                                           fontWeight: FontWeight.bold,
@@ -243,7 +243,9 @@ class _RestaurantDashboardScreenState extends ConsumerState<RestaurantDashboardS
                               icon: Icons.calendar_today,
                               label: 'Reservasi',
                               color: Colors.orange,
-                              onTap: () {},
+                              onTap: () {
+                                context.push('/restaurant/dashboard/reservation');
+                              },
                             ),
                             GridMenuButtonWidget(
                               icon: Icons.live_tv,

@@ -9,7 +9,6 @@ import 'package:socieaty/features/customer/model/socieaty_customer.dart';
 import 'package:socieaty/features/post/post/view/post_grid_widget.dart';
 import 'package:socieaty/shared/view_state.dart';
 import 'package:socieaty/shared/widgets/loading_indicator_widget.dart';
-import 'package:socieaty/shared/widgets/profile_avatar_placeholder_widget.dart';
 import 'package:socieaty/shared/widgets/profile_picture_widget.dart';
 
 class OtherCustomerProfileScreen extends ConsumerStatefulWidget {

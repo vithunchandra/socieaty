@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:socieaty/core/theme/app_pallete.dart';
+import 'package:socieaty/core/utils/converter.dart';
 import 'package:socieaty/core/utils/show_snackbar.dart';
 import 'package:socieaty/features/authentication/repository/auth_local_repository.dart';
 import 'package:socieaty/features/food_order_chat/provider/track_food_order_transaction_message_provider.dart';
@@ -9,6 +10,7 @@ import 'package:socieaty/features/food_order_chat/viewmodel/chat_view_model.dart
 import 'package:socieaty/features/food-order/model/food_order_transaction.dart';
 import 'package:socieaty/features/food-order/model/food_order_transaction_message.dart';
 import 'package:socieaty/features/user/model/socieaty_user.dart';
+import 'package:socieaty/shared/widgets/profile_picture_widget.dart';
 
 class ChatScreen extends ConsumerStatefulWidget {
   final FoodOrderTransaction order;
@@ -151,12 +153,9 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
         foregroundColor: Colors.white,
         title: Row(
           children: [
-            CircleAvatar(
-              backgroundImage:
-                  NetworkImage(widget.order.restaurant.restaurantData.restaurantBannerUrl),
-              backgroundColor: AppPallete.neutralColor.shade200,
+            ProfilePictureWidget(
+              user: UserConverter.restaurantToUser(widget.order.restaurant),
               radius: 16,
-              onBackgroundImageError: (_, __) {},
             ),
             const SizedBox(width: 8),
             Expanded(

@@ -15,6 +15,13 @@ enum FoodOrderStatus {
   completed
 }
 
+enum ReservationStatus {
+  pending,
+  confirmed,
+  cancelled,
+  completed,
+}
+
 enum TransactionStatus{
   success,
   failed,

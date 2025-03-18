@@ -5,28 +5,30 @@ import 'package:socieaty/features/customer/model/socieaty_customer.dart';
 import 'package:socieaty/features/menu_item/model/menu_item.dart';
 import 'package:socieaty/features/restaurant/model/socieaty_restaurant.dart';
 
-part 'food_order_transaction.freezed.dart';
-part 'food_order_transaction.g.dart';
+part 'reservation.freezed.dart';
+part 'reservation.g.dart';
 
 @freezed
-class FoodOrderTransaction with _$FoodOrderTransaction {
-  const factory FoodOrderTransaction({
+class Reservation with _$Reservation {
+  const factory Reservation({
     required String transactionId,
-    required String orderId,
     @TransactionServiceTypeConverter() required TransactionServiceType serviceType,
     required int grossAmount,
     required int serviceFee,
+    required String note,
     @TransactionStatusConverter() required TransactionStatus status,
-    @FoodOrderStatusConverter() required FoodOrderStatus foodOrderStatus,
     required SocieatyRestaurant restaurant,
     required SocieatyCustomer customer,
+    required String reservationId,
+    @ReservationStatusConverter() required ReservationStatus reservationStatus,
+    required DateTime reservationTime,
+    required DateTime endTimeEstimation,
+    required int peopleSize,
     required List<MenuItem> menuItems,
-    required String note,
     required DateTime createdAt,
     required DateTime updatedAt,
     required DateTime finishedAt,
-  }) = _FoodOrderTransaction;
+  }) = _Reservation;
 
-  factory FoodOrderTransaction.fromJson(Map<String, dynamic> json) =>
-      _$FoodOrderTransactionFromJson(json);
+  factory Reservation.fromJson(Map<String, dynamic> json) => _$ReservationFromJson(json);
 }

@@ -13,7 +13,6 @@ import 'package:socieaty/features/customer/viewstate/update_customer_profile_for
 import 'package:socieaty/shared/view_state.dart';
 import 'package:socieaty/shared/widgets/custom_text_field.dart';
 import 'package:socieaty/shared/widgets/loading_indicator_widget.dart';
-import 'package:socieaty/shared/widgets/profile_avatar_placeholder_widget.dart';
 import 'package:socieaty/shared/widgets/profile_picture_widget.dart';
 
 class UpdateCustomerProfileScreen extends ConsumerStatefulWidget {

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:socieaty/core/enums/transaction.enum.dart';
+import 'package:socieaty/core/utils/converter.dart';
 import 'package:socieaty/core/utils/custom_extension.dart';
 import 'package:socieaty/features/food-order/model/food_order_transaction.dart';
 import 'package:socieaty/features/food-order/restaurant/widgets/order_details_sheet.dart';
@@ -8,6 +9,7 @@ import 'package:socieaty/features/food-order/restaurant/viewmodel/update_food_or
 import 'package:socieaty/features/food-order/restaurant/provider/get_restaurant_food_order_provider.dart';
 import 'package:socieaty/core/utils/show_snackbar.dart';
 import 'package:socieaty/shared/view_state.dart';
+import 'package:socieaty/shared/widgets/profile_picture_widget.dart';
 
 class OrderCard extends ConsumerWidget {
   final FoodOrderTransaction order;
@@ -129,16 +131,9 @@ class OrderCard extends ConsumerWidget {
                 children: [
                   Row(
                     children: [
-                      CircleAvatar(
-                        backgroundColor: Colors.grey[200],
+                      ProfilePictureWidget(
+                        user: UserConverter.customerToUser(order.customer),
                         radius: 20,
-                        child: Text(
-                          order.customer.name[0],
-                          style: TextStyle(
-                            fontWeight: FontWeight.bold,
-                            color: Theme.of(context).primaryColor,
-                          ),
-                        ),
                       ),
                       const SizedBox(width: 12),
                       Expanded(

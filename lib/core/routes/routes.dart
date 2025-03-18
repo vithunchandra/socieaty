@@ -21,6 +21,7 @@ import 'package:socieaty/features/home/restaurant/view/restaurant_dashboard_scre
 import 'package:socieaty/features/livestream/view/livestream_home_screen.dart';
 import 'package:socieaty/features/map/view/select_location.dart';
 import 'package:socieaty/features/post/post/view/post_screen.dart';
+import 'package:socieaty/features/reservation/restaurant/view/reservation_navigator_screen.dart';
 import 'package:socieaty/features/restaurant/model/socieaty_restaurant.dart';
 import 'package:socieaty/features/restaurant/view/restaurant_scaffold_with_navbar.dart';
 import 'package:socieaty/features/food_menu/restaurant/view/create_food_menu_screen.dart';
@@ -214,6 +215,12 @@ GoRouter router(Ref ref) {
                       ),
                     ],
                   ),
+                  GoRoute(
+                    path: 'reservation',
+                    pageBuilder: (context, state) => const NoTransitionPage(
+                      child: ReservationNavigatorScreen(),
+                    ),
+                  )
                 ],
               ),
             ],

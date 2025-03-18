@@ -11,7 +11,6 @@ import 'package:socieaty/shared/view_state.dart';
 import 'package:socieaty/shared/widgets/loading_indicator_widget.dart';
 import 'package:dropdown_button2/dropdown_button2.dart';
 import 'package:socieaty/shared/widgets/custom_text_field.dart';
-import 'package:socieaty/shared/widgets/profile_avatar_placeholder_widget.dart';
 import 'package:socieaty/shared/widgets/profile_picture_widget.dart';
 
 class CurrentCustomerProfileScreen extends ConsumerStatefulWidget {

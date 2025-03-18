@@ -112,8 +112,21 @@ class TransactionStatusConverter implements JsonConverter<TransactionStatus, Str
   }
 }
 
-class SocieatyRestaurantConverter
-    implements JsonConverter<SocieatyRestaurant, Map<String, dynamic>> {
+class ReservationStatusConverter implements JsonConverter<ReservationStatus, String> {
+  const ReservationStatusConverter();
+
+  @override
+  ReservationStatus fromJson(String json) {
+    return ReservationStatus.values.firstWhere((element) => element.name == json);  
+  }
+
+  @override
+  String toJson(ReservationStatus object) {
+    return object.name;
+  }
+}
+
+class SocieatyRestaurantConverter implements JsonConverter<SocieatyRestaurant, Map<String, dynamic>> {
   const SocieatyRestaurantConverter();
 
   @override

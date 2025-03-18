@@ -7,8 +7,11 @@ import 'package:socieaty/core/network/api_client.dart';
 import 'package:socieaty/core/network/api_result.dart';
 import 'package:socieaty/core/utils/execute_request.dart';
 import 'package:socieaty/features/authentication/repository/auth_local_repository.dart';
+import 'package:socieaty/features/restaurant/repository/response/create_reservation_config_response.dart';
 import 'package:socieaty/features/restaurant/repository/response/get_all_restaurant_themes_response.dart';
+import 'package:socieaty/features/restaurant/repository/response/get_reservation_config_response.dart';
 import 'package:socieaty/features/restaurant/repository/response/paginate_restaurant_response.dart';
+import 'package:socieaty/features/restaurant/viewstate/create_reservation_config_form_state.dart';
 import 'package:socieaty/features/restaurant/viewstate/paginate_restaurant_query_state.dart';
 
 part 'restaurant_respository.g.dart';
@@ -30,6 +33,21 @@ class RestaurantRespository {
 
   RestaurantRespository({required Dio dio}) {
     _dio = dio;
+  }
+
+  Future<ApiResult<CreateReservationConfigResponse>> createReservationConfig(
+      CreateReservationConfigFormState formState) {
+    return executeRequest<CreateReservationConfigResponse>(
+      requestFunction: () => _dio.post('restaurant/reservation-config', data: formState.toJson()),
+      successParser: (data) => CreateReservationConfigResponse.fromJson(data),
+    );
+  }
+
+  Future<ApiResult<GetReservationConfigResponse>> getReservationConfig(String restaurantId) {
+    return executeRequest<GetReservationConfigResponse>(
+      requestFunction: () => _dio.get('restaurant/reservation-config'),
+      successParser: (data) => GetReservationConfigResponse.fromJson(data),
+    );
   }
 
   Future<ApiResult<PaginateRestaurantResponse>> paginateRestaurants(
