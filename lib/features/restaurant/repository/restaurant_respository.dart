@@ -10,6 +10,7 @@ import 'package:socieaty/features/authentication/repository/auth_local_repositor
 import 'package:socieaty/features/restaurant/repository/response/create_reservation_config_response.dart';
 import 'package:socieaty/features/restaurant/repository/response/get_all_restaurant_themes_response.dart';
 import 'package:socieaty/features/restaurant/repository/response/get_reservation_config_response.dart';
+import 'package:socieaty/features/restaurant/repository/response/get_reservation_facilities_suggestion_response.dart';
 import 'package:socieaty/features/restaurant/repository/response/paginate_restaurant_response.dart';
 import 'package:socieaty/features/restaurant/viewstate/create_reservation_config_form_state.dart';
 import 'package:socieaty/features/restaurant/viewstate/paginate_restaurant_query_state.dart';
@@ -72,6 +73,13 @@ class RestaurantRespository {
     return executeRequest<GetAllRestaurantThemesResponse>(
       requestFunction: () => _dio.get('restaurant/themes'),
       successParser: (data) => GetAllRestaurantThemesResponse.fromJson(data),
+    );
+  }
+
+  Future<ApiResult<GetReservationFacilitiesSuggestionResponse>> getReservationFacilitiesSuggestion(String name) {
+    return executeRequest<GetReservationFacilitiesSuggestionResponse>(
+      requestFunction: () => _dio.get('restaurant/facilities', queryParameters: {'name': name}),
+      successParser: (data) => GetReservationFacilitiesSuggestionResponse.fromJson(data),
     );
   }
 }

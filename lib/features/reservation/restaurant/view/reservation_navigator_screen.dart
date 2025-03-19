@@ -32,7 +32,7 @@ class ReservationNavigatorScreen extends ConsumerWidget {
     return reservationConfig.when(
       data: (data) {
         if (data == null) {
-          return CreateReservationConfigScreen();
+          return const CreateReservationConfigScreen();
         } else {
           return const RestaurantReservationHomeScreen();
         }

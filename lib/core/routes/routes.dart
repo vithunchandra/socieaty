@@ -23,6 +23,7 @@ import 'package:socieaty/features/map/view/select_location.dart';
 import 'package:socieaty/features/post/post/view/post_screen.dart';
 import 'package:socieaty/features/reservation/restaurant/view/reservation_navigator_screen.dart';
 import 'package:socieaty/features/restaurant/model/socieaty_restaurant.dart';
+import 'package:socieaty/features/restaurant/view/create_reservation_config_screen.dart';
 import 'package:socieaty/features/restaurant/view/restaurant_scaffold_with_navbar.dart';
 import 'package:socieaty/features/food_menu/restaurant/view/create_food_menu_screen.dart';
 import 'package:socieaty/features/food_menu/restaurant/view/owner_food_menu_screen.dart';
@@ -220,6 +221,20 @@ GoRouter router(Ref ref) {
                     pageBuilder: (context, state) => const NoTransitionPage(
                       child: ReservationNavigatorScreen(),
                     ),
+                    // routes: [
+                    //   GoRoute(
+                    //     path: 'config/create',
+                    //     pageBuilder: (context, state) => const NoTransitionPage(
+                    //       child: CreateReservationConfigScreen(),
+                    //     ),
+                    //   ),
+                    //   GoRoute(
+                    //     path: 'config/update',
+                    //     pageBuilder: (context, state) => const NoTransitionPage(
+                    //       child: CreateReservationConfigScreen(),
+                    //     ),
+                    //   ),
+                    // ],
                   )
                 ],
               ),

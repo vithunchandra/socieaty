@@ -27,7 +27,7 @@ class Reservation with _$Reservation {
     required List<MenuItem> menuItems,
     required DateTime createdAt,
     required DateTime updatedAt,
-    required DateTime finishedAt,
+    required DateTime? finishedAt,
   }) = _Reservation;
 
   factory Reservation.fromJson(Map<String, dynamic> json) => _$ReservationFromJson(json);
