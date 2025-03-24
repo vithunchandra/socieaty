@@ -24,7 +24,7 @@ class FoodOrderTransaction with _$FoodOrderTransaction {
     required String note,
     required DateTime createdAt,
     required DateTime updatedAt,
-    required DateTime finishedAt,
+    @Default(null) DateTime? finishedAt,
   }) = _FoodOrderTransaction;
 
   factory FoodOrderTransaction.fromJson(Map<String, dynamic> json) =>

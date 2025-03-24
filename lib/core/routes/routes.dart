@@ -21,13 +21,18 @@ import 'package:socieaty/features/home/restaurant/view/restaurant_dashboard_scre
 import 'package:socieaty/features/livestream/view/livestream_home_screen.dart';
 import 'package:socieaty/features/map/view/select_location.dart';
 import 'package:socieaty/features/post/post/view/post_screen.dart';
+import 'package:socieaty/features/reservation/customer/view/outlet_reserve_screen.dart';
+import 'package:socieaty/features/reservation/restaurant/view/incoming_reservation_offers_screen.dart';
 import 'package:socieaty/features/reservation/restaurant/view/reservation_navigator_screen.dart';
+import 'package:socieaty/features/reservation/restaurant/view/reservation_schedule_calender_screen.dart';
+import 'package:socieaty/features/reservation/restaurant/view/reservations_schedule_screen.dart';
+import 'package:socieaty/features/restaurant/model/reservation_config.dart';
 import 'package:socieaty/features/restaurant/model/socieaty_restaurant.dart';
-import 'package:socieaty/features/restaurant/view/create_reservation_config_screen.dart';
 import 'package:socieaty/features/restaurant/view/restaurant_scaffold_with_navbar.dart';
 import 'package:socieaty/features/food_menu/restaurant/view/create_food_menu_screen.dart';
 import 'package:socieaty/features/food_menu/restaurant/view/owner_food_menu_screen.dart';
 import 'package:socieaty/features/food_menu/restaurant/view/update_food_menu_screen.dart';
+import 'package:socieaty/features/restaurant/view/update_reservation_config_screen.dart';
 import 'package:socieaty/features/shop/customer/view/shop_screen.dart';
 import 'package:socieaty/features/shop/customer/view/shop_search_screen.dart';
 import 'package:socieaty/features/food-order/customer/view/create_food_order_screen.dart';
@@ -218,23 +223,47 @@ GoRouter router(Ref ref) {
                   ),
                   GoRoute(
                     path: 'reservation',
+                    parentNavigatorKey: rootNavigatorKey,
                     pageBuilder: (context, state) => const NoTransitionPage(
                       child: ReservationNavigatorScreen(),
                     ),
-                    // routes: [
-                    //   GoRoute(
-                    //     path: 'config/create',
-                    //     pageBuilder: (context, state) => const NoTransitionPage(
-                    //       child: CreateReservationConfigScreen(),
-                    //     ),
-                    //   ),
-                    //   GoRoute(
-                    //     path: 'config/update',
-                    //     pageBuilder: (context, state) => const NoTransitionPage(
-                    //       child: CreateReservationConfigScreen(),
-                    //     ),
-                    //   ),
-                    // ],
+                    routes: [
+                      GoRoute(
+                          path: 'view',
+                          parentNavigatorKey: rootNavigatorKey,
+                          pageBuilder: (context, state) => NoTransitionPage(
+                                child: ReservationsScheduleScreen(
+                                  reservationConfig: state.extra as ReservationConfig,
+                                ),
+                              ),
+                          routes: [
+                            GoRoute(
+                              path: 'calender',
+                              parentNavigatorKey: rootNavigatorKey,
+                              pageBuilder: (context, state) => NoTransitionPage(
+                                child: ReservationScheduleCalenderScreen(
+                                  reservationConfig: state.extra as ReservationConfig,
+                                ),
+                              ),
+                            ),
+                          ]),
+                      GoRoute(
+                        path: 'offers',
+                        parentNavigatorKey: rootNavigatorKey,
+                        pageBuilder: (context, state) => const NoTransitionPage(
+                          child: IncomingReservationOffersScreen(),
+                        ),
+                      ),
+                      GoRoute(
+                        path: 'config/update',
+                        parentNavigatorKey: rootNavigatorKey,
+                        pageBuilder: (context, state) => NoTransitionPage(
+                          child: UpdateReservationConfigScreen(
+                            reservationConfig: state.extra as ReservationConfig,
+                          ),
+                        ),
+                      ),
+                    ],
                   )
                 ],
               ),
@@ -304,6 +333,12 @@ GoRouter router(Ref ref) {
               GoRoute(
                 path: 'order',
                 builder: (context, state) => CreateFoodOrderScreen(
+                  restaurant: state.extra as SocieatyRestaurant,
+                ),
+              ),
+              GoRoute(
+                path: 'reserve',
+                builder: (context, state) => OutletReserveScreen(
                   restaurant: state.extra as SocieatyRestaurant,
                 ),
               ),

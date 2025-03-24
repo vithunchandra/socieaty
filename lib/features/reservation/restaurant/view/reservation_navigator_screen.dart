@@ -31,6 +31,7 @@ class ReservationNavigatorScreen extends ConsumerWidget {
     );
     return reservationConfig.when(
       data: (data) {
+        debugPrint("data: $data");
         if (data == null) {
           return const CreateReservationConfigScreen();
         } else {

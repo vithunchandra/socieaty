@@ -1,56 +1,94 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
 import 'package:socieaty/core/theme/app_pallete.dart';
-import 'package:table_calendar/table_calendar.dart';
+import 'package:socieaty/core/utils/converter.dart';
+import 'package:socieaty/features/authentication/repository/auth_local_repository.dart';
+import 'package:socieaty/features/restaurant/model/reservation_config.dart';
+import 'package:socieaty/features/restaurant/provider/get_restaurant_reservation_config_provider.dart';
+import 'package:socieaty/features/restaurant/view/create_reservation_config_screen.dart';
+import 'package:socieaty/shared/widgets/custom_error_widget.dart';
+import 'package:socieaty/shared/widgets/loading_indicator_widget.dart';
 
-class RestaurantReservationHomeScreen extends StatefulWidget {
+class RestaurantReservationHomeScreen extends ConsumerStatefulWidget {
   const RestaurantReservationHomeScreen({super.key});
 
   @override
-  State<RestaurantReservationHomeScreen> createState() => _RestaurantReservationHomeScreenState();
+  ConsumerState<RestaurantReservationHomeScreen> createState() =>
+      _RestaurantReservationHomeScreenState();
 }
 
-class _RestaurantReservationHomeScreenState extends State<RestaurantReservationHomeScreen> {
+class _RestaurantReservationHomeScreenState extends ConsumerState<RestaurantReservationHomeScreen> {
   bool _isReservationEnabled = true;
-  DateTime _selectedDay = DateTime.now();
-  DateTime _focusedDay = DateTime.now();
-  CalendarFormat _calendarFormat = CalendarFormat.week;
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: AppPallete.neutralColor.shade50,
-      appBar: AppBar(
-        title: Text(
-          'Reservation Management',
-          style: Theme.of(context).textTheme.titleLarge?.copyWith(
-                fontWeight: FontWeight.bold,
+    final restaurant =
+        UserConverter.userToRestaurant(ref.watch(authLocalRepositoryProvider).getUserData()!);
+    final reservationConfig = ref.watch(getRestaurantReservationConfigProvider(restaurant.restaurantData.id));
+
+    return reservationConfig.when(
+      data: (config) {
+        if (config == null) {
+          return const CreateReservationConfigScreen();
+        } else {
+          return Scaffold(
+            backgroundColor: AppPallete.neutralColor.shade50,
+            appBar: AppBar(
+              title: Text(
+                'Reservation',
+                style: Theme.of(context).textTheme.titleLarge,
               ),
-        ),
-        centerTitle: true,
-        backgroundColor: Colors.white,
-        elevation: 0,
-      ),
-      body: SingleChildScrollView(
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            _buildReservationToggleCard(),
-            const SizedBox(height: 16),
-            _buildCalendarSection(),
-            const SizedBox(height: 16),
-            _buildTodayReservationsSection(),
-            const SizedBox(height: 16),
-            _buildConfigurationSection(),
-          ],
-        ),
-      ),
-      floatingActionButton: FloatingActionButton.extended(
-        onPressed: () {
-          // TODO: Navigate to configuration screen
-        },
-        backgroundColor: AppPallete.primaryColor,
-        icon: const Icon(Icons.settings),
-        label: const Text('Configure'),
+              centerTitle: true,
+              backgroundColor: Colors.white,
+              elevation: 0,
+              actions: [
+                IconButton(
+                  icon: const Icon(Icons.settings),
+                  onPressed: () {
+                    context.push('/restaurant/dashboard/reservation/config/update', extra: config);
+                  },
+                  color: AppPallete.primaryColor,
+                ),
+              ],
+            ),
+            body: SingleChildScrollView(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  _buildReservationToggleCard(),
+                  const SizedBox(height: 16),
+                  _buildTodayReservationsSection(config),
+                  const SizedBox(height: 16),
+                  _buildConfigurationSection(config),
+                  const SizedBox(height: 72),
+                ],
+              ),
+            ),
+            floatingActionButton: FloatingActionButton.extended(
+              onPressed: () {
+                context.push('/restaurant/dashboard/reservation/offers');
+              },
+              backgroundColor: AppPallete.primaryColor,
+              icon: const Icon(Icons.notifications),
+              label: const Text('New Offers'),
+            ),
+          );
+        }
+      },
+      error: (error, stack) {
+        return Scaffold(
+          body: CustomErrorWidget(
+            error: error.toString(),
+            title: 'Reservation Config',
+            onPressed: () {
+              ref.invalidate(getRestaurantReservationConfigProvider(restaurant.id));
+            },
+          ),
+        );
+      },
+      loading: () => Scaffold(
+        body: LoadingIndicatorWidget(),
       ),
     );
   }
@@ -108,87 +146,7 @@ class _RestaurantReservationHomeScreenState extends State<RestaurantReservationH
     );
   }
 
-  Widget _buildCalendarSection() {
-    return Container(
-      margin: const EdgeInsets.symmetric(horizontal: 16),
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(16),
-        boxShadow: [
-          BoxShadow(
-            color: AppPallete.neutralColor.shade200.withAlpha(25),
-            blurRadius: 10,
-            offset: const Offset(0, 4),
-          ),
-        ],
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Padding(
-            padding: const EdgeInsets.all(16),
-            child: Text(
-              'Reservation Calendar',
-              style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                    fontWeight: FontWeight.bold,
-                  ),
-            ),
-          ),
-          TableCalendar(
-            firstDay: DateTime.utc(2020, 1, 1),
-            lastDay: DateTime.utc(2030, 12, 31),
-            focusedDay: _focusedDay,
-            calendarFormat: _calendarFormat,
-            selectedDayPredicate: (day) {
-              return isSameDay(_selectedDay, day);
-            },
-            onDaySelected: (selectedDay, focusedDay) {
-              setState(() {
-                _selectedDay = selectedDay;
-                _focusedDay = focusedDay;
-              });
-            },
-            onFormatChanged: (format) {
-              setState(() {
-                _calendarFormat = format;
-              });
-            },
-            onPageChanged: (focusedDay) {
-              _focusedDay = focusedDay;
-            },
-            headerStyle: HeaderStyle(
-              titleCentered: true,
-              formatButtonVisible: true,
-              formatButtonDecoration: BoxDecoration(
-                color: AppPallete.primaryColor.shade100,
-                borderRadius: BorderRadius.circular(16),
-              ),
-              formatButtonTextStyle: TextStyle(
-                color: AppPallete.primaryColor,
-              ),
-              titleTextStyle: Theme.of(context).textTheme.titleMedium!,
-            ),
-            calendarStyle: CalendarStyle(
-              selectedDecoration: BoxDecoration(
-                color: AppPallete.primaryColor,
-                shape: BoxShape.circle,
-              ),
-              todayDecoration: BoxDecoration(
-                color: AppPallete.primaryColor.shade300,
-                shape: BoxShape.circle,
-              ),
-              markerDecoration: BoxDecoration(
-                color: AppPallete.successColor,
-                shape: BoxShape.circle,
-              ),
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-
-  Widget _buildTodayReservationsSection() {
+  Widget _buildTodayReservationsSection(ReservationConfig reservationConfig) {
     return Container(
       margin: const EdgeInsets.symmetric(horizontal: 16),
       decoration: BoxDecoration(
@@ -258,7 +216,8 @@ class _RestaurantReservationHomeScreenState extends State<RestaurantReservationH
             child: Center(
               child: TextButton(
                 onPressed: () {
-                  // TODO: Navigate to detailed reservations page
+                  // Navigate to all reservations screen
+                  context.push('/restaurant/dashboard/reservation/view', extra: reservationConfig);
                 },
                 child: Text(
                   'View All Reservations',
@@ -357,7 +316,7 @@ class _RestaurantReservationHomeScreenState extends State<RestaurantReservationH
     );
   }
 
-  Widget _buildConfigurationSection() {
+  Widget _buildConfigurationSection(ReservationConfig reservationConfig) {
     return Container(
       margin: const EdgeInsets.all(16),
       padding: const EdgeInsets.all(16),
@@ -385,22 +344,22 @@ class _RestaurantReservationHomeScreenState extends State<RestaurantReservationH
           _buildConfigItem(
             icon: Icons.people,
             title: 'Maximum People',
-            value: '8 per reservation',
+            value: '${reservationConfig.maxPerson} per reservation',
           ),
           _buildConfigItem(
             icon: Icons.attach_money,
             title: 'Minimum Cost',
-            value: 'Rp 50,000 per person',
+            value: 'Rp ${reservationConfig.minCostPerPerson} per person',
           ),
           _buildConfigItem(
             icon: Icons.timer,
             title: 'Time Limit',
-            value: '2 hours',
+            value: '${reservationConfig.timeLimit} hours',
           ),
           _buildConfigItem(
             icon: Icons.category,
             title: 'Facilities',
-            value: 'Wi-Fi, Smoking Area, Private Room',
+            value: reservationConfig.facilities.join(', '),
           ),
         ],
       ),

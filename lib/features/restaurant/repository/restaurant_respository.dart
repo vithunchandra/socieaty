@@ -12,8 +12,10 @@ import 'package:socieaty/features/restaurant/repository/response/get_all_restaur
 import 'package:socieaty/features/restaurant/repository/response/get_reservation_config_response.dart';
 import 'package:socieaty/features/restaurant/repository/response/get_reservation_facilities_suggestion_response.dart';
 import 'package:socieaty/features/restaurant/repository/response/paginate_restaurant_response.dart';
+import 'package:socieaty/features/restaurant/repository/response/update_reservation_config_response.dart';
 import 'package:socieaty/features/restaurant/viewstate/create_reservation_config_form_state.dart';
 import 'package:socieaty/features/restaurant/viewstate/paginate_restaurant_query_state.dart';
+import 'package:socieaty/features/restaurant/viewstate/update_reservation_config_form_state.dart';
 
 part 'restaurant_respository.g.dart';
 
@@ -44,9 +46,17 @@ class RestaurantRespository {
     );
   }
 
+  Future<ApiResult<UpdateReservationConfigResponse>> updateReservationConfig(
+      UpdateReservationConfigFormState formState) {
+    return executeRequest<UpdateReservationConfigResponse>(
+      requestFunction: () => _dio.put('restaurant/reservation-config', data: formState.toJson()),
+      successParser: (data) => UpdateReservationConfigResponse.fromJson(data),
+    );
+  }
+
   Future<ApiResult<GetReservationConfigResponse>> getReservationConfig(String restaurantId) {
     return executeRequest<GetReservationConfigResponse>(
-      requestFunction: () => _dio.get('restaurant/reservation-config'),
+      requestFunction: () => _dio.get('restaurant/reservation-config/$restaurantId'),
       successParser: (data) => GetReservationConfigResponse.fromJson(data),
     );
   }
@@ -76,7 +86,8 @@ class RestaurantRespository {
     );
   }
 
-  Future<ApiResult<GetReservationFacilitiesSuggestionResponse>> getReservationFacilitiesSuggestion(String name) {
+  Future<ApiResult<GetReservationFacilitiesSuggestionResponse>> getReservationFacilitiesSuggestion(
+      String name) {
     return executeRequest<GetReservationFacilitiesSuggestionResponse>(
       requestFunction: () => _dio.get('restaurant/facilities', queryParameters: {'name': name}),
       successParser: (data) => GetReservationFacilitiesSuggestionResponse.fromJson(data),

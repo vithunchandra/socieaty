@@ -8,6 +8,7 @@ import 'package:socieaty/core/utils/time_utils.dart';
 import 'package:socieaty/features/food_menu/customer/view/outlet_food_menu_screen.dart';
 import 'package:socieaty/features/post/post/view/post_sliver_grid_widget.dart';
 import 'package:socieaty/features/restaurant/model/socieaty_restaurant.dart';
+import 'package:socieaty/features/restaurant/provider/get_restaurant_reservation_config_provider.dart';
 import 'package:socieaty/features/restaurant/view/bottom_cart_widget.dart';
 import 'package:socieaty/features/restaurant/view/outlet_home_widget.dart';
 import 'package:socieaty/features/transaction_review/provider/get_all_restaurant_reviews_provider.dart';
@@ -84,6 +85,9 @@ class _OtherOutletScreenState extends ConsumerState<OtherOutletScreen>
 
     final reviewsAsync =
         ref.watch(getAllRestaurantReviewsProvider(widget.restaurant.restaurantData.id, null));
+
+    final reservationConfigAsync =
+        ref.watch(getRestaurantReservationConfigProvider(widget.restaurant.restaurantData.id));
 
     final List<OutletTabs> tabs = [
       OutletTabs(
@@ -408,6 +412,38 @@ class _OtherOutletScreenState extends ConsumerState<OtherOutletScreen>
                                       ),
                                     ),
                                     const SizedBox(width: 8),
+                                    reservationConfigAsync.when(
+                                      data: (reservationConfig) {
+                                        if (reservationConfig != null) {
+                                          return FilledButton(
+                                            onPressed: () {
+                                              context.push(
+                                                '/${widget.restaurant.id}/shop/reserve',
+                                                extra: widget.restaurant,
+                                              );
+                                            },
+                                            child: Padding(
+                                              padding: const EdgeInsets.symmetric(
+                                                  vertical: 4, horizontal: 12.0),
+                                              child: Row(
+                                                mainAxisAlignment: MainAxisAlignment.center,
+                                                children: [
+                                                  Icon(Icons.calendar_month, size: 20),
+                                                  const SizedBox(width: 4),
+                                                  Text(
+                                                    "Reserve Table",
+                                                  ),
+                                                ],
+                                              ),
+                                            ),
+                                          );
+                                        } else {
+                                          return const SizedBox.shrink();
+                                        }
+                                      },
+                                      loading: () => const SizedBox.shrink(),
+                                      error: (_, __) => const SizedBox.shrink(),
+                                    ),
                                   ],
                                 ),
                               ),
