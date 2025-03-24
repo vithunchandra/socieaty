@@ -1,11 +1,20 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
 import 'package:socieaty/core/theme/app_pallete.dart';
 import 'package:socieaty/core/theme/custom_themes/button_theme.dart';
+import 'package:socieaty/core/utils/custom_extension.dart';
+import 'package:socieaty/features/food_menu/model/menu_cart.dart';
+import 'package:socieaty/features/food_menu/provider/menu_cart_view_model.dart';
+import 'package:socieaty/features/menu_item/model/menu_cart_item.dart';
+import 'package:socieaty/features/reservation/customer/view/create_reservation_screen.dart';
+import 'package:socieaty/features/reservation/customer/view/reservation_food_selection_screen.dart';
+import 'package:socieaty/features/reservation/customer/viewstate/create_reservation_form_state.dart';
 import 'package:socieaty/features/restaurant/model/reservation_config.dart';
 import 'package:socieaty/features/restaurant/model/socieaty_restaurant.dart';
 import 'package:socieaty/features/restaurant/provider/get_restaurant_reservation_config_provider.dart';
+import 'package:socieaty/shared/widgets/dotted_divider.dart';
 
 class OutletReserveScreen extends ConsumerStatefulWidget {
   final SocieatyRestaurant restaurant;
@@ -24,6 +33,7 @@ class _OutletReserveScreenState extends ConsumerState<OutletReserveScreen> {
   final GlobalKey _sliverKey = GlobalKey();
   double _sliverHeight = 0;
   final List<int> _guestOptions = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10];
+  List<MenuCart> _selectedMenuItems = [];
 
   @override
   void initState() {
@@ -55,6 +65,37 @@ class _OutletReserveScreenState extends ConsumerState<OutletReserveScreen> {
     }
   }
 
+  void _navigateToFoodSelection() async {
+    // Clear any existing menu cart items for this restaurant
+    ref.read(menuCartViewModelProvider(widget.restaurant.id).notifier).clearCart();
+
+    // If we have selected menu items, add them to the cart
+    if (_selectedMenuItems.isNotEmpty) {
+      final cartNotifier = ref.read(menuCartViewModelProvider(widget.restaurant.id).notifier);
+      for (final item in _selectedMenuItems) {
+        for (int i = 0; i < item.quantity; i++) {
+          cartNotifier.addMenuToCart(item.menuItem);
+        }
+      }
+    }
+
+    final result = await context.push(
+      '/${widget.restaurant.id}/shop/reserve/food-selection',
+      extra: ReservationFoodSelectionScreenArgs(restaurant: widget.restaurant),
+    );
+
+    if (result is ReservationFoodSelectionScreenResult) {
+      setState(() {
+        _selectedMenuItems = result.menuItems;
+      });
+    } else {
+      // If no result was returned, ensure we're using the latest cart state
+      setState(() {
+        _selectedMenuItems = [];
+      });
+    }
+  }
+
   @override
   void dispose() {
     _scrollController.removeListener(_onScroll);
@@ -66,6 +107,10 @@ class _OutletReserveScreenState extends ConsumerState<OutletReserveScreen> {
   Widget build(BuildContext context) {
     final reservationConfigAsync =
         ref.watch(getRestaurantReservationConfigProvider(widget.restaurant.restaurantData.id));
+
+    final totalPrice = _selectedMenuItems.isEmpty
+        ? 0
+        : _selectedMenuItems.fold(0, (sum, item) => sum + item.quantity * item.menuItem.price);
 
     return Scaffold(
       backgroundColor: Colors.white,
@@ -82,7 +127,7 @@ class _OutletReserveScreenState extends ConsumerState<OutletReserveScreen> {
         elevation: 0,
         leading: IconButton(
           icon: Icon(Icons.arrow_back_ios, color: AppPallete.neutralColor.shade800, size: 20),
-          onPressed: () => Navigator.of(context).pop(),
+          onPressed: () => context.pop(),
         ),
       ),
       body: CustomScrollView(
@@ -93,6 +138,7 @@ class _OutletReserveScreenState extends ConsumerState<OutletReserveScreen> {
           _buildGuestSelection(),
           _buildDateSelection(),
           _buildTimeSlots(reservationConfigAsync),
+          _buildFoodMenuSelection(),
           SliverToBoxAdapter(
             child: Padding(
               padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 16.0),
@@ -100,7 +146,53 @@ class _OutletReserveScreenState extends ConsumerState<OutletReserveScreen> {
                 width: double.infinity,
                 height: 50,
                 child: FilledButton(
-                  onPressed: () {},
+                  onPressed: () {
+                    if (_selectedTime == null) {
+                      // Show error for time not selected
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        SnackBar(
+                          content: Text("Please select a time slot"),
+                          backgroundColor: AppPallete.errorColor,
+                        ),
+                      );
+                      return;
+                    }
+
+                    // Convert menu items to the format needed for the form
+                    final menuCartItems = _selectedMenuItems
+                        .map((menuCart) => MenuCartItem(
+                              menuId: menuCart.menuItem.id,
+                              quantity: menuCart.quantity,
+                            ))
+                        .toList();
+
+                    // Create the form state with the current selections
+                    final formState = CreateReservationFormState(
+                      restaurantId: widget.restaurant.restaurantData.id,
+                      reservationTime: DateTime(
+                        _selectedDate.year,
+                        _selectedDate.month,
+                        _selectedDate.day,
+                        int.parse(_selectedTime!.split(':')[0]),
+                        int.parse(_selectedTime!.split(':')[1]),
+                      ),
+                      peopleSize: _selectedGuests,
+                      note: "",
+                      menuItems: menuCartItems,
+                    );
+
+                    // Navigate to create reservation screen
+                    context.push(
+                      '/${widget.restaurant.id}/shop/reserve/create',
+                      extra: CreateReservationScreenArgs(
+                        formState: formState,
+                        restaurant: widget.restaurant,
+                        menuItems: _selectedMenuItems,
+                        selectedTime: _selectedTime!,
+                        
+                      ),
+                    );
+                  },
                   style: CustomButtonStyle.filledButtonStyle.copyWith(
                     backgroundColor: WidgetStateProperty.all(AppPallete.primaryColor),
                     shape: WidgetStateProperty.all(
@@ -124,6 +216,238 @@ class _OutletReserveScreenState extends ConsumerState<OutletReserveScreen> {
           ),
         ],
       ),
+    );
+  }
+
+  SliverToBoxAdapter _buildFoodMenuSelection() {
+    return SliverToBoxAdapter(
+      child: Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+        child: Container(
+          decoration: BoxDecoration(
+            color: Colors.white,
+            borderRadius: BorderRadius.circular(12),
+            boxShadow: [
+              BoxShadow(
+                color: AppPallete.neutralColor.shade200.withAlpha(80),
+                blurRadius: 8,
+                offset: const Offset(0, 2),
+              ),
+            ],
+          ),
+          child: Padding(
+            padding: const EdgeInsets.all(12),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Row(
+                  children: [
+                    Icon(Icons.restaurant_menu, color: AppPallete.primaryColor, size: 20),
+                    const SizedBox(width: 8),
+                    Text(
+                      'Pre-order Menu',
+                      style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                            fontWeight: FontWeight.w500,
+                          ),
+                    ),
+                  ],
+                ),
+                const SizedBox(height: 12),
+                if (_selectedMenuItems.isEmpty)
+                  _buildEmptyMenuState()
+                else
+                  _buildSelectedMenuList(),
+                const SizedBox(height: 16),
+                SizedBox(
+                  width: double.infinity,
+                  child: OutlinedButton.icon(
+                    onPressed: _navigateToFoodSelection,
+                    icon: Icon(
+                      _selectedMenuItems.isEmpty ? Icons.add : Icons.edit,
+                      color: AppPallete.primaryColor,
+                      size: 18,
+                    ),
+                    label: Text(
+                      _selectedMenuItems.isEmpty ? 'Add Menu Items' : 'Edit Menu Items',
+                      style: TextStyle(color: AppPallete.primaryColor),
+                    ),
+                    style: OutlinedButton.styleFrom(
+                      padding: const EdgeInsets.symmetric(vertical: 12),
+                      side: BorderSide(color: AppPallete.primaryColor),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(10),
+                      ),
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildEmptyMenuState() {
+    return Container(
+      padding: const EdgeInsets.symmetric(vertical: 24, horizontal: 16),
+      decoration: BoxDecoration(
+        color: AppPallete.neutralColor.shade50,
+        borderRadius: BorderRadius.circular(8),
+        border: Border.all(color: AppPallete.neutralColor.shade200),
+      ),
+      child: Column(
+        children: [
+          Icon(
+            Icons.restaurant_outlined,
+            size: 48,
+            color: AppPallete.neutralColor.shade400,
+          ),
+          const SizedBox(height: 12),
+          Text(
+            'No menu items selected',
+            style: Theme.of(context).textTheme.titleSmall?.copyWith(
+                  fontWeight: FontWeight.w500,
+                  color: AppPallete.neutralColor.shade700,
+                ),
+            textAlign: TextAlign.center,
+          ),
+          const SizedBox(height: 4),
+          Text(
+            'Pre-order your favorite dishes to save time during your visit',
+            style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                  color: AppPallete.neutralColor.shade600,
+                ),
+            textAlign: TextAlign.center,
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildSelectedMenuList() {
+    final totalPrice = _selectedMenuItems.isEmpty
+        ? 0
+        : _selectedMenuItems.fold(0, (sum, item) => sum + item.quantity * item.menuItem.price);
+
+    return Column(
+      children: [
+        Container(
+          padding: const EdgeInsets.all(12),
+          decoration: BoxDecoration(
+            color: AppPallete.primaryColor.withAlpha(15),
+            borderRadius: BorderRadius.circular(8),
+          ),
+          child: Row(
+            children: [
+              Icon(
+                Icons.info_outline,
+                size: 16,
+                color: AppPallete.primaryColor,
+              ),
+              const SizedBox(width: 8),
+              Expanded(
+                child: Text(
+                  'These items will be prepared ahead of your arrival',
+                  style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                        color: AppPallete.primaryColor,
+                      ),
+                ),
+              ),
+            ],
+          ),
+        ),
+        const SizedBox(height: 12),
+        ListView.separated(
+          physics: const NeverScrollableScrollPhysics(),
+          shrinkWrap: true,
+          itemCount: _selectedMenuItems.length,
+          separatorBuilder: (context, index) => const Divider(height: 0.5),
+          itemBuilder: (context, index) {
+            final item = _selectedMenuItems[index];
+            return Padding(
+              padding: const EdgeInsets.symmetric(vertical: 8),
+              child: Row(
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: [
+                  Container(
+                    width: 24,
+                    height: 24,
+                    decoration: BoxDecoration(
+                      color: AppPallete.primaryColor.withAlpha(25),
+                      shape: BoxShape.circle,
+                    ),
+                    child: Center(
+                      child: Text(
+                        item.quantity.toString(),
+                        style: TextStyle(
+                          color: AppPallete.primaryColor,
+                          fontWeight: FontWeight.bold,
+                          fontSize: 12,
+                        ),
+                      ),
+                    ),
+                  ),
+                  const SizedBox(width: 12),
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          item.menuItem.name,
+                          style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                                fontWeight: FontWeight.w500,
+                              ),
+                        ),
+                        if (item.menuItem.description.isNotEmpty)
+                          Text(
+                            item.menuItem.description,
+                            style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                                  color: AppPallete.neutralColor.shade600,
+                                ),
+                            maxLines: 1,
+                            overflow: TextOverflow.ellipsis,
+                          ),
+                      ],
+                    ),
+                  ),
+                  const SizedBox(width: 8),
+                  Text(
+                    (item.menuItem.price * item.quantity).toIDRFormat(),
+                    style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                          fontWeight: FontWeight.w600,
+                        ),
+                  ),
+                ],
+              ),
+            );
+          },
+        ),
+        if (_selectedMenuItems.isNotEmpty) ...[
+          const Padding(
+            padding: EdgeInsets.symmetric(vertical: 8),
+            child: DottedDivider(color: AppPallete.neutralColor),
+          ),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Text(
+                'Total Menu Price',
+                style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                      fontWeight: FontWeight.w500,
+                    ),
+              ),
+              Text(
+                totalPrice.toIDRFormat(),
+                style: Theme.of(context).textTheme.titleSmall?.copyWith(
+                      fontWeight: FontWeight.bold,
+                      color: AppPallete.primaryColor,
+                    ),
+              ),
+            ],
+          ),
+        ],
+      ],
     );
   }
 

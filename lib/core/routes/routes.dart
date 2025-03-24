@@ -21,7 +21,9 @@ import 'package:socieaty/features/home/restaurant/view/restaurant_dashboard_scre
 import 'package:socieaty/features/livestream/view/livestream_home_screen.dart';
 import 'package:socieaty/features/map/view/select_location.dart';
 import 'package:socieaty/features/post/post/view/post_screen.dart';
+import 'package:socieaty/features/reservation/customer/view/create_reservation_screen.dart';
 import 'package:socieaty/features/reservation/customer/view/outlet_reserve_screen.dart';
+import 'package:socieaty/features/reservation/customer/view/reservation_food_selection_screen.dart';
 import 'package:socieaty/features/reservation/restaurant/view/incoming_reservation_offers_screen.dart';
 import 'package:socieaty/features/reservation/restaurant/view/reservation_navigator_screen.dart';
 import 'package:socieaty/features/reservation/restaurant/view/reservation_schedule_calender_screen.dart';
@@ -341,6 +343,20 @@ GoRouter router(Ref ref) {
                 builder: (context, state) => OutletReserveScreen(
                   restaurant: state.extra as SocieatyRestaurant,
                 ),
+                routes: [
+                  GoRoute(
+                    path: 'food-selection',
+                    builder: (context, state) => ReservationFoodSelectionScreen(
+                      args: state.extra as ReservationFoodSelectionScreenArgs,
+                    ),
+                  ),
+                  GoRoute(
+                    path: 'create',
+                    builder: (context, state) => CreateReservationScreen(
+                      args: state.extra as CreateReservationScreenArgs,
+                    ),
+                  ),
+                ],
               ),
             ],
           ),

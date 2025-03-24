@@ -1,8 +1,6 @@
 import 'package:riverpod_annotation/riverpod_annotation.dart';
-import 'package:socieaty/core/utils/converter.dart';
 import 'package:socieaty/features/account/customer/viewstate/account_view_state.dart';
 import 'package:socieaty/features/authentication/repository/auth_local_repository.dart';
-import 'package:socieaty/features/restaurant/provider/get_restaurant_reservation_config_provider.dart';
 import 'package:socieaty/shared/view_state.dart';
 
 part 'account_view_model.g.dart';

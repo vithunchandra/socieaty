@@ -183,6 +183,9 @@ class _OutletFoodMenuScreenState extends ConsumerState<OutletFoodMenuScreen> {
             child: BottomCartWidget(
               restaurant: widget.args.restaurant,
               scrollController: _scrollController,
+              onClick: (innerContext) {
+                context.push("/${widget.args.restaurant.id}/shop/order", extra: widget.args.restaurant);
+              },
               child: CustomScrollView(
                 controller: _scrollController,
                 slivers: [

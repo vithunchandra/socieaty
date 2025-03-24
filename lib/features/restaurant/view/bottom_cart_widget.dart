@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:go_router/go_router.dart';
 import 'package:socieaty/core/theme/app_pallete.dart';
 import 'package:socieaty/core/utils/custom_extension.dart';
 import 'package:socieaty/features/food_menu/provider/menu_cart_view_model.dart';
@@ -12,6 +11,7 @@ class BottomCartWidget extends ConsumerStatefulWidget {
   final Widget child;
   final SocieatyRestaurant restaurant;
   final ScrollController? scrollController;
+  final void Function(BuildContext context) onClick;
   static const double _cartHeight = 80;
 
   const BottomCartWidget({
@@ -19,6 +19,7 @@ class BottomCartWidget extends ConsumerStatefulWidget {
     required this.child,
     required this.restaurant,
     this.scrollController,
+    required this.onClick,
   });
 
   @override
@@ -116,7 +117,7 @@ class _BottomCartWidgetState extends ConsumerState<BottomCartWidget> {
               alignment: Alignment.center,
               child: ElevatedButton(
                 onPressed: () {
-                  context.push("/${widget.restaurant.id}/shop/order", extra: widget.restaurant);
+                  widget.onClick(context);
                 },
                 style: ElevatedButton.styleFrom(
                   backgroundColor: AppPallete.primaryColor,

@@ -138,6 +138,9 @@ class _OtherOutletScreenState extends ConsumerState<OtherOutletScreen>
         body: BottomCartWidget(
           restaurant: widget.restaurant,
           scrollController: _scrollController,
+          onClick: (innerContext) {
+            context.push("/${widget.restaurant.id}/shop/order", extra: widget.restaurant);
+          },
           child: NestedScrollView(
             controller: _scrollController,
             headerSliverBuilder: (context, innerBoxIsScrolled) {
