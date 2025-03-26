@@ -1,6 +1,9 @@
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import 'package:socieaty/core/enums/transaction.enum.dart';
+import 'package:socieaty/core/theme/app_pallete.dart';
+import 'package:socieaty/features/menu_item/model/menu_item.dart';
 
 extension StringCasingExtension on String {
   String toCapitalized() {
@@ -30,7 +33,6 @@ extension StringCasingExtension on String {
 }
 
 extension ListStringExtension on List<String> {
-
   String toHashtags() {
     return where((hashtag) => hashtag.isNotEmpty) // Exclude empty strings
         .map((hashtag) => "#$hashtag") // Prepend #
@@ -71,5 +73,39 @@ extension PriceFormatter on num {
       RegExp(r'(\d{1,3})(?=(\d{3})+(?!\d))'),
       (Match m) => '${m[1]}.',
     );
+  }
+}
+
+extension MenuItemsExtension on List<MenuItem> {
+  int calculateTotalPrice() {
+    return fold(0, (sum, item) => sum + item.totalPrice);
+  }
+}
+
+extension ReservationStatusExtension on ReservationStatus {
+  Color getStatusColor() {
+    switch (this) {
+      case ReservationStatus.confirmed:
+        return AppPallete.successColor;
+      case ReservationStatus.pending:
+        return AppPallete.warningColor;
+      case ReservationStatus.cancelled:
+        return AppPallete.errorColor;
+      case ReservationStatus.completed:
+        return AppPallete.infoColor;
+    }
+  }
+
+  IconData getStatusIcon() {
+    switch (this) {
+      case ReservationStatus.confirmed:
+        return Icons.check_circle;
+      case ReservationStatus.pending:
+        return Icons.pending;
+      case ReservationStatus.cancelled:
+        return Icons.cancel;
+      case ReservationStatus.completed:
+        return Icons.task_alt;
+    }
   }
 }

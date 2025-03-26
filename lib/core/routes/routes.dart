@@ -24,6 +24,7 @@ import 'package:socieaty/features/post/post/view/post_screen.dart';
 import 'package:socieaty/features/reservation/customer/view/create_reservation_screen.dart';
 import 'package:socieaty/features/reservation/customer/view/outlet_reserve_screen.dart';
 import 'package:socieaty/features/reservation/customer/view/reservation_food_selection_screen.dart';
+import 'package:socieaty/features/reservation/customer/view/track_reservation_screen.dart';
 import 'package:socieaty/features/reservation/restaurant/view/incoming_reservation_offers_screen.dart';
 import 'package:socieaty/features/reservation/restaurant/view/reservation_navigator_screen.dart';
 import 'package:socieaty/features/reservation/restaurant/view/reservation_schedule_calender_screen.dart';
@@ -354,6 +355,12 @@ GoRouter router(Ref ref) {
                     path: 'create',
                     builder: (context, state) => CreateReservationScreen(
                       args: state.extra as CreateReservationScreenArgs,
+                    ),
+                  ),
+                  GoRoute(
+                    path: 'track',
+                    builder: (context, state) => TrackReservationScreen(
+                      reservationId: state.extra as String,
                     ),
                   ),
                 ],

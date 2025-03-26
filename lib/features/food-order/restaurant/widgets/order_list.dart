@@ -75,8 +75,6 @@ class _OrderListState extends ConsumerState<OrderList> {
     ref.listen(newOrderNotificationProvider, (previous, next) {
       if (next != null && widget.statusFilter.contains(next.foodOrderStatus)) {
         _addNewOrder(next);
-
-        if (mounted && context.mounted) {}
       }
     });
 

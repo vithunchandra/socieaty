@@ -112,109 +112,115 @@ class _OutletReserveScreenState extends ConsumerState<OutletReserveScreen> {
         ? 0
         : _selectedMenuItems.fold(0, (sum, item) => sum + item.quantity * item.menuItem.price);
 
-    return Scaffold(
-      backgroundColor: Colors.white,
-      appBar: AppBar(
+    return PopScope(
+      onPopInvokedWithResult: (didPop, result) {
+        if (didPop) {
+          ref.read(menuCartViewModelProvider(widget.restaurant.id).notifier).clearCart();
+        }
+      },
+      child: Scaffold(
         backgroundColor: Colors.white,
-        surfaceTintColor: Colors.transparent,
-        title: Text(
-          _isCollapsed ? 'Book a table' : '',
-          style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                fontWeight: FontWeight.bold,
-              ),
+        appBar: AppBar(
+          backgroundColor: Colors.white,
+          surfaceTintColor: Colors.transparent,
+          title: Text(
+            _isCollapsed ? 'Book a table' : '',
+            style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                  fontWeight: FontWeight.bold,
+                ),
+          ),
+          centerTitle: true,
+          elevation: 0,
+          leading: IconButton(
+            icon: Icon(Icons.arrow_back_ios, color: AppPallete.neutralColor.shade800, size: 20),
+            onPressed: () => context.pop(),
+          ),
         ),
-        centerTitle: true,
-        elevation: 0,
-        leading: IconButton(
-          icon: Icon(Icons.arrow_back_ios, color: AppPallete.neutralColor.shade800, size: 20),
-          onPressed: () => context.pop(),
-        ),
-      ),
-      body: CustomScrollView(
-        controller: _scrollController,
-        physics: const BouncingScrollPhysics(),
-        slivers: [
-          _buildHeader(),
-          _buildGuestSelection(),
-          _buildDateSelection(),
-          _buildTimeSlots(reservationConfigAsync),
-          _buildFoodMenuSelection(),
-          SliverToBoxAdapter(
-            child: Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 16.0),
-              child: SizedBox(
-                width: double.infinity,
-                height: 50,
-                child: FilledButton(
-                  onPressed: () {
-                    if (_selectedTime == null) {
-                      // Show error for time not selected
-                      ScaffoldMessenger.of(context).showSnackBar(
-                        SnackBar(
-                          content: Text("Please select a time slot"),
-                          backgroundColor: AppPallete.errorColor,
+        body: CustomScrollView(
+          controller: _scrollController,
+          physics: const BouncingScrollPhysics(),
+          slivers: [
+            _buildHeader(),
+            _buildGuestSelection(),
+            _buildDateSelection(),
+            _buildTimeSlots(reservationConfigAsync),
+            _buildFoodMenuSelection(),
+            SliverToBoxAdapter(
+              child: Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 16.0),
+                child: SizedBox(
+                  width: double.infinity,
+                  height: 50,
+                  child: FilledButton(
+                    onPressed: () {
+                      if (_selectedTime == null) {
+                        // Show error for time not selected
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          SnackBar(
+                            content: Text("Please select a time slot"),
+                            backgroundColor: AppPallete.errorColor,
+                          ),
+                        );
+                        return;
+                      }
+
+                      // Convert menu items to the format needed for the form
+                      final menuCartItems = _selectedMenuItems
+                          .map((menuCart) => MenuCartItem(
+                                menuId: menuCart.menuItem.id,
+                                quantity: menuCart.quantity,
+                              ))
+                          .toList();
+
+                      // Create the form state with the current selections
+                      final formState = CreateReservationFormState(
+                        restaurantId: widget.restaurant.restaurantData.id,
+                        reservationTime: DateTime(
+                          _selectedDate.year,
+                          _selectedDate.month,
+                          _selectedDate.day,
+                          int.parse(_selectedTime!.split(':')[0]),
+                          int.parse(_selectedTime!.split(':')[1]),
+                        ),
+                        peopleSize: _selectedGuests,
+                        note: "",
+                        menuItems: menuCartItems,
+                      );
+
+                      // Navigate to create reservation screen
+                      context.push(
+                        '/${widget.restaurant.id}/shop/reserve/create',
+                        extra: CreateReservationScreenArgs(
+                          formState: formState,
+                          restaurant: widget.restaurant,
+                          menuItems: _selectedMenuItems,
+                          selectedTime: _selectedTime!,
                         ),
                       );
-                      return;
-                    }
-
-                    // Convert menu items to the format needed for the form
-                    final menuCartItems = _selectedMenuItems
-                        .map((menuCart) => MenuCartItem(
-                              menuId: menuCart.menuItem.id,
-                              quantity: menuCart.quantity,
-                            ))
-                        .toList();
-
-                    // Create the form state with the current selections
-                    final formState = CreateReservationFormState(
-                      restaurantId: widget.restaurant.restaurantData.id,
-                      reservationTime: DateTime(
-                        _selectedDate.year,
-                        _selectedDate.month,
-                        _selectedDate.day,
-                        int.parse(_selectedTime!.split(':')[0]),
-                        int.parse(_selectedTime!.split(':')[1]),
+                    },
+                    style: CustomButtonStyle.filledButtonStyle.copyWith(
+                      backgroundColor: WidgetStateProperty.all(AppPallete.primaryColor),
+                      shape: WidgetStateProperty.all(
+                        RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
                       ),
-                      peopleSize: _selectedGuests,
-                      note: "",
-                      menuItems: menuCartItems,
-                    );
-
-                    // Navigate to create reservation screen
-                    context.push(
-                      '/${widget.restaurant.id}/shop/reserve/create',
-                      extra: CreateReservationScreenArgs(
-                        formState: formState,
-                        restaurant: widget.restaurant,
-                        menuItems: _selectedMenuItems,
-                        selectedTime: _selectedTime!,
-                        
-                      ),
-                    );
-                  },
-                  style: CustomButtonStyle.filledButtonStyle.copyWith(
-                    backgroundColor: WidgetStateProperty.all(AppPallete.primaryColor),
-                    shape: WidgetStateProperty.all(
-                      RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
                     ),
-                  ),
-                  child: Text(
-                    'Proceed to Reservation',
-                    style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                          color: Colors.white,
-                          fontSize: 16,
-                          fontWeight: FontWeight.bold,
-                        ),
+                    child: Text(
+                      'Proceed to Reservation',
+                      style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                            color: Colors.white,
+                            fontSize: 16,
+                            fontWeight: FontWeight.bold,
+                          ),
+                    ),
                   ),
                 ),
               ),
             ),
-          ),
-          const SliverToBoxAdapter(
-            child: SizedBox(height: 16),
-          ),
-        ],
+            const SliverToBoxAdapter(
+              child: SizedBox(height: 16),
+            ),
+          ],
+        ),
       ),
     );
   }

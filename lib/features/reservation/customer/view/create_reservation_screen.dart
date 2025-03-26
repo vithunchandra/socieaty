@@ -3,9 +3,13 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:socieaty/core/theme/app_pallete.dart';
 import 'package:socieaty/core/utils/custom_extension.dart';
+import 'package:socieaty/core/utils/show_snackbar.dart';
 import 'package:socieaty/features/food_menu/model/menu_cart.dart';
+import 'package:socieaty/features/reservation/customer/viewmodel/create_reservation_viewmodel.dart';
 import 'package:socieaty/features/reservation/customer/viewstate/create_reservation_form_state.dart';
+import 'package:socieaty/features/reservation/model/reservation.dart';
 import 'package:socieaty/features/restaurant/model/socieaty_restaurant.dart';
+import 'package:socieaty/shared/view_state.dart';
 import 'package:socieaty/shared/widgets/dotted_divider.dart';
 import 'package:socieaty/shared/widgets/profile_picture_widget.dart';
 import 'package:socieaty/core/utils/converter.dart';
@@ -159,6 +163,22 @@ class _CreateReservationScreenState extends ConsumerState<CreateReservationScree
         ? 0
         : widget.args.menuItems.fold(0, (sum, item) => sum + item.menuItem.price * item.quantity);
 
+    ref.listen(createReservationViewModelProvider, (previous, next) {
+      switch (next.createdReservation) {
+        case SuccessState(data: final data):
+          debugPrint(data.toString());
+          showSnackbar(context, 'Reservation created successfully');
+          context.pushReplacement(
+            '/${widget.args.restaurant.id}/shop/reserve/track',
+            extra: data.reservationId,
+          );
+        case ErrorState(message: final message):
+          showSnackbar(context, message);
+        case LoadingState<Reservation>():
+        case IdleState():
+      }
+    });
+
     return Scaffold(
       backgroundColor: AppPallete.neutralColor.shade50,
       appBar: AppBar(
@@ -309,17 +329,9 @@ class _CreateReservationScreenState extends ConsumerState<CreateReservationScree
             children: [
               ClipRRect(
                 borderRadius: BorderRadius.circular(8),
-                child: Image.network(
-                  widget.args.restaurant.restaurantData.restaurantBannerUrl,
-                  width: 50,
-                  height: 50,
-                  fit: BoxFit.cover,
-                  errorBuilder: (context, url, error) => Container(
-                    width: 50,
-                    height: 50,
-                    color: Colors.grey[300],
-                    child: const Icon(Icons.restaurant, color: Colors.white),
-                  ),
+                child: ProfilePictureWidget(
+                  user: UserConverter.restaurantToUser(widget.args.restaurant),
+                  radius: 16,
                 ),
               ),
               const SizedBox(width: 12),
@@ -538,55 +550,6 @@ class _CreateReservationScreenState extends ConsumerState<CreateReservationScree
           ),
         ],
       ),
-    );
-  }
-
-  Widget _buildDetailRow({
-    required IconData icon,
-    required String label,
-    required String value,
-    Color? backgroundColor,
-    Color? iconColor,
-  }) {
-    return Row(
-      children: [
-        Container(
-          padding: const EdgeInsets.all(10),
-          decoration: BoxDecoration(
-            color: backgroundColor ?? AppPallete.primaryColor.withAlpha(25),
-            borderRadius: BorderRadius.circular(12),
-          ),
-          child: Icon(
-            icon,
-            color: iconColor ?? AppPallete.primaryColor,
-            size: 20,
-          ),
-        ),
-        const SizedBox(width: 16),
-        Expanded(
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text(
-                label,
-                style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                      color: AppPallete.neutralColor.shade500,
-                      fontWeight: FontWeight.w500,
-                    ),
-              ),
-              const SizedBox(height: 4),
-              Text(
-                value,
-                style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                      fontWeight: FontWeight.w600,
-                      color: AppPallete.neutralColor.shade800,
-                    ),
-                overflow: TextOverflow.ellipsis,
-              ),
-            ],
-          ),
-        ),
-      ],
     );
   }
 
@@ -977,7 +940,9 @@ class _CreateReservationScreenState extends ConsumerState<CreateReservationScree
               child: FilledButton(
                 onPressed: () {
                   // Here you would submit the reservation
-                  context.pop(_formState);
+                  ref
+                      .read(createReservationViewModelProvider.notifier)
+                      .createReservation(_formState);
                 },
                 style: FilledButton.styleFrom(
                   backgroundColor: AppPallete.primaryColor,
@@ -991,7 +956,7 @@ class _CreateReservationScreenState extends ConsumerState<CreateReservationScree
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
                     Text(
-                      "Confirm Reservation",
+                      "Reserve",
                       style: TextStyle(
                         fontWeight: FontWeight.bold,
                         fontSize: 16,

@@ -1,285 +1,117 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:intl/intl.dart';
+import 'package:socieaty/core/enums/transaction.enum.dart';
 import 'package:socieaty/core/theme/app_pallete.dart';
+import 'package:socieaty/core/utils/show_snackbar.dart';
+import 'package:socieaty/features/reservation/model/reservation.dart';
+import 'package:socieaty/features/reservation/restaurant/provider/get_restaurant_reservations_provider.dart';
+import 'package:socieaty/features/reservation/restaurant/socket/restaurant_reservation_socket_service.dart';
+import 'package:socieaty/features/reservation/restaurant/widgets/reservation_card.dart';
+import 'package:socieaty/features/reservation/restaurant/widgets/reservation_details_sheet.dart';
+import 'package:socieaty/features/reservation/restaurant/widgets/reservation_list.dart';
 
-class IncomingReservationOffersScreen extends StatelessWidget {
-  const IncomingReservationOffersScreen({super.key});
+class IncomingReservationOffersScreen extends ConsumerStatefulWidget {
+  final Reservation? initialReservation;
+
+  const IncomingReservationOffersScreen({super.key, this.initialReservation});
+
+  @override
+  ConsumerState<IncomingReservationOffersScreen> createState() =>
+      _IncomingReservationOffersScreenState();
+}
+
+class _IncomingReservationOffersScreenState extends ConsumerState<IncomingReservationOffersScreen>
+    with SingleTickerProviderStateMixin {
+  late TabController _tabController;
+  bool _isSocketInitialized = false;
+
+  @override
+  void initState() {
+    super.initState();
+    _tabController = TabController(length: 3, vsync: this);
+
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (!_isSocketInitialized) {
+        final socketService = ref.read(restaurantReservationSocketServiceProvider);
+        socketService.initConnection();
+
+        socketService.listenNewReservation((reservation) {
+          showSnackbar(context, "New reservation from ${reservation.customer.name}");
+          ref.invalidate(getRestaurantReservationsProvider([ReservationStatus.pending]));
+        });
+
+        _isSocketInitialized = true;
+      }
+
+      if (widget.initialReservation != null) {
+        _showReservationDetails(widget.initialReservation!);
+      }
+    });
+  }
+
+  @override
+  void dispose() {
+    _tabController.dispose();
+    super.dispose();
+  }
+
+  void _showReservationDetails(Reservation reservation) {
+    showModalBottomSheet(
+      context: context,
+      isScrollControlled: true,
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(top: Radius.circular(16)),
+      ),
+      builder: (context) => DraggableScrollableSheet(
+        initialChildSize: 0.8,
+        maxChildSize: 0.9,
+        minChildSize: 0.5,
+        expand: false,
+        builder: (_, scrollController) => ReservationDetailsSheet(
+          reservation: reservation,
+          scrollController: scrollController,
+          statusFilter: [reservation.reservationStatus],
+        ),
+      ),
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
+        elevation: 0,
         title: Text(
-          'New Reservation Offers',
+          'Reservations',
           style: Theme.of(context).textTheme.titleLarge?.copyWith(
                 fontWeight: FontWeight.bold,
+                color: Colors.white,
               ),
         ),
         centerTitle: true,
-        backgroundColor: Colors.white,
-        elevation: 0,
+        backgroundColor: AppPallete.primaryColor,
+        bottom: TabBar(
+          controller: _tabController,
+          indicatorColor: Colors.white,
+          indicatorWeight: 3,
+          labelColor: Colors.white,
+          unselectedLabelColor: Colors.white.withAlpha(178),
+          tabs: const [
+            Tab(text: 'Pending'),
+            Tab(text: 'Confirmed'),
+            Tab(text: 'Completed'),
+          ],
+        ),
       ),
-      body: ListView.separated(
-        padding: const EdgeInsets.all(16),
-        itemCount: dummyOffers.length,
-        separatorBuilder: (context, index) => const SizedBox(height: 12),
-        itemBuilder: (context, index) {
-          final offer = dummyOffers[index];
-          return _buildOfferCard(context, offer);
-        },
-      ),
-    );
-  }
-
-  Widget _buildOfferCard(BuildContext context, ReservationOffer offer) {
-    return Container(
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(16),
-        boxShadow: [
-          BoxShadow(
-            color: AppPallete.neutralColor.shade200.withAlpha(25),
-            blurRadius: 10,
-            offset: const Offset(0, 4),
-          ),
-        ],
-      ),
-      child: Column(
+      body: TabBarView(
+        controller: _tabController,
         children: [
-          Container(
-            padding: const EdgeInsets.all(16),
-            decoration: BoxDecoration(
-              color: AppPallete.primaryColor.withAlpha(25),
-              borderRadius: const BorderRadius.only(
-                topLeft: Radius.circular(16),
-                topRight: Radius.circular(16),
-              ),
-            ),
-            child: Row(
-              children: [
-                Icon(
-                  Icons.access_time,
-                  color: AppPallete.primaryColor,
-                  size: 16,
-                ),
-                const SizedBox(width: 8),
-                Text(
-                  'Requested ${offer.timeAgo}',
-                  style: TextStyle(
-                    color: AppPallete.primaryColor,
-                    fontWeight: FontWeight.bold,
-                  ),
-                ),
-              ],
-            ),
-          ),
-          Padding(
-            padding: const EdgeInsets.all(16),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Row(
-                  children: [
-                    CircleAvatar(
-                      backgroundImage: NetworkImage(offer.customerImage),
-                      radius: 24,
-                    ),
-                    const SizedBox(width: 16),
-                    Expanded(
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Text(
-                            offer.customerName,
-                            style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                                  fontWeight: FontWeight.bold,
-                                ),
-                          ),
-                          Text(
-                            offer.phoneNumber,
-                            style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                                  color: AppPallete.neutralColor.shade500,
-                                ),
-                          ),
-                        ],
-                      ),
-                    ),
-                  ],
-                ),
-                const SizedBox(height: 16),
-                _buildDetailRow(
-                  context,
-                  Icons.calendar_today,
-                  'Date',
-                  offer.date,
-                ),
-                const SizedBox(height: 8),
-                _buildDetailRow(
-                  context,
-                  Icons.access_time,
-                  'Time',
-                  offer.time,
-                ),
-                const SizedBox(height: 8),
-                _buildDetailRow(
-                  context,
-                  Icons.people,
-                  'People',
-                  '${offer.peopleCount} persons',
-                ),
-                const SizedBox(height: 8),
-                _buildDetailRow(
-                  context,
-                  Icons.comment,
-                  'Notes',
-                  offer.notes,
-                ),
-                const SizedBox(height: 16),
-                Row(
-                  children: [
-                    Expanded(
-                      child: OutlinedButton(
-                        onPressed: () {
-                          // Handle decline
-                        },
-                        style: OutlinedButton.styleFrom(
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(10),
-                          ),
-                          side: BorderSide(color: AppPallete.errorColor),
-                          padding: const EdgeInsets.symmetric(vertical: 12),
-                        ),
-                        child: Text(
-                          'Decline',
-                          style: TextStyle(
-                            color: AppPallete.errorColor,
-                            fontWeight: FontWeight.bold,
-                          ),
-                        ),
-                      ),
-                    ),
-                    const SizedBox(width: 16),
-                    Expanded(
-                      child: ElevatedButton(
-                        onPressed: () {
-                          // Handle accept
-                        },
-                        style: ElevatedButton.styleFrom(
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(10),
-                          ),
-                          backgroundColor: AppPallete.primaryColor,
-                          padding: const EdgeInsets.symmetric(vertical: 12),
-                        ),
-                        child: const Text(
-                          'Accept',
-                          style: TextStyle(
-                            color: Colors.white,
-                            fontWeight: FontWeight.bold,
-                          ),
-                        ),
-                      ),
-                    ),
-                  ],
-                ),
-              ],
-            ),
-          ),
+          ReservationList(status: [ReservationStatus.pending]),
+          ReservationList(status: [ReservationStatus.confirmed]),
+          ReservationList(status: [ReservationStatus.completed]),
         ],
       ),
     );
   }
-
-  Widget _buildDetailRow(
-    BuildContext context,
-    IconData icon,
-    String title,
-    String value,
-  ) {
-    return Row(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Icon(
-          icon,
-          size: 16,
-          color: AppPallete.neutralColor.shade500,
-        ),
-        const SizedBox(width: 8),
-        Expanded(
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text(
-                title,
-                style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                      color: AppPallete.neutralColor.shade500,
-                    ),
-              ),
-              Text(
-                value,
-                style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                      fontWeight: FontWeight.w500,
-                    ),
-              ),
-            ],
-          ),
-        ),
-      ],
-    );
-  }
 }
-
-class ReservationOffer {
-  final String customerName;
-  final String customerImage;
-  final String phoneNumber;
-  final String date;
-  final String time;
-  final int peopleCount;
-  final String notes;
-  final String timeAgo;
-
-  ReservationOffer({
-    required this.customerName,
-    required this.customerImage,
-    required this.phoneNumber,
-    required this.date,
-    required this.time,
-    required this.peopleCount,
-    required this.notes,
-    required this.timeAgo,
-  });
-}
-
-// Dummy data for reservation offers
-final List<ReservationOffer> dummyOffers = [
-  ReservationOffer(
-    customerName: 'Sarah Johnson',
-    customerImage: 'https://randomuser.me/api/portraits/women/44.jpg',
-    phoneNumber: '123-456-7890',
-    date: 'Tomorrow',
-    time: '19:00',
-    peopleCount: 2,
-    notes: 'Anniversary dinner. Would like a table near the window.',
-    timeAgo: '10 minutes ago',
-  ),
-  ReservationOffer(
-    customerName: 'Alex Williams',
-    customerImage: 'https://randomuser.me/api/portraits/men/32.jpg',
-    phoneNumber: '234-567-8901',
-    date: 'Aug 24, 2023',
-    time: '20:30',
-    peopleCount: 4,
-    notes: 'Business dinner. Need a quiet table.',
-    timeAgo: '25 minutes ago',
-  ),
-  ReservationOffer(
-    customerName: 'Emma Thompson',
-    customerImage: 'https://randomuser.me/api/portraits/women/65.jpg',
-    phoneNumber: '345-678-9012',
-    date: 'Aug 25, 2023',
-    time: '18:00',
-    peopleCount: 6,
-    notes: 'Birthday celebration. Will bring cake.',
-    timeAgo: '1 hour ago',
-  ),
-];
