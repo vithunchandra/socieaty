@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:go_router/go_router.dart';
+import 'package:socieaty/features/reservation/enum/reservation_status_enum.dart';
 import 'package:socieaty/features/restaurant/model/reservation_config.dart';
 import 'package:calendar_view/calendar_view.dart';
 import 'package:socieaty/core/theme/app_pallete.dart';

@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
-import 'package:socieaty/core/enums/transaction.enum.dart';
 import 'package:socieaty/core/network/api_result.dart';
 import 'package:socieaty/core/theme/app_pallete.dart';
 import 'package:socieaty/core/utils/show_snackbar.dart';
@@ -16,6 +15,9 @@ import 'package:socieaty/features/food-order/customer/view/states/error_view.dar
 import 'package:socieaty/features/food-order/customer/view/states/generic_error_view.dart';
 import 'package:socieaty/features/food-order/customer/view/states/loading_view.dart';
 import 'package:socieaty/features/food-order/customer/view/states/rejected_order_screen.dart';
+import 'package:socieaty/features/food-order/enum/food_order_status_enum.dart';
+
+
 
 class TrackOrderScreen extends ConsumerStatefulWidget {
   final String orderId;

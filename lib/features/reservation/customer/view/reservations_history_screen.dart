@@ -1,33 +1,43 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:socieaty/core/theme/app_pallete.dart';
-import 'package:socieaty/features/food-order/customer/provider/get_all_food_order_transactions_provider.dart';
-import 'package:socieaty/features/food-order/customer/widgets/order_list.dart';
-import 'package:socieaty/features/food-order/enum/food_order_status_enum.dart';
+import 'package:socieaty/features/reservation/customer/provider/get_customer_reservations_provider.dart';
+import 'package:socieaty/features/reservation/customer/viewstate/get_reservations_history_query_state.dart';
+import 'package:socieaty/features/reservation/customer/widgets/reservation_filter_widget.dart';
+import 'package:socieaty/features/reservation/customer/widgets/reservation_list.dart';
+import 'package:socieaty/features/reservation/enum/reservation_status_enum.dart';
 
-class OrderHistoryScreen extends ConsumerStatefulWidget {
-  const OrderHistoryScreen({super.key});
+class ReservationsHistoryScreen extends ConsumerStatefulWidget {
+  const ReservationsHistoryScreen({super.key});
 
   @override
-  ConsumerState<OrderHistoryScreen> createState() => _OrderHistoryScreenState();
+  ConsumerState<ReservationsHistoryScreen> createState() => _ReservationsHistoryScreenState();
 }
 
-class _OrderHistoryScreenState extends ConsumerState<OrderHistoryScreen>
+class _ReservationsHistoryScreenState extends ConsumerState<ReservationsHistoryScreen>
     with SingleTickerProviderStateMixin {
   late TabController _tabController;
 
-  final List<FoodOrderStatus> _activeStatuses = [
-    FoodOrderStatus.pending,
-    FoodOrderStatus.preparing,
-    FoodOrderStatus.ready
+  final List<ReservationStatus> _activeStatuses = [
+    ReservationStatus.pending,
+    ReservationStatus.confirmed,
   ];
 
-  final List<FoodOrderStatus> _pastStatuses = [FoodOrderStatus.completed, FoodOrderStatus.rejected];
+  final List<ReservationStatus> _pastStatuses = [
+    ReservationStatus.completed,
+    ReservationStatus.cancelled,
+    ReservationStatus.rejected
+  ];
+
+  late GetReservationsHistoryQueryState _activeQueryState;
+  late GetReservationsHistoryQueryState _pastQueryState;
 
   @override
   void initState() {
     super.initState();
     _tabController = TabController(length: 2, vsync: this);
+    _activeQueryState = GetReservationsHistoryQueryState(reservationStatus: _activeStatuses);
+    _pastQueryState = GetReservationsHistoryQueryState(reservationStatus: _pastStatuses);
   }
 
   @override
@@ -52,12 +62,37 @@ class _OrderHistoryScreenState extends ConsumerState<OrderHistoryScreen>
           onPressed: () => Navigator.of(context).pop(),
         ),
         title: Text(
-          'Orderan Saya',
+          'Reservasi Saya',
           style: textTheme.titleLarge?.copyWith(
             color: AppPallete.neutralColor.shade800,
             fontWeight: FontWeight.w600,
           ),
         ),
+        actions: [
+          IconButton(
+            icon: Icon(Icons.tune, color: AppPallete.neutralColor.shade800),
+            onPressed: () {
+              final isActiveTab = _tabController.index == 0;
+              final currentQuery = isActiveTab ? _activeQueryState : _pastQueryState;
+
+              showReservationFilterBottomSheet(context, currentQuery).then((result) {
+                if (result != null) {
+                  setState(() {
+                    if (isActiveTab) {
+                      _activeQueryState = result;
+                    } else {
+                      _pastQueryState = result;
+                    }
+                  });
+
+                  // Refresh data with new filters
+                  ref.invalidate(getCustomerReservationsProvider(
+                      isActiveTab ? _activeQueryState : _pastQueryState));
+                }
+              });
+            },
+          ),
+        ],
       ),
       body: Column(
         children: [
@@ -93,12 +128,16 @@ class _OrderHistoryScreenState extends ConsumerState<OrderHistoryScreen>
                 fontWeight: FontWeight.w500,
               ),
               padding: const EdgeInsets.symmetric(horizontal: 8),
+              onTap: (_) {
+                // Force rebuild when tab changes to update filter state
+                setState(() {});
+              },
               tabs: const [
                 Tab(
-                  text: 'Pesanan Aktif',
+                  text: 'Reservasi Aktif',
                 ),
                 Tab(
-                  text: 'Riwayat Pesanan',
+                  text: 'Riwayat Reservasi',
                 ),
               ],
             ),
@@ -112,17 +151,16 @@ class _OrderHistoryScreenState extends ConsumerState<OrderHistoryScreen>
             child: TabBarView(
               controller: _tabController,
               children: [
-                OrderList(
-                  statuses: _activeStatuses,
+                ReservationList(
+                  queryState: _activeQueryState,
                   isActiveTab: true,
                   onRefresh: () =>
-                      ref.invalidate(getAllFoodOrderTransactionsProvider(_activeStatuses)),
+                      ref.invalidate(getCustomerReservationsProvider(_activeQueryState)),
                 ),
-                OrderList(
-                  statuses: _pastStatuses,
+                ReservationList(
+                  queryState: _pastQueryState,
                   isActiveTab: false,
-                  onRefresh: () =>
-                      ref.invalidate(getAllFoodOrderTransactionsProvider(_pastStatuses)),
+                  onRefresh: () => ref.invalidate(getCustomerReservationsProvider(_pastQueryState)),
                 ),
               ],
             ),

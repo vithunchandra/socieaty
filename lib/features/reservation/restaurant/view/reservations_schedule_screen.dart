@@ -3,6 +3,8 @@ import 'package:go_router/go_router.dart';
 import 'package:intl/intl.dart';
 import 'package:socieaty/core/enums/transaction.enum.dart';
 import 'package:socieaty/core/theme/app_pallete.dart';
+import 'package:socieaty/core/utils/custom_extension.dart';
+import 'package:socieaty/features/reservation/enum/reservation_status_enum.dart';
 import 'package:socieaty/features/reservation/model/reservation.dart';
 import 'package:socieaty/features/customer/model/socieaty_customer.dart';
 import 'package:socieaty/features/restaurant/model/reservation_config.dart';
@@ -205,20 +207,7 @@ class _ReservationsScheduleScreenState extends State<ReservationsScheduleScreen>
     if (status == null) {
       chipColor = AppPallete.primaryColor;
     } else {
-      switch (status) {
-        case ReservationStatus.confirmed:
-          chipColor = AppPallete.successColor;
-          break;
-        case ReservationStatus.pending:
-          chipColor = AppPallete.warningColor;
-          break;
-        case ReservationStatus.cancelled:
-          chipColor = AppPallete.errorColor;
-          break;
-        case ReservationStatus.completed:
-          chipColor = AppPallete.infoColor;
-          break;
-      }
+      chipColor = status.getStatusColor();
     }
     return Padding(
       padding: const EdgeInsets.only(right: 4.0),
@@ -343,21 +332,7 @@ class _ReservationsScheduleScreenState extends State<ReservationsScheduleScreen>
   }
 
   Widget _buildReservationCard(BuildContext context, Reservation reservation) {
-    Color statusColor;
-    switch (reservation.reservationStatus) {
-      case ReservationStatus.confirmed:
-        statusColor = AppPallete.successColor;
-        break;
-      case ReservationStatus.pending:
-        statusColor = AppPallete.warningColor;
-        break;
-      case ReservationStatus.cancelled:
-        statusColor = AppPallete.errorColor;
-        break;
-      case ReservationStatus.completed:
-        statusColor = AppPallete.infoColor;
-        break;
-    }
+    Color statusColor = reservation.reservationStatus.getStatusColor();
 
     final durationInMinutes =
         reservation.endTimeEstimation.difference(reservation.reservationTime).inMinutes;

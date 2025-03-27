@@ -1,10 +1,14 @@
 import 'package:freezed_annotation/freezed_annotation.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:socieaty/core/enums/bank.enum.dart';
+import 'package:socieaty/core/enums/sort_order_enum.dart';
 import 'package:socieaty/core/enums/transaction.enum.dart';
 import 'package:socieaty/core/enums/user_role.enum.dart';
 import 'package:socieaty/core/utils/custom_extension.dart';
 import 'package:socieaty/features/customer/model/socieaty_customer.dart';
+import 'package:socieaty/features/food-order/enum/food_order_status_enum.dart';
+import 'package:socieaty/features/reservation/enum/reservation_sort_by_enum.dart';
+import 'package:socieaty/features/reservation/enum/reservation_status_enum.dart';
 import 'package:socieaty/features/restaurant/model/socieaty_restaurant.dart';
 import 'package:socieaty/features/user/model/socieaty_user.dart';
 
@@ -117,7 +121,7 @@ class ReservationStatusConverter implements JsonConverter<ReservationStatus, Str
 
   @override
   ReservationStatus fromJson(String json) {
-    return ReservationStatus.values.firstWhere((element) => element.name == json);  
+    return ReservationStatus.values.firstWhere((element) => element.name == json);
   }
 
   @override
@@ -126,7 +130,36 @@ class ReservationStatusConverter implements JsonConverter<ReservationStatus, Str
   }
 }
 
-class SocieatyRestaurantConverter implements JsonConverter<SocieatyRestaurant, Map<String, dynamic>> {
+class ReservationSortByConverter implements JsonConverter<ReservationSortBy, String> {
+  const ReservationSortByConverter();
+
+  @override
+  ReservationSortBy fromJson(String json) {
+    return ReservationSortBy.values.firstWhere((element) => element.name == json);
+  }
+
+  @override
+  String toJson(ReservationSortBy object) {
+    return object.name;
+  }
+}
+
+class SortOrderConverter implements JsonConverter<SortOrder, String> {
+  const SortOrderConverter();
+
+  @override
+  SortOrder fromJson(String json) {
+    return SortOrder.values.firstWhere((element) => element.name == json);
+  }
+
+  @override
+  String toJson(SortOrder object) {
+    return object.name;
+  }
+}
+
+class SocieatyRestaurantConverter
+    implements JsonConverter<SocieatyRestaurant, Map<String, dynamic>> {
   const SocieatyRestaurantConverter();
 
   @override

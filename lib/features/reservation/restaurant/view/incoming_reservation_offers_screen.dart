@@ -1,13 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:intl/intl.dart';
-import 'package:socieaty/core/enums/transaction.enum.dart';
 import 'package:socieaty/core/theme/app_pallete.dart';
-import 'package:socieaty/core/utils/show_snackbar.dart';
+import 'package:socieaty/features/reservation/enum/reservation_status_enum.dart';
 import 'package:socieaty/features/reservation/model/reservation.dart';
-import 'package:socieaty/features/reservation/restaurant/provider/get_restaurant_reservations_provider.dart';
-import 'package:socieaty/features/reservation/restaurant/socket/restaurant_reservation_socket_service.dart';
-import 'package:socieaty/features/reservation/restaurant/widgets/reservation_card.dart';
 import 'package:socieaty/features/reservation/restaurant/widgets/reservation_details_sheet.dart';
 import 'package:socieaty/features/reservation/restaurant/widgets/reservation_list.dart';
 
@@ -24,30 +19,11 @@ class IncomingReservationOffersScreen extends ConsumerStatefulWidget {
 class _IncomingReservationOffersScreenState extends ConsumerState<IncomingReservationOffersScreen>
     with SingleTickerProviderStateMixin {
   late TabController _tabController;
-  bool _isSocketInitialized = false;
 
   @override
   void initState() {
     super.initState();
     _tabController = TabController(length: 3, vsync: this);
-
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      if (!_isSocketInitialized) {
-        final socketService = ref.read(restaurantReservationSocketServiceProvider);
-        socketService.initConnection();
-
-        socketService.listenNewReservation((reservation) {
-          showSnackbar(context, "New reservation from ${reservation.customer.name}");
-          ref.invalidate(getRestaurantReservationsProvider([ReservationStatus.pending]));
-        });
-
-        _isSocketInitialized = true;
-      }
-
-      if (widget.initialReservation != null) {
-        _showReservationDetails(widget.initialReservation!);
-      }
-    });
   }
 
   @override

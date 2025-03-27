@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:socieaty/core/enums/transaction.enum.dart';
 import 'package:socieaty/core/theme/app_pallete.dart';
+import 'package:socieaty/features/reservation/enum/reservation_status_enum.dart';
 import 'package:socieaty/features/reservation/restaurant/provider/get_restaurant_reservations_provider.dart';
 import 'package:socieaty/features/reservation/restaurant/widgets/reservation_card.dart';
 
@@ -69,7 +69,10 @@ class ReservationList extends ConsumerWidget {
           separatorBuilder: (context, index) => const SizedBox(height: 16),
           itemBuilder: (context, index) {
             final reservation = reservations[index];
-            return ReservationCard(reservation: reservation);
+            return ReservationCard(
+              reservation: reservation,
+              statusFilter: status,
+            );
           },
         );
       },

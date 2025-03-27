@@ -16,6 +16,7 @@ import 'package:socieaty/features/restaurant/viewstate/paginate_restaurant_query
 import 'package:socieaty/shared/widgets/custom_error_widget.dart';
 import 'package:socieaty/shared/widgets/menu_filter_widget.dart';
 import 'package:socieaty/shared/widgets/search_bar_widget.dart';
+import 'package:dropdown_button2/dropdown_button2.dart';
 
 class ShopScreen extends ConsumerStatefulWidget {
   const ShopScreen({super.key});
@@ -343,11 +344,52 @@ class _ShopDetailsHeader extends StatelessWidget {
             ],
           ),
           const Spacer(),
-          InkWell(
-            onTap: () {
-              context.push('/customer/shop/history');
-            },
-            child: const Icon(Icons.history, color: AppPallete.primaryColor, size: 28),
+          DropdownButtonHideUnderline(
+            child: DropdownButton2(
+              customButton: const Icon(Icons.history, color: AppPallete.primaryColor, size: 28),
+              items: [
+                DropdownMenuItem(
+                  value: 'order',
+                  child: Row(
+                    children: [
+                      Icon(Icons.receipt_outlined, color: AppPallete.neutralColor.shade800),
+                      const SizedBox(width: 10),
+                      Text('Order', style: Theme.of(context).textTheme.titleSmall),
+                    ],
+                  ),
+                ),
+                DropdownMenuItem(
+                  value: 'reservation',
+                  child: Row(
+                    children: [
+                      Icon(Icons.calendar_today_outlined, color: AppPallete.neutralColor.shade800),
+                      const SizedBox(width: 10),
+                      Text('Reservation', style: Theme.of(context).textTheme.titleSmall),
+                    ],
+                  ),
+                ),
+              ],
+              onChanged: (value) {
+                switch (value) {
+                  case 'order':
+                    context.push('/customer/shop/history/order');
+                    break;
+                  case 'reservation':
+                    context.push('/customer/shop/history/reservation');
+                    break;
+                }
+              },
+              dropdownStyleData: DropdownStyleData(
+                width: 160,
+                padding: const EdgeInsets.symmetric(vertical: 6),
+                elevation: 1,
+                decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(12),
+                  color: Colors.white,
+                ),
+                offset: const Offset(0, 8),
+              ),
+            ),
           ),
         ],
       ),

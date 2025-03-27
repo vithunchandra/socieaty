@@ -4,6 +4,7 @@ import 'package:socieaty/core/utils/converter.dart';
 import 'package:socieaty/features/customer/model/socieaty_customer.dart';
 import 'package:socieaty/features/menu_item/model/menu_item.dart';
 import 'package:socieaty/features/restaurant/model/socieaty_restaurant.dart';
+import 'package:socieaty/features/food-order/enum/food_order_status_enum.dart';
 
 part 'food_order_transaction.freezed.dart';
 part 'food_order_transaction.g.dart';

@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:socieaty/core/enums/transaction.enum.dart';
+import 'package:socieaty/features/reservation/enum/reservation_status_enum.dart';
 
 Widget getStatusChip(ReservationStatus status) {
   Color backgroundColor;
@@ -26,6 +26,11 @@ Widget getStatusChip(ReservationStatus status) {
       backgroundColor = Colors.red.shade50;
       textColor = Colors.red.shade700;
       label = 'Cancelled';
+      break;
+    case ReservationStatus.rejected:
+      backgroundColor = Colors.red.shade50;
+      textColor = Colors.red.shade700;
+      label = 'Rejected';
       break;
   }
 

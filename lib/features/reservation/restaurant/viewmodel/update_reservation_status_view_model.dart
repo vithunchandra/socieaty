@@ -1,7 +1,7 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
-import 'package:socieaty/core/enums/transaction.enum.dart';
 import 'package:socieaty/core/network/api_result.dart';
+import 'package:socieaty/features/reservation/enum/reservation_status_enum.dart';
 import 'package:socieaty/features/reservation/repository/reservation_repository.dart';
 import 'package:socieaty/features/reservation/restaurant/viewstate/update_reservation_status_view_state.dart';
 import 'package:socieaty/shared/view_state.dart';

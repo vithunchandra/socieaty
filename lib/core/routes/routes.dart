@@ -24,6 +24,7 @@ import 'package:socieaty/features/post/post/view/post_screen.dart';
 import 'package:socieaty/features/reservation/customer/view/create_reservation_screen.dart';
 import 'package:socieaty/features/reservation/customer/view/outlet_reserve_screen.dart';
 import 'package:socieaty/features/reservation/customer/view/reservation_food_selection_screen.dart';
+import 'package:socieaty/features/reservation/customer/view/reservations_history_screen.dart';
 import 'package:socieaty/features/reservation/customer/view/track_reservation_screen.dart';
 import 'package:socieaty/features/reservation/restaurant/view/incoming_reservation_offers_screen.dart';
 import 'package:socieaty/features/reservation/restaurant/view/reservation_navigator_screen.dart';
@@ -145,9 +146,15 @@ GoRouter router(Ref ref) {
                     ),
                   ),
                   GoRoute(
-                    path: 'history',
+                    path: 'history/order',
                     pageBuilder: (context, state) => const NoTransitionPage(
                       child: OrderHistoryScreen(),
+                    ),
+                  ),
+                  GoRoute(
+                    path: 'history/reservation',
+                    pageBuilder: (context, state) => const NoTransitionPage(
+                      child: ReservationsHistoryScreen(),
                     ),
                   ),
                 ],
@@ -321,6 +328,13 @@ GoRouter router(Ref ref) {
         builder: (context, state) => ChatScreen(
           order: state.extra as FoodOrderTransaction,
         ),
+      ),
+      GoRoute(
+        path: '/track-reservation',
+        builder: (context, state) => TrackReservationScreen(
+          reservationId: state.extra as String,
+        ),
+        routes: [],
       ),
       GoRoute(
         path: '/:userId',

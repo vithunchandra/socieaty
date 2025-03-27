@@ -1,17 +1,34 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:intl/intl.dart';
-import 'package:socieaty/core/enums/transaction.enum.dart';
 import 'package:socieaty/core/theme/app_pallete.dart';
+import 'package:socieaty/core/utils/converter.dart';
+import 'package:socieaty/core/utils/show_snackbar.dart';
+import 'package:socieaty/features/reservation/enum/reservation_status_enum.dart';
 import 'package:socieaty/features/reservation/model/reservation.dart';
+import 'package:socieaty/features/reservation/restaurant/provider/get_restaurant_reservations_provider.dart';
+import 'package:socieaty/features/reservation/restaurant/viewmodel/update_reservation_status_view_model.dart';
 import 'package:socieaty/features/reservation/restaurant/widgets/reservation_details_sheet.dart';
 import 'package:socieaty/features/reservation/restaurant/widgets/status_chip.dart';
+import 'package:socieaty/shared/view_state.dart';
+import 'package:socieaty/shared/widgets/profile_picture_widget.dart';
 
-class ReservationCard extends ConsumerWidget {
+class ReservationCard extends ConsumerStatefulWidget {
   final Reservation reservation;
+  final List<ReservationStatus> statusFilter;
 
-  const ReservationCard({super.key, required this.reservation});
+  const ReservationCard({
+    super.key,
+    required this.reservation,
+    required this.statusFilter,
+  });
 
+  @override
+  ConsumerState<ReservationCard> createState() => _ReservationCardState();
+}
+
+class _ReservationCardState extends ConsumerState<ReservationCard> {
+  ReservationStatus? _lastUpdatedStatus;
   void _showReservationDetails(BuildContext context, Reservation reservation) {
     showModalBottomSheet(
       context: context,
@@ -35,10 +52,34 @@ class ReservationCard extends ConsumerWidget {
     );
   }
 
+  void _updateReservationStatus(ReservationStatus newStatus) {
+    setState(() {
+      _lastUpdatedStatus = newStatus;
+    });
+    ref
+        .read(updateReservationStatusViewModelProvider(widget.reservation.reservationId).notifier)
+        .updateReservationStatus(newStatus);
+  }
+
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
+  Widget build(BuildContext context) {
+    bool isLoading = ref
+        .watch(updateReservationStatusViewModelProvider(widget.reservation.reservationId))
+        .updatedReservation is LoadingState;
+    ref.listen(updateReservationStatusViewModelProvider(widget.reservation.reservationId),
+        (previous, next) {
+      switch (next.updatedReservation) {
+        case SuccessState<Reservation>():
+          ref.invalidate(getRestaurantReservationsProvider(widget.statusFilter));
+        case ErrorState(message: var message):
+          showSnackbar(context, message, state: SnackbarState.error);
+        case LoadingState<Reservation>():
+        case IdleState():
+      }
+    });
+
     return GestureDetector(
-      onTap: () => _showReservationDetails(context, reservation),
+      onTap: () => _showReservationDetails(context, widget.reservation),
       child: Container(
         decoration: BoxDecoration(
           color: Colors.white,
@@ -64,9 +105,8 @@ class ReservationCard extends ConsumerWidget {
               ),
               child: Row(
                 children: [
-                  CircleAvatar(
-                    backgroundImage: NetworkImage(
-                        'https://randomuser.me/api/portraits/men/${(reservation.customer.name.hashCode % 99).abs()}.jpg'),
+                  ProfilePictureWidget(
+                    user: UserConverter.customerToUser(widget.reservation.customer),
                     radius: 24,
                   ),
                   const SizedBox(width: 12),
@@ -75,13 +115,13 @@ class ReservationCard extends ConsumerWidget {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Text(
-                          reservation.customer.name,
+                          widget.reservation.customer.name,
                           style: Theme.of(context).textTheme.titleMedium?.copyWith(
                                 fontWeight: FontWeight.bold,
                               ),
                         ),
                         Text(
-                          reservation.customer.phoneNumber ?? '-',
+                          widget.reservation.customer.phoneNumber,
                           style: Theme.of(context).textTheme.bodyMedium?.copyWith(
                                 color: AppPallete.neutralColor.shade500,
                               ),
@@ -89,7 +129,7 @@ class ReservationCard extends ConsumerWidget {
                       ],
                     ),
                   ),
-                  getStatusChip(reservation.reservationStatus),
+                  getStatusChip(widget.reservation.reservationStatus),
                 ],
               ),
             ),
@@ -104,7 +144,7 @@ class ReservationCard extends ConsumerWidget {
                           context,
                           Icons.calendar_today,
                           'Date',
-                          _formatDateShort(reservation.reservationTime),
+                          _formatDateShort(widget.reservation.reservationTime),
                           AppPallete.primaryColor.withAlpha(25),
                         ),
                       ),
@@ -114,7 +154,7 @@ class ReservationCard extends ConsumerWidget {
                           context,
                           Icons.access_time,
                           'Time',
-                          _formatTimeShort(reservation.reservationTime),
+                          _formatTimeShort(widget.reservation.reservationTime),
                           AppPallete.infoColor.withAlpha(25),
                         ),
                       ),
@@ -124,14 +164,14 @@ class ReservationCard extends ConsumerWidget {
                           context,
                           Icons.people,
                           'People',
-                          '${reservation.peopleSize} persons',
+                          '${widget.reservation.peopleSize} persons',
                           AppPallete.successColor.withAlpha(25),
                         ),
                       ),
                     ],
                   ),
                   const SizedBox(height: 16),
-                  if (reservation.note.isNotEmpty)
+                  if (widget.reservation.note.isNotEmpty)
                     Container(
                       padding: const EdgeInsets.all(12),
                       decoration: BoxDecoration(
@@ -149,7 +189,7 @@ class ReservationCard extends ConsumerWidget {
                           const SizedBox(width: 8),
                           Expanded(
                             child: Text(
-                              reservation.note,
+                              widget.reservation.note,
                               style: Theme.of(context).textTheme.bodySmall?.copyWith(
                                     color: AppPallete.neutralColor.shade700,
                                   ),
@@ -159,12 +199,14 @@ class ReservationCard extends ConsumerWidget {
                       ),
                     ),
                   const SizedBox(height: 16),
-                  if (reservation.reservationStatus == ReservationStatus.pending)
+                  if (widget.reservation.reservationStatus == ReservationStatus.pending)
                     Row(
                       children: [
                         Expanded(
                           child: OutlinedButton(
-                            onPressed: () {},
+                            onPressed: isLoading
+                                ? null
+                                : () => _updateReservationStatus(ReservationStatus.rejected),
                             style: OutlinedButton.styleFrom(
                               shape: RoundedRectangleBorder(
                                 borderRadius: BorderRadius.circular(10),
@@ -172,19 +214,30 @@ class ReservationCard extends ConsumerWidget {
                               side: BorderSide(color: AppPallete.errorColor),
                               padding: const EdgeInsets.symmetric(vertical: 12),
                             ),
-                            child: Text(
-                              'Decline',
-                              style: TextStyle(
-                                color: AppPallete.errorColor,
-                                fontWeight: FontWeight.bold,
-                              ),
-                            ),
+                            child: isLoading && _lastUpdatedStatus == ReservationStatus.rejected
+                                ? const SizedBox(
+                                    height: 16,
+                                    width: 16,
+                                    child: CircularProgressIndicator(
+                                      strokeWidth: 2,
+                                      color: AppPallete.errorColor,
+                                    ),
+                                  )
+                                : Text(
+                                    'Decline',
+                                    style: TextStyle(
+                                      color: AppPallete.errorColor,
+                                      fontWeight: FontWeight.bold,
+                                    ),
+                                  ),
                           ),
                         ),
                         const SizedBox(width: 16),
                         Expanded(
                           child: ElevatedButton(
-                            onPressed: () {},
+                            onPressed: isLoading
+                                ? null
+                                : () => _updateReservationStatus(ReservationStatus.confirmed),
                             style: ElevatedButton.styleFrom(
                               shape: RoundedRectangleBorder(
                                 borderRadius: BorderRadius.circular(10),
@@ -192,13 +245,22 @@ class ReservationCard extends ConsumerWidget {
                               backgroundColor: AppPallete.primaryColor,
                               padding: const EdgeInsets.symmetric(vertical: 12),
                             ),
-                            child: const Text(
-                              'Accept',
-                              style: TextStyle(
-                                color: Colors.white,
-                                fontWeight: FontWeight.bold,
-                              ),
-                            ),
+                            child: isLoading && _lastUpdatedStatus == ReservationStatus.confirmed
+                                ? const SizedBox(
+                                    height: 16,
+                                    width: 16,
+                                    child: CircularProgressIndicator(
+                                      strokeWidth: 2,
+                                      color: Colors.white,
+                                    ),
+                                  )
+                                : const Text(
+                                    'Accept',
+                                    style: TextStyle(
+                                      color: Colors.white,
+                                      fontWeight: FontWeight.bold,
+                                    ),
+                                  ),
                           ),
                         ),
                       ],

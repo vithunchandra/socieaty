@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
-import 'package:socieaty/core/enums/transaction.enum.dart';
 import 'package:socieaty/core/network/api_result.dart';
+import 'package:socieaty/features/food-order/enum/food_order_status_enum.dart';
 import 'package:socieaty/features/food-order/model/food_order_transaction.dart';
 import 'package:socieaty/features/food-order/repository/food_order_repository.dart';
 

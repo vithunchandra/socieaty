@@ -2,12 +2,14 @@ import 'package:dio/dio.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 import 'package:socieaty/core/constants.dart';
-import 'package:socieaty/core/enums/transaction.enum.dart';
+import 'package:socieaty/core/enums/sort_order_enum.dart';
 import 'package:socieaty/core/network/api_client.dart';
 import 'package:socieaty/core/network/api_result.dart';
 import 'package:socieaty/core/utils/execute_request.dart';
 import 'package:socieaty/features/authentication/repository/auth_local_repository.dart';
 import 'package:socieaty/features/reservation/customer/viewstate/create_reservation_form_state.dart';
+import 'package:socieaty/features/reservation/enum/reservation_sort_by_enum.dart';
+import 'package:socieaty/features/reservation/enum/reservation_status_enum.dart';
 import 'package:socieaty/features/reservation/repository/responses/create_reservation_response.dart';
 import 'package:socieaty/features/reservation/repository/responses/get_reservation_response.dart';
 import 'package:socieaty/features/reservation/repository/responses/get_restaurant_reservations_response.dart';
@@ -61,6 +63,30 @@ class ReservationRepository {
       requestFunction: () => _dio.get('reservation/restaurant', queryParameters: {
         'status[]': List.generate(status.length, (index) => status[index].name),
       }),
+      successParser: (data) => GetRestaurantReservationsResponse.fromJson(data),
+    );
+  }
+
+  // Using GetRestaurantReservationsResponse temporarily until proper response class is generated
+  Future<ApiResult<GetRestaurantReservationsResponse>> getCustomerReservations(
+    List<ReservationStatus> status, {
+    ReservationSortBy? sortBy,
+    SortOrder? sortOrder,
+  }) {
+    final queryParams = <String, dynamic>{
+      'status[]': List.generate(status.length, (index) => status[index].name),
+    };
+
+    if (sortBy != null) {
+      queryParams['sortBy'] = sortBy.name;
+    }
+
+    if (sortOrder != null) {
+      queryParams['sortOrder'] = sortOrder.name;
+    }
+
+    return executeRequest<GetRestaurantReservationsResponse>(
+      requestFunction: () => _dio.get('reservation/customer', queryParameters: queryParams),
       successParser: (data) => GetRestaurantReservationsResponse.fromJson(data),
     );
   }

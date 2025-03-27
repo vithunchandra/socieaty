@@ -3,6 +3,7 @@ import 'package:socieaty/core/enums/transaction.enum.dart';
 import 'package:socieaty/core/utils/converter.dart';
 import 'package:socieaty/features/customer/model/socieaty_customer.dart';
 import 'package:socieaty/features/menu_item/model/menu_item.dart';
+import 'package:socieaty/features/reservation/enum/reservation_status_enum.dart';
 import 'package:socieaty/features/restaurant/model/socieaty_restaurant.dart';
 
 part 'reservation.freezed.dart';

@@ -1,9 +1,9 @@
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
-import 'package:socieaty/core/enums/transaction.enum.dart';
 import 'package:socieaty/core/theme/app_pallete.dart';
 import 'package:socieaty/features/menu_item/model/menu_item.dart';
+import 'package:socieaty/features/reservation/enum/reservation_status_enum.dart';
 
 extension StringCasingExtension on String {
   String toCapitalized() {
@@ -93,6 +93,8 @@ extension ReservationStatusExtension on ReservationStatus {
         return AppPallete.errorColor;
       case ReservationStatus.completed:
         return AppPallete.infoColor;
+      case ReservationStatus.rejected:
+        return AppPallete.errorColor;
     }
   }
 
@@ -106,6 +108,23 @@ extension ReservationStatusExtension on ReservationStatus {
         return Icons.cancel;
       case ReservationStatus.completed:
         return Icons.task_alt;
+      case ReservationStatus.rejected:
+        return Icons.close;
+    }
+  }
+
+  String updatedStatusName() {
+    switch (this) {
+      case ReservationStatus.confirmed:
+        return 'dikonfirmasi';
+      case ReservationStatus.cancelled:
+        return 'dibatalkan';
+      case ReservationStatus.completed:
+        return 'selesai';
+      case ReservationStatus.pending:
+        return 'menunggu';
+      case ReservationStatus.rejected:
+        return 'ditolak';
     }
   }
 }

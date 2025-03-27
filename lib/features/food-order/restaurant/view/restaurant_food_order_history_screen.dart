@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:socieaty/core/enums/transaction.enum.dart';
+import 'package:socieaty/features/food-order/enum/food_order_status_enum.dart';
 import 'package:socieaty/features/food-order/restaurant/widgets/order_list.dart';
 
 class RestaurantFoodOrderHistoryScreen extends StatefulWidget {

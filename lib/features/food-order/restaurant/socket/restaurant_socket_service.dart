@@ -35,6 +35,7 @@ class RestaurantSocketService {
   final LocalNotificationService notificationService;
   bool _hasNewOrderListener = false;
   Function(FoodOrderTransaction)? _onNewOrderCallback;
+  Function(String?)? _onNewOrderNotificationTap;
 
   RestaurantSocketService({
     required this.socket,
@@ -43,7 +44,10 @@ class RestaurantSocketService {
 
   bool get isConnected => _isConnected;
 
-  initConnection() {
+  initConnection({
+    required Function(FoodOrderTransaction) onNewOrderCallback,
+    required Function(String?) onNewOrderNotificationTap,
+  }) {
     if (_isConnected) return;
 
     notificationService.init();
@@ -57,10 +61,9 @@ class RestaurantSocketService {
     socket.onConnect((_) {
       debugPrint('Restaurant connected to server');
       _isConnected = true;
-
-      if (!_hasNewOrderListener) {
-        _setupNewOrderListener();
-      }
+      _onNewOrderCallback = onNewOrderCallback;
+      _onNewOrderNotificationTap = onNewOrderNotificationTap;
+      _setupNewOrderListener();
     });
 
     socket.onDisconnect((_) {
@@ -103,6 +106,8 @@ class RestaurantSocketService {
             'Items: $itemCount\n'
             '$itemsText';
 
+        notificationService.setOnNotificationTap(_onNewOrderNotificationTap!);
+
         notificationService.showNewOrderNotification(
           title: notificationTitle,
           body: notificationBody,
@@ -125,16 +130,6 @@ class RestaurantSocketService {
     });
 
     _hasNewOrderListener = true;
-  }
-
-  void listenNewOrder(Function(FoodOrderTransaction) onNewOrder) {
-    _onNewOrderCallback = onNewOrder;
-
-    if (!_isConnected) {
-      initConnection();
-    } else if (!_hasNewOrderListener) {
-      _setupNewOrderListener();
-    }
   }
 
   String _getItemsDescription(FoodOrderTransaction order) {

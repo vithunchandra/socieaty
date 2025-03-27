@@ -33,8 +33,8 @@ class RestaurantReservationSocketService {
   Socket socket;
   bool _isConnected = false;
   final LocalNotificationService notificationService;
-  bool _hasNewReservationListener = false;
   Function(Reservation)? _onNewReservationCallback;
+  Function(String?)? _onNewReservationNotificationTap;
 
   RestaurantReservationSocketService({
     required this.socket,
@@ -43,7 +43,10 @@ class RestaurantReservationSocketService {
 
   bool get isConnected => _isConnected;
 
-  initConnection() {
+  initConnection({
+    required Function(Reservation) onNewReservationCallback,
+    required Function(String?) onNewReservationNotificationTap,
+  }) {
     if (_isConnected) return;
 
     notificationService.init();
@@ -57,16 +60,14 @@ class RestaurantReservationSocketService {
     socket.onConnect((_) {
       debugPrint('Restaurant connected to server');
       _isConnected = true;
-
-      if (!_hasNewReservationListener) {
-        _setupNewReservationListener();
-      }
+      _onNewReservationCallback = onNewReservationCallback;
+      _onNewReservationNotificationTap = onNewReservationNotificationTap;
+      _setupNewReservationListener();
     });
 
     socket.onDisconnect((_) {
       debugPrint('Restaurant disconnected from server');
       _isConnected = false;
-      _hasNewReservationListener = false;
     });
 
     socket.onerror((_) {
@@ -79,12 +80,12 @@ class RestaurantReservationSocketService {
     removeListener('new-reservation');
     socket.disconnect();
     _isConnected = false;
-    _hasNewReservationListener = false;
     _onNewReservationCallback = null;
+    _onNewReservationNotificationTap = null;
   }
 
   void _setupNewReservationListener() {
-    if (_hasNewReservationListener) return;
+    if (_onNewReservationCallback == null) return;
 
     socket.on('new-reservation', (data) {
       try {
@@ -116,6 +117,10 @@ class RestaurantReservationSocketService {
           orderDetails: reservationData.toJson(),
         );
 
+        if (_onNewReservationNotificationTap != null) {
+          notificationService.setOnNotificationTap(_onNewReservationNotificationTap!);
+        }
+
         if (_onNewReservationCallback != null) {
           debugPrint("Calling onNewReservationCallback");
           _onNewReservationCallback!(reservationData);
@@ -129,18 +134,6 @@ class RestaurantReservationSocketService {
         );
       }
     });
-
-    _hasNewReservationListener = true;
-  }
-
-  void listenNewReservation(Function(Reservation) onNewReservation) {
-    _onNewReservationCallback = onNewReservation;
-
-    if (!_isConnected) {
-      initConnection();
-    } else if (!_hasNewReservationListener) {
-      _setupNewReservationListener();
-    }
   }
 
   String _getItemsDescription(Reservation reservation) {
@@ -180,8 +173,8 @@ class RestaurantReservationSocketService {
   void removeListener(String event) {
     socket.off(event);
     if (event == 'new-reservation') {
-      _hasNewReservationListener = false;
       _onNewReservationCallback = null;
+      _onNewReservationNotificationTap = null;
     }
   }
 }

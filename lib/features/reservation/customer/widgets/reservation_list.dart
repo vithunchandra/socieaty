@@ -2,29 +2,30 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:socieaty/core/theme/app_pallete.dart';
-import 'package:socieaty/features/food-order/customer/provider/get_all_food_order_transactions_provider.dart';
-import 'package:socieaty/features/food-order/customer/widgets/order_card.dart';
-import 'package:socieaty/features/food-order/enum/food_order_status_enum.dart';
+import 'package:socieaty/features/reservation/customer/provider/get_customer_reservations_provider.dart';
+import 'package:socieaty/features/reservation/customer/viewstate/get_reservations_history_query_state.dart';
+import 'package:socieaty/features/reservation/customer/widgets/reservation_card.dart';
+import 'package:socieaty/features/reservation/enum/reservation_status_enum.dart';
 
-class OrderList extends ConsumerWidget {
-  final List<FoodOrderStatus> statuses;
+class ReservationList extends ConsumerWidget {
+  final GetReservationsHistoryQueryState queryState;
   final bool isActiveTab;
   final Function() onRefresh;
 
-  const OrderList({
+  const ReservationList({
     super.key,
-    required this.statuses,
+    required this.queryState,
     required this.isActiveTab,
     required this.onRefresh,
   });
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final ordersAsync = ref.watch(getAllFoodOrderTransactionsProvider(statuses));
+    final reservationsAsync = ref.watch(getCustomerReservationsProvider(queryState));
 
-    return ordersAsync.when(
-      data: (orders) {
-        if (orders.isEmpty) {
+    return reservationsAsync.when(
+      data: (reservations) {
+        if (reservations.isEmpty) {
           return _buildEmptyState(context);
         }
 
@@ -36,12 +37,12 @@ class OrderList extends ConsumerWidget {
           child: ListView.builder(
             physics: const BouncingScrollPhysics(),
             padding: const EdgeInsets.fromLTRB(16, 16, 16, 24),
-            itemCount: orders.length,
+            itemCount: reservations.length,
             itemBuilder: (context, index) {
               return Padding(
                 padding: const EdgeInsets.only(bottom: 16),
-                child: OrderCard(
-                  order: orders[index],
+                child: ReservationCard(
+                  reservation: reservations[index],
                   isActive: isActiveTab,
                 ),
               );
@@ -64,13 +65,13 @@ class OrderList extends ConsumerWidget {
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             Icon(
-              isActiveTab ? Icons.local_dining_outlined : Icons.receipt_long_outlined,
+              isActiveTab ? Icons.event_available_outlined : Icons.history_outlined,
               size: 64,
               color: AppPallete.neutralColor.shade300,
             ),
             const SizedBox(height: 24),
             Text(
-              isActiveTab ? 'Pesanan Aktif Kosong' : 'Riwayat Pesanan Kosong',
+              isActiveTab ? 'Reservasi Aktif Kosong' : 'Riwayat Reservasi Kosong',
               style: textTheme.headlineSmall?.copyWith(
                 fontWeight: FontWeight.w600,
                 color: AppPallete.neutralColor.shade800,
@@ -80,8 +81,8 @@ class OrderList extends ConsumerWidget {
             const SizedBox(height: 12),
             Text(
               isActiveTab
-                  ? 'Pesanan aktif Anda akan muncul di sini'
-                  : 'Riwayat pesanan Anda akan muncul di sini',
+                  ? 'Reservasi aktif Anda akan muncul di sini'
+                  : 'Riwayat reservasi Anda akan muncul di sini',
               textAlign: TextAlign.center,
               style: textTheme.bodyMedium?.copyWith(
                 color: AppPallete.neutralColor.shade600,
@@ -95,11 +96,11 @@ class OrderList extends ConsumerWidget {
                   context.pop();
                 },
                 icon: const Icon(
-                  Icons.restaurant_menu,
+                  Icons.restaurant,
                   size: 18,
                   color: Colors.white,
                 ),
-                label: const Text('Pesan Makanan'),
+                label: const Text('Buat Reservasi'),
                 style: ElevatedButton.styleFrom(
                   backgroundColor: AppPallete.primaryColor,
                   foregroundColor: Colors.white,
@@ -127,7 +128,7 @@ class OrderList extends ConsumerWidget {
           ),
           const SizedBox(height: 16),
           Text(
-            'Loading your orders...',
+            'Loading your reservations...',
             style: TextStyle(
               color: AppPallete.neutralColor.shade600,
               fontSize: 14,
@@ -154,7 +155,7 @@ class OrderList extends ConsumerWidget {
             ),
             const SizedBox(height: 16),
             Text(
-              "Couldn't load your orders",
+              "Couldn't load your reservations",
               style: textTheme.titleMedium?.copyWith(
                 fontWeight: FontWeight.w600,
                 color: AppPallete.neutralColor.shade800,

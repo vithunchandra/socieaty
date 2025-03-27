@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
-import 'package:socieaty/core/enums/transaction.enum.dart';
 import 'package:socieaty/core/utils/converter.dart';
 import 'package:socieaty/core/utils/custom_extension.dart';
 import 'package:socieaty/core/utils/show_snackbar.dart';
+import 'package:socieaty/features/food-order/enum/food_order_status_enum.dart';
 import 'package:socieaty/features/food-order/model/food_order_transaction.dart';
 import 'package:socieaty/features/food-order/restaurant/provider/get_restaurant_food_order_provider.dart';
 import 'package:socieaty/features/food-order/restaurant/viewmodel/update_food_order_status_view_model.dart';

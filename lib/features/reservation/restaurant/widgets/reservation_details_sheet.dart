@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
-import 'package:socieaty/core/enums/transaction.enum.dart';
 import 'package:socieaty/core/utils/converter.dart';
 import 'package:socieaty/core/utils/custom_extension.dart';
 import 'package:socieaty/core/utils/show_snackbar.dart';
@@ -10,8 +9,10 @@ import 'package:socieaty/features/reservation/restaurant/provider/get_restaurant
 import 'package:socieaty/features/reservation/restaurant/viewmodel/update_reservation_status_view_model.dart';
 import 'package:socieaty/shared/view_state.dart';
 import 'package:socieaty/core/theme/app_pallete.dart';
+import 'package:socieaty/shared/widgets/loading_indicator_widget.dart';
 import 'package:socieaty/shared/widgets/profile_picture_widget.dart';
 import 'package:intl/intl.dart';
+import 'package:socieaty/features/reservation/enum/reservation_status_enum.dart';
 
 class ReservationDetailsSheet extends ConsumerStatefulWidget {
   final Reservation reservation;
@@ -29,6 +30,12 @@ class ReservationDetailsSheet extends ConsumerStatefulWidget {
 }
 
 class _ReservationDetailsSheetState extends ConsumerState<ReservationDetailsSheet> {
+  void _updateReservationStatus(ReservationStatus newStatus) {
+    ref
+        .read(updateReservationStatusViewModelProvider(widget.reservation.reservationId).notifier)
+        .updateReservationStatus(newStatus);
+  }
+
   @override
   Widget build(BuildContext context) {
     final statusColors = {
@@ -48,12 +55,14 @@ class _ReservationDetailsSheetState extends ConsumerState<ReservationDetailsShee
     ref.listen(updateReservationStatusViewModelProvider(widget.reservation.reservationId),
         (previous, next) {
       switch (next.updatedReservation) {
-        case SuccessState<Reservation>():
-          if (widget.reservation.reservationStatus == ReservationStatus.pending) {
-            ref.invalidate(getRestaurantReservationsProvider(widget.statusFilter));
-          }
+        case SuccessState<Reservation>(data: final data):
+          ref.invalidate(getRestaurantReservationsProvider(widget.statusFilter));
+          showSnackbar(
+            context,
+            'Reservasi berhasil ${data.reservationStatus.updatedStatusName()}',
+            state: SnackbarState.success,
+          );
           context.pop();
-
         case ErrorState(message: var message):
           showSnackbar(context, message, state: SnackbarState.error);
         case LoadingState<Reservation>():
@@ -340,7 +349,10 @@ class _ReservationDetailsSheetState extends ConsumerState<ReservationDetailsShee
             ),
           ),
           if (widget.reservation.reservationStatus == ReservationStatus.pending)
-            PendingReservationActions(reservation: widget.reservation),
+            PendingReservationActions(
+              reservation: widget.reservation,
+              onUpdateReservationStatus: _updateReservationStatus,
+            ),
         ],
       ),
     );
@@ -400,43 +412,66 @@ class _ReservationDetailsSheetState extends ConsumerState<ReservationDetailsShee
   }
 }
 
-class PendingReservationActions extends ConsumerWidget {
+class PendingReservationActions extends ConsumerStatefulWidget {
   final Reservation reservation;
-
-  const PendingReservationActions({super.key, required this.reservation});
+  final void Function(ReservationStatus) onUpdateReservationStatus;
+  const PendingReservationActions({
+    super.key,
+    required this.reservation,
+    required this.onUpdateReservationStatus,
+  });
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
+  ConsumerState<PendingReservationActions> createState() => _PendingReservationActionsState();
+}
+
+class _PendingReservationActionsState extends ConsumerState<PendingReservationActions> {
+  ReservationStatus? _lastUpdatedStatus;
+
+  @override
+  Widget build(BuildContext context) {
+    bool isLoading = ref
+        .watch(updateReservationStatusViewModelProvider(widget.reservation.reservationId))
+        .updatedReservation is LoadingState;
+
     return Padding(
       padding: const EdgeInsets.only(top: 8),
       child: Row(
         children: [
           Expanded(
             child: OutlinedButton(
-              onPressed: () {
-                ref
-                    .read(updateReservationStatusViewModelProvider(reservation.reservationId)
-                        .notifier)
-                    .updateReservationStatus(ReservationStatus.cancelled);
-              },
+              onPressed: isLoading
+                  ? null
+                  : () {
+                      setState(() {
+                        _lastUpdatedStatus = ReservationStatus.cancelled;
+                      });
+                      widget.onUpdateReservationStatus(ReservationStatus.cancelled);
+                    },
               style: OutlinedButton.styleFrom(
                 foregroundColor: Colors.red,
                 side: const BorderSide(color: Colors.red),
                 padding: const EdgeInsets.symmetric(vertical: 12),
               ),
-              child: const Text('Tolak Reservasi'),
+              child: isLoading && _lastUpdatedStatus == ReservationStatus.cancelled
+                  ? const LoadingIndicatorWidget(size: 16)
+                  : const Text('Tolak Reservasi'),
             ),
           ),
           const SizedBox(width: 16),
           Expanded(
             child: FilledButton(
-              onPressed: () {
-                ref
-                    .read(updateReservationStatusViewModelProvider(reservation.reservationId)
-                        .notifier)
-                    .updateReservationStatus(ReservationStatus.confirmed);
-              },
-              child: const Text('Terima Reservasi'),
+              onPressed: isLoading
+                  ? null
+                  : () {
+                      setState(() {
+                        _lastUpdatedStatus = ReservationStatus.confirmed;
+                      });
+                      widget.onUpdateReservationStatus(ReservationStatus.confirmed);
+                    },
+              child: isLoading && _lastUpdatedStatus == ReservationStatus.confirmed
+                  ? const LoadingIndicatorWidget(size: 16)
+                  : const Text('Terima Reservasi'),
             ),
           ),
         ],

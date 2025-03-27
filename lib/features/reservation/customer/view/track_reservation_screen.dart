@@ -1,13 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
-import 'package:socieaty/core/enums/transaction.enum.dart';
 import 'package:socieaty/core/network/api_result.dart';
 import 'package:socieaty/core/theme/app_pallete.dart';
 import 'package:socieaty/core/utils/show_snackbar.dart';
-import 'package:socieaty/features/food-order/repository/food_order_repository.dart';
 import 'package:socieaty/features/reservation/customer/provider/get_reservation_provider.dart';
 import 'package:socieaty/features/reservation/customer/socket/customer_reservation_socket_service.dart';
+import 'package:socieaty/features/reservation/enum/reservation_status_enum.dart';
 import 'package:socieaty/features/reservation/model/reservation.dart';
 import 'package:socieaty/features/reservation/customer/view/states/active_reservation_view.dart';
 import 'package:socieaty/features/reservation/customer/view/states/cancelled_reservation_screen.dart';

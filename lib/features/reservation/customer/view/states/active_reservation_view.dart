@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
-import 'package:socieaty/core/enums/transaction.enum.dart';
 import 'package:socieaty/core/theme/app_pallete.dart';
 import 'package:socieaty/core/utils/converter.dart';
 import 'package:socieaty/core/utils/custom_extension.dart';
+import 'package:socieaty/features/reservation/enum/reservation_status_enum.dart';
 import 'package:socieaty/features/reservation/model/reservation.dart';
 import 'package:socieaty/shared/widgets/dotted_divider.dart';
 import 'package:socieaty/shared/widgets/profile_picture_widget.dart';
@@ -84,21 +84,7 @@ class _ActiveReservationViewState extends State<ActiveReservationView> {
     final timeFormat = DateFormat('HH:mm');
     final dateFormat = DateFormat('EEEE, d MMMM yyyy');
 
-    Color statusColor;
-    switch (reservation.reservationStatus) {
-      case ReservationStatus.confirmed:
-        statusColor = AppPallete.successColor;
-        break;
-      case ReservationStatus.pending:
-        statusColor = AppPallete.warningColor;
-        break;
-      case ReservationStatus.cancelled:
-        statusColor = AppPallete.errorColor;
-        break;
-      case ReservationStatus.completed:
-        statusColor = AppPallete.infoColor;
-        break;
-    }
+    Color statusColor = reservation.reservationStatus.getStatusColor();
 
     return Container(
       color: AppPallete.primaryColor,
@@ -272,6 +258,8 @@ class _ActiveReservationViewState extends State<ActiveReservationView> {
         return 'Reservasi Dibatalkan';
       case ReservationStatus.completed:
         return 'Reservasi Selesai';
+      case ReservationStatus.rejected:
+        return 'Reservasi Ditolak';
     }
   }
 

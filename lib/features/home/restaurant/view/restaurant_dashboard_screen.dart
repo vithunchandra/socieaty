@@ -10,6 +10,9 @@ import 'package:socieaty/features/home/restaurant/view/grid_menu_button_widget.d
 import 'package:socieaty/features/home/restaurant/view/recent_reservation_widget.dart';
 import 'package:socieaty/features/home/restaurant/view/statistic_summary_widget.dart';
 import 'package:socieaty/features/food-order/restaurant/socket/restaurant_socket_service.dart';
+import 'package:socieaty/features/reservation/enum/reservation_status_enum.dart';
+import 'package:socieaty/features/reservation/restaurant/provider/get_restaurant_reservations_provider.dart';
+import 'package:socieaty/features/reservation/restaurant/socket/restaurant_reservation_socket_service.dart';
 import 'package:socieaty/features/restaurant/view/restaurant_scaffold_with_navbar.dart';
 import 'package:socieaty/features/food-order/restaurant/view/food_order_item_summary_widget.dart';
 import 'package:socieaty/features/food-order/restaurant/provider/new_order_notification_provider.dart';
@@ -28,35 +31,34 @@ class _RestaurantDashboardScreenState extends ConsumerState<RestaurantDashboardS
   void initState() {
     super.initState();
     initializeSocketConnection();
-    setupNotificationTapHandling();
     requestNotificationPermissions();
   }
 
   void initializeSocketConnection() {
-    final socketService = ref.read(restaurantSocketServiceProvider);
-    socketService.initConnection();
+    final orderSocketService = ref.read(restaurantSocketServiceProvider);
+    orderSocketService.initConnection(
+      onNewOrderCallback: (order) {
+        ref.read(newOrderNotificationProvider.notifier).setNewOrder(order);
+      },
+      onNewOrderNotificationTap: (orderId) {
+        navigateToOrderDetails(orderId ?? "");
+      },
+    );
 
-    socketService.listenNewOrder((order) {
-      ref.read(newOrderNotificationProvider.notifier).setNewOrder(order);
-    });
+    final reservationSocketService = ref.read(restaurantReservationSocketServiceProvider);
+    reservationSocketService.initConnection(
+      onNewReservationCallback: (reservation) {
+        showSnackbar(context, "New reservation from ${reservation.customer.name}");
+        ref.invalidate(getRestaurantReservationsProvider([ReservationStatus.pending]));
+      },
+      onNewReservationNotificationTap: (reservationId) {
+        context.push('/restaurant/dashboard/reservation/offers', extra: reservationId);
+      },
+    );
   }
 
   void navigateToOrderDetails(String orderId) {
     ref.read(restaurantScaffoldPageControllerProvider).pushNewBranch(1);
-  }
-
-  void setupNotificationTapHandling() {
-    ref.read(localNotificationServiceProvider).setOnNotificationTap((String? orderId) {
-      if (orderId != null) {
-        debugPrint('Navigating to order details for order: $orderId');
-        navigateToOrderDetails(orderId);
-      }
-    });
-  }
-
-  Future<void> openAppSettings() async {
-    await openAppSettings();
-    debugPrint('Opening app settings to enable notifications');
   }
 
   Future<void> requestNotificationPermissions() async {
