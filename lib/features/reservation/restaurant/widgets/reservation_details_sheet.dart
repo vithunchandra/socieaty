@@ -1,12 +1,15 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
+import 'package:socieaty/core/network/api_result.dart';
 import 'package:socieaty/core/utils/converter.dart';
 import 'package:socieaty/core/utils/custom_extension.dart';
 import 'package:socieaty/core/utils/show_snackbar.dart';
+import 'package:socieaty/features/qr_code_scanner/view/qr_code_scanner_screen.dart';
 import 'package:socieaty/features/reservation/model/reservation.dart';
+import 'package:socieaty/features/reservation/repository/reservation_repository.dart';
 import 'package:socieaty/features/reservation/restaurant/provider/get_restaurant_reservations_provider.dart';
-import 'package:socieaty/features/reservation/restaurant/viewmodel/update_reservation_status_view_model.dart';
+import 'package:socieaty/features/reservation/restaurant/viewmodel/restaurant_reservation_view_model.dart';
 import 'package:socieaty/shared/view_state.dart';
 import 'package:socieaty/core/theme/app_pallete.dart';
 import 'package:socieaty/shared/widgets/loading_indicator_widget.dart';
@@ -32,7 +35,7 @@ class ReservationDetailsSheet extends ConsumerStatefulWidget {
 class _ReservationDetailsSheetState extends ConsumerState<ReservationDetailsSheet> {
   void _updateReservationStatus(ReservationStatus newStatus) {
     ref
-        .read(updateReservationStatusViewModelProvider(widget.reservation.reservationId).notifier)
+        .read(restaurantReservationViewModelProvider(widget.reservation.reservationId).notifier)
         .updateReservationStatus(newStatus);
   }
 
@@ -52,7 +55,7 @@ class _ReservationDetailsSheetState extends ConsumerState<ReservationDetailsShee
       ReservationStatus.completed: 'SELESAI',
     };
 
-    ref.listen(updateReservationStatusViewModelProvider(widget.reservation.reservationId),
+    ref.listen(restaurantReservationViewModelProvider(widget.reservation.reservationId),
         (previous, next) {
       switch (next.updatedReservation) {
         case SuccessState<Reservation>(data: final data):
@@ -353,6 +356,11 @@ class _ReservationDetailsSheetState extends ConsumerState<ReservationDetailsShee
               reservation: widget.reservation,
               onUpdateReservationStatus: _updateReservationStatus,
             ),
+          if (widget.reservation.reservationStatus == ReservationStatus.confirmed)
+            ConfirmedReservationActions(
+              reservation: widget.reservation,
+              onUpdateReservationStatus: _updateReservationStatus,
+            ),
         ],
       ),
     );
@@ -431,7 +439,7 @@ class _PendingReservationActionsState extends ConsumerState<PendingReservationAc
   @override
   Widget build(BuildContext context) {
     bool isLoading = ref
-        .watch(updateReservationStatusViewModelProvider(widget.reservation.reservationId))
+        .watch(restaurantReservationViewModelProvider(widget.reservation.reservationId))
         .updatedReservation is LoadingState;
 
     return Padding(
@@ -477,5 +485,135 @@ class _PendingReservationActionsState extends ConsumerState<PendingReservationAc
         ],
       ),
     );
+  }
+}
+
+class ConfirmedReservationActions extends ConsumerStatefulWidget {
+  final Reservation reservation;
+  final void Function(ReservationStatus) onUpdateReservationStatus;
+  const ConfirmedReservationActions({
+    super.key,
+    required this.reservation,
+    required this.onUpdateReservationStatus,
+  });
+
+  @override
+  ConsumerState<ConfirmedReservationActions> createState() => _ConfirmedReservationActionsState();
+}
+
+class _ConfirmedReservationActionsState extends ConsumerState<ConfirmedReservationActions> {
+  ReservationStatus? _lastUpdatedStatus;
+
+  @override
+  Widget build(BuildContext context) {
+    bool isLoading = ref
+        .watch(restaurantReservationViewModelProvider(widget.reservation.reservationId))
+        .updatedReservation is LoadingState;
+
+    return Padding(
+      padding: const EdgeInsets.only(top: 8),
+      child: Row(
+        children: [
+          Expanded(
+            child: OutlinedButton.icon(
+              onPressed: () {
+                // Empty function for "Lihat Jadwal"
+              },
+              icon: const Icon(Icons.calendar_month, size: 18),
+              label: const Text('Lihat Jadwal'),
+              style: OutlinedButton.styleFrom(
+                foregroundColor: AppPallete.primaryColor,
+                side: BorderSide(color: AppPallete.primaryColor),
+                padding: const EdgeInsets.symmetric(vertical: 12),
+              ),
+            ),
+          ),
+          const SizedBox(width: 16),
+          Expanded(
+            child: FilledButton.icon(
+              onPressed: isLoading
+                  ? null
+                  : () {
+                      setState(() {
+                        _lastUpdatedStatus = ReservationStatus.completed;
+                      });
+                      widget.onUpdateReservationStatus(ReservationStatus.completed);
+                    },
+              icon: isLoading && _lastUpdatedStatus == ReservationStatus.completed
+                  ? const SizedBox(
+                      height: 16,
+                      width: 16,
+                      child: CircularProgressIndicator(
+                        strokeWidth: 2,
+                        color: Colors.white,
+                      ),
+                    )
+                  : const Icon(Icons.check_circle_outline, size: 18),
+              label: const Text('Selesai'),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Future<void> _processReservationQrCode(String code, BuildContext context) async {
+    String? reservationId;
+
+    // Try to extract reservation ID from URL or use directly
+    if (code.contains('/reservation/')) {
+      reservationId = code.split('/reservation/').last.split('/').first;
+    } else {
+      reservationId = code;
+    }
+
+    if (reservationId.isEmpty) {
+      _showMessage(context, 'Invalid QR code format', SnackbarState.error);
+      return;
+    }
+
+    try {
+      // Get reservation details
+      final result = await ref.read(reservationRepositoryProvider).getReservation(reservationId);
+
+      switch (result) {
+        case Success(data: final data):
+          final reservation = data.reservation;
+
+          // Check if reservation is in confirmed status
+          if (reservation.reservationStatus != ReservationStatus.confirmed) {
+            if (reservation.reservationStatus == ReservationStatus.completed) {
+              _showMessage(context, 'Reservation has already been completed', SnackbarState.info);
+            } else {
+              _showMessage(context, 'Reservation is not in confirmed status', SnackbarState.error);
+            }
+            return;
+          }
+
+          // If it's the same reservation, update its status
+          if (reservation.reservationId == widget.reservation.reservationId) {
+            setState(() {
+              _lastUpdatedStatus = ReservationStatus.completed;
+            });
+            widget.onUpdateReservationStatus(ReservationStatus.completed);
+            _showMessage(context, 'Reservation checked-in successfully!', SnackbarState.success);
+          } else {
+            _showMessage(context, 'QR code does not match this reservation', SnackbarState.error);
+          }
+          break;
+        case Error(error: final error):
+          _showMessage(
+              context, 'Failed to load reservation: ${error.message}', SnackbarState.error);
+          break;
+      }
+    } catch (e) {
+      _showMessage(context, 'An error occurred processing the QR code: $e', SnackbarState.error);
+    }
+  }
+
+  void _showMessage(BuildContext context, String message, SnackbarState state) {
+    if (context.mounted) {
+      showSnackbar(context, message, state: state);
+    }
   }
 }

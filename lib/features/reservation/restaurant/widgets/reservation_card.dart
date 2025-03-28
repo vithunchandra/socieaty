@@ -7,7 +7,7 @@ import 'package:socieaty/core/utils/show_snackbar.dart';
 import 'package:socieaty/features/reservation/enum/reservation_status_enum.dart';
 import 'package:socieaty/features/reservation/model/reservation.dart';
 import 'package:socieaty/features/reservation/restaurant/provider/get_restaurant_reservations_provider.dart';
-import 'package:socieaty/features/reservation/restaurant/viewmodel/update_reservation_status_view_model.dart';
+import 'package:socieaty/features/reservation/restaurant/viewmodel/restaurant_reservation_view_model.dart';
 import 'package:socieaty/features/reservation/restaurant/widgets/reservation_details_sheet.dart';
 import 'package:socieaty/features/reservation/restaurant/widgets/status_chip.dart';
 import 'package:socieaty/shared/view_state.dart';
@@ -57,16 +57,16 @@ class _ReservationCardState extends ConsumerState<ReservationCard> {
       _lastUpdatedStatus = newStatus;
     });
     ref
-        .read(updateReservationStatusViewModelProvider(widget.reservation.reservationId).notifier)
+        .read(restaurantReservationViewModelProvider(widget.reservation.reservationId).notifier)
         .updateReservationStatus(newStatus);
   }
 
   @override
   Widget build(BuildContext context) {
     bool isLoading = ref
-        .watch(updateReservationStatusViewModelProvider(widget.reservation.reservationId))
+        .watch(restaurantReservationViewModelProvider(widget.reservation.reservationId))
         .updatedReservation is LoadingState;
-    ref.listen(updateReservationStatusViewModelProvider(widget.reservation.reservationId),
+    ref.listen(restaurantReservationViewModelProvider(widget.reservation.reservationId),
         (previous, next) {
       switch (next.updatedReservation) {
         case SuccessState<Reservation>():
@@ -261,6 +261,60 @@ class _ReservationCardState extends ConsumerState<ReservationCard> {
                                       fontWeight: FontWeight.bold,
                                     ),
                                   ),
+                          ),
+                        ),
+                      ],
+                    ),
+                  if (widget.reservation.reservationStatus == ReservationStatus.confirmed)
+                    Row(
+                      children: [
+                        Expanded(
+                          child: OutlinedButton.icon(
+                            onPressed: () {
+                              // Empty function for "See Schedule"
+                            },
+                            icon: const Icon(Icons.calendar_month),
+                            label: const Text('See Schedule'),
+                            style: OutlinedButton.styleFrom(
+                              foregroundColor: AppPallete.primaryColor,
+                              side: BorderSide(color: AppPallete.primaryColor),
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(10),
+                              ),
+                              padding: const EdgeInsets.symmetric(vertical: 12),
+                            ),
+                          ),
+                        ),
+                        const SizedBox(width: 16),
+                        Expanded(
+                          child: ElevatedButton.icon(
+                            onPressed: isLoading
+                                ? null
+                                : () => _updateReservationStatus(ReservationStatus.completed),
+                            icon: isLoading && _lastUpdatedStatus == ReservationStatus.completed
+                                ? const SizedBox(
+                                    height: 16,
+                                    width: 16,
+                                    child: CircularProgressIndicator(
+                                      strokeWidth: 2,
+                                      color: Colors.white,
+                                    ),
+                                  )
+                                : const Icon(Icons.check_circle_outline, size: 16),
+                            label: const Text(
+                              'Complete',
+                              style: TextStyle(
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+                            style: ElevatedButton.styleFrom(
+                              backgroundColor: AppPallete.primaryColor,
+                              foregroundColor: Colors.white,
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(10),
+                              ),
+                              padding: const EdgeInsets.symmetric(vertical: 12),
+                            ),
                           ),
                         ),
                       ],

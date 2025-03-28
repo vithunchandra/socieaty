@@ -3,19 +3,19 @@ import 'package:riverpod_annotation/riverpod_annotation.dart';
 import 'package:socieaty/core/network/api_result.dart';
 import 'package:socieaty/features/reservation/enum/reservation_status_enum.dart';
 import 'package:socieaty/features/reservation/repository/reservation_repository.dart';
-import 'package:socieaty/features/reservation/restaurant/viewstate/update_reservation_status_view_state.dart';
+import 'package:socieaty/features/reservation/restaurant/viewstate/restaurant_reservation_view_state.dart';
 import 'package:socieaty/shared/view_state.dart';
 
-part 'update_reservation_status_view_model.g.dart';
+part 'restaurant_reservation_view_model.g.dart';
 
 @riverpod
-class UpdateReservationStatusViewModel extends _$UpdateReservationStatusViewModel {
+class RestaurantReservationViewModel extends _$RestaurantReservationViewModel {
   late ReservationRepository _reservationRepository;
 
   @override
-  UpdateReservationStatusViewState build(String reservationId) {
+  RestaurantReservationViewState build(String reservationId) {
     _reservationRepository = ref.read(reservationRepositoryProvider);
-    return UpdateReservationStatusViewState(
+    return RestaurantReservationViewState(
       reservationId: reservationId,
       updatedReservation: IdleState(),
     );

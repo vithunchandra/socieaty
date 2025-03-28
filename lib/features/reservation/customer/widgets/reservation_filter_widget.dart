@@ -5,7 +5,6 @@ import 'package:socieaty/core/enums/sort_order_enum.dart';
 import 'package:socieaty/core/theme/app_pallete.dart';
 import 'package:socieaty/features/reservation/customer/viewstate/get_reservations_history_query_state.dart';
 import 'package:socieaty/features/reservation/enum/reservation_sort_by_enum.dart';
-import 'package:socieaty/features/reservation/enum/reservation_status_enum.dart';
 import 'package:socieaty/shared/widgets/dotted_divider.dart';
 
 Future<GetReservationsHistoryQueryState?> showReservationFilterBottomSheet(

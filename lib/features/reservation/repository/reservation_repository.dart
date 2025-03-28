@@ -13,6 +13,7 @@ import 'package:socieaty/features/reservation/enum/reservation_status_enum.dart'
 import 'package:socieaty/features/reservation/repository/responses/create_reservation_response.dart';
 import 'package:socieaty/features/reservation/repository/responses/get_reservation_response.dart';
 import 'package:socieaty/features/reservation/repository/responses/get_restaurant_reservations_response.dart';
+import 'package:socieaty/features/reservation/repository/responses/scan_customer_reservation.dart';
 import 'package:socieaty/features/reservation/repository/responses/track_reservation_response.dart';
 import 'package:socieaty/features/reservation/repository/responses/update_reservation_response.dart';
 
@@ -53,6 +54,13 @@ class ReservationRepository {
       requestFunction: () =>
           _dio.put('reservation/$reservationId', data: {'status': newStatus.name}),
       successParser: (data) => UpdateReservationResponse.fromJson(data),
+    );
+  }
+
+  Future<ApiResult<ScanCustomerReservationResponse>> scanCustomerReservation(String reservationId) {
+    return executeRequest<ScanCustomerReservationResponse>(
+      requestFunction: () => _dio.get('reservation/$reservationId/scan'),
+      successParser: (data) => ScanCustomerReservationResponse.fromJson(data),
     );
   }
 
@@ -97,4 +105,6 @@ class ReservationRepository {
       successParser: (data) => TrackReservationResponse.fromJson(data),
     );
   }
+
+  
 }

@@ -21,6 +21,7 @@ import 'package:socieaty/features/home/restaurant/view/restaurant_dashboard_scre
 import 'package:socieaty/features/livestream/view/livestream_home_screen.dart';
 import 'package:socieaty/features/map/view/select_location.dart';
 import 'package:socieaty/features/post/post/view/post_screen.dart';
+import 'package:socieaty/features/qr_code_scanner/view/qr_code_scanner_screen.dart';
 import 'package:socieaty/features/reservation/customer/view/create_reservation_screen.dart';
 import 'package:socieaty/features/reservation/customer/view/outlet_reserve_screen.dart';
 import 'package:socieaty/features/reservation/customer/view/reservation_food_selection_screen.dart';
@@ -335,6 +336,16 @@ GoRouter router(Ref ref) {
           reservationId: state.extra as String,
         ),
         routes: [],
+      ),
+      GoRoute(
+        path: '/qr-code-scanner',
+        builder: (context, state) => QrCodeScannerScreen(
+          args: state.extra as QrCodeScannerArgs? ??
+              const QrCodeScannerArgs(
+                title: 'Scan QR Code',
+                helperMessage: 'Align QR code within the frame to scan',
+              ),
+        ),
       ),
       GoRoute(
         path: '/:userId',
