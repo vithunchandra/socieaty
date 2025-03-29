@@ -95,8 +95,6 @@ class _ActiveReservationViewState extends ConsumerState<ActiveReservationView> {
     final timeFormat = DateFormat('HH:mm');
     final dateFormat = DateFormat('EEEE, d MMMM yyyy');
 
-    Color statusColor = reservation.reservationStatus.getStatusColor();
-
     return Container(
       color: AppPallete.primaryColor,
       padding: const EdgeInsets.fromLTRB(16, 8, 16, 30),
@@ -231,7 +229,7 @@ class _ActiveReservationViewState extends ConsumerState<ActiveReservationView> {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
-                  _getStatusMessage(reservation.reservationStatus),
+                  reservation.reservationStatus.getStatusName(),
                   style: Theme.of(context).textTheme.titleMedium?.copyWith(
                         color: statusColor,
                         fontWeight: FontWeight.bold,
@@ -255,21 +253,6 @@ class _ActiveReservationViewState extends ConsumerState<ActiveReservationView> {
         ],
       ),
     );
-  }
-
-  String _getStatusMessage(ReservationStatus status) {
-    switch (status) {
-      case ReservationStatus.confirmed:
-        return 'Reservasi Dikonfirmasi';
-      case ReservationStatus.pending:
-        return 'Menunggu Konfirmasi';
-      case ReservationStatus.cancelled:
-        return 'Reservasi Dibatalkan';
-      case ReservationStatus.completed:
-        return 'Reservasi Selesai';
-      case ReservationStatus.rejected:
-        return 'Reservasi Ditolak';
-    }
   }
 
   Widget _buildRestaurantSection(Reservation reservation) {

@@ -1,51 +1,57 @@
 import 'package:flutter/material.dart';
+import 'package:socieaty/core/theme/app_pallete.dart';
 import 'package:socieaty/features/reservation/enum/reservation_status_enum.dart';
 
 Widget getStatusChip(ReservationStatus status) {
-  Color backgroundColor;
-  Color textColor;
-  String label;
+  Color bgColor = Colors.grey;
+  Color textColor = Colors.white;
+  String label = '';
 
   switch (status) {
     case ReservationStatus.pending:
-      backgroundColor = Colors.amber.shade50;
-      textColor = Colors.amber.shade800;
+      bgColor = Colors.orange;
+      textColor = Colors.white;
       label = 'Pending';
       break;
     case ReservationStatus.confirmed:
-      backgroundColor = Colors.blue.shade50;
-      textColor = Colors.blue.shade700;
+      bgColor = AppPallete.infoColor;
+      textColor = Colors.white;
       label = 'Confirmed';
       break;
+    case ReservationStatus.dining:
+      bgColor = AppPallete.primaryColor;
+      textColor = Colors.white;
+      label = 'Dining';
+      break;
     case ReservationStatus.completed:
-      backgroundColor = Colors.green.shade50;
-      textColor = Colors.green.shade700;
+      bgColor = AppPallete.successColor;
+      textColor = Colors.white;
       label = 'Completed';
       break;
-    case ReservationStatus.cancelled:
-      backgroundColor = Colors.red.shade50;
-      textColor = Colors.red.shade700;
-      label = 'Cancelled';
-      break;
     case ReservationStatus.rejected:
-      backgroundColor = Colors.red.shade50;
-      textColor = Colors.red.shade700;
+      bgColor = AppPallete.errorColor;
+      textColor = Colors.white;
       label = 'Rejected';
+      break;
+    case ReservationStatus.cancelled:
+      bgColor = Colors.red.shade300;
+      textColor = Colors.white;
+      label = 'Cancelled';
       break;
   }
 
   return Container(
-    padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+    padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
     decoration: BoxDecoration(
-      color: backgroundColor,
-      borderRadius: BorderRadius.circular(20),
+      color: bgColor,
+      borderRadius: BorderRadius.circular(16),
     ),
     child: Text(
       label,
       style: TextStyle(
         color: textColor,
-        fontWeight: FontWeight.bold,
         fontSize: 12,
+        fontWeight: FontWeight.bold,
       ),
     ),
   );

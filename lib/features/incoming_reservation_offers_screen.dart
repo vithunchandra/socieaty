@@ -28,7 +28,8 @@ class _IncomingReservationOffersScreenState extends ConsumerState<IncomingReserv
 
     // If there's an initial reservation, go to the appropriate tab
     if (widget.initialReservation != null) {
-      if (widget.initialReservation!.reservationStatus == ReservationStatus.confirmed) {
+      if (widget.initialReservation!.reservationStatus == ReservationStatus.confirmed ||
+          widget.initialReservation!.reservationStatus == ReservationStatus.dining) {
         _tabController.animateTo(1);
       }
     }
@@ -92,7 +93,7 @@ class _IncomingReservationOffersScreenState extends ConsumerState<IncomingReserv
         controller: _tabController,
         children: [
           ReservationList(status: [ReservationStatus.pending]),
-          ReservationList(status: [ReservationStatus.confirmed]),
+          ReservationList(status: [ReservationStatus.confirmed, ReservationStatus.dining]),
           ReservationList(status: [ReservationStatus.completed]),
         ],
       ),

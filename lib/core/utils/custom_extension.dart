@@ -87,6 +87,8 @@ extension ReservationStatusExtension on ReservationStatus {
     switch (this) {
       case ReservationStatus.confirmed:
         return AppPallete.successColor;
+      case ReservationStatus.dining:
+        return AppPallete.primaryColor;
       case ReservationStatus.pending:
         return AppPallete.warningColor;
       case ReservationStatus.cancelled:
@@ -102,6 +104,8 @@ extension ReservationStatusExtension on ReservationStatus {
     switch (this) {
       case ReservationStatus.confirmed:
         return Icons.check_circle;
+      case ReservationStatus.dining:
+        return Icons.dining;
       case ReservationStatus.pending:
         return Icons.pending;
       case ReservationStatus.cancelled:
@@ -113,10 +117,12 @@ extension ReservationStatusExtension on ReservationStatus {
     }
   }
 
-  String updatedStatusName() {
+  String getStatusName() {
     switch (this) {
       case ReservationStatus.confirmed:
         return 'dikonfirmasi';
+      case ReservationStatus.dining:
+        return 'sedang makan';
       case ReservationStatus.cancelled:
         return 'dibatalkan';
       case ReservationStatus.completed:

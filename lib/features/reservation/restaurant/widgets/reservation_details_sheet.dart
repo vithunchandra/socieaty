@@ -44,6 +44,7 @@ class _ReservationDetailsSheetState extends ConsumerState<ReservationDetailsShee
     final statusColors = {
       ReservationStatus.pending: Colors.orange,
       ReservationStatus.confirmed: Colors.blue,
+      ReservationStatus.dining: AppPallete.primaryColor,
       ReservationStatus.cancelled: Colors.red,
       ReservationStatus.completed: Colors.green,
     };
@@ -51,6 +52,7 @@ class _ReservationDetailsSheetState extends ConsumerState<ReservationDetailsShee
     final statusNames = {
       ReservationStatus.pending: 'MENUNGGU',
       ReservationStatus.confirmed: 'DIKONFIRMASI',
+      ReservationStatus.dining: 'SEDANG MAKAN',
       ReservationStatus.cancelled: 'DIBATALKAN',
       ReservationStatus.completed: 'SELESAI',
     };
@@ -62,7 +64,7 @@ class _ReservationDetailsSheetState extends ConsumerState<ReservationDetailsShee
           ref.invalidate(getRestaurantReservationsProvider(widget.statusFilter));
           showSnackbar(
             context,
-            'Reservasi berhasil ${data.reservationStatus.updatedStatusName()}',
+            'Reservasi berhasil ${data.reservationStatus.getStatusName()}',
             state: SnackbarState.success,
           );
           context.pop();
@@ -361,6 +363,11 @@ class _ReservationDetailsSheetState extends ConsumerState<ReservationDetailsShee
               reservation: widget.reservation,
               onUpdateReservationStatus: _updateReservationStatus,
             ),
+          if (widget.reservation.reservationStatus == ReservationStatus.dining)
+            DiningReservationActions(
+              reservation: widget.reservation,
+              onUpdateReservationStatus: _updateReservationStatus,
+            ),
         ],
       ),
     );
@@ -535,6 +542,61 @@ class _ConfirmedReservationActionsState extends ConsumerState<ConfirmedReservati
                   ? null
                   : () {
                       setState(() {
+                        _lastUpdatedStatus = ReservationStatus.dining;
+                      });
+                      widget.onUpdateReservationStatus(ReservationStatus.dining);
+                    },
+              icon: isLoading && _lastUpdatedStatus == ReservationStatus.dining
+                  ? const SizedBox(
+                      height: 16,
+                      width: 16,
+                      child: CircularProgressIndicator(
+                        strokeWidth: 2,
+                        color: Colors.white,
+                      ),
+                    )
+                  : const Icon(Icons.check_circle_outline, size: 18),
+              label: const Text('Layani'),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class DiningReservationActions extends ConsumerStatefulWidget {
+  final Reservation reservation;
+  final void Function(ReservationStatus) onUpdateReservationStatus;
+  const DiningReservationActions({
+    super.key,
+    required this.reservation,
+    required this.onUpdateReservationStatus,
+  });
+
+  @override
+  ConsumerState<DiningReservationActions> createState() => _DiningReservationActionsState();
+}
+
+class _DiningReservationActionsState extends ConsumerState<DiningReservationActions> {
+  ReservationStatus? _lastUpdatedStatus;
+
+  @override
+  Widget build(BuildContext context) {
+    bool isLoading = ref
+        .watch(restaurantReservationViewModelProvider(widget.reservation.reservationId))
+        .updatedReservation is LoadingState;
+
+    return Padding(
+      padding: const EdgeInsets.only(top: 8),
+      child: Row(
+        children: [
+          Expanded(
+            child: FilledButton.icon(
+              onPressed: isLoading
+                  ? null
+                  : () {
+                      setState(() {
                         _lastUpdatedStatus = ReservationStatus.completed;
                       });
                       widget.onUpdateReservationStatus(ReservationStatus.completed);
@@ -555,65 +617,5 @@ class _ConfirmedReservationActionsState extends ConsumerState<ConfirmedReservati
         ],
       ),
     );
-  }
-
-  Future<void> _processReservationQrCode(String code, BuildContext context) async {
-    String? reservationId;
-
-    // Try to extract reservation ID from URL or use directly
-    if (code.contains('/reservation/')) {
-      reservationId = code.split('/reservation/').last.split('/').first;
-    } else {
-      reservationId = code;
-    }
-
-    if (reservationId.isEmpty) {
-      _showMessage(context, 'Invalid QR code format', SnackbarState.error);
-      return;
-    }
-
-    try {
-      // Get reservation details
-      final result = await ref.read(reservationRepositoryProvider).getReservation(reservationId);
-
-      switch (result) {
-        case Success(data: final data):
-          final reservation = data.reservation;
-
-          // Check if reservation is in confirmed status
-          if (reservation.reservationStatus != ReservationStatus.confirmed) {
-            if (reservation.reservationStatus == ReservationStatus.completed) {
-              _showMessage(context, 'Reservation has already been completed', SnackbarState.info);
-            } else {
-              _showMessage(context, 'Reservation is not in confirmed status', SnackbarState.error);
-            }
-            return;
-          }
-
-          // If it's the same reservation, update its status
-          if (reservation.reservationId == widget.reservation.reservationId) {
-            setState(() {
-              _lastUpdatedStatus = ReservationStatus.completed;
-            });
-            widget.onUpdateReservationStatus(ReservationStatus.completed);
-            _showMessage(context, 'Reservation checked-in successfully!', SnackbarState.success);
-          } else {
-            _showMessage(context, 'QR code does not match this reservation', SnackbarState.error);
-          }
-          break;
-        case Error(error: final error):
-          _showMessage(
-              context, 'Failed to load reservation: ${error.message}', SnackbarState.error);
-          break;
-      }
-    } catch (e) {
-      _showMessage(context, 'An error occurred processing the QR code: $e', SnackbarState.error);
-    }
-  }
-
-  void _showMessage(BuildContext context, String message, SnackbarState state) {
-    if (context.mounted) {
-      showSnackbar(context, message, state: state);
-    }
   }
 }

@@ -200,124 +200,40 @@ class _ReservationCardState extends ConsumerState<ReservationCard> {
                     ),
                   const SizedBox(height: 16),
                   if (widget.reservation.reservationStatus == ReservationStatus.pending)
-                    Row(
-                      children: [
-                        Expanded(
-                          child: OutlinedButton(
-                            onPressed: isLoading
-                                ? null
-                                : () => _updateReservationStatus(ReservationStatus.rejected),
-                            style: OutlinedButton.styleFrom(
-                              shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(10),
-                              ),
-                              side: BorderSide(color: AppPallete.errorColor),
-                              padding: const EdgeInsets.symmetric(vertical: 12),
-                            ),
-                            child: isLoading && _lastUpdatedStatus == ReservationStatus.rejected
-                                ? const SizedBox(
-                                    height: 16,
-                                    width: 16,
-                                    child: CircularProgressIndicator(
-                                      strokeWidth: 2,
-                                      color: AppPallete.errorColor,
-                                    ),
-                                  )
-                                : Text(
-                                    'Decline',
-                                    style: TextStyle(
-                                      color: AppPallete.errorColor,
-                                      fontWeight: FontWeight.bold,
-                                    ),
-                                  ),
-                          ),
-                        ),
-                        const SizedBox(width: 16),
-                        Expanded(
-                          child: ElevatedButton(
-                            onPressed: isLoading
-                                ? null
-                                : () => _updateReservationStatus(ReservationStatus.confirmed),
-                            style: ElevatedButton.styleFrom(
-                              shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(10),
-                              ),
-                              backgroundColor: AppPallete.primaryColor,
-                              padding: const EdgeInsets.symmetric(vertical: 12),
-                            ),
-                            child: isLoading && _lastUpdatedStatus == ReservationStatus.confirmed
-                                ? const SizedBox(
-                                    height: 16,
-                                    width: 16,
-                                    child: CircularProgressIndicator(
-                                      strokeWidth: 2,
-                                      color: Colors.white,
-                                    ),
-                                  )
-                                : const Text(
-                                    'Accept',
-                                    style: TextStyle(
-                                      color: Colors.white,
-                                      fontWeight: FontWeight.bold,
-                                    ),
-                                  ),
-                          ),
-                        ),
-                      ],
+                    PendingReservationCardActions(
+                      reservation: widget.reservation,
+                      isLoading: isLoading,
+                      lastUpdatedStatus: _lastUpdatedStatus,
+                      onUpdateStatus: (status) {
+                        setState(() {
+                          _lastUpdatedStatus = status;
+                        });
+                        _updateReservationStatus(status);
+                      },
                     ),
                   if (widget.reservation.reservationStatus == ReservationStatus.confirmed)
-                    Row(
-                      children: [
-                        Expanded(
-                          child: OutlinedButton.icon(
-                            onPressed: () {
-                              // Empty function for "See Schedule"
-                            },
-                            icon: const Icon(Icons.calendar_month),
-                            label: const Text('See Schedule'),
-                            style: OutlinedButton.styleFrom(
-                              foregroundColor: AppPallete.primaryColor,
-                              side: BorderSide(color: AppPallete.primaryColor),
-                              shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(10),
-                              ),
-                              padding: const EdgeInsets.symmetric(vertical: 12),
-                            ),
-                          ),
-                        ),
-                        const SizedBox(width: 16),
-                        Expanded(
-                          child: ElevatedButton.icon(
-                            onPressed: isLoading
-                                ? null
-                                : () => _updateReservationStatus(ReservationStatus.completed),
-                            icon: isLoading && _lastUpdatedStatus == ReservationStatus.completed
-                                ? const SizedBox(
-                                    height: 16,
-                                    width: 16,
-                                    child: CircularProgressIndicator(
-                                      strokeWidth: 2,
-                                      color: Colors.white,
-                                    ),
-                                  )
-                                : const Icon(Icons.check_circle_outline, size: 16),
-                            label: const Text(
-                              'Complete',
-                              style: TextStyle(
-                                fontWeight: FontWeight.bold,
-                              ),
-                            ),
-                            style: ElevatedButton.styleFrom(
-                              backgroundColor: AppPallete.primaryColor,
-                              foregroundColor: Colors.white,
-                              shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(10),
-                              ),
-                              padding: const EdgeInsets.symmetric(vertical: 12),
-                            ),
-                          ),
-                        ),
-                      ],
+                    ConfirmedReservationCardActions(
+                      reservation: widget.reservation,
+                      isLoading: isLoading,
+                      lastUpdatedStatus: _lastUpdatedStatus,
+                      onUpdateStatus: (status) {
+                        setState(() {
+                          _lastUpdatedStatus = status;
+                        });
+                        _updateReservationStatus(status);
+                      },
+                    ),
+                  if (widget.reservation.reservationStatus == ReservationStatus.dining)
+                    DiningReservationCardActions(
+                      reservation: widget.reservation,
+                      isLoading: isLoading,
+                      lastUpdatedStatus: _lastUpdatedStatus,
+                      onUpdateStatus: (status) {
+                        setState(() {
+                          _lastUpdatedStatus = status;
+                        });
+                        _updateReservationStatus(status);
+                      },
                     ),
                 ],
               ),
@@ -391,5 +307,225 @@ class _ReservationCardState extends ConsumerState<ReservationCard> {
   String _formatTimeShort(DateTime dateTime) {
     final formatter = DateFormat('HH:mm');
     return formatter.format(dateTime);
+  }
+}
+
+class PendingReservationCardActions extends StatelessWidget {
+  final Reservation reservation;
+  final bool isLoading;
+  final ReservationStatus? lastUpdatedStatus;
+  final Function(ReservationStatus) onUpdateStatus;
+
+  const PendingReservationCardActions({
+    super.key,
+    required this.reservation,
+    required this.isLoading,
+    required this.lastUpdatedStatus,
+    required this.onUpdateStatus,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Row(
+      children: [
+        Expanded(
+          child: OutlinedButton(
+            onPressed: isLoading ? null : () => onUpdateStatus(ReservationStatus.rejected),
+            style: OutlinedButton.styleFrom(
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(10),
+              ),
+              side: BorderSide(color: AppPallete.errorColor),
+              padding: const EdgeInsets.symmetric(vertical: 12),
+            ),
+            child: isLoading && lastUpdatedStatus == ReservationStatus.rejected
+                ? const SizedBox(
+                    height: 16,
+                    width: 16,
+                    child: CircularProgressIndicator(
+                      strokeWidth: 2,
+                      color: AppPallete.errorColor,
+                    ),
+                  )
+                : Text(
+                    'Decline',
+                    style: TextStyle(
+                      color: AppPallete.errorColor,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+          ),
+        ),
+        const SizedBox(width: 16),
+        Expanded(
+          child: ElevatedButton(
+            onPressed: isLoading ? null : () => onUpdateStatus(ReservationStatus.confirmed),
+            style: ElevatedButton.styleFrom(
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(10),
+              ),
+              backgroundColor: AppPallete.primaryColor,
+              padding: const EdgeInsets.symmetric(vertical: 12),
+            ),
+            child: isLoading && lastUpdatedStatus == ReservationStatus.confirmed
+                ? const SizedBox(
+                    height: 16,
+                    width: 16,
+                    child: CircularProgressIndicator(
+                      strokeWidth: 2,
+                      color: Colors.white,
+                    ),
+                  )
+                : const Text(
+                    'Accept',
+                    style: TextStyle(
+                      color: Colors.white,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+          ),
+        ),
+      ],
+    );
+  }
+}
+
+class ConfirmedReservationCardActions extends StatelessWidget {
+  final Reservation reservation;
+  final bool isLoading;
+  final ReservationStatus? lastUpdatedStatus;
+  final Function(ReservationStatus) onUpdateStatus;
+
+  const ConfirmedReservationCardActions({
+    super.key,
+    required this.reservation,
+    required this.isLoading,
+    required this.lastUpdatedStatus,
+    required this.onUpdateStatus,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Row(
+      children: [
+        Expanded(
+          child: OutlinedButton.icon(
+            onPressed: () {
+              // Empty function for "See Schedule"
+            },
+            icon: const Icon(Icons.calendar_month),
+            label: const Text('See Schedule'),
+            style: OutlinedButton.styleFrom(
+              foregroundColor: AppPallete.primaryColor,
+              side: BorderSide(color: AppPallete.primaryColor),
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(10),
+              ),
+              padding: const EdgeInsets.symmetric(vertical: 12),
+            ),
+          ),
+        ),
+        const SizedBox(width: 16),
+        Expanded(
+          child: ElevatedButton.icon(
+            onPressed: isLoading ? null : () => onUpdateStatus(ReservationStatus.completed),
+            icon: isLoading && lastUpdatedStatus == ReservationStatus.completed
+                ? const SizedBox(
+                    height: 16,
+                    width: 16,
+                    child: CircularProgressIndicator(
+                      strokeWidth: 2,
+                      color: Colors.white,
+                    ),
+                  )
+                : const Icon(Icons.check_circle_outline, size: 16),
+            label: const Text(
+              'Complete',
+              style: TextStyle(
+                fontWeight: FontWeight.bold,
+              ),
+            ),
+            style: ElevatedButton.styleFrom(
+              backgroundColor: AppPallete.primaryColor,
+              foregroundColor: Colors.white,
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(10),
+              ),
+              padding: const EdgeInsets.symmetric(vertical: 12),
+            ),
+          ),
+        ),
+      ],
+    );
+  }
+}
+
+class DiningReservationCardActions extends StatelessWidget {
+  final Reservation reservation;
+  final bool isLoading;
+  final ReservationStatus? lastUpdatedStatus;
+  final Function(ReservationStatus) onUpdateStatus;
+
+  const DiningReservationCardActions({
+    super.key,
+    required this.reservation,
+    required this.isLoading,
+    required this.lastUpdatedStatus,
+    required this.onUpdateStatus,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Row(
+      children: [
+        Expanded(
+          child: OutlinedButton.icon(
+            onPressed: () {
+              // Empty function for "Add order"
+            },
+            icon: const Icon(Icons.restaurant_menu),
+            label: const Text('Add Order'),
+            style: OutlinedButton.styleFrom(
+              foregroundColor: AppPallete.primaryColor,
+              side: BorderSide(color: AppPallete.primaryColor),
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(10),
+              ),
+              padding: const EdgeInsets.symmetric(vertical: 12),
+            ),
+          ),
+        ),
+        const SizedBox(width: 16),
+        Expanded(
+          child: ElevatedButton.icon(
+            onPressed: isLoading ? null : () => onUpdateStatus(ReservationStatus.completed),
+            icon: isLoading && lastUpdatedStatus == ReservationStatus.completed
+                ? const SizedBox(
+                    height: 16,
+                    width: 16,
+                    child: CircularProgressIndicator(
+                      strokeWidth: 2,
+                      color: Colors.white,
+                    ),
+                  )
+                : const Icon(Icons.check_circle_outline, size: 16),
+            label: const Text(
+              'Complete',
+              style: TextStyle(
+                fontWeight: FontWeight.bold,
+              ),
+            ),
+            style: ElevatedButton.styleFrom(
+              backgroundColor: AppPallete.primaryColor,
+              foregroundColor: Colors.white,
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(10),
+              ),
+              padding: const EdgeInsets.symmetric(vertical: 12),
+            ),
+          ),
+        ),
+      ],
+    );
   }
 }

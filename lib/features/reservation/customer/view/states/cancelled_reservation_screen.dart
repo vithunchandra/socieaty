@@ -170,28 +170,13 @@ class _CancelledReservationScreenState extends State<CancelledReservationScreen>
       child: Column(
         children: [
           Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            mainAxisAlignment: MainAxisAlignment.center,
             children: [
               Text(
                 'Reservasi #${reservation.reservationId.substring(0, 8)}',
                 style: const TextStyle(
                   fontWeight: FontWeight.bold,
                   fontSize: 18,
-                ),
-              ),
-              Container(
-                padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
-                decoration: BoxDecoration(
-                  color: reservation.reservationStatus.getStatusColor().withAlpha(25),
-                  borderRadius: BorderRadius.circular(20),
-                ),
-                child: Text(
-                  reservation.reservationStatus.name.toUpperCase(),
-                  style: TextStyle(
-                    color: reservation.reservationStatus.getStatusColor(),
-                    fontWeight: FontWeight.w600,
-                    fontSize: 12,
-                  ),
                 ),
               ),
             ],

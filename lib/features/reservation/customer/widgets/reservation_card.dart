@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:intl/intl.dart';
 import 'package:socieaty/core/theme/app_pallete.dart';
+import 'package:socieaty/core/utils/custom_extension.dart';
 import 'package:socieaty/features/reservation/model/reservation.dart';
 import 'package:socieaty/features/reservation/enum/reservation_status_enum.dart';
 
@@ -17,7 +18,7 @@ class ReservationCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final statusColor = _getStatusColor(reservation.reservationStatus);
+    final statusColor = reservation.reservationStatus.getStatusColor();
     final textTheme = Theme.of(context).textTheme;
     final formatter = DateFormat('dd MMM yyyy • HH:mm');
 
@@ -79,7 +80,7 @@ class ReservationCard extends StatelessWidget {
                                   borderRadius: BorderRadius.circular(4),
                                 ),
                                 child: Text(
-                                  _getStatusText(reservation.reservationStatus),
+                                  reservation.reservationStatus.getStatusName(),
                                   style: textTheme.labelSmall?.copyWith(
                                     color: statusColor,
                                     fontWeight: FontWeight.w500,
@@ -216,34 +217,5 @@ class ReservationCard extends StatelessWidget {
     return reservation.reservationId.length >= 4
         ? reservation.reservationId.substring(0, 4)
         : reservation.reservationId;
-  }
-
-  Color _getStatusColor(ReservationStatus status) {
-    switch (status) {
-      case ReservationStatus.pending:
-        return Colors.amber.shade700;
-      case ReservationStatus.confirmed:
-        return Colors.blue.shade700;
-      case ReservationStatus.completed:
-        return Colors.green.shade700;
-      case ReservationStatus.cancelled:
-      case ReservationStatus.rejected:
-        return Colors.red.shade700;
-    }
-  }
-
-  String _getStatusText(ReservationStatus status) {
-    switch (status) {
-      case ReservationStatus.pending:
-        return 'Menunggu';
-      case ReservationStatus.confirmed:
-        return 'Dikonfirmasi';
-      case ReservationStatus.completed:
-        return 'Selesai';
-      case ReservationStatus.cancelled:
-        return 'Dibatalkan';
-      case ReservationStatus.rejected:
-        return 'Ditolak';
-    }
   }
 }

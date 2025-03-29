@@ -4,7 +4,6 @@ import 'package:go_router/go_router.dart';
 import 'package:socieaty/core/network/api_result.dart';
 import 'package:socieaty/core/theme/app_pallete.dart';
 import 'package:socieaty/core/utils/show_snackbar.dart';
-import 'package:socieaty/features/reservation/customer/provider/get_reservation_provider.dart';
 import 'package:socieaty/features/reservation/customer/socket/customer_reservation_socket_service.dart';
 import 'package:socieaty/features/reservation/enum/reservation_status_enum.dart';
 import 'package:socieaty/features/reservation/model/reservation.dart';
@@ -13,6 +12,7 @@ import 'package:socieaty/features/reservation/customer/view/states/cancelled_res
 import 'package:socieaty/features/reservation/customer/view/states/completed_reservation_screen.dart';
 import 'package:socieaty/features/reservation/customer/view/states/error_view.dart';
 import 'package:socieaty/features/reservation/customer/view/states/loading_view.dart';
+import 'package:socieaty/features/reservation/provider/get_reservation_provider.dart';
 import 'package:socieaty/features/reservation/repository/reservation_repository.dart';
 
 class TrackReservationScreen extends ConsumerStatefulWidget {

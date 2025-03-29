@@ -2,9 +2,12 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:socieaty/core/theme/app_pallete.dart';
+import 'package:socieaty/core/utils/show_snackbar.dart';
 import 'package:socieaty/features/qr_code_scanner/view/qr_code_scanner_screen.dart';
+import 'package:socieaty/features/reservation/customer/view/states/loading_view.dart';
 import 'package:socieaty/features/reservation/enum/reservation_status_enum.dart';
 import 'package:socieaty/features/reservation/model/reservation.dart';
+import 'package:socieaty/features/reservation/provider/get_reservation_provider.dart';
 import 'package:socieaty/features/reservation/restaurant/widgets/reservation_details_sheet.dart';
 import 'package:socieaty/features/reservation/restaurant/widgets/reservation_list.dart';
 
@@ -21,6 +24,7 @@ class IncomingReservationOffersScreen extends ConsumerStatefulWidget {
 class _IncomingReservationOffersScreenState extends ConsumerState<IncomingReservationOffersScreen>
     with SingleTickerProviderStateMixin {
   late TabController _tabController;
+  bool _isScanning = false;
 
   @override
   void initState() {
@@ -36,6 +40,61 @@ class _IncomingReservationOffersScreenState extends ConsumerState<IncomingReserv
   void dispose() {
     _tabController.dispose();
     super.dispose();
+  }
+
+  Future<void> _handleReservationScan(BuildContext context) async {
+    final result = await context.push(
+      '/qr-code-scanner',
+      extra: const QrCodeScannerArgs(
+        title: 'Scan Reservation QR',
+        helperMessage: 'Scan customer QR code to check-in',
+      ),
+    );
+
+    if (result == null) {
+      if (context.mounted) {
+        showSnackbar(context, 'QR code scan gagal', state: SnackbarState.error);
+      }
+      return;
+    }
+
+    if (result is! String) {
+      if (context.mounted) {
+        showSnackbar(context, 'QR code tidak valid', state: SnackbarState.error);
+      }
+      return;
+    }
+
+    if (_isScanning) {
+      return;
+    }
+
+    setState(() {
+      _isScanning = true;
+    });
+
+    final reservationId = result.toString();
+
+    try {
+      final reservation = await ref.watch(getReservationProvider(reservationId).future);
+      if (reservation.reservationStatus != ReservationStatus.confirmed) {
+        if (context.mounted) {
+          showSnackbar(context, 'Invalid reservation status', state: SnackbarState.error);
+        }
+        return;
+      }
+
+      return _showReservationDetails(reservation);
+    } catch (err) {
+      if (context.mounted) {
+        showSnackbar(context, 'Reservation tidak ditemukan', state: SnackbarState.error);
+      }
+      return;
+    } finally {
+      setState(() {
+        _isScanning = false;
+      });
+    }
   }
 
   void _showReservationDetails(Reservation reservation) {
@@ -86,7 +145,7 @@ class _IncomingReservationOffersScreenState extends ConsumerState<IncomingReserv
           ],
         ),
       ),
-      body: TabBarView(
+      body: _isScanning ? const LoadingView() : TabBarView(
         controller: _tabController,
         children: [
           ReservationList(status: [ReservationStatus.pending]),
@@ -102,19 +161,8 @@ class _IncomingReservationOffersScreenState extends ConsumerState<IncomingReserv
     // Only show the FAB when on the "Confirmed" tab
     if (_tabController.index == 1) {
       return FloatingActionButton(
-        onPressed: () async {
-          final result = await context.push(
-            '/qr-code-scanner',
-            extra: const QrCodeScannerArgs(
-              title: 'Scan Reservation QR',
-              helperMessage: 'Scan customer QR code to check-in',
-            ),
-          );
-
-          if (result != null && result is String) {
-            debugPrint("Scanned QR code: $result");
-            // Process the scanned QR code here if needed
-          }
+        onPressed: () {
+          _handleReservationScan(context);
         },
         backgroundColor: AppPallete.primaryColor,
         child: const Icon(Icons.qr_code_scanner, color: Colors.white),
