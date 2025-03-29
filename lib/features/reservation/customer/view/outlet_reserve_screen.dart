@@ -745,6 +745,7 @@ class _OutletReserveScreenState extends ConsumerState<OutletReserveScreen> {
                 const SizedBox(height: 12),
                 reservationConfigAsync.when(
                   data: (config) {
+                    debugPrint('config: ${config.toString()}');
                     List<String> timeSlots = _generateTimeSlots(config, _selectedDate);
                     if (timeSlots.isEmpty) {
                       return _buildEmptyTimeSlotsMessage();
@@ -789,12 +790,6 @@ class _OutletReserveScreenState extends ConsumerState<OutletReserveScreen> {
   }
 
   Widget _buildTimeSlot(String time) {
-    final timeParts = time.split(':');
-    final hour = timeParts[0];
-    final minute = timeParts[1];
-    final ampm = int.parse(hour) < 12 ? 'AM' : 'PM';
-    final displayHour = int.parse(hour) <= 12 ? hour : (int.parse(hour) - 12).toString();
-
     bool isSelected = _selectedTime == time;
 
     return GestureDetector(
@@ -823,24 +818,14 @@ class _OutletReserveScreenState extends ConsumerState<OutletReserveScreen> {
                 ]
               : null,
         ),
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Text(
-              "$displayHour:$minute",
-              style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                    fontWeight: isSelected ? FontWeight.bold : FontWeight.w500,
-                    color: isSelected ? AppPallete.primaryColor : AppPallete.neutralColor.shade800,
-                  ),
-            ),
-            Text(
-              ampm,
-              style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                    color: isSelected ? AppPallete.primaryColor : AppPallete.neutralColor.shade500,
-                    fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
-                  ),
-            ),
-          ],
+        child: Center(
+          child: Text(
+            time,
+            style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                  fontWeight: isSelected ? FontWeight.bold : FontWeight.w500,
+                  color: isSelected ? AppPallete.primaryColor : AppPallete.neutralColor.shade800,
+                ),
+          ),
         ),
       ),
     );
@@ -902,35 +887,40 @@ class _OutletReserveScreenState extends ConsumerState<OutletReserveScreen> {
 
     List<String> slots = [];
 
-    int currentTimeInMinutes = openHour * 60 + openMinute;
+    int openTimeInMinutes = openHour * 60 + openMinute;
     int closeTimeInMinutes = closeHour * 60 + closeMinute;
 
-    // Round current time to the next interval
-    currentTimeInMinutes = (currentTimeInMinutes ~/ timeIntervalMinutes) * timeIntervalMinutes;
+    bool isCrossingMidnight = openTimeInMinutes > closeTimeInMinutes;
 
     // Check if selected date is today
     final now = DateTime.now();
-    final isToday = selectedDate.year == now.year &&
+
+    bool isToday = selectedDate.year == now.year &&
         selectedDate.month == now.month &&
         selectedDate.day == now.day;
+    final currentTimeInMinutes = isToday ? now.hour * 60 + now.minute : 0;
+    int minutePointer = 0;
 
-    // If today, get current time in minutes
-    int nowInMinutes = 0;
-    if (isToday) {
-      nowInMinutes = now.hour * 60 + now.minute;
-    }
-
-    while (currentTimeInMinutes < closeTimeInMinutes) {
-      int hour = currentTimeInMinutes ~/ 60;
-      int minute = currentTimeInMinutes % 60;
-
-      // Skip time slots that have already passed if today
-      if (!isToday || currentTimeInMinutes > nowInMinutes) {
-        String timeSlot = '${hour.toString().padLeft(2, '0')}:${minute.toString().padLeft(2, '0')}';
-        slots.add(timeSlot);
+    if (isCrossingMidnight) {
+      while (minutePointer < 24 * 60) {
+        if ((minutePointer > openTimeInMinutes || minutePointer < closeTimeInMinutes) &&
+            minutePointer > currentTimeInMinutes) {
+          final timeSlot =
+              '${(minutePointer % (24 * 60) ~/ 60).toString().padLeft(2, '0')}:${(minutePointer % 60).toString().padLeft(2, '0')}';
+          slots.add(timeSlot);
+        }
+        minutePointer += timeIntervalMinutes;
       }
-
-      currentTimeInMinutes += timeIntervalMinutes;
+    } else {
+      while (minutePointer < 24 * 60) {
+        if ((minutePointer > openTimeInMinutes && minutePointer < closeTimeInMinutes) &&
+            minutePointer > currentTimeInMinutes) {
+          final timeSlot =
+              '${(minutePointer % (24 * 60) ~/ 60).toString().padLeft(2, '0')}:${(minutePointer % 60).toString().padLeft(2, '0')}';
+          slots.add(timeSlot);
+        }
+        minutePointer += timeIntervalMinutes;
+      }
     }
 
     return slots;

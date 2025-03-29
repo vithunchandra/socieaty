@@ -1,4 +1,5 @@
 import 'package:dio/dio.dart';
+import 'package:flutter/material.dart';
 import 'package:socieaty/core/enums/status_code.enum.dart';
 import 'package:socieaty/core/network/api_result.dart';
 import 'package:socieaty/shared/models/network_error.dart';
@@ -40,9 +41,13 @@ String _handleDioError(DioException error) {
       return "Waktu habis saat mengirim atau menerima data dari server";
     case DioExceptionType.badResponse:
       final statusCode = error.response?.statusCode;
-      final errorData = error.response?.data['message'];
+      dynamic errorData;
+      try {
+        errorData = error.response?.data['message'];
+      } catch (err) {
+        errorData = "Kesalahan tidak diketahui";
+      }
       String? errorMessage;
-
       if (errorData is String) {
         errorMessage = errorData;
       } else if (errorData is List<dynamic>) {

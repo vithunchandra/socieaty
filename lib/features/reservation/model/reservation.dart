@@ -15,6 +15,8 @@ class Reservation with _$Reservation {
     required String transactionId,
     @TransactionServiceTypeConverter() required TransactionServiceType serviceType,
     required int grossAmount,
+    required int netAmount,
+    required int refundAmount,
     required int serviceFee,
     required String note,
     @TransactionStatusConverter() required TransactionStatus status,

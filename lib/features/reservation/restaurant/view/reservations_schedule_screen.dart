@@ -1,19 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:intl/intl.dart';
-import 'package:socieaty/core/enums/transaction.enum.dart';
 import 'package:socieaty/core/theme/app_pallete.dart';
 import 'package:socieaty/core/utils/custom_extension.dart';
 import 'package:socieaty/features/reservation/enum/reservation_status_enum.dart';
 import 'package:socieaty/features/reservation/model/reservation.dart';
-import 'package:socieaty/features/customer/model/socieaty_customer.dart';
 import 'package:socieaty/features/restaurant/model/reservation_config.dart';
-import 'package:socieaty/features/restaurant/model/socieaty_restaurant.dart';
-import 'package:socieaty/features/customer/model/customer_data.dart';
-import 'package:socieaty/features/restaurant/model/restaurant_data.dart';
-import 'package:socieaty/core/enums/user_role.enum.dart';
-import 'package:socieaty/core/enums/bank.enum.dart';
-import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:socieaty/shared/widgets/custom_date_picker.dart';
 
 class ReservationsScheduleScreen extends StatefulWidget {
@@ -232,7 +224,8 @@ class _ReservationsScheduleScreenState extends State<ReservationsScheduleScreen>
   }
 
   Widget _buildSliverReservationsList() {
-    final filteredReservations = _getFilteredReservations();
+    // final filteredReservations = _getFilteredReservations();
+    final filteredReservations = [];
 
     if (filteredReservations.isEmpty) {
       return SliverFillRemaining(
@@ -505,30 +498,30 @@ class _ReservationsScheduleScreenState extends State<ReservationsScheduleScreen>
     );
   }
 
-  List<Reservation> _getFilteredReservations() {
-    final date = _selectedDate;
-    final formattedSelectedDate = DateFormat('yyyy-MM-dd').format(date);
+  // List<Reservation> _getFilteredReservations() {
+  //   final date = _selectedDate;
+  //   final formattedSelectedDate = DateFormat('yyyy-MM-dd').format(date);
 
-    // First filter by date
-    final dateFilteredReservations = dummyReservations.where((reservation) {
-      final formattedReservationDate = DateFormat('yyyy-MM-dd').format(reservation.reservationTime);
-      return formattedReservationDate == formattedSelectedDate;
-    }).toList();
+  //   // First filter by date
+  //   final dateFilteredReservations = dummyReservations.where((reservation) {
+  //     final formattedReservationDate = DateFormat('yyyy-MM-dd').format(reservation.reservationTime);
+  //     return formattedReservationDate == formattedSelectedDate;
+  //   }).toList();
 
-    // Then exclude pending reservations (only show confirmed, completed, or cancelled)
-    final statusFilteredReservations = dateFilteredReservations.where((reservation) {
-      return reservation.reservationStatus != ReservationStatus.pending;
-    }).toList();
+  //   // Then exclude pending reservations (only show confirmed, completed, or cancelled)
+  //   final statusFilteredReservations = dateFilteredReservations.where((reservation) {
+  //     return reservation.reservationStatus != ReservationStatus.pending;
+  //   }).toList();
 
-    // Then apply additional status filter if selected
-    if (_selectedStatusFilter == null) {
-      return statusFilteredReservations;
-    }
+  //   // Then apply additional status filter if selected
+  //   if (_selectedStatusFilter == null) {
+  //     return statusFilteredReservations;
+  //   }
 
-    return statusFilteredReservations
-        .where((reservation) => reservation.reservationStatus == _selectedStatusFilter)
-        .toList();
-  }
+  //   return statusFilteredReservations
+  //       .where((reservation) => reservation.reservationStatus == _selectedStatusFilter)
+  //       .toList();
+  // }
 }
 
 class _SliverStatusFilterDelegate extends SliverPersistentHeaderDelegate {
@@ -555,430 +548,3 @@ class _SliverStatusFilterDelegate extends SliverPersistentHeaderDelegate {
     return true;
   }
 }
-
-// Dummy reservation data
-final List<Reservation> dummyReservations = [
-  Reservation(
-    transactionId: '1001',
-    serviceType: TransactionServiceType.reservation,
-    grossAmount: 150000,
-    serviceFee: 15000,
-    note: 'Window seat preferred',
-    status: TransactionStatus.success,
-    restaurant: SocieatyRestaurant(
-      id: 'rest001',
-      name: 'Delicious Bistro',
-      email: 'delicious@example.com',
-      phoneNumber: '123-456-7890',
-      role: UserRole.restaurant,
-      restaurantData: RestaurantData(
-        id: 'rd001',
-        restaurantBannerUrl: 'https://example.com/banner.jpg',
-        location: const LatLng(-6.2088, 106.8456),
-        themes: [],
-        payoutBank: BankEnum.mandiri,
-        accountNumber: '1234567890',
-        openTime: '08:00',
-        closeTime: '22:00',
-        isReservationAvailable: true,
-      ),
-    ),
-    customer: SocieatyCustomer(
-      id: 'cust001',
-      name: 'John Doe',
-      email: 'john@example.com',
-      phoneNumber: '123-456-7890',
-      role: UserRole.customer,
-      customerData: const CustomerData(
-        id: 'cd001',
-        wallet: 1000000,
-      ),
-    ),
-    reservationId: 'rsv001',
-    reservationStatus: ReservationStatus.confirmed,
-    reservationTime: DateTime.now().add(const Duration(hours: 1)),
-    endTimeEstimation: DateTime.now().add(const Duration(hours: 3)),
-    peopleSize: 2,
-    menuItems: [],
-    createdAt: DateTime.now().subtract(const Duration(days: 2)),
-    updatedAt: DateTime.now().subtract(const Duration(days: 1)),
-    finishedAt: null,
-  ),
-
-  Reservation(
-    transactionId: '1002',
-    serviceType: TransactionServiceType.reservation,
-    grossAmount: 300000,
-    serviceFee: 30000,
-    note: 'Birthday celebration',
-    status: TransactionStatus.success,
-    restaurant: SocieatyRestaurant(
-      id: 'rest001',
-      name: 'Delicious Bistro',
-      email: 'delicious@example.com',
-      phoneNumber: '123-456-7890',
-      role: UserRole.restaurant,
-      restaurantData: RestaurantData(
-        id: 'rd001',
-        restaurantBannerUrl: 'https://example.com/banner.jpg',
-        location: const LatLng(-6.2088, 106.8456),
-        themes: [],
-        payoutBank: BankEnum.mandiri,
-        accountNumber: '1234567890',
-        openTime: '08:00',
-        closeTime: '22:00',
-        isReservationAvailable: true,
-      ),
-    ),
-    customer: SocieatyCustomer(
-      id: 'cust002',
-      name: 'Jane Smith',
-      email: 'jane@example.com',
-      phoneNumber: '234-567-8901',
-      role: UserRole.customer,
-      customerData: const CustomerData(
-        id: 'cd002',
-        wallet: 850000,
-      ),
-    ),
-    reservationId: 'rsv002',
-    reservationStatus: ReservationStatus.pending,
-    reservationTime: DateTime.now().add(const Duration(hours: 4)),
-    endTimeEstimation: DateTime.now().add(const Duration(hours: 6)),
-    peopleSize: 4,
-    menuItems: [],
-    createdAt: DateTime.now().subtract(const Duration(days: 1)),
-    updatedAt: DateTime.now().subtract(const Duration(hours: 12)),
-    finishedAt: null,
-  ),
-
-  Reservation(
-    transactionId: '1003',
-    serviceType: TransactionServiceType.reservation,
-    grossAmount: 500000,
-    serviceFee: 50000,
-    note: 'Business meeting',
-    status: TransactionStatus.success,
-    restaurant: SocieatyRestaurant(
-      id: 'rest001',
-      name: 'Delicious Bistro',
-      email: 'delicious@example.com',
-      phoneNumber: '123-456-7890',
-      role: UserRole.restaurant,
-      restaurantData: RestaurantData(
-        id: 'rd001',
-        restaurantBannerUrl: 'https://example.com/banner.jpg',
-        location: const LatLng(-6.2088, 106.8456),
-        themes: [],
-        payoutBank: BankEnum.mandiri,
-        accountNumber: '1234567890',
-        openTime: '08:00',
-        closeTime: '22:00',
-        isReservationAvailable: true,
-      ),
-    ),
-    customer: SocieatyCustomer(
-      id: 'cust003',
-      name: 'Robert Johnson',
-      email: 'robert@example.com',
-      phoneNumber: '345-678-9012',
-      role: UserRole.customer,
-      customerData: const CustomerData(
-        id: 'cd003',
-        wallet: 1200000,
-      ),
-    ),
-    reservationId: 'rsv003',
-    reservationStatus: ReservationStatus.confirmed,
-    reservationTime: DateTime.now().add(const Duration(hours: 5)),
-    endTimeEstimation: DateTime.now().add(const Duration(hours: 7)),
-    peopleSize: 6,
-    menuItems: [],
-    createdAt: DateTime.now().subtract(const Duration(days: 3)),
-    updatedAt: DateTime.now().subtract(const Duration(days: 2)),
-    finishedAt: null,
-  ),
-
-  Reservation(
-    transactionId: '1004',
-    serviceType: TransactionServiceType.reservation,
-    grossAmount: 200000,
-    serviceFee: 20000,
-    note: '',
-    status: TransactionStatus.success,
-    restaurant: SocieatyRestaurant(
-      id: 'rest001',
-      name: 'Delicious Bistro',
-      email: 'delicious@example.com',
-      phoneNumber: '123-456-7890',
-      role: UserRole.restaurant,
-      restaurantData: RestaurantData(
-        id: 'rd001',
-        restaurantBannerUrl: 'https://example.com/banner.jpg',
-        location: const LatLng(-6.2088, 106.8456),
-        themes: [],
-        payoutBank: BankEnum.mandiri,
-        accountNumber: '1234567890',
-        openTime: '08:00',
-        closeTime: '22:00',
-        isReservationAvailable: true,
-      ),
-    ),
-    customer: SocieatyCustomer(
-      id: 'cust004',
-      name: 'Emily Wilson',
-      email: 'emily@example.com',
-      phoneNumber: '456-789-0123',
-      role: UserRole.customer,
-      customerData: const CustomerData(
-        id: 'cd004',
-        wallet: 750000,
-      ),
-    ),
-    reservationId: 'rsv004',
-    reservationStatus: ReservationStatus.confirmed,
-    reservationTime: DateTime.now().add(const Duration(days: 1, hours: 2)),
-    endTimeEstimation: DateTime.now().add(const Duration(days: 1, hours: 4)),
-    peopleSize: 3,
-    menuItems: [],
-    createdAt: DateTime.now().subtract(const Duration(days: 1)),
-    updatedAt: DateTime.now().subtract(const Duration(hours: 6)),
-    finishedAt: null,
-  ),
-
-  Reservation(
-    transactionId: '1005',
-    serviceType: TransactionServiceType.reservation,
-    grossAmount: 180000,
-    serviceFee: 18000,
-    note: 'Quiet section preferred',
-    status: TransactionStatus.success,
-    restaurant: SocieatyRestaurant(
-      id: 'rest001',
-      name: 'Delicious Bistro',
-      email: 'delicious@example.com',
-      phoneNumber: '123-456-7890',
-      role: UserRole.restaurant,
-      restaurantData: RestaurantData(
-        id: 'rd001',
-        restaurantBannerUrl: 'https://example.com/banner.jpg',
-        location: const LatLng(-6.2088, 106.8456),
-        themes: [],
-        payoutBank: BankEnum.mandiri,
-        accountNumber: '1234567890',
-        openTime: '08:00',
-        closeTime: '22:00',
-        isReservationAvailable: true,
-      ),
-    ),
-    customer: SocieatyCustomer(
-      id: 'cust005',
-      name: 'Michael Brown',
-      email: 'michael@example.com',
-      phoneNumber: '567-890-1234',
-      role: UserRole.customer,
-      customerData: const CustomerData(
-        id: 'cd005',
-        wallet: 950000,
-      ),
-    ),
-    reservationId: 'rsv005',
-    reservationStatus: ReservationStatus.pending,
-    reservationTime: DateTime.now().add(const Duration(days: 1, hours: 6)),
-    endTimeEstimation: DateTime.now().add(const Duration(days: 1, hours: 8)),
-    peopleSize: 2,
-    menuItems: [],
-    createdAt: DateTime.now().subtract(const Duration(hours: 12)),
-    updatedAt: DateTime.now().subtract(const Duration(hours: 8)),
-    finishedAt: null,
-  ),
-
-  Reservation(
-    transactionId: '1006',
-    serviceType: TransactionServiceType.reservation,
-    grossAmount: 800000,
-    serviceFee: 80000,
-    note: 'Family gathering',
-    status: TransactionStatus.success,
-    restaurant: SocieatyRestaurant(
-      id: 'rest001',
-      name: 'Delicious Bistro',
-      email: 'delicious@example.com',
-      phoneNumber: '123-456-7890',
-      role: UserRole.restaurant,
-      restaurantData: RestaurantData(
-        id: 'rd001',
-        restaurantBannerUrl: 'https://example.com/banner.jpg',
-        location: const LatLng(-6.2088, 106.8456),
-        themes: [],
-        payoutBank: BankEnum.mandiri,
-        accountNumber: '1234567890',
-        openTime: '08:00',
-        closeTime: '22:00',
-        isReservationAvailable: true,
-      ),
-    ),
-    customer: SocieatyCustomer(
-      id: 'cust006',
-      name: 'Lisa Anderson',
-      email: 'lisa@example.com',
-      phoneNumber: '678-901-2345',
-      role: UserRole.customer,
-      customerData: const CustomerData(
-        id: 'cd006',
-        wallet: 1500000,
-      ),
-    ),
-    reservationId: 'rsv006',
-    reservationStatus: ReservationStatus.confirmed,
-    reservationTime: DateTime.now().add(const Duration(days: 2, hours: 7)),
-    endTimeEstimation: DateTime.now().add(const Duration(days: 2, hours: 10)),
-    peopleSize: 8,
-    menuItems: [],
-    createdAt: DateTime.now().subtract(const Duration(days: 4)),
-    updatedAt: DateTime.now().subtract(const Duration(days: 3)),
-    finishedAt: null,
-  ),
-
-  Reservation(
-    transactionId: '1007',
-    serviceType: TransactionServiceType.reservation,
-    grossAmount: 450000,
-    serviceFee: 45000,
-    note: 'Vegetarian options required',
-    status: TransactionStatus.failed,
-    restaurant: SocieatyRestaurant(
-      id: 'rest001',
-      name: 'Delicious Bistro',
-      email: 'delicious@example.com',
-      phoneNumber: '123-456-7890',
-      role: UserRole.restaurant,
-      restaurantData: RestaurantData(
-        id: 'rd001',
-        restaurantBannerUrl: 'https://example.com/banner.jpg',
-        location: const LatLng(-6.2088, 106.8456),
-        themes: [],
-        payoutBank: BankEnum.mandiri,
-        accountNumber: '1234567890',
-        openTime: '08:00',
-        closeTime: '22:00',
-        isReservationAvailable: true,
-      ),
-    ),
-    customer: SocieatyCustomer(
-      id: 'cust007',
-      name: 'David Taylor',
-      email: 'david@example.com',
-      phoneNumber: '789-012-3456',
-      role: UserRole.customer,
-      customerData: const CustomerData(
-        id: 'cd007',
-        wallet: 1100000,
-      ),
-    ),
-    reservationId: 'rsv007',
-    reservationStatus: ReservationStatus.cancelled,
-    reservationTime: DateTime.now().add(const Duration(days: 3, hours: 6)),
-    endTimeEstimation: DateTime.now().add(const Duration(days: 3, hours: 8)),
-    peopleSize: 5,
-    menuItems: [],
-    createdAt: DateTime.now().subtract(const Duration(days: 5)),
-    updatedAt: DateTime.now().subtract(const Duration(days: 2)),
-    finishedAt: null,
-  ),
-
-  // Same day reservations with different times
-  Reservation(
-    transactionId: '1008',
-    serviceType: TransactionServiceType.reservation,
-    grossAmount: 200000,
-    serviceFee: 20000,
-    note: 'Anniversary dinner',
-    status: TransactionStatus.success,
-    restaurant: SocieatyRestaurant(
-      id: 'rest001',
-      name: 'Delicious Bistro',
-      email: 'delicious@example.com',
-      phoneNumber: '123-456-7890',
-      role: UserRole.restaurant,
-      restaurantData: RestaurantData(
-        id: 'rd001',
-        restaurantBannerUrl: 'https://example.com/banner.jpg',
-        location: const LatLng(-6.2088, 106.8456),
-        themes: [],
-        payoutBank: BankEnum.mandiri,
-        accountNumber: '1234567890',
-        openTime: '08:00',
-        closeTime: '22:00',
-        isReservationAvailable: true,
-      ),
-    ),
-    customer: SocieatyCustomer(
-      id: 'cust008',
-      name: 'Sarah Lee',
-      email: 'sarah@example.com',
-      phoneNumber: '890-123-4567',
-      role: UserRole.customer,
-      customerData: const CustomerData(
-        id: 'cd008',
-        wallet: 900000,
-      ),
-    ),
-    reservationId: 'rsv008',
-    reservationStatus: ReservationStatus.confirmed,
-    reservationTime: DateTime.now().add(const Duration(hours: 1, minutes: 30)),
-    endTimeEstimation: DateTime.now().add(const Duration(hours: 3, minutes: 30)),
-    peopleSize: 2,
-    menuItems: [],
-    createdAt: DateTime.now().subtract(const Duration(days: 1)),
-    updatedAt: DateTime.now().subtract(const Duration(hours: 12)),
-    finishedAt: null,
-  ),
-
-  Reservation(
-    transactionId: '1009',
-    serviceType: TransactionServiceType.reservation,
-    grossAmount: 350000,
-    serviceFee: 35000,
-    note: 'Allergy to shellfish',
-    status: TransactionStatus.success,
-    restaurant: SocieatyRestaurant(
-      id: 'rest001',
-      name: 'Delicious Bistro',
-      email: 'delicious@example.com',
-      phoneNumber: '123-456-7890',
-      role: UserRole.restaurant,
-      restaurantData: RestaurantData(
-        id: 'rd001',
-        restaurantBannerUrl: 'https://example.com/banner.jpg',
-        location: const LatLng(-6.2088, 106.8456),
-        themes: [],
-        payoutBank: BankEnum.mandiri,
-        accountNumber: '1234567890',
-        openTime: '08:00',
-        closeTime: '22:00',
-        isReservationAvailable: true,
-      ),
-    ),
-    customer: SocieatyCustomer(
-      id: 'cust009',
-      name: 'Thomas White',
-      email: 'thomas@example.com',
-      phoneNumber: '901-234-5678',
-      role: UserRole.customer,
-      customerData: const CustomerData(
-        id: 'cd009',
-        wallet: 1250000,
-      ),
-    ),
-    reservationId: 'rsv009',
-    reservationStatus: ReservationStatus.confirmed,
-    reservationTime: DateTime.now().add(const Duration(hours: 1, minutes: 30)),
-    endTimeEstimation: DateTime.now().add(const Duration(hours: 3, minutes: 30)),
-    peopleSize: 4,
-    menuItems: [],
-    createdAt: DateTime.now().subtract(const Duration(days: 2)),
-    updatedAt: DateTime.now().subtract(const Duration(days: 1)),
-    finishedAt: null,
-  ),
-];

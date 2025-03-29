@@ -594,6 +594,9 @@ class _SignupRestaurantFinalPageState extends ConsumerState<SignupRestaurantFina
                   height: 45,
                   child: FilledButton(
                     onPressed: () async {
+                      if (_formData.openTime > _formData.closeTime) {
+                        return showSnackbar(context, "Waktu buka tidak boleh lebih dari waktu tutup");
+                      }
                       if (_formKey.currentState != null &&
                           _formKey.currentState!.validate() &&
                           _selectedBannerImage != null &&

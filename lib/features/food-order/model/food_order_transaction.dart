@@ -16,6 +16,8 @@ class FoodOrderTransaction with _$FoodOrderTransaction {
     required String orderId,
     @TransactionServiceTypeConverter() required TransactionServiceType serviceType,
     required int grossAmount,
+    required int netAmount,
+    required int refundAmount,
     required int serviceFee,
     @TransactionStatusConverter() required TransactionStatus status,
     @FoodOrderStatusConverter() required FoodOrderStatus foodOrderStatus,

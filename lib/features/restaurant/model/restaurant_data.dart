@@ -11,6 +11,7 @@ part 'restaurant_data.g.dart';
 class RestaurantData with _$RestaurantData {
   const factory RestaurantData({
     required String id,
+    required int wallet,
     required String restaurantBannerUrl,
     @LatLngConverter() required LatLng location,
     required List<RestaurantTheme> themes,

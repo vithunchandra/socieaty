@@ -1,13 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
-import 'package:socieaty/core/network/api_result.dart';
 import 'package:socieaty/core/utils/converter.dart';
 import 'package:socieaty/core/utils/custom_extension.dart';
 import 'package:socieaty/core/utils/show_snackbar.dart';
-import 'package:socieaty/features/qr_code_scanner/view/qr_code_scanner_screen.dart';
 import 'package:socieaty/features/reservation/model/reservation.dart';
-import 'package:socieaty/features/reservation/repository/reservation_repository.dart';
 import 'package:socieaty/features/reservation/restaurant/provider/get_restaurant_reservations_provider.dart';
 import 'package:socieaty/features/reservation/restaurant/viewmodel/restaurant_reservation_view_model.dart';
 import 'package:socieaty/shared/view_state.dart';

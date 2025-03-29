@@ -1,22 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:go_router/go_router.dart';
-import 'package:socieaty/features/reservation/enum/reservation_status_enum.dart';
 import 'package:socieaty/features/restaurant/model/reservation_config.dart';
 import 'package:calendar_view/calendar_view.dart';
 import 'package:socieaty/core/theme/app_pallete.dart';
 import 'package:intl/intl.dart';
 import 'package:socieaty/features/reservation/model/reservation.dart';
-import 'package:socieaty/core/enums/transaction.enum.dart';
-import 'package:socieaty/features/restaurant/model/socieaty_restaurant.dart';
-import 'package:socieaty/features/customer/model/socieaty_customer.dart';
-import 'package:socieaty/core/enums/user_role.enum.dart';
-import 'package:socieaty/features/restaurant/model/restaurant_data.dart';
-import 'package:socieaty/features/customer/model/customer_data.dart';
-import 'package:google_maps_flutter/google_maps_flutter.dart';
-import 'package:socieaty/core/enums/bank.enum.dart';
-import 'package:socieaty/features/restaurant/model/restaurant_theme.dart';
-import 'package:socieaty/features/menu_item/model/menu_item.dart';
 
 class ReservationScheduleCalenderScreen extends StatefulWidget {
   final ReservationConfig reservationConfig;
@@ -42,100 +31,7 @@ class _ReservationScheduleCalenderScreenState extends State<ReservationScheduleC
     SystemChrome.setSystemUIOverlayStyle(const SystemUiOverlayStyle(
       statusBarIconBrightness: Brightness.light,
     ));
-    _generateDummyData();
     _loadEvents();
-  }
-
-  void _generateDummyData() {
-    final int timeLimit = widget.reservationConfig.timeLimit;
-    final DateTime today = DateTime(now.year, now.month, now.day);
-
-    // Generate reservations for the next 7 days
-    for (int day = 0; day < 7; day++) {
-      final DateTime reservationDay = today.add(Duration(days: day));
-
-      // Generate 2-3 reservations per day
-      final int reservationsCount = 2 + (day % 2);
-
-      for (int i = 0; i < reservationsCount; i++) {
-        // Random hour between 11 AM and 8 PM
-        final int startHour = 11 + (i * 2);
-        if (startHour > 20) continue; // Don't create reservations after 8 PM
-
-        final DateTime reservationTime = DateTime(
-          reservationDay.year,
-          reservationDay.month,
-          reservationDay.day,
-          startHour,
-          0,
-        );
-
-        final DateTime endTimeEstimation = reservationTime.add(Duration(minutes: timeLimit));
-
-        // Create dummy restaurant with restaurantData
-        final restaurant = SocieatyRestaurant(
-          id: 'restaurant_$i',
-          name: 'Restaurant $i',
-          email: 'restaurant$i@example.com',
-          phoneNumber: '08123456789',
-          profilePictureUrl: 'https://example.com/profile.jpg',
-          role: UserRole.restaurant,
-          restaurantData: RestaurantData(
-            id: 'restaurant_data_$i',
-            restaurantBannerUrl: 'https://example.com/banner.jpg',
-            location: const LatLng(-6.2088, 106.8456),
-            themes: [
-              RestaurantTheme(
-                id: 1,
-                name: 'Casual',
-              )
-            ],
-            payoutBank: BankEnum.bca,
-            accountNumber: '1234567890',
-            openTime: '08:00',
-            closeTime: '22:00',
-            isReservationAvailable: true,
-          ),
-        );
-
-        // Create dummy customer with customerData
-        final customer = SocieatyCustomer(
-          id: 'customer_${day * 10 + i}',
-          name: 'Customer ${day * 10 + i}',
-          email: 'customer${day * 10 + i}@example.com',
-          phoneNumber: '08123456789',
-          profilePictureUrl: 'https://example.com/profile.jpg',
-          role: UserRole.customer,
-          customerData: CustomerData(
-            id: 'customer_data_${day * 10 + i}',
-            bio: 'Customer bio',
-            wallet: 500000,
-          ),
-        );
-
-        dummyReservations.add(
-          Reservation(
-            transactionId: 'trans_${day}_$i',
-            serviceType: TransactionServiceType.reservation,
-            grossAmount: 150000 * (2 + (i % 4)),
-            serviceFee: 15000,
-            note: 'Special request for table $i',
-            status: TransactionStatus.ongoing,
-            restaurant: restaurant,
-            customer: customer,
-            reservationId: 'res_${day}_$i',
-            reservationStatus: ReservationStatus.confirmed,
-            reservationTime: reservationTime,
-            endTimeEstimation: endTimeEstimation,
-            peopleSize: 2 + (i % 4),
-            menuItems: <MenuItem>[],
-            createdAt: DateTime.now().subtract(const Duration(days: 1)),
-            updatedAt: DateTime.now(),
-            finishedAt: null,
-          ),
-        );
-      }
-    }
   }
 
   void _loadEvents() {
