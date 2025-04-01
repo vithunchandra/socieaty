@@ -25,7 +25,7 @@ class _ReservationsHistoryScreenState extends ConsumerState<ReservationsHistoryS
 
   final List<ReservationStatus> _pastStatuses = [
     ReservationStatus.completed,
-    ReservationStatus.cancelled,
+    ReservationStatus.canceled,
     ReservationStatus.rejected
   ];
 

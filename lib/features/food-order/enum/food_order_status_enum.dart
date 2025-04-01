@@ -1,1 +1,7 @@
-enum FoodOrderStatus { pending, rejected, preparing, ready, completed }
+enum FoodOrderStatus {
+  pending,
+  rejected,
+  preparing,
+  ready,
+  completed,
+}

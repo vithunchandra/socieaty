@@ -12,7 +12,7 @@ Future<FoodOrderTransaction> getFoodOrder(Ref ref, String id) async {
   final result = await repository.getFoodOrderTransaction(id);
   switch (result) {
     case Success(data: final data):
-      return data;
+      return data.transaction;
     case Error(error: final error):
       throw Exception(error.message);
   }

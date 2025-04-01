@@ -33,9 +33,11 @@ class RestaurantSocketService {
   Socket socket;
   bool _isConnected = false;
   final LocalNotificationService notificationService;
-  bool _hasNewOrderListener = false;
+
   Function(FoodOrderTransaction)? _onNewOrderCallback;
   Function(String?)? _onNewOrderNotificationTap;
+  Function(FoodOrderTransaction)? _onOrderChangesCallback;
+  Function(String?)? _onOrderChangesNotificationTap;
 
   RestaurantSocketService({
     required this.socket,
@@ -47,6 +49,8 @@ class RestaurantSocketService {
   initConnection({
     required Function(FoodOrderTransaction) onNewOrderCallback,
     required Function(String?) onNewOrderNotificationTap,
+    required Function(FoodOrderTransaction) onOrderChangesCallback,
+    required Function(String?) onOrderChangesNotificationTap,
   }) {
     if (_isConnected) return;
 
@@ -63,13 +67,14 @@ class RestaurantSocketService {
       _isConnected = true;
       _onNewOrderCallback = onNewOrderCallback;
       _onNewOrderNotificationTap = onNewOrderNotificationTap;
+      _onOrderChangesCallback = onOrderChangesCallback;
+      _onOrderChangesNotificationTap = onOrderChangesNotificationTap;
       _setupNewOrderListener();
     });
 
     socket.onDisconnect((_) {
       debugPrint('Restaurant disconnected from server');
       _isConnected = false;
-      _hasNewOrderListener = false;
     });
 
     socket.onerror((_) {
@@ -80,15 +85,13 @@ class RestaurantSocketService {
 
   void disconnect() {
     removeListener('new-order');
+    removeListener('order-changes');
     socket.disconnect();
     _isConnected = false;
-    _hasNewOrderListener = false;
     _onNewOrderCallback = null;
   }
 
   void _setupNewOrderListener() {
-    if (_hasNewOrderListener) return;
-
     socket.on('new-order', (data) {
       try {
         final FoodOrderTransaction orderData = FoodOrderTransaction.fromJson(data);
@@ -129,7 +132,42 @@ class RestaurantSocketService {
       }
     });
 
-    _hasNewOrderListener = true;
+    socket.on('order-changes', (data) {
+      try {
+        final FoodOrderTransaction orderData = FoodOrderTransaction.fromJson(data);
+        final formattedTotal = (orderData.grossAmount + orderData.serviceFee).toIDRFormat();
+
+        final customerName = orderData.customer.name;
+
+        final int itemCount = orderData.menuItems.length;
+        final String itemsText = _getItemsDescription(orderData);
+
+        String notificationTitle = 'Update Order #${orderData.orderId.substring(0, 8)}';
+
+        String notificationBody = 'Order from $customerName\n'
+            'Total: \$$formattedTotal\n'
+            'Items: $itemCount\n'
+            'Status: ${orderData.status}\n'
+            '$itemsText';
+
+        notificationService.setOnNotificationTap(_onOrderChangesNotificationTap!);
+
+        notificationService.showNewOrderNotification(
+          title: notificationTitle,
+          body: notificationBody,
+        );
+
+        if (_onOrderChangesCallback != null) {
+          _onOrderChangesCallback!(orderData);
+        }
+      } catch (err) {
+        notificationService.showNewOrderNotification(
+          title: 'Update Order',
+          body: 'Ada update pada pesanan anda. Tap untuk melihat detail.',
+        );
+        debugPrint('Error processing order changes: $err');
+      }
+    });
   }
 
   String _getItemsDescription(FoodOrderTransaction order) {
@@ -159,8 +197,10 @@ class RestaurantSocketService {
   void removeListener(String event) {
     socket.off(event);
     if (event == 'new-order') {
-      _hasNewOrderListener = false;
       _onNewOrderCallback = null;
+    }
+    if (event == 'order-changes') {
+      _onOrderChangesCallback = null;
     }
   }
 }

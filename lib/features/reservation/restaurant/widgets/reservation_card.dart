@@ -29,6 +29,27 @@ class ReservationCard extends ConsumerStatefulWidget {
 
 class _ReservationCardState extends ConsumerState<ReservationCard> {
   ReservationStatus? _lastUpdatedStatus;
+  late Reservation _reservation;
+  late List<ReservationStatus> _statusFilter;
+
+  @override
+  void initState() {
+    super.initState();
+    _reservation = widget.reservation;
+    _statusFilter = widget.statusFilter;
+  }
+
+  @override
+  void didUpdateWidget(ReservationCard oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    if (oldWidget.reservation != widget.reservation) {
+      _reservation = widget.reservation;
+    }
+    if (oldWidget.statusFilter != widget.statusFilter) {
+      _statusFilter = widget.statusFilter;
+    }
+  }
+
   void _showReservationDetails(BuildContext context, Reservation reservation) {
     showModalBottomSheet(
       context: context,
@@ -45,7 +66,7 @@ class _ReservationCardState extends ConsumerState<ReservationCard> {
           return ReservationDetailsSheet(
             reservation: reservation,
             scrollController: scrollController,
-            statusFilter: [reservation.reservationStatus],
+            statusFilter: _statusFilter,
           );
         },
       ),
@@ -57,20 +78,21 @@ class _ReservationCardState extends ConsumerState<ReservationCard> {
       _lastUpdatedStatus = newStatus;
     });
     ref
-        .read(restaurantReservationViewModelProvider(widget.reservation.reservationId).notifier)
+        .read(restaurantReservationViewModelProvider(_reservation.reservationId).notifier)
         .updateReservationStatus(newStatus);
   }
 
   @override
   Widget build(BuildContext context) {
     bool isLoading = ref
-        .watch(restaurantReservationViewModelProvider(widget.reservation.reservationId))
+        .watch(restaurantReservationViewModelProvider(_reservation.reservationId))
         .updatedReservation is LoadingState;
-    ref.listen(restaurantReservationViewModelProvider(widget.reservation.reservationId),
+
+    ref.listen(restaurantReservationViewModelProvider(_reservation.reservationId),
         (previous, next) {
       switch (next.updatedReservation) {
         case SuccessState<Reservation>():
-          ref.invalidate(getRestaurantReservationsProvider(widget.statusFilter));
+          ref.invalidate(getRestaurantReservationsProvider(_statusFilter));
         case ErrorState(message: var message):
           showSnackbar(context, message, state: SnackbarState.error);
         case LoadingState<Reservation>():
@@ -79,7 +101,7 @@ class _ReservationCardState extends ConsumerState<ReservationCard> {
     });
 
     return GestureDetector(
-      onTap: () => _showReservationDetails(context, widget.reservation),
+      onTap: () => _showReservationDetails(context, _reservation),
       child: Container(
         decoration: BoxDecoration(
           color: Colors.white,
@@ -106,7 +128,7 @@ class _ReservationCardState extends ConsumerState<ReservationCard> {
               child: Row(
                 children: [
                   ProfilePictureWidget(
-                    user: UserConverter.customerToUser(widget.reservation.customer),
+                    user: UserConverter.customerToUser(_reservation.customer),
                     radius: 24,
                   ),
                   const SizedBox(width: 12),
@@ -115,13 +137,13 @@ class _ReservationCardState extends ConsumerState<ReservationCard> {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Text(
-                          widget.reservation.customer.name,
+                          _reservation.customer.name,
                           style: Theme.of(context).textTheme.titleMedium?.copyWith(
                                 fontWeight: FontWeight.bold,
                               ),
                         ),
                         Text(
-                          widget.reservation.customer.phoneNumber,
+                          _reservation.customer.phoneNumber,
                           style: Theme.of(context).textTheme.bodyMedium?.copyWith(
                                 color: AppPallete.neutralColor.shade500,
                               ),
@@ -129,7 +151,7 @@ class _ReservationCardState extends ConsumerState<ReservationCard> {
                       ],
                     ),
                   ),
-                  getStatusChip(widget.reservation.reservationStatus),
+                  getStatusChip(_reservation.reservationStatus),
                 ],
               ),
             ),
@@ -144,7 +166,7 @@ class _ReservationCardState extends ConsumerState<ReservationCard> {
                           context,
                           Icons.calendar_today,
                           'Date',
-                          _formatDateShort(widget.reservation.reservationTime),
+                          _formatDateShort(_reservation.reservationTime),
                           AppPallete.primaryColor.withAlpha(25),
                         ),
                       ),
@@ -154,7 +176,7 @@ class _ReservationCardState extends ConsumerState<ReservationCard> {
                           context,
                           Icons.access_time,
                           'Time',
-                          _formatTimeShort(widget.reservation.reservationTime),
+                          _formatTimeShort(_reservation.reservationTime),
                           AppPallete.infoColor.withAlpha(25),
                         ),
                       ),
@@ -164,14 +186,14 @@ class _ReservationCardState extends ConsumerState<ReservationCard> {
                           context,
                           Icons.people,
                           'People',
-                          '${widget.reservation.peopleSize} persons',
+                          '${_reservation.peopleSize} persons',
                           AppPallete.successColor.withAlpha(25),
                         ),
                       ),
                     ],
                   ),
                   const SizedBox(height: 16),
-                  if (widget.reservation.note.isNotEmpty)
+                  if (_reservation.note.isNotEmpty)
                     Container(
                       padding: const EdgeInsets.all(12),
                       decoration: BoxDecoration(
@@ -189,7 +211,7 @@ class _ReservationCardState extends ConsumerState<ReservationCard> {
                           const SizedBox(width: 8),
                           Expanded(
                             child: Text(
-                              widget.reservation.note,
+                              _reservation.note,
                               style: Theme.of(context).textTheme.bodySmall?.copyWith(
                                     color: AppPallete.neutralColor.shade700,
                                   ),
@@ -199,9 +221,9 @@ class _ReservationCardState extends ConsumerState<ReservationCard> {
                       ),
                     ),
                   const SizedBox(height: 16),
-                  if (widget.reservation.reservationStatus == ReservationStatus.pending)
+                  if (_reservation.reservationStatus == ReservationStatus.pending)
                     PendingReservationCardActions(
-                      reservation: widget.reservation,
+                      reservation: _reservation,
                       isLoading: isLoading,
                       lastUpdatedStatus: _lastUpdatedStatus,
                       onUpdateStatus: (status) {
@@ -211,9 +233,9 @@ class _ReservationCardState extends ConsumerState<ReservationCard> {
                         _updateReservationStatus(status);
                       },
                     ),
-                  if (widget.reservation.reservationStatus == ReservationStatus.confirmed)
+                  if (_reservation.reservationStatus == ReservationStatus.confirmed)
                     ConfirmedReservationCardActions(
-                      reservation: widget.reservation,
+                      reservation: _reservation,
                       isLoading: isLoading,
                       lastUpdatedStatus: _lastUpdatedStatus,
                       onUpdateStatus: (status) {
@@ -223,9 +245,9 @@ class _ReservationCardState extends ConsumerState<ReservationCard> {
                         _updateReservationStatus(status);
                       },
                     ),
-                  if (widget.reservation.reservationStatus == ReservationStatus.dining)
+                  if (_reservation.reservationStatus == ReservationStatus.dining)
                     DiningReservationCardActions(
-                      reservation: widget.reservation,
+                      reservation: _reservation,
                       isLoading: isLoading,
                       lastUpdatedStatus: _lastUpdatedStatus,
                       onUpdateStatus: (status) {
@@ -428,8 +450,8 @@ class ConfirmedReservationCardActions extends StatelessWidget {
         const SizedBox(width: 16),
         Expanded(
           child: ElevatedButton.icon(
-            onPressed: isLoading ? null : () => onUpdateStatus(ReservationStatus.completed),
-            icon: isLoading && lastUpdatedStatus == ReservationStatus.completed
+            onPressed: isLoading ? null : () => onUpdateStatus(ReservationStatus.dining),
+            icon: isLoading && lastUpdatedStatus == ReservationStatus.dining
                 ? const SizedBox(
                     height: 16,
                     width: 16,
@@ -438,9 +460,13 @@ class ConfirmedReservationCardActions extends StatelessWidget {
                       color: Colors.white,
                     ),
                   )
-                : const Icon(Icons.check_circle_outline, size: 16),
+                : const Icon(
+                    Icons.restaurant,
+                    size: 16,
+                    color: Colors.white,
+                  ),
             label: const Text(
-              'Complete',
+              'Layani',
               style: TextStyle(
                 fontWeight: FontWeight.bold,
               ),
@@ -508,7 +534,11 @@ class DiningReservationCardActions extends StatelessWidget {
                       color: Colors.white,
                     ),
                   )
-                : const Icon(Icons.check_circle_outline, size: 16),
+                : const Icon(
+                    Icons.check_circle_outline,
+                    size: 16,
+                    color: Colors.white,
+                  ),
             label: const Text(
               'Complete',
               style: TextStyle(

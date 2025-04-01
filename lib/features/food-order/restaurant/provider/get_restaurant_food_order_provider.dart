@@ -13,7 +13,8 @@ Future<List<FoodOrderTransaction>> getRestaurantFoodOrder(
     Ref ref, List<FoodOrderStatus> status) async {
   final repository = ref.watch(foodOrderRepositoryProvider);
   final result = await repository.getRestaurantFoodTransaction(status);
-  debugPrint(result.toString());
+
+  debugPrint("data (${DateTime.now()}): ${result.toString()}");
 
   switch (result) {
     case Success(data: var data):

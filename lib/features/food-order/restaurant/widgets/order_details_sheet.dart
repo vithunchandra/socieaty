@@ -11,6 +11,7 @@ import 'package:socieaty/features/food-order/restaurant/viewmodel/update_food_or
 import 'package:socieaty/shared/view_state.dart';
 import 'package:socieaty/core/theme/app_pallete.dart';
 import 'package:socieaty/shared/widgets/profile_picture_widget.dart';
+import 'package:socieaty/shared/widgets/loading_indicator_widget.dart';
 
 class OrderDetailsSheet extends ConsumerStatefulWidget {
   final FoodOrderTransaction order;
@@ -46,9 +47,7 @@ class _OrderDetailsSheetState extends ConsumerState<OrderDetailsSheet> {
     ref.listen(updateFoodOrderStatusViewModelProvider(widget.order.orderId), (previous, next) {
       switch (next.updatedOrder) {
         case SuccessState<FoodOrderTransaction>():
-          if (widget.order.foodOrderStatus == FoodOrderStatus.pending) {
-            ref.invalidate(getRestaurantFoodOrderProvider(widget.statusFilter));
-          }
+          ref.invalidate(getRestaurantFoodOrderProvider(widget.statusFilter));
           context.pop();
 
         case ErrorState(message: var message):
@@ -317,36 +316,60 @@ class PendingOrderDetailsActions extends ConsumerStatefulWidget {
 }
 
 class _PendingOrderDetailsActionsState extends ConsumerState<PendingOrderDetailsActions> {
+  FoodOrderStatus? _lastUpdatedStatus;
+
   @override
   Widget build(BuildContext context) {
+    bool isLoading = ref
+        .watch(updateFoodOrderStatusViewModelProvider(widget.order.orderId))
+        .updatedOrder is LoadingState;
+
     return Padding(
       padding: const EdgeInsets.only(top: 8),
       child: Row(
         children: [
           Expanded(
             child: OutlinedButton(
-              onPressed: () {
-                ref
-                    .read(updateFoodOrderStatusViewModelProvider(widget.order.orderId).notifier)
-                    .updateTransactionStatus(FoodOrderStatus.rejected);
-              },
+              onPressed: isLoading
+                  ? null
+                  : () {
+                      setState(() {
+                        _lastUpdatedStatus = FoodOrderStatus.rejected;
+                      });
+                      ref
+                          .read(
+                              updateFoodOrderStatusViewModelProvider(widget.order.orderId).notifier)
+                          .updateTransactionStatus(FoodOrderStatus.rejected);
+                    },
               style: OutlinedButton.styleFrom(
                 foregroundColor: Colors.red,
                 side: const BorderSide(color: Colors.red),
                 padding: const EdgeInsets.symmetric(vertical: 12),
               ),
-              child: const Text('Tolak Pesanan'),
+              child: isLoading && _lastUpdatedStatus == FoodOrderStatus.rejected
+                  ? const LoadingIndicatorWidget(
+                      size: 16,
+                    )
+                  : const Text('Tolak Pesanan'),
             ),
           ),
           const SizedBox(width: 16),
           Expanded(
             child: FilledButton(
-              onPressed: () {
-                ref
-                    .read(updateFoodOrderStatusViewModelProvider(widget.order.orderId).notifier)
-                    .updateTransactionStatus(FoodOrderStatus.preparing);
-              },
-              child: const Text('Terima Pesanan'),
+              onPressed: isLoading
+                  ? null
+                  : () {
+                      setState(() {
+                        _lastUpdatedStatus = FoodOrderStatus.preparing;
+                      });
+                      ref
+                          .read(
+                              updateFoodOrderStatusViewModelProvider(widget.order.orderId).notifier)
+                          .updateTransactionStatus(FoodOrderStatus.preparing);
+                    },
+              child: isLoading && _lastUpdatedStatus == FoodOrderStatus.preparing
+                  ? const LoadingIndicatorWidget(size: 16, color: Colors.white)
+                  : const Text('Terima Pesanan'),
             ),
           ),
         ],
@@ -364,24 +387,38 @@ class PreparingOrderDetailsActions extends ConsumerStatefulWidget {
 }
 
 class _PreparingOrderDetailsActionsState extends ConsumerState<PreparingOrderDetailsActions> {
+  FoodOrderStatus? _lastUpdatedStatus;
+
   @override
   Widget build(BuildContext context) {
+    bool isLoading = ref
+        .watch(updateFoodOrderStatusViewModelProvider(widget.order.orderId))
+        .updatedOrder is LoadingState;
+
     return Padding(
       padding: const EdgeInsets.only(top: 8),
       child: Row(
         children: [
           Expanded(
             child: FilledButton(
-              onPressed: () {
-                ref
-                    .read(updateFoodOrderStatusViewModelProvider(widget.order.orderId).notifier)
-                    .updateTransactionStatus(FoodOrderStatus.ready);
-              },
+              onPressed: isLoading
+                  ? null
+                  : () {
+                      setState(() {
+                        _lastUpdatedStatus = FoodOrderStatus.ready;
+                      });
+                      ref
+                          .read(
+                              updateFoodOrderStatusViewModelProvider(widget.order.orderId).notifier)
+                          .updateTransactionStatus(FoodOrderStatus.ready);
+                    },
               style: FilledButton.styleFrom(
-                backgroundColor: Colors.amber,
+                backgroundColor: AppPallete.primaryColor,
                 padding: const EdgeInsets.symmetric(vertical: 12),
               ),
-              child: const Text('Pesanan Siap Diambil'),
+              child: isLoading && _lastUpdatedStatus == FoodOrderStatus.ready
+                  ? const LoadingIndicatorWidget(size: 16, color: Colors.white)
+                  : const Text('Pesanan Siap Diambil'),
             ),
           ),
         ],
@@ -399,24 +436,38 @@ class ReadyOrderDetailsActions extends ConsumerStatefulWidget {
 }
 
 class _ReadyOrderDetailsActionsState extends ConsumerState<ReadyOrderDetailsActions> {
+  FoodOrderStatus? _lastUpdatedStatus;
+
   @override
   Widget build(BuildContext context) {
+    bool isLoading = ref
+        .watch(updateFoodOrderStatusViewModelProvider(widget.order.orderId))
+        .updatedOrder is LoadingState;
+
     return Padding(
       padding: const EdgeInsets.only(top: 8),
       child: Row(
         children: [
           Expanded(
             child: FilledButton(
-              onPressed: () {
-                ref
-                    .read(updateFoodOrderStatusViewModelProvider(widget.order.orderId).notifier)
-                    .updateTransactionStatus(FoodOrderStatus.completed);
-              },
+              onPressed: isLoading
+                  ? null
+                  : () {
+                      setState(() {
+                        _lastUpdatedStatus = FoodOrderStatus.completed;
+                      });
+                      ref
+                          .read(
+                              updateFoodOrderStatusViewModelProvider(widget.order.orderId).notifier)
+                          .updateTransactionStatus(FoodOrderStatus.completed);
+                    },
               style: FilledButton.styleFrom(
-                backgroundColor: Colors.green,
+                backgroundColor: AppPallete.successColor,
                 padding: const EdgeInsets.symmetric(vertical: 12),
               ),
-              child: const Text('Pesanan Selesai'),
+              child: isLoading && _lastUpdatedStatus == FoodOrderStatus.completed
+                  ? const LoadingIndicatorWidget(size: 16, color: Colors.white)
+                  : const Text('Pesanan Selesai'),
             ),
           ),
         ],

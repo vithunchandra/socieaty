@@ -1,5 +1,4 @@
 import 'package:dio/dio.dart';
-import 'package:flutter/material.dart';
 import 'package:socieaty/core/enums/status_code.enum.dart';
 import 'package:socieaty/core/network/api_result.dart';
 import 'package:socieaty/shared/models/network_error.dart';

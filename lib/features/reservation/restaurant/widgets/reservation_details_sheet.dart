@@ -42,7 +42,7 @@ class _ReservationDetailsSheetState extends ConsumerState<ReservationDetailsShee
       ReservationStatus.pending: Colors.orange,
       ReservationStatus.confirmed: Colors.blue,
       ReservationStatus.dining: AppPallete.primaryColor,
-      ReservationStatus.cancelled: Colors.red,
+      ReservationStatus.canceled: Colors.red,
       ReservationStatus.completed: Colors.green,
     };
 
@@ -50,7 +50,7 @@ class _ReservationDetailsSheetState extends ConsumerState<ReservationDetailsShee
       ReservationStatus.pending: 'MENUNGGU',
       ReservationStatus.confirmed: 'DIKONFIRMASI',
       ReservationStatus.dining: 'SEDANG MAKAN',
-      ReservationStatus.cancelled: 'DIBATALKAN',
+      ReservationStatus.canceled: 'DIBATALKAN',
       ReservationStatus.completed: 'SELESAI',
     };
 
@@ -456,16 +456,16 @@ class _PendingReservationActionsState extends ConsumerState<PendingReservationAc
                   ? null
                   : () {
                       setState(() {
-                        _lastUpdatedStatus = ReservationStatus.cancelled;
+                        _lastUpdatedStatus = ReservationStatus.canceled;
                       });
-                      widget.onUpdateReservationStatus(ReservationStatus.cancelled);
+                      widget.onUpdateReservationStatus(ReservationStatus.canceled);
                     },
               style: OutlinedButton.styleFrom(
                 foregroundColor: Colors.red,
                 side: const BorderSide(color: Colors.red),
                 padding: const EdgeInsets.symmetric(vertical: 12),
               ),
-              child: isLoading && _lastUpdatedStatus == ReservationStatus.cancelled
+              child: isLoading && _lastUpdatedStatus == ReservationStatus.canceled
                   ? const LoadingIndicatorWidget(size: 16)
                   : const Text('Tolak Reservasi'),
             ),

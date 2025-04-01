@@ -11,25 +11,23 @@ import 'package:socieaty/features/reservation/model/reservation.dart';
 import 'package:socieaty/shared/widgets/dotted_divider.dart';
 import 'package:socieaty/shared/widgets/profile_picture_widget.dart';
 
-class ActiveReservationView extends ConsumerStatefulWidget {
+class ConfirmedReservationScreen extends ConsumerStatefulWidget {
   final Reservation reservation;
-  final VoidCallback? onCancel;
   final VoidCallback? onReschedule;
   final VoidCallback? onShowQR;
 
-  const ActiveReservationView({
+  const ConfirmedReservationScreen({
     super.key,
     required this.reservation,
-    this.onCancel,
     this.onReschedule,
     this.onShowQR,
   });
 
   @override
-  ConsumerState<ActiveReservationView> createState() => _ActiveReservationViewState();
+  ConsumerState<ConfirmedReservationScreen> createState() => _ConfirmedReservationScreenState();
 }
 
-class _ActiveReservationViewState extends ConsumerState<ActiveReservationView> {
+class _ConfirmedReservationScreenState extends ConsumerState<ConfirmedReservationScreen> {
   final ScrollController _scrollController = ScrollController();
   bool _isHeaderCollapsed = false;
 
@@ -107,9 +105,9 @@ class _ActiveReservationViewState extends ConsumerState<ActiveReservationView> {
               color: Colors.white.withAlpha(50),
               borderRadius: BorderRadius.circular(30),
             ),
-            child: Text(
-              reservation.reservationStatus.name.toUpperCase(),
-              style: const TextStyle(
+            child: const Text(
+              'CONFIRMED',
+              style: TextStyle(
                 color: Colors.white,
                 fontWeight: FontWeight.w600,
                 fontSize: 12,
@@ -147,29 +145,26 @@ class _ActiveReservationViewState extends ConsumerState<ActiveReservationView> {
                         color: AppPallete.neutralColor.shade600,
                       ),
                 ),
-                if (reservation.reservationStatus != ReservationStatus.canceled &&
-                    reservation.reservationStatus != ReservationStatus.completed) ...[
-                  const SizedBox(height: 16),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      Icon(
-                        Icons.access_time,
-                        color: AppPallete.primaryColor,
-                        size: 16,
+                const SizedBox(height: 16),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Icon(
+                      Icons.access_time,
+                      color: AppPallete.primaryColor,
+                      size: 16,
+                    ),
+                    const SizedBox(width: 8),
+                    Text(
+                      '${reservation.endTimeEstimation.difference(reservation.reservationTime).inHours} jam durasi',
+                      style: TextStyle(
+                        color: AppPallete.neutralColor.shade600,
+                        fontWeight: FontWeight.w500,
+                        fontSize: 14,
                       ),
-                      const SizedBox(width: 8),
-                      Text(
-                        '${reservation.endTimeEstimation.difference(reservation.reservationTime).inHours} jam durasi',
-                        style: TextStyle(
-                          color: AppPallete.neutralColor.shade600,
-                          fontWeight: FontWeight.w500,
-                          fontSize: 14,
-                        ),
-                      ),
-                    ],
-                  ),
-                ],
+                    ),
+                  ],
+                ),
               ],
             ),
           ),
@@ -206,21 +201,19 @@ class _ActiveReservationViewState extends ConsumerState<ActiveReservationView> {
   }
 
   Widget _buildStatusMessage(Reservation reservation) {
-    final Color statusColor = reservation.reservationStatus.getStatusColor();
-
     return Container(
       width: double.infinity,
       padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 16),
       decoration: BoxDecoration(
-        color: statusColor.withAlpha(25),
+        color: AppPallete.primaryColor.withAlpha(25),
         borderRadius: BorderRadius.circular(12),
-        border: Border.all(color: statusColor.withAlpha(75)),
+        border: Border.all(color: AppPallete.primaryColor.withAlpha(75)),
       ),
       child: Row(
         children: [
           Icon(
-            reservation.reservationStatus.getStatusIcon(),
-            color: statusColor,
+            Icons.check_circle,
+            color: AppPallete.primaryColor,
             size: 24,
           ),
           const SizedBox(width: 12),
@@ -229,18 +222,16 @@ class _ActiveReservationViewState extends ConsumerState<ActiveReservationView> {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
-                  reservation.reservationStatus.getStatusName(),
+                  'Reservasi Dikonfirmasi',
                   style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                        color: statusColor,
+                        color: AppPallete.primaryColor,
                         fontWeight: FontWeight.bold,
                       ),
                 ),
                 Padding(
                   padding: const EdgeInsets.only(top: 4),
                   child: Text(
-                    reservation.reservationStatus == ReservationStatus.confirmed
-                        ? 'Silakan datang sesuai jadwal'
-                        : 'Reservasi sedang diproses',
+                    'Silakan datang sesuai jadwal',
                     style: TextStyle(
                       fontSize: 12,
                       color: Colors.grey[600],
@@ -623,57 +614,41 @@ class _ActiveReservationViewState extends ConsumerState<ActiveReservationView> {
       margin: const EdgeInsets.symmetric(horizontal: 16),
       child: Column(
         children: [
-          if (reservation.reservationStatus == ReservationStatus.confirmed)
-            Row(
-              children: [
-                Expanded(
-                  child: ElevatedButton.icon(
-                    onPressed: _showQRCodeDialog,
-                    icon: const Icon(Icons.qr_code, size: 18),
-                    label: const Text('Tunjukkan QR'),
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: AppPallete.primaryColor,
-                      foregroundColor: Colors.white,
-                      padding: const EdgeInsets.symmetric(vertical: 12),
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(8),
-                      ),
+          Row(
+            children: [
+              Expanded(
+                child: ElevatedButton.icon(
+                  onPressed: _showQRCodeDialog,
+                  icon: const Icon(Icons.qr_code, size: 18),
+                  label: const Text('Tunjukkan QR'),
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: AppPallete.primaryColor,
+                    foregroundColor: Colors.white,
+                    padding: const EdgeInsets.symmetric(vertical: 12),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(8),
                     ),
                   ),
-                ),
-                const SizedBox(width: 12),
-                Expanded(
-                  child: OutlinedButton.icon(
-                    onPressed: widget.onReschedule,
-                    icon: const Icon(Icons.edit_calendar, size: 18),
-                    label: const Text('Atur Ulang'),
-                    style: OutlinedButton.styleFrom(
-                      foregroundColor: AppPallete.primaryColor,
-                      side: BorderSide(color: AppPallete.primaryColor),
-                      padding: const EdgeInsets.symmetric(vertical: 12),
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(8),
-                      ),
-                    ),
-                  ),
-                ),
-              ],
-            )
-          else if (reservation.reservationStatus == ReservationStatus.pending)
-            OutlinedButton.icon(
-              onPressed: widget.onCancel,
-              icon: const Icon(Icons.cancel, size: 18),
-              label: const Text('Batalkan Reservasi'),
-              style: OutlinedButton.styleFrom(
-                foregroundColor: AppPallete.errorColor,
-                side: BorderSide(color: AppPallete.errorColor),
-                padding: const EdgeInsets.symmetric(vertical: 12),
-                minimumSize: const Size(double.infinity, 48),
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(8),
                 ),
               ),
-            ),
+              const SizedBox(width: 12),
+              Expanded(
+                child: OutlinedButton.icon(
+                  onPressed: widget.onReschedule,
+                  icon: const Icon(Icons.edit_calendar, size: 18),
+                  label: const Text('Atur Ulang'),
+                  style: OutlinedButton.styleFrom(
+                    foregroundColor: AppPallete.primaryColor,
+                    side: BorderSide(color: AppPallete.primaryColor),
+                    padding: const EdgeInsets.symmetric(vertical: 12),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(8),
+                    ),
+                  ),
+                ),
+              ),
+            ],
+          ),
         ],
       ),
     );

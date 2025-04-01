@@ -35,6 +35,8 @@ class RestaurantReservationSocketService {
   final LocalNotificationService notificationService;
   Function(Reservation)? _onNewReservationCallback;
   Function(String?)? _onNewReservationNotificationTap;
+  Function(Reservation)? _onReservationChangesCallback;
+  Function(String?)? _onReservationChangesNotificationTap;
 
   RestaurantReservationSocketService({
     required this.socket,
@@ -46,6 +48,8 @@ class RestaurantReservationSocketService {
   initConnection({
     required Function(Reservation) onNewReservationCallback,
     required Function(String?) onNewReservationNotificationTap,
+    required Function(Reservation) onReservationChangesCallback,
+    required Function(String?) onReservationChangesNotificationTap,
   }) {
     if (_isConnected) return;
 
@@ -62,6 +66,7 @@ class RestaurantReservationSocketService {
       _isConnected = true;
       _onNewReservationCallback = onNewReservationCallback;
       _onNewReservationNotificationTap = onNewReservationNotificationTap;
+      _onReservationChangesCallback = onReservationChangesCallback;
       _setupNewReservationListener();
     });
 
@@ -133,6 +138,45 @@ class RestaurantReservationSocketService {
           body: 'You have received a new reservation. Tap to view details.',
         );
       }
+    });
+
+    socket.on('reservation-changes', (data) {
+      final Reservation reservationData = Reservation.fromJson(data);
+      final formattedTotal =
+          (reservationData.grossAmount + reservationData.serviceFee).toIDRFormat();
+
+      final customerName = reservationData.customer.name;
+      final reservationTime = reservationData.reservationTime;
+      final peopleSize = reservationData.peopleSize;
+
+      final int itemCount = reservationData.menuItems.length;
+      final String itemsText = _getItemsDescription(reservationData);
+
+      String notificationTitle =
+          'Update Reservasi #${reservationData.reservationId.substring(0, 8)}';
+
+      String notificationBody = 'Reservation from $customerName\n'
+          'Time: ${_formatDateTime(reservationTime)}\n'
+          'People: $peopleSize\n'
+          'Total: \$$formattedTotal\n'
+          'Pre-ordered Items: $itemCount\n'
+          'Status: ${reservationData.status}\n'
+          '$itemsText';
+
+      if (_onReservationChangesCallback != null) {
+        _onReservationChangesCallback!(reservationData);
+      }
+
+      if (_onReservationChangesNotificationTap != null) {
+        notificationService.setOnNotificationTap(_onReservationChangesNotificationTap!);
+      }
+
+      notificationService.showNewOrderNotification(
+        title: notificationTitle,
+        body: notificationBody,
+        payload: null,
+        orderDetails: reservationData.toJson(),
+      );
     });
   }
 

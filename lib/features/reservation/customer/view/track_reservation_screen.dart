@@ -10,8 +10,12 @@ import 'package:socieaty/features/reservation/model/reservation.dart';
 import 'package:socieaty/features/reservation/customer/view/states/active_reservation_view.dart';
 import 'package:socieaty/features/reservation/customer/view/states/cancelled_reservation_screen.dart';
 import 'package:socieaty/features/reservation/customer/view/states/completed_reservation_screen.dart';
+import 'package:socieaty/features/reservation/customer/view/states/confirmed_reservation_screen.dart';
+import 'package:socieaty/features/reservation/customer/view/states/dining_reservation_screen.dart';
 import 'package:socieaty/features/reservation/customer/view/states/error_view.dart';
 import 'package:socieaty/features/reservation/customer/view/states/loading_view.dart';
+import 'package:socieaty/features/reservation/customer/view/states/pending_reservation_screen.dart';
+import 'package:socieaty/features/reservation/customer/view/states/rejected_reservation_screen.dart';
 import 'package:socieaty/features/reservation/provider/get_reservation_provider.dart';
 import 'package:socieaty/features/reservation/repository/reservation_repository.dart';
 
@@ -73,11 +77,10 @@ class _TrackReservationScreenState extends ConsumerState<TrackReservationScreen>
     _socketService.removeListener('track-reservation');
   }
 
-  void _handleReservationUpdate(dynamic data) {
-    debugPrint('Received reservation update: $data');
-
+  void _handleReservationUpdate(dynamic data) async {
     try {
       final updatedReservation = Reservation.fromJson(data);
+      debugPrint('Received reservation update: ${updatedReservation.reservationStatus}');
 
       if (updatedReservation.reservationId == widget.reservationId) {
         if (mounted) {
@@ -194,11 +197,50 @@ class _TrackReservationScreenState extends ConsumerState<TrackReservationScreen>
         onBackToHome: () => context.pop(),
         onRateRestaurant: _showRateRestaurantDialog,
       );
-    } else if (reservation.reservationStatus == ReservationStatus.cancelled) {
+    } else if (reservation.reservationStatus == ReservationStatus.canceled) {
       return CancelledReservationScreen(
         reservation: reservation,
         onBackToHome: () => context.pop(),
         onContactSupport: _showContactSupportDialog,
+      );
+    } else if (reservation.reservationStatus == ReservationStatus.rejected) {
+      return RejectedReservationScreen(
+        reservation: reservation,
+        onBackToHome: () => context.pop(),
+        onContactSupport: _showContactSupportDialog,
+      );
+    } else if (reservation.reservationStatus == ReservationStatus.dining) {
+      return DiningReservationScreen(
+        reservation: reservation,
+        onViewBill: () => showSnackbar(
+          context,
+          'Fitur lihat tagihan akan diimplementasikan secara terpisah',
+          state: SnackbarState.info,
+        ),
+        onCallWaiter: () => showSnackbar(
+          context,
+          'Fitur panggil pelayan akan diimplementasikan secara terpisah',
+          state: SnackbarState.info,
+        ),
+      );
+    } else if (reservation.reservationStatus == ReservationStatus.confirmed) {
+      return ConfirmedReservationScreen(
+        reservation: reservation,
+        onReschedule: () => showSnackbar(
+          context,
+          'Fitur atur ulang reservasi akan diimplementasikan secara terpisah',
+          state: SnackbarState.info,
+        ),
+        onShowQR: () => {},
+      );
+    } else if (reservation.reservationStatus == ReservationStatus.pending) {
+      return PendingReservationScreen(
+        reservation: reservation,
+        onCancel: () => showSnackbar(
+          context,
+          'Fitur pembatalan reservasi akan diimplementasikan secara terpisah',
+          state: SnackbarState.info,
+        ),
       );
     } else {
       return ActiveReservationView(

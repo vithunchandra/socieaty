@@ -186,7 +186,7 @@ class _ReservationsScheduleScreenState extends State<ReservationsScheduleScreen>
             _buildFilterChip(null, 'All'),
             _buildFilterChip(ReservationStatus.confirmed, 'Confirmed'),
             _buildFilterChip(ReservationStatus.completed, 'Completed'),
-            _buildFilterChip(ReservationStatus.cancelled, 'Cancelled'),
+            _buildFilterChip(ReservationStatus.canceled, 'Cancelled'),
           ],
         ),
       ),

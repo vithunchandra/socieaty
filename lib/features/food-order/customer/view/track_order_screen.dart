@@ -17,8 +17,6 @@ import 'package:socieaty/features/food-order/customer/view/states/loading_view.d
 import 'package:socieaty/features/food-order/customer/view/states/rejected_order_screen.dart';
 import 'package:socieaty/features/food-order/enum/food_order_status_enum.dart';
 
-
-
 class TrackOrderScreen extends ConsumerStatefulWidget {
   final String orderId;
 

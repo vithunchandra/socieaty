@@ -12,6 +12,7 @@ import 'package:socieaty/features/food-order/enum/food_order_status_enum.dart';
 import 'package:socieaty/features/food-order/model/food_order_transaction.dart';
 import 'package:socieaty/features/food-order/repository/response/create_order_transaction_response.dart';
 import 'package:socieaty/features/food-order/repository/response/get_customer_food_order_transaction_response.dart';
+import 'package:socieaty/features/food-order/repository/response/get_food_order_transaction_response.dart';
 import 'package:socieaty/features/food-order/repository/response/get_restaurant_food_transaction_response.dart';
 import 'package:socieaty/features/food-order/repository/response/track_order_transaction_response.dart';
 import 'package:socieaty/features/food-order/repository/response/update_order_transaction_response.dart';
@@ -44,10 +45,10 @@ class FoodOrderRepository {
     );
   }
 
-  Future<ApiResult<FoodOrderTransaction>> getFoodOrderTransaction(String id) async {
-    return executeRequest<FoodOrderTransaction>(
+  Future<ApiResult<GetFoodOrderTransactionResponse>> getFoodOrderTransaction(String id) async {
+    return executeRequest<GetFoodOrderTransactionResponse>(
       requestFunction: () => _dio.get('food-orders/$id'),
-      successParser: (data) => FoodOrderTransaction.fromJson(data),
+      successParser: (data) => GetFoodOrderTransactionResponse.fromJson(data),
     );
   }
 
@@ -70,7 +71,6 @@ class FoodOrderRepository {
 
   Future<ApiResult<GetRestaurantFoodTransactionResponse>> getRestaurantFoodTransaction(
       List<FoodOrderStatus> status) async {
-    debugPrint("Hai");
     return executeRequest<GetRestaurantFoodTransactionResponse>(
       requestFunction: () => _dio.get('food-orders/restaurant', queryParameters: {
         'status[]': List.generate(status.length, (index) => status[index].name),

@@ -3,6 +3,6 @@ enum ReservationStatus {
   pending,
   confirmed,
   dining,
-  cancelled,
+  canceled,
   completed,
 }

@@ -33,7 +33,7 @@ Widget getStatusChip(ReservationStatus status) {
       textColor = Colors.white;
       label = 'Rejected';
       break;
-    case ReservationStatus.cancelled:
+    case ReservationStatus.canceled:
       bgColor = Colors.red.shade300;
       textColor = Colors.white;
       label = 'Cancelled';

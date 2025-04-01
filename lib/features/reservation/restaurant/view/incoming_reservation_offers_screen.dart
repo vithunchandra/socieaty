@@ -145,14 +145,23 @@ class _IncomingReservationOffersScreenState extends ConsumerState<IncomingReserv
           ],
         ),
       ),
-      body: _isScanning ? const LoadingView() : TabBarView(
-        controller: _tabController,
-        children: [
-          ReservationList(status: [ReservationStatus.pending]),
-          ReservationList(status: [ReservationStatus.confirmed]),
-          ReservationList(status: [ReservationStatus.completed]),
-        ],
-      ),
+      body: _isScanning
+          ? const LoadingView()
+          : TabBarView(
+              controller: _tabController,
+              children: [
+                ReservationList(status: [ReservationStatus.pending]),
+                ReservationList(status: [
+                  ReservationStatus.confirmed,
+                  ReservationStatus.dining,
+                ]),
+                ReservationList(status: [
+                  ReservationStatus.completed,
+                  ReservationStatus.canceled,
+                  ReservationStatus.rejected,
+                ]),
+              ],
+            ),
       floatingActionButton: _buildFloatingActionButton(),
     );
   }

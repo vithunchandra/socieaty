@@ -1,12 +1,15 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:socieaty/core/theme/app_pallete.dart';
 import 'package:socieaty/features/food-order/enum/food_order_status_enum.dart';
 import 'package:socieaty/features/food-order/model/food_order_transaction.dart';
 import 'package:socieaty/shared/widgets/dotted_divider.dart';
 import 'package:socieaty/core/utils/custom_extension.dart';
+import 'package:socieaty/features/authentication/repository/auth_local_repository.dart';
+import 'package:socieaty/features/food-order/customer/widgets/qr_code_dialog.dart';
 
-class ActiveOrderView extends StatefulWidget {
+class ActiveOrderView extends ConsumerStatefulWidget {
   final FoodOrderTransaction order;
   final ScrollController scrollController;
   final Function() navigateToMapScreen;
@@ -19,10 +22,10 @@ class ActiveOrderView extends StatefulWidget {
   });
 
   @override
-  State<ActiveOrderView> createState() => _ActiveOrderViewState();
+  ConsumerState<ActiveOrderView> createState() => _ActiveOrderViewState();
 }
 
-class _ActiveOrderViewState extends State<ActiveOrderView> {
+class _ActiveOrderViewState extends ConsumerState<ActiveOrderView> {
   bool _isHeaderCollapsed = false;
 
   void handleScroll() {
@@ -37,6 +40,14 @@ class _ActiveOrderViewState extends State<ActiveOrderView> {
         _isHeaderCollapsed = isCollapsed;
       });
     }
+  }
+
+  void _showQRCodeDialog() {
+    final token = ref.read(authLocalRepositoryProvider).getToken();
+    showDialog(
+      context: context,
+      builder: (context) => QRCodeDialog(order: widget.order, token: token!),
+    );
   }
 
   @override
@@ -174,6 +185,11 @@ class _ActiveOrderViewState extends State<ActiveOrderView> {
             padding: const EdgeInsets.fromLTRB(16.0, 8.0, 16.0, 16.0),
             child: _buildStatusMessage(order),
           ),
+          if (order.foodOrderStatus == FoodOrderStatus.ready)
+            Padding(
+              padding: const EdgeInsets.fromLTRB(16.0, 0.0, 16.0, 16.0),
+              child: _buildQrCodeButton(),
+            ),
           Padding(
             padding: const EdgeInsets.fromLTRB(16.0, 0.0, 16.0, 16.0),
             child: _buildRestaurantSection(order),
@@ -183,6 +199,23 @@ class _ActiveOrderViewState extends State<ActiveOrderView> {
             child: _buildOrderSummary(order),
           ),
         ],
+      ),
+    );
+  }
+
+  Widget _buildQrCodeButton() {
+    return SizedBox(
+      width: double.infinity,
+      child: ElevatedButton.icon(
+        onPressed: _showQRCodeDialog,
+        icon: const Icon(Icons.qr_code, size: 18),
+        label: const Text('Tunjukkan QR Code'),
+        style: ElevatedButton.styleFrom(
+          padding: const EdgeInsets.symmetric(vertical: 12),
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(8),
+          ),
+        ),
       ),
     );
   }

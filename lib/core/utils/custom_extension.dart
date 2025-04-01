@@ -91,7 +91,7 @@ extension ReservationStatusExtension on ReservationStatus {
         return AppPallete.primaryColor;
       case ReservationStatus.pending:
         return AppPallete.warningColor;
-      case ReservationStatus.cancelled:
+      case ReservationStatus.canceled:
         return AppPallete.errorColor;
       case ReservationStatus.completed:
         return AppPallete.infoColor;
@@ -108,7 +108,7 @@ extension ReservationStatusExtension on ReservationStatus {
         return Icons.dining;
       case ReservationStatus.pending:
         return Icons.pending;
-      case ReservationStatus.cancelled:
+      case ReservationStatus.canceled:
         return Icons.cancel;
       case ReservationStatus.completed:
         return Icons.task_alt;
@@ -123,7 +123,7 @@ extension ReservationStatusExtension on ReservationStatus {
         return 'dikonfirmasi';
       case ReservationStatus.dining:
         return 'sedang makan';
-      case ReservationStatus.cancelled:
+      case ReservationStatus.canceled:
         return 'dibatalkan';
       case ReservationStatus.completed:
         return 'selesai';

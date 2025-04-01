@@ -6,12 +6,13 @@ import 'package:socieaty/core/notifications/local_notification_service.dart';
 import 'package:socieaty/core/theme/app_pallete.dart';
 import 'package:socieaty/core/utils/show_snackbar.dart';
 import 'package:socieaty/features/authentication/repository/auth_local_repository.dart';
+import 'package:socieaty/features/food-order/restaurant/provider/order_changes_notification_provider.dart';
 import 'package:socieaty/features/home/restaurant/view/grid_menu_button_widget.dart';
 import 'package:socieaty/features/home/restaurant/view/recent_reservation_widget.dart';
 import 'package:socieaty/features/home/restaurant/view/statistic_summary_widget.dart';
 import 'package:socieaty/features/food-order/restaurant/socket/restaurant_socket_service.dart';
-import 'package:socieaty/features/reservation/enum/reservation_status_enum.dart';
-import 'package:socieaty/features/reservation/restaurant/provider/get_restaurant_reservations_provider.dart';
+import 'package:socieaty/features/reservation/restaurant/provider/new_reservation_notification_provider.dart';
+import 'package:socieaty/features/reservation/restaurant/provider/reservation_changes_notification_provider.dart';
 import 'package:socieaty/features/reservation/restaurant/socket/restaurant_reservation_socket_service.dart';
 import 'package:socieaty/features/restaurant/view/restaurant_scaffold_with_navbar.dart';
 import 'package:socieaty/features/food-order/restaurant/view/food_order_item_summary_widget.dart';
@@ -43,15 +44,28 @@ class _RestaurantDashboardScreenState extends ConsumerState<RestaurantDashboardS
       onNewOrderNotificationTap: (orderId) {
         navigateToOrderDetails(orderId ?? "");
       },
+      onOrderChangesCallback: (order) {
+        ref.read(orderChangesNotificationProvider.notifier).setOrder(order);
+      },
+      onOrderChangesNotificationTap: (orderId) {
+        navigateToOrderDetails(orderId ?? "");
+      },
     );
 
     final reservationSocketService = ref.read(restaurantReservationSocketServiceProvider);
     reservationSocketService.initConnection(
       onNewReservationCallback: (reservation) {
-        showSnackbar(context, "New reservation from ${reservation.customer.name}");
-        ref.invalidate(getRestaurantReservationsProvider([ReservationStatus.pending]));
+        ref.read(newReservationNotificationProvider.notifier).setNewReservation(reservation);
       },
       onNewReservationNotificationTap: (reservationId) {
+        context.push('/restaurant/dashboard/reservation/offers', extra: reservationId);
+      },
+      onReservationChangesCallback: (reservation) {
+        ref
+            .read(reservationChangesNotificationProvider.notifier)
+            .setReservationChanges(reservation);
+      },
+      onReservationChangesNotificationTap: (reservationId) {
         context.push('/restaurant/dashboard/reservation/offers', extra: reservationId);
       },
     );

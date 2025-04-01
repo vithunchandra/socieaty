@@ -1,12 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
+import 'package:socieaty/core/theme/app_pallete.dart';
+import 'package:socieaty/core/utils/show_snackbar.dart';
 import 'package:socieaty/features/food-order/enum/food_order_status_enum.dart';
 import 'package:socieaty/features/food-order/model/food_order_transaction.dart';
-import 'package:socieaty/features/food-order/restaurant/provider/get_restaurant_food_order_provider.dart';
-import 'package:socieaty/features/food-order/restaurant/provider/new_order_notification_provider.dart';
+import 'package:socieaty/features/food-order/customer/provider/get_food_order_provider.dart';
 import 'package:socieaty/features/food-order/restaurant/widgets/order_details_sheet.dart';
 import 'package:socieaty/features/food-order/restaurant/widgets/order_list.dart';
+import 'package:socieaty/features/qr_code_scanner/view/qr_code_scanner_screen.dart';
 
 class RestaurantFoodOrderScreen extends ConsumerStatefulWidget {
   final FoodOrderTransaction? order;
@@ -20,6 +22,7 @@ class RestaurantFoodOrderScreen extends ConsumerStatefulWidget {
 class _RestaurantFoodOrderScreenState extends ConsumerState<RestaurantFoodOrderScreen>
     with SingleTickerProviderStateMixin {
   late TabController _tabController;
+  bool _isScanning = false;
 
   @override
   void initState() {
@@ -30,13 +33,6 @@ class _RestaurantFoodOrderScreenState extends ConsumerState<RestaurantFoodOrderS
       if (widget.order != null) {
         _showHighlightedOrder(widget.order!);
       }
-
-      // Set up the listener once using listenManual
-      ref.listenManual(newOrderNotificationProvider, (previous, next) {
-        if (next != null) {
-          ref.invalidate(getRestaurantFoodOrderProvider([FoodOrderStatus.pending]));
-        }
-      });
     });
   }
 
@@ -47,28 +43,76 @@ class _RestaurantFoodOrderScreenState extends ConsumerState<RestaurantFoodOrderS
   }
 
   void _showHighlightedOrder(FoodOrderTransaction order) {
-    showModalBottomSheet(
-      context: context,
-      isScrollControlled: true,
-      shape: const RoundedRectangleBorder(
-        borderRadius: BorderRadius.vertical(top: Radius.circular(16)),
-      ),
-      builder: (context) => DraggableScrollableSheet(
-        initialChildSize: 0.8,
-        maxChildSize: 0.9,
-        minChildSize: 0.5,
-        expand: false,
-        builder: (_, scrollController) => OrderDetailsSheet(
-          order: order,
-          statusFilter: [FoodOrderStatus.pending],
-          scrollController: scrollController,
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      showModalBottomSheet(
+        context: context,
+        isScrollControlled: true,
+        shape: const RoundedRectangleBorder(
+          borderRadius: BorderRadius.vertical(top: Radius.circular(16)),
         ),
-      ),
-    );
+        builder: (context) => DraggableScrollableSheet(
+          initialChildSize: 0.8,
+          maxChildSize: 0.9,
+          minChildSize: 0.5,
+          expand: false,
+          builder: (_, scrollController) => OrderDetailsSheet(
+            order: order,
+            statusFilter: [FoodOrderStatus.pending],
+            scrollController: scrollController,
+          ),
+        ),
+      );
+    });
   }
 
-  void _navigateToHistory() {
-    context.push('/restaurant/transaksi/history');
+  Future<void> _handleOrderScan(BuildContext context) async {
+    final result = await context.push(
+      '/qr-code-scanner',
+      extra: const QrCodeScannerArgs(
+        title: 'Scan Order QR',
+        helperMessage: 'Scan customer order QR code to verify',
+      ),
+    );
+
+    if (result == null) {
+      if (context.mounted) {
+        showSnackbar(context, 'QR code scan gagal', state: SnackbarState.error);
+      }
+      return;
+    }
+
+    if (result is! String) {
+      if (context.mounted) {
+        showSnackbar(context, 'QR code tidak valid', state: SnackbarState.error);
+      }
+      return;
+    }
+
+    if (_isScanning) {
+      return;
+    }
+
+    setState(() {
+      _isScanning = true;
+    });
+
+    final orderId = result.toString();
+
+    try {
+      final order = await ref.read(getFoodOrderProvider(orderId).future);
+
+      if (context.mounted) {
+        _showHighlightedOrder(order);
+      }
+    } catch (err) {
+      if (context.mounted) {
+        showSnackbar(context, 'Pesanan tidak ditemukan', state: SnackbarState.error);
+      }
+    } finally {
+      setState(() {
+        _isScanning = false;
+      });
+    }
   }
 
   @override
@@ -87,7 +131,9 @@ class _RestaurantFoodOrderScreenState extends ConsumerState<RestaurantFoodOrderS
           IconButton(
             icon: const Icon(Icons.history),
             tooltip: 'Riwayat Transaksi',
-            onPressed: _navigateToHistory,
+            onPressed: () {
+              context.push('/restaurant/transaksi/history');
+            },
           ),
         ],
         bottom: TabBar(
@@ -105,18 +151,33 @@ class _RestaurantFoodOrderScreenState extends ConsumerState<RestaurantFoodOrderS
       ),
       body: TabBarView(
         controller: _tabController,
-        children: const [
+        children: [
           OrderList(
             statusFilter: [FoodOrderStatus.pending],
+            onViewOrderDetails: _showHighlightedOrder,
           ),
           OrderList(
             statusFilter: [FoodOrderStatus.preparing],
+            onViewOrderDetails: _showHighlightedOrder,
           ),
           OrderList(
             statusFilter: [FoodOrderStatus.ready],
+            onViewOrderDetails: _showHighlightedOrder,
           ),
         ],
       ),
+      floatingActionButton: StatefulBuilder(builder: (context, setState) {
+        _tabController.addListener(() {
+          setState(() {});
+        });
+        return _tabController.index == 2
+            ? FloatingActionButton(
+                onPressed: () => _handleOrderScan(context),
+                backgroundColor: AppPallete.primaryColor,
+                child: const Icon(Icons.qr_code_scanner, color: Colors.white),
+              )
+            : const SizedBox.shrink();
+      }),
     );
   }
 }

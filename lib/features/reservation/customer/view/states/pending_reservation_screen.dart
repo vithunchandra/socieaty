@@ -1,35 +1,29 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:intl/intl.dart';
-import 'package:socieaty/core/constants.dart';
 import 'package:socieaty/core/theme/app_pallete.dart';
 import 'package:socieaty/core/utils/converter.dart';
 import 'package:socieaty/core/utils/custom_extension.dart';
-import 'package:socieaty/features/authentication/repository/auth_local_repository.dart';
 import 'package:socieaty/features/reservation/enum/reservation_status_enum.dart';
 import 'package:socieaty/features/reservation/model/reservation.dart';
 import 'package:socieaty/shared/widgets/dotted_divider.dart';
 import 'package:socieaty/shared/widgets/profile_picture_widget.dart';
 
-class ActiveReservationView extends ConsumerStatefulWidget {
+class PendingReservationScreen extends ConsumerStatefulWidget {
   final Reservation reservation;
   final VoidCallback? onCancel;
-  final VoidCallback? onReschedule;
-  final VoidCallback? onShowQR;
 
-  const ActiveReservationView({
+  const PendingReservationScreen({
     super.key,
     required this.reservation,
     this.onCancel,
-    this.onReschedule,
-    this.onShowQR,
   });
 
   @override
-  ConsumerState<ActiveReservationView> createState() => _ActiveReservationViewState();
+  ConsumerState<PendingReservationScreen> createState() => _PendingReservationScreenState();
 }
 
-class _ActiveReservationViewState extends ConsumerState<ActiveReservationView> {
+class _PendingReservationScreenState extends ConsumerState<PendingReservationScreen> {
   final ScrollController _scrollController = ScrollController();
   bool _isHeaderCollapsed = false;
 
@@ -58,14 +52,6 @@ class _ActiveReservationViewState extends ConsumerState<ActiveReservationView> {
         _isHeaderCollapsed = isCollapsed;
       });
     }
-  }
-
-  void _showQRCodeDialog() {
-    final token = ref.watch(authLocalRepositoryProvider).getToken();
-    showDialog(
-      context: context,
-      builder: (context) => QRCodeDialog(reservation: widget.reservation, token: token!),
-    );
   }
 
   @override
@@ -107,9 +93,9 @@ class _ActiveReservationViewState extends ConsumerState<ActiveReservationView> {
               color: Colors.white.withAlpha(50),
               borderRadius: BorderRadius.circular(30),
             ),
-            child: Text(
-              reservation.reservationStatus.name.toUpperCase(),
-              style: const TextStyle(
+            child: const Text(
+              'PENDING',
+              style: TextStyle(
                 color: Colors.white,
                 fontWeight: FontWeight.w600,
                 fontSize: 12,
@@ -147,29 +133,26 @@ class _ActiveReservationViewState extends ConsumerState<ActiveReservationView> {
                         color: AppPallete.neutralColor.shade600,
                       ),
                 ),
-                if (reservation.reservationStatus != ReservationStatus.canceled &&
-                    reservation.reservationStatus != ReservationStatus.completed) ...[
-                  const SizedBox(height: 16),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      Icon(
-                        Icons.access_time,
-                        color: AppPallete.primaryColor,
-                        size: 16,
+                const SizedBox(height: 16),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Icon(
+                      Icons.access_time,
+                      color: AppPallete.primaryColor,
+                      size: 16,
+                    ),
+                    const SizedBox(width: 8),
+                    Text(
+                      '${reservation.endTimeEstimation.difference(reservation.reservationTime).inHours} jam durasi',
+                      style: TextStyle(
+                        color: AppPallete.neutralColor.shade600,
+                        fontWeight: FontWeight.w500,
+                        fontSize: 14,
                       ),
-                      const SizedBox(width: 8),
-                      Text(
-                        '${reservation.endTimeEstimation.difference(reservation.reservationTime).inHours} jam durasi',
-                        style: TextStyle(
-                          color: AppPallete.neutralColor.shade600,
-                          fontWeight: FontWeight.w500,
-                          fontSize: 14,
-                        ),
-                      ),
-                    ],
-                  ),
-                ],
+                    ),
+                  ],
+                ),
               ],
             ),
           ),
@@ -206,21 +189,19 @@ class _ActiveReservationViewState extends ConsumerState<ActiveReservationView> {
   }
 
   Widget _buildStatusMessage(Reservation reservation) {
-    final Color statusColor = reservation.reservationStatus.getStatusColor();
-
     return Container(
       width: double.infinity,
       padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 16),
       decoration: BoxDecoration(
-        color: statusColor.withAlpha(25),
+        color: AppPallete.primaryColor.withAlpha(25),
         borderRadius: BorderRadius.circular(12),
-        border: Border.all(color: statusColor.withAlpha(75)),
+        border: Border.all(color: AppPallete.primaryColor.withAlpha(75)),
       ),
       child: Row(
         children: [
           Icon(
-            reservation.reservationStatus.getStatusIcon(),
-            color: statusColor,
+            Icons.schedule,
+            color: AppPallete.primaryColor,
             size: 24,
           ),
           const SizedBox(width: 12),
@@ -229,18 +210,16 @@ class _ActiveReservationViewState extends ConsumerState<ActiveReservationView> {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
-                  reservation.reservationStatus.getStatusName(),
+                  'Menunggu Konfirmasi',
                   style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                        color: statusColor,
+                        color: AppPallete.primaryColor,
                         fontWeight: FontWeight.bold,
                       ),
                 ),
                 Padding(
                   padding: const EdgeInsets.only(top: 4),
                   child: Text(
-                    reservation.reservationStatus == ReservationStatus.confirmed
-                        ? 'Silakan datang sesuai jadwal'
-                        : 'Reservasi sedang diproses',
+                    'Reservasi sedang diproses oleh restoran',
                     style: TextStyle(
                       fontSize: 12,
                       color: Colors.grey[600],
@@ -623,193 +602,21 @@ class _ActiveReservationViewState extends ConsumerState<ActiveReservationView> {
       margin: const EdgeInsets.symmetric(horizontal: 16),
       child: Column(
         children: [
-          if (reservation.reservationStatus == ReservationStatus.confirmed)
-            Row(
-              children: [
-                Expanded(
-                  child: ElevatedButton.icon(
-                    onPressed: _showQRCodeDialog,
-                    icon: const Icon(Icons.qr_code, size: 18),
-                    label: const Text('Tunjukkan QR'),
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: AppPallete.primaryColor,
-                      foregroundColor: Colors.white,
-                      padding: const EdgeInsets.symmetric(vertical: 12),
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(8),
-                      ),
-                    ),
-                  ),
-                ),
-                const SizedBox(width: 12),
-                Expanded(
-                  child: OutlinedButton.icon(
-                    onPressed: widget.onReschedule,
-                    icon: const Icon(Icons.edit_calendar, size: 18),
-                    label: const Text('Atur Ulang'),
-                    style: OutlinedButton.styleFrom(
-                      foregroundColor: AppPallete.primaryColor,
-                      side: BorderSide(color: AppPallete.primaryColor),
-                      padding: const EdgeInsets.symmetric(vertical: 12),
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(8),
-                      ),
-                    ),
-                  ),
-                ),
-              ],
-            )
-          else if (reservation.reservationStatus == ReservationStatus.pending)
-            OutlinedButton.icon(
-              onPressed: widget.onCancel,
-              icon: const Icon(Icons.cancel, size: 18),
-              label: const Text('Batalkan Reservasi'),
-              style: OutlinedButton.styleFrom(
-                foregroundColor: AppPallete.errorColor,
-                side: BorderSide(color: AppPallete.errorColor),
-                padding: const EdgeInsets.symmetric(vertical: 12),
-                minimumSize: const Size(double.infinity, 48),
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(8),
-                ),
+          OutlinedButton.icon(
+            onPressed: widget.onCancel,
+            icon: const Icon(Icons.cancel, size: 18),
+            label: const Text('Batalkan Reservasi'),
+            style: OutlinedButton.styleFrom(
+              foregroundColor: AppPallete.errorColor,
+              side: BorderSide(color: AppPallete.errorColor),
+              padding: const EdgeInsets.symmetric(vertical: 12),
+              minimumSize: const Size(double.infinity, 48),
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(8),
               ),
             ),
+          ),
         ],
-      ),
-    );
-  }
-}
-
-class QRCodeDialog extends StatelessWidget {
-  final String token;
-  final Reservation reservation;
-
-  const QRCodeDialog({
-    super.key,
-    required this.reservation,
-    required this.token,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    final qrCodeUrl =
-        '${AppConstants.socieatyBackendUrl}reservation/${reservation.reservationId}/qr-code';
-
-    return Dialog(
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(16),
-      ),
-      child: Padding(
-        padding: const EdgeInsets.all(24),
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                Expanded(
-                  child: Text(
-                    'QR Code Reservasi',
-                    style: Theme.of(context).textTheme.titleLarge?.copyWith(
-                          fontWeight: FontWeight.bold,
-                          color: AppPallete.neutralColor.shade800,
-                        ),
-                  ),
-                ),
-                GestureDetector(
-                  onTap: () => Navigator.of(context).pop(),
-                  child: Icon(
-                    Icons.close,
-                    color: AppPallete.neutralColor.shade600,
-                    size: 24,
-                  ),
-                ),
-              ],
-            ),
-            const SizedBox(height: 16),
-            const DottedDivider(color: AppPallete.neutralColor),
-            const SizedBox(height: 24),
-            Container(
-              width: 250,
-              height: 250,
-              padding: const EdgeInsets.all(12),
-              decoration: BoxDecoration(
-                color: Colors.white,
-                borderRadius: BorderRadius.circular(12),
-                boxShadow: [
-                  BoxShadow(
-                    color: Colors.black.withAlpha(20),
-                    blurRadius: 10,
-                    offset: const Offset(0, 4),
-                  ),
-                ],
-              ),
-              child: Image.network(
-                headers: {
-                  'Authorization': 'Bearer $token',
-                },
-                qrCodeUrl,
-                fit: BoxFit.contain,
-                loadingBuilder: (context, child, loadingProgress) {
-                  if (loadingProgress == null) return child;
-                  return Center(
-                    child: CircularProgressIndicator(
-                      value: loadingProgress.expectedTotalBytes != null
-                          ? loadingProgress.cumulativeBytesLoaded /
-                              loadingProgress.expectedTotalBytes!
-                          : null,
-                      color: AppPallete.primaryColor,
-                    ),
-                  );
-                },
-                errorBuilder: (context, error, stackTrace) {
-                  return Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      Icon(
-                        Icons.error_outline,
-                        color: AppPallete.errorColor,
-                        size: 48,
-                      ),
-                      const SizedBox(height: 16),
-                      Text(
-                        'Gagal memuat QR Code',
-                        style: TextStyle(
-                          color: AppPallete.errorColor,
-                          fontWeight: FontWeight.w500,
-                        ),
-                      ),
-                    ],
-                  );
-                },
-              ),
-            ),
-            const SizedBox(height: 24),
-            Text(
-              'Tunjukkan QR Code ini kepada staf restoran saat kedatangan',
-              textAlign: TextAlign.center,
-              style: TextStyle(
-                color: AppPallete.neutralColor.shade600,
-              ),
-            ),
-            const SizedBox(height: 24),
-            SizedBox(
-              width: double.infinity,
-              child: ElevatedButton(
-                onPressed: () => Navigator.of(context).pop(),
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: AppPallete.primaryColor,
-                  foregroundColor: Colors.white,
-                  padding: const EdgeInsets.symmetric(vertical: 12),
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(8),
-                  ),
-                ),
-                child: const Text('Tutup'),
-              ),
-            ),
-          ],
-        ),
       ),
     );
   }
