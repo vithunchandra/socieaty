@@ -40,7 +40,11 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
   @override
   void initState() {
     super.initState();
-    initializeSocketService();
+    _transactionMessagesSocketService = ref.read(transactionMessagesSocketServiceProvider);
+
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      initializeSocketService();
+    });
     _currentUser = ref.read(authLocalRepositoryProvider).getUserData();
   }
 
@@ -53,10 +57,10 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
   }
 
   void initializeSocketService() {
-    _transactionMessagesSocketService = ref.read(transactionMessagesSocketServiceProvider);
-
+    debugPrint('Initializing socket service');
     _transactionMessagesSocketService.initConnection(
-      onNewTransactionMessage: (message) {
+      onNewTransactionMessage: (data) {
+        final message = TransactionMessage.fromJson(data);
         if (message.transactionId == widget.transaction.transactionId) {
           if (mounted) {
             setState(() {
@@ -79,8 +83,21 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
     );
   }
 
-  void _loadMessages() {
-    ref.invalidate(trackTransactionMessageProvider(widget.transaction.transactionId));
+  Future<void> _loadMessages() async {
+    setState(() {
+      _isLoading = true;
+    });
+    try {
+      final result =
+          await ref.read(trackTransactionMessageProvider(widget.transaction.transactionId).future);
+      _messages = List<TransactionMessage>.from(result);
+    } catch (error) {
+      showSnackbar(null, error.toString(), state: SnackbarState.error);
+      _errorMessage = error.toString();
+    }
+    _isLoading = false;
+
+    setState(() {});
   }
 
   void _scrollToBottom() {
@@ -119,30 +136,6 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
 
   @override
   Widget build(BuildContext context) {
-    ref.listen(trackTransactionMessageProvider(widget.transaction.transactionId),
-        (previous, next) {
-      switch (next) {
-        case AsyncData(value: final data):
-          setState(() {
-            _messages = List<TransactionMessage>.from(data);
-            _isLoading = false;
-            _hasError = false;
-          });
-          _scrollToBottom();
-        case AsyncError(error: final error):
-          setState(() {
-            _isLoading = false;
-            _hasError = true;
-            _errorMessage = error.toString();
-          });
-          showSnackbar(context, error.toString(), state: SnackbarState.error);
-        case AsyncLoading():
-          setState(() {
-            _isLoading = true;
-          });
-      }
-    });
-
     return Scaffold(
       appBar: AppBar(
         backgroundColor: AppPallete.primaryColor,

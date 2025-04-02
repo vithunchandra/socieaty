@@ -34,6 +34,7 @@ class _TrackOrderScreenState extends ConsumerState<TrackOrderScreen> {
   FoodOrderTransaction? _orderData;
   bool _isLoading = true;
   String? _errorMessage;
+  final bool _isConnected = false;
 
   final ScrollController _scrollController = ScrollController();
 
@@ -55,14 +56,19 @@ class _TrackOrderScreenState extends ConsumerState<TrackOrderScreen> {
   }
 
   void _setupSocketListeners() {
-    _socketService.initConnection();
-    _socketService.listenOrderUpdate(widget.orderId, _handleOrderUpdate);
-    ref.read(foodOrderRepositoryProvider).trackOrderTransaction(widget.orderId).then((value) {
-      switch (value) {
-        case Success(data: final data):
-        case Error(error: final error):
-      }
-    });
+    _socketService.initConnection(
+      onOrderUpdate: _handleOrderUpdate,
+      onConnected: () {
+        setState(() {
+          ref.read(foodOrderRepositoryProvider).trackOrderTransaction(widget.orderId).then((value) {
+            switch (value) {
+              case Success(data: final data):
+              case Error(error: final error):
+            }
+          });
+        });
+      },
+    );
   }
 
   void _removeSocketListeners() {
@@ -137,7 +143,12 @@ class _TrackOrderScreenState extends ConsumerState<TrackOrderScreen> {
       _isLoading = true;
       _errorMessage = null;
     });
-    _setupSocketListeners();
+    ref.read(foodOrderRepositoryProvider).trackOrderTransaction(widget.orderId).then((value) {
+      switch (value) {
+        case Success(data: final data):
+        case Error(error: final error):
+      }
+    });
   }
 
   void _showRateRestaurantDialog() {

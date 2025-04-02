@@ -21,13 +21,16 @@ CustomerSocketService customerSocketService(Ref ref) {
 class CustomerSocketService {
   final Socket _socket;
   bool _isConnected = false;
+  Function(dynamic)? _onOrderUpdate;
 
   CustomerSocketService({required Socket socket}) : _socket = socket;
 
   bool get isConnected => _isConnected;
 
-  initConnection() {
+  initConnection({required Function(dynamic) onOrderUpdate, required Function() onConnected}) {
     if (_isConnected) return;
+
+    debugPrint('Socket 2');
 
     _socket.connect();
 
@@ -38,6 +41,9 @@ class CustomerSocketService {
     _socket.onConnect((_) {
       debugPrint('Connected to server');
       _isConnected = true;
+      _onOrderUpdate = onOrderUpdate;
+      listenOrderUpdate();
+      onConnected();
     });
 
     _socket.onDisconnect((_) {
@@ -52,8 +58,6 @@ class CustomerSocketService {
   }
 
   void disconnect() {
-    _socket.clearListeners();
-    _socket.disconnect();
     _socket.dispose();
     _isConnected = false;
   }
@@ -63,10 +67,10 @@ class CustomerSocketService {
     _socket.emit('track-order', orderId);
   }
 
-  void listenOrderUpdate(String orderId, Function(dynamic) onOrderUpdate) {
+  void listenOrderUpdate() {
     _socket.on('track-order', (data) {
-      debugPrint('Order Tracking: $data');
-      onOrderUpdate(data);
+      debugPrint('Order Tracking: ${DateTime.now()}');
+      _onOrderUpdate!(data);
     });
   }
 

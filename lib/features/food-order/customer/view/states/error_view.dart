@@ -29,7 +29,7 @@ class ErrorView extends StatelessWidget {
               'Gagal Memuat Pesanan',
               style: Theme.of(context).textTheme.titleLarge?.copyWith(
                     fontWeight: FontWeight.bold,
-                    color: AppPallete.neutralColor.shade900,
+                    color: AppPallete.neutralColor.shade800,
                   ),
             ),
             const SizedBox(height: 12),

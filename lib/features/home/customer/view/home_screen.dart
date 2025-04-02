@@ -24,9 +24,6 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
       ),
     );
     _pageController = PageController();
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      ref.read(customerSocketServiceProvider).initConnection();
-    });
   }
 
   @override
