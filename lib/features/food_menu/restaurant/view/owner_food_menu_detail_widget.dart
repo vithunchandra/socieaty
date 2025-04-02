@@ -48,8 +48,6 @@ class _OwnerFoodMenuDetailWidgetState extends ConsumerState<OwnerFoodMenuDetailW
   @override
   void didUpdateWidget(OwnerFoodMenuDetailWidget oldWidget) {
     super.didUpdateWidget(oldWidget);
-    debugPrint('oldWidget: ${oldWidget.restaurantMenu}');
-    debugPrint('widget: ${widget.restaurantMenu}');
     if (oldWidget.restaurantMenu.hashCode != widget.restaurantMenu.hashCode) {
       _menu = widget.restaurantMenu;
       _isAvailable = _menu.isStockAvailable;
@@ -345,7 +343,7 @@ class _OwnerFoodMenuDetailWidgetState extends ConsumerState<OwnerFoodMenuDetailW
                         ? const SizedBox(
                             width: 20,
                             height: 20,
-                            child: LoadingIndicatorWidget(),
+                            child: LoadingIndicatorWidget(size: 16, color: Colors.white),
                           )
                         : Row(
                             mainAxisAlignment: MainAxisAlignment.center,

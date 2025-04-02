@@ -72,7 +72,6 @@ class RestaurantRespository {
       'offset': query.offset,
       'limit': query.limit,
     };
-    debugPrint(queryData.toString());
     return executeRequest<PaginateRestaurantResponse>(
       requestFunction: () => _dio.get('restaurant', queryParameters: queryData),
       successParser: (data) => PaginateRestaurantResponse.fromJson(data),

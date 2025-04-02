@@ -239,7 +239,9 @@ class _SignupCustomerPageState extends ConsumerState<SignupCustomerPage> {
                             .signupCustomer(_formData);
                       }
                     },
-                    child: isLoading ? LoadingIndicatorWidget() : const Text("Sign Up"),
+                    child: isLoading
+                        ? const LoadingIndicatorWidget(size: 16, color: Colors.white)
+                        : const Text("Sign Up"),
                   ),
                 ),
               )

@@ -83,7 +83,9 @@ class RestaurantReservationSocketService {
 
   void disconnect() {
     removeListener('new-reservation');
+    socket.clearListeners();
     socket.disconnect();
+    socket.dispose();
     _isConnected = false;
     _onNewReservationCallback = null;
     _onNewReservationNotificationTap = null;
@@ -127,11 +129,9 @@ class RestaurantReservationSocketService {
         }
 
         if (_onNewReservationCallback != null) {
-          debugPrint("Calling onNewReservationCallback");
           _onNewReservationCallback!(reservationData);
         }
       } catch (e) {
-        debugPrint('Error processing new reservation: $e');
 
         notificationService.showNewOrderNotification(
           title: 'New Restaurant Reservation',

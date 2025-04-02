@@ -15,6 +15,7 @@ import 'package:socieaty/features/restaurant/model/reservation_config.dart';
 import 'package:socieaty/features/restaurant/model/socieaty_restaurant.dart';
 import 'package:socieaty/features/restaurant/provider/get_restaurant_reservation_config_provider.dart';
 import 'package:socieaty/shared/widgets/dotted_divider.dart';
+import 'package:socieaty/shared/widgets/loading_indicator_widget.dart';
 
 class OutletReserveScreen extends ConsumerStatefulWidget {
   final SocieatyRestaurant restaurant;
@@ -745,7 +746,6 @@ class _OutletReserveScreenState extends ConsumerState<OutletReserveScreen> {
                 const SizedBox(height: 12),
                 reservationConfigAsync.when(
                   data: (config) {
-                    debugPrint('config: ${config.toString()}');
                     List<String> timeSlots = _generateTimeSlots(config, _selectedDate);
                     if (timeSlots.isEmpty) {
                       return _buildEmptyTimeSlotsMessage();
@@ -755,7 +755,7 @@ class _OutletReserveScreenState extends ConsumerState<OutletReserveScreen> {
                   loading: () => const Center(
                     child: Padding(
                       padding: EdgeInsets.all(24.0),
-                      child: CircularProgressIndicator(),
+                      child: const LoadingIndicatorWidget(size: 36),
                     ),
                   ),
                   error: (error, stack) => Center(

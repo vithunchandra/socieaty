@@ -1,5 +1,4 @@
 import 'package:dio/dio.dart';
-import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 import 'package:socieaty/core/constants.dart';
@@ -9,7 +8,6 @@ import 'package:socieaty/core/utils/execute_request.dart';
 import 'package:socieaty/features/authentication/repository/auth_local_repository.dart';
 import 'package:socieaty/features/food-order/customer/viewstate/create_food_order_form_state.dart';
 import 'package:socieaty/features/food-order/enum/food_order_status_enum.dart';
-import 'package:socieaty/features/food-order/model/food_order_transaction.dart';
 import 'package:socieaty/features/food-order/repository/response/create_order_transaction_response.dart';
 import 'package:socieaty/features/food-order/repository/response/get_customer_food_order_transaction_response.dart';
 import 'package:socieaty/features/food-order/repository/response/get_food_order_transaction_response.dart';

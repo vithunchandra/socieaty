@@ -11,17 +11,16 @@ import 'package:socieaty/features/reservation/provider/get_reservation_provider.
 import 'package:socieaty/features/reservation/restaurant/widgets/reservation_details_sheet.dart';
 import 'package:socieaty/features/reservation/restaurant/widgets/reservation_list.dart';
 
-class IncomingReservationOffersScreen extends ConsumerStatefulWidget {
+class ReservationManagementScreen extends ConsumerStatefulWidget {
   final Reservation? initialReservation;
 
-  const IncomingReservationOffersScreen({super.key, this.initialReservation});
+  const ReservationManagementScreen({super.key, this.initialReservation});
 
   @override
-  ConsumerState<IncomingReservationOffersScreen> createState() =>
-      _IncomingReservationOffersScreenState();
+  ConsumerState<ReservationManagementScreen> createState() => _ReservationManagementScreenState();
 }
 
-class _IncomingReservationOffersScreenState extends ConsumerState<IncomingReservationOffersScreen>
+class _ReservationManagementScreenState extends ConsumerState<ReservationManagementScreen>
     with SingleTickerProviderStateMixin {
   late TabController _tabController;
   bool _isScanning = false;
@@ -30,10 +29,6 @@ class _IncomingReservationOffersScreenState extends ConsumerState<IncomingReserv
   void initState() {
     super.initState();
     _tabController = TabController(length: 3, vsync: this);
-    // Add listener to update UI when tab changes
-    _tabController.addListener(() {
-      setState(() {});
-    });
   }
 
   @override
@@ -123,6 +118,10 @@ class _IncomingReservationOffersScreenState extends ConsumerState<IncomingReserv
     return Scaffold(
       appBar: AppBar(
         elevation: 0,
+        leading: GestureDetector(
+          onTap: () => context.pop(),
+          child: const Icon(Icons.arrow_back, color: Colors.white),
+        ),
         title: Text(
           'Reservations',
           style: Theme.of(context).textTheme.titleLarge?.copyWith(
@@ -132,6 +131,15 @@ class _IncomingReservationOffersScreenState extends ConsumerState<IncomingReserv
         ),
         centerTitle: true,
         backgroundColor: AppPallete.primaryColor,
+        actions: [
+          IconButton(
+            icon: const Icon(Icons.history, color: Colors.white),
+            tooltip: 'Riwayat Reservasi',
+            onPressed: () {
+              context.push('/restaurant/dashboard/reservation/manage/history');
+            },
+          ),
+        ],
         bottom: TabBar(
           controller: _tabController,
           indicatorColor: Colors.white,
@@ -141,7 +149,7 @@ class _IncomingReservationOffersScreenState extends ConsumerState<IncomingReserv
           tabs: const [
             Tab(text: 'Pending'),
             Tab(text: 'Confirmed'),
-            Tab(text: 'Completed'),
+            Tab(text: 'Dining'),
           ],
         ),
       ),
@@ -151,15 +159,8 @@ class _IncomingReservationOffersScreenState extends ConsumerState<IncomingReserv
               controller: _tabController,
               children: [
                 ReservationList(status: [ReservationStatus.pending]),
-                ReservationList(status: [
-                  ReservationStatus.confirmed,
-                  ReservationStatus.dining,
-                ]),
-                ReservationList(status: [
-                  ReservationStatus.completed,
-                  ReservationStatus.canceled,
-                  ReservationStatus.rejected,
-                ]),
+                ReservationList(status: [ReservationStatus.confirmed]),
+                ReservationList(status: [ReservationStatus.dining]),
               ],
             ),
       floatingActionButton: _buildFloatingActionButton(),
@@ -167,91 +168,19 @@ class _IncomingReservationOffersScreenState extends ConsumerState<IncomingReserv
   }
 
   Widget _buildFloatingActionButton() {
-    // Only show the FAB when on the "Confirmed" tab
-    if (_tabController.index == 1) {
-      return FloatingActionButton(
-        onPressed: () {
-          _handleReservationScan(context);
-        },
-        backgroundColor: AppPallete.primaryColor,
-        child: const Icon(Icons.qr_code_scanner, color: Colors.white),
-      );
-    }
-    return const SizedBox.shrink();
+    return StatefulBuilder(builder: (context, setState) {
+      _tabController.addListener(() {
+        setState(() {});
+      });
+      return _tabController.index == 2
+          ? FloatingActionButton(
+              onPressed: () {
+                _handleReservationScan(context);
+              },
+              backgroundColor: AppPallete.primaryColor,
+              child: const Icon(Icons.qr_code_scanner, color: Colors.white),
+            )
+          : const SizedBox.shrink();
+    });
   }
-
-  // Future<void> _handleScannedQrCode(String code) async {
-  //   String? reservationId;
-
-  //   // Try to extract reservation ID from URL or use directly
-  //   final backendUrl = Uri.parse(code).authority;
-  //   if (code.contains('/reservation/')) {
-  //     reservationId = code.split('/reservation/').last.split('/').first;
-  //   } else {
-  //     reservationId = code;
-  //   }
-
-  //   if (reservationId.isEmpty) {
-  //     _showMessage('Invalid QR code format', SnackbarState.error);
-  //     return;
-  //   }
-
-  //   try {
-  //     // Get reservation details
-  //     final result = await ref.read(reservationRepositoryProvider).getReservation(reservationId);
-
-  //     switch (result) {
-  //       case Success(data: final data):
-  //         final reservation = data.reservation;
-
-  //         // Check if reservation is in confirmed status
-  //         if (reservation.reservationStatus != ReservationStatus.confirmed) {
-  //           if (reservation.reservationStatus == ReservationStatus.completed) {
-  //             _showMessage('Reservation has already been completed', SnackbarState.info);
-  //           } else {
-  //             _showMessage('Reservation is not in confirmed status', SnackbarState.error);
-  //           }
-  //           return;
-  //         }
-
-  //         // Update reservation to completed status
-  //         await _updateReservationStatus(reservationId);
-  //         break;
-  //       case Error(error: final error):
-  //         _showMessage('Failed to load reservation: ${error.message}', SnackbarState.error);
-  //         break;
-  //     }
-  //   } catch (e) {
-  //     _showMessage('An error occurred: $e', SnackbarState.error);
-  //   }
-  // }
-
-  // Future<void> _updateReservationStatus(String reservationId) async {
-  //   // Listen for updates
-  //   ref.listen(updateReservationStatusViewModelProvider(reservationId), (previous, next) {
-  //     switch (next.updatedReservation) {
-  //       case SuccessState():
-  //         _showMessage('Reservation checked-in successfully!', SnackbarState.success);
-  //         // Refresh the list
-  //         ref.invalidate(getRestaurantReservationsProvider([ReservationStatus.confirmed]));
-  //         ref.invalidate(getRestaurantReservationsProvider([ReservationStatus.completed]));
-  //       case ErrorState(message: var message):
-  //         _showMessage('Failed to update reservation: $message', SnackbarState.error);
-  //       case LoadingState():
-  //       case IdleState():
-  //         break;
-  //     }
-  //   });
-
-  //   // Update the reservation status to completed
-  //   await ref
-  //       .read(updateReservationStatusViewModelProvider(reservationId).notifier)
-  //       .updateReservationStatus(ReservationStatus.completed);
-  // }
-
-  // void _showMessage(String message, SnackbarState state) {
-  //   if (context.mounted) {
-  //     showSnackbar(context, message, state: state);
-  //   }
-  // }
 }

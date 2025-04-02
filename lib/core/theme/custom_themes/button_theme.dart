@@ -30,6 +30,9 @@ class CustomButtonStyle {
     shape: RoundedRectangleBorder(
       borderRadius: BorderRadius.circular(10),
     ),
+    side: BorderSide(color: AppPallete.primaryColor),
     textStyle: CustomTextTheme.lightTextTheme.bodyMedium?.copyWith(fontWeight: FontWeight.bold),
+    foregroundColor: AppPallete.primaryColor,
+    backgroundColor: Colors.transparent,
   );
 }

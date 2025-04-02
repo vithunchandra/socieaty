@@ -6,42 +6,42 @@ import 'package:socieaty/core/network/api_client.dart';
 import 'package:socieaty/core/network/api_result.dart';
 import 'package:socieaty/core/utils/execute_request.dart';
 import 'package:socieaty/features/authentication/repository/auth_local_repository.dart';
-import 'package:socieaty/features/food_order_chat/repository/response/create_food_order_transaction_message_response.dart';
-import 'package:socieaty/features/food_order_chat/repository/response/track_food_order_transaction_message_response.dart';
+import 'package:socieaty/features/transaction-message/repository/response/create_transaction_message_response.dart';
+import 'package:socieaty/features/transaction-message/repository/response/track_transaction_message_response.dart';
 
-part 'food_order_chat_repository.g.dart';
+part 'transaction_message_repository.g.dart';
 
 @riverpod
-FoodOrderChatRepository foodOrderChatRepository(Ref ref) {
+TransactionMessageRepository transactionMessageRepository(Ref ref) {
   final AuthLocalRepository authLocalRepository = ref.watch(authLocalRepositoryProvider);
   final token = authLocalRepository.getToken();
-  return FoodOrderChatRepository(
+  return TransactionMessageRepository(
     dio: ref.watch(apiClientProvider(url: AppConstants.socieatyBackendUrl, token: token)),
   );
 }
 
-class FoodOrderChatRepository {
+class TransactionMessageRepository {
   final Dio _dio;
-  FoodOrderChatRepository({required Dio dio}) : _dio = dio;
+  TransactionMessageRepository({required Dio dio}) : _dio = dio;
 
-  Future<ApiResult<CreateFoodOrderTransactionMessageResponse>> createFoodOrderTransactionMessage(
+  Future<ApiResult<CreateTransactionMessageResponse>> createTransactionMessage(
     String transactionId,
     String message,
   ) async {
-    return executeRequest<CreateFoodOrderTransactionMessageResponse>(
+    return executeRequest<CreateTransactionMessageResponse>(
       requestFunction: () => _dio.post('transactions/order/$transactionId/messages', data: {
         'message': message,
       }),
-      successParser: (data) => CreateFoodOrderTransactionMessageResponse.fromJson(data),
+      successParser: (data) => CreateTransactionMessageResponse.fromJson(data),
     );
   }
 
-  Future<ApiResult<TrackFoodOrderTransactionMessageResponse>> trackFoodOrderTransactionMessage(
+  Future<ApiResult<TrackTransactionMessageResponse>> trackTransactionMessage(
     String transactionId,
   ) async {
-    return executeRequest<TrackFoodOrderTransactionMessageResponse>(
+    return executeRequest<TrackTransactionMessageResponse>(
       requestFunction: () => _dio.get('transactions/order/$transactionId/messages/track'),
-      successParser: (data) => TrackFoodOrderTransactionMessageResponse.fromJson(data),
+      successParser: (data) => TrackTransactionMessageResponse.fromJson(data),
     );
   }
 }

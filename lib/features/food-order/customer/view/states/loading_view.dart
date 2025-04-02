@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:socieaty/core/theme/app_pallete.dart';
+import 'package:socieaty/shared/widgets/loading_indicator_widget.dart';
 
 class LoadingView extends StatelessWidget {
   const LoadingView({super.key});
@@ -10,9 +11,7 @@ class LoadingView extends StatelessWidget {
       child: Column(
         mainAxisSize: MainAxisSize.min,
         children: [
-          CircularProgressIndicator(
-            valueColor: AlwaysStoppedAnimation<Color>(AppPallete.primaryColor),
-          ),
+          const LoadingIndicatorWidget(size: 36),
           const SizedBox(height: 24),
           Text(
             'Loading order details...',

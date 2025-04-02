@@ -48,8 +48,6 @@ class LocalNotificationService {
     await _flutterLocalNotificationsPlugin.initialize(
       initializationSettings,
       onDidReceiveNotificationResponse: (NotificationResponse response) {
-        debugPrint('Notification clicked: ${response.payload}');
-        // Handle notification click
         if (_onNotificationTap != null) {
           _onNotificationTap!(response.payload);
         }
@@ -65,10 +63,8 @@ class LocalNotificationService {
 
       if (androidImplementation != null) {
         final bool? granted = await androidImplementation.requestNotificationsPermission();
-        debugPrint('Android notification permission granted: $granted');
       }
     } catch (e) {
-      debugPrint('Error requesting Android notification permission: $e');
     }
 
     try {
@@ -81,14 +77,12 @@ class LocalNotificationService {
           badge: true,
           sound: true,
         );
-        debugPrint('iOS notification permission granted: $granted');
       }
     } catch (e) {
       debugPrint('Error requesting iOS notification permission: $e');
     }
 
     _isInitialized = true;
-    debugPrint('LocalNotificationService initialized');
   }
 
   Future<void> _createNotificationChannels() async {
@@ -108,7 +102,6 @@ class LocalNotificationService {
         .resolvePlatformSpecificImplementation<AndroidFlutterLocalNotificationsPlugin>()
         ?.createNotificationChannel(newOrderChannel);
 
-    debugPrint('Created enhanced notification channels');
   }
 
   Future<bool> requestPermissions() async {
@@ -125,7 +118,6 @@ class LocalNotificationService {
 
       if (androidImplementation != null) {
         final bool? granted = await androidImplementation.requestNotificationsPermission();
-        debugPrint('Android notification permission granted: $granted');
         permissionGranted = granted ?? false;
       }
     } catch (e) {
@@ -142,7 +134,6 @@ class LocalNotificationService {
           badge: true,
           sound: true,
         );
-        debugPrint('iOS notification permission granted: $granted');
         permissionGranted = granted ?? false;
       }
     } catch (e) {

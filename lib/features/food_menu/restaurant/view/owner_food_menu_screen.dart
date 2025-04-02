@@ -17,6 +17,7 @@ import 'package:socieaty/features/food_menu/restaurant/view/owner_food_menu_item
 import 'package:socieaty/features/restaurant/model/socieaty_restaurant.dart';
 import 'package:socieaty/shared/widgets/custom_error_widget.dart';
 import 'package:socieaty/shared/widgets/dotted_divider.dart';
+import 'package:socieaty/shared/widgets/loading_indicator_widget.dart';
 import 'package:socieaty/shared/widgets/menu_filter_widget.dart';
 
 class OwnerFoodMenuScreenArgs {
@@ -491,12 +492,7 @@ class _OwnerFoodMenuScreenState extends ConsumerState<OwnerFoodMenuScreen> {
                         ),
                       ),
                     _ => const SliverToBoxAdapter(
-                        child: SizedBox(
-                          height: 300,
-                          child: Center(
-                            child: CircularProgressIndicator(),
-                          ),
-                        ),
+                        child: LoadingIndicatorWidget(size: 36),
                       ),
                   },
                   SliverToBoxAdapter(

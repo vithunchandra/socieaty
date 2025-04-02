@@ -46,7 +46,7 @@ class _RestaurantAccountScreenState extends ConsumerState<RestaurantAccountScree
         title: const Text('Restaurant Account'),
       ),
       body: isLoading
-          ? LoadingIndicatorWidget()
+          ? const LoadingIndicatorWidget(size: 32)
           : Center(
               child: FilledButton(
                 onPressed: () {

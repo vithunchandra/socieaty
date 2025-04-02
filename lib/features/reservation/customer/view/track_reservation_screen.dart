@@ -66,9 +66,7 @@ class _TrackReservationScreenState extends ConsumerState<TrackReservationScreen>
     ref.read(reservationRepositoryProvider).trackReservation(widget.reservationId).then((value) {
       switch (value) {
         case Success(data: final data):
-          debugPrint('Reservation tracked: ${data.message}');
         case Error(error: final error):
-          debugPrint('Error tracking reservation: $error');
       }
     });
   }
@@ -80,7 +78,6 @@ class _TrackReservationScreenState extends ConsumerState<TrackReservationScreen>
   void _handleReservationUpdate(dynamic data) async {
     try {
       final updatedReservation = Reservation.fromJson(data);
-      debugPrint('Received reservation update: ${updatedReservation.reservationStatus}');
 
       if (updatedReservation.reservationId == widget.reservationId) {
         if (mounted) {
@@ -92,7 +89,6 @@ class _TrackReservationScreenState extends ConsumerState<TrackReservationScreen>
         }
       }
     } catch (e) {
-      debugPrint('Error processing reservation update: $e');
       if (mounted) {
         setState(() {
           _errorMessage = 'Error processing reservation data';

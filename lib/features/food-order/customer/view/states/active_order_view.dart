@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:socieaty/core/theme/app_pallete.dart';
+import 'package:socieaty/core/utils/converter.dart';
 import 'package:socieaty/features/food-order/enum/food_order_status_enum.dart';
 import 'package:socieaty/features/food-order/model/food_order_transaction.dart';
 import 'package:socieaty/shared/widgets/dotted_divider.dart';
@@ -337,7 +338,7 @@ class _ActiveOrderViewState extends ConsumerState<ActiveOrderView> {
           ),
           InkWell(
             onTap: () {
-              context.push('/track-order/message', extra: order);
+              context.push('/transaction/message', extra: TransactionConverter.foodOrderToTransaction(order));
             },
             child: Container(
               padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),

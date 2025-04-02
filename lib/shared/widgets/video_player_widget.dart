@@ -71,7 +71,6 @@ class _VideoPlayerWidgetState extends ConsumerState<VideoPlayerWidget> {
     });
 
     ref.listen(homeScreenViewModelProvider, (_, next) {
-      debugPrint("next: ${next.currentPostId}");
       if (next.currentPostId != widget.postId) {
         _videoController.pause();
       } else {
@@ -85,7 +84,7 @@ class _VideoPlayerWidgetState extends ConsumerState<VideoPlayerWidget> {
     }
 
     if (!_isInitialized) {
-      return const Center(child: LoadingIndicatorWidget());
+      return const LoadingIndicatorWidget(size: 36);
     }
 
     return VisibilityDetector(

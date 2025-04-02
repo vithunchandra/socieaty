@@ -355,7 +355,9 @@ class CreateFoodMenuScreenState extends ConsumerState<CreateFoodMenuScreen> {
                   },
                   child: Padding(
                     padding: EdgeInsets.symmetric(vertical: 8),
-                    child: isCreateLoading ? LoadingIndicatorWidget() : Text('Create Menu Item'),
+                    child: isCreateLoading
+                        ? const LoadingIndicatorWidget(size: 16, color: Colors.white)
+                        : const Text('Create Menu Item'),
                   ),
                 ),
               ),

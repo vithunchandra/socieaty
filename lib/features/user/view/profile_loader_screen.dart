@@ -23,7 +23,6 @@ class ProfileLoaderScreen extends ConsumerStatefulWidget {
 class _ProfileLoaderScreenState extends ConsumerState<ProfileLoaderScreen> {
   @override
   Widget build(BuildContext context) {
-    debugPrint("userId: ${widget.userId}");
     final userAsyncValue = ref.watch(getUserDataProvider(widget.userId));
     final currentUser = ref.watch(authLocalRepositoryProvider).getUserData();
     return userAsyncValue.when(
@@ -72,7 +71,7 @@ class _ProfileLoaderScreenState extends ConsumerState<ProfileLoaderScreen> {
         ),
       ),
       loading: () => const Scaffold(
-        body: LoadingIndicatorWidget(),
+        body: LoadingIndicatorWidget(size: 36),
       ),
     );
   }

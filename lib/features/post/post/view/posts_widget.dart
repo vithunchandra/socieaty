@@ -67,7 +67,6 @@ class _PostsWidgetState extends ConsumerState<PostsWidget> {
         final nextPageKey = pageKey + newPosts.length;
         _pagingController.appendPage(newPosts, nextPageKey);
       }
-      debugPrint("HEiiiii");
     } catch (error) {
       _pagingController.error = error;
     }
@@ -92,8 +91,8 @@ class _PostsWidgetState extends ConsumerState<PostsWidget> {
           },
         );
       },
-      firstPageProgressIndicatorBuilder: (_) => LoadingIndicatorWidget(),
-      newPageProgressIndicatorBuilder: (_) => LoadingIndicatorWidget(),
+      firstPageProgressIndicatorBuilder: (_) => const LoadingIndicatorWidget(size: 36),
+      newPageProgressIndicatorBuilder: (_) => const LoadingIndicatorWidget(size: 36),
       firstPageErrorIndicatorBuilder: (context) => CustomErrorWidget(
         error: _pagingController.error,
         title: 'Posts',

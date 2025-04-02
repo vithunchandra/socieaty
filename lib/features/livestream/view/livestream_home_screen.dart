@@ -54,7 +54,7 @@ class _LivestreamHomeScreenState extends ConsumerState<LivestreamHomeScreen> {
       },
       child: Scaffold(
         body: _isLoading
-            ? const LoadingIndicatorWidget()
+            ? const LoadingIndicatorWidget(size: 32)
             : _rooms.isEmpty
                 ? Center(
                     child: Column(

@@ -83,7 +83,7 @@ class UpdateFoodMenuScreenState extends ConsumerState<UpdateFoodMenuScreen> {
                 content: ref.watch(getAllFoodMenuCategoriesProvider).isLoading
                     ? SizedBox(
                         height: 300,
-                        child: LoadingIndicatorWidget(),
+                        child: LoadingIndicatorWidget(size: 24, color: Colors.white),
                       )
                     : SizedBox(
                         height: 300,
@@ -407,7 +407,9 @@ class UpdateFoodMenuScreenState extends ConsumerState<UpdateFoodMenuScreen> {
                     },
                     child: Padding(
                       padding: EdgeInsets.symmetric(vertical: 8),
-                      child: isUpdateLoading ? LoadingIndicatorWidget() : Text('Update Menu Item'),
+                      child: isUpdateLoading
+                          ? const LoadingIndicatorWidget(size: 16, color: Colors.white)
+                          : const Text('Update Menu Item'),
                     ),
                   ),
                 ),

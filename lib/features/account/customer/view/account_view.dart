@@ -28,7 +28,7 @@ class AccountView extends ConsumerWidget {
 
     return Scaffold(
       body: isLoading
-          ? const LoadingIndicatorWidget()
+          ? const LoadingIndicatorWidget(size: 32)
           : Center(
               child: FilledButton(
                 onPressed: () {

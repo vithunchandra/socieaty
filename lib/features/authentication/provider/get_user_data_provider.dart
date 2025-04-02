@@ -14,7 +14,6 @@ Future<SocieatyUser> getUserData(Ref ref, String userId) async {
     case Success<SocieatyUser>(data: final user):
       return user;
     case Error(error: final error):
-      debugPrint("result: ${error.message}");
       throw Exception(error.message);
   }
 }

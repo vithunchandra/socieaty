@@ -253,7 +253,7 @@ class UpdateReservationConfigScreenState extends ConsumerState<UpdateReservation
                   child: Padding(
                     padding: const EdgeInsets.symmetric(vertical: 8),
                     child: isLoading
-                        ? const LoadingIndicatorWidget()
+                        ? const LoadingIndicatorWidget(size: 16, color: Colors.white)
                         : const Text('Update Configuration'),
                   ),
                 ),
@@ -329,7 +329,6 @@ class _FacilitySelectionDialogState extends ConsumerState<FacilitySelectionDialo
                   .where((facility) => !widget.existingFacilities.contains(facility))
                   .toList();
             } catch (e) {
-              debugPrint('Error fetching suggestions: $e');
               return const <String>[];
             }
           },

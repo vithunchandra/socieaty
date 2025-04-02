@@ -9,6 +9,7 @@ import 'package:socieaty/core/utils/map_camera_utils.dart';
 import 'package:socieaty/core/utils/map_markers_helper.dart';
 import 'package:socieaty/features/map/view/map_test_screen.dart';
 import 'package:go_router/go_router.dart' as go;
+import 'package:socieaty/shared/widgets/loading_indicator_widget.dart';
 
 class TrackingMap extends StatefulWidget {
   final LatLng customerLocation;
@@ -115,7 +116,6 @@ class _TrackingMapState extends State<TrackingMap> {
 
     // Check if user is off route using the utility class
     if (LocationHandler.needsRerouting(_currentLocation, _routeData!.points)) {
-      debugPrint("User is off route. Initiating rerouting...");
       _lastRerouteTime = now;
       _isRerouting = true;
 
@@ -190,9 +190,6 @@ class _TrackingMapState extends State<TrackingMap> {
     });
 
     try {
-      debugPrint(
-          "Requesting route from: ${_currentLocation.latitude},${_currentLocation.longitude} to ${widget.targetLocation.latitude},${widget.targetLocation.longitude}");
-
       // Use the new helper method with fallback
       final routeData = await LocationHandler.getRouteCoordinatesWithFallback(
         _currentLocation,
@@ -200,8 +197,6 @@ class _TrackingMapState extends State<TrackingMap> {
       );
 
       if (mounted) {
-        debugPrint("Route data received: ${routeData.distance} meters, ${routeData.duration}");
-
         setState(() {
           _routeData = routeData;
           _lastPassedPointIndex = -1; // Reset progress tracking
@@ -214,7 +209,6 @@ class _TrackingMapState extends State<TrackingMap> {
         _fitMapToRoute();
       }
     } catch (e) {
-      debugPrint("Error in _setupRoute: $e");
       setState(() {
         _isLoadingRoute = false;
       });
@@ -230,8 +224,6 @@ class _TrackingMapState extends State<TrackingMap> {
       final cameraUpdate = MapCameraUtils.fitToPointsList(_routeData!.points);
       _mapController!.animateCamera(cameraUpdate);
     } catch (e) {
-      debugPrint("Error fitting map to route: $e");
-
       // Fallback to simple two-point bounds
       final fallbackUpdate = MapCameraUtils.fitToPoints(_currentLocation, widget.targetLocation);
       _mapController!.animateCamera(fallbackUpdate);
@@ -283,10 +275,7 @@ class _TrackingMapState extends State<TrackingMap> {
                     SizedBox(
                       width: 20,
                       height: 20,
-                      child: CircularProgressIndicator(
-                        strokeWidth: 2.0,
-                        valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
-                      ),
+                      child: LoadingIndicatorWidget(size: 20, color: Colors.white),
                     ),
                     SizedBox(width: 12),
                     Text(
@@ -408,9 +397,7 @@ class _TrackingMapState extends State<TrackingMap> {
                           ? const SizedBox(
                               width: 20,
                               height: 20,
-                              child: CircularProgressIndicator(
-                                strokeWidth: 2.0,
-                              ),
+                              child: LoadingIndicatorWidget(size: 20),
                             )
                           : const SizedBox(),
                     ],

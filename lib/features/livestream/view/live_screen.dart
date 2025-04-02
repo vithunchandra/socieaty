@@ -248,7 +248,7 @@ class _LiveScreenState extends ConsumerState<LiveScreen> {
                 content: Column(
                   mainAxisSize: MainAxisSize.min,
                   children: [
-                    CircularProgressIndicator(),
+                    LoadingIndicatorWidget(size: 36),
                     SizedBox(height: 16),
                     Text('Closing livestream room...'),
                   ],
@@ -281,7 +281,7 @@ class _LiveScreenState extends ConsumerState<LiveScreen> {
               width: double.infinity,
               height: double.infinity,
               child: _isVideoTrackLoading
-                  ? LoadingIndicatorWidget()
+                  ? const LoadingIndicatorWidget(size: 32)
                   : _localVideoTrack == null
                       ? Center(
                           child: Column(

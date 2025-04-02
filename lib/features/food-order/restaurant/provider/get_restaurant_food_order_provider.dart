@@ -14,8 +14,6 @@ Future<List<FoodOrderTransaction>> getRestaurantFoodOrder(
   final repository = ref.watch(foodOrderRepositoryProvider);
   final result = await repository.getRestaurantFoodTransaction(status);
 
-  debugPrint("data (${DateTime.now()}): ${result.toString()}");
-
   switch (result) {
     case Success(data: var data):
       return data.transactions;

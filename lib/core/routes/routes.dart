@@ -15,7 +15,7 @@ import 'package:socieaty/features/authentication/viewstate/signup_restaurant_for
 import 'package:socieaty/features/customer/model/socieaty_customer.dart';
 import 'package:socieaty/features/customer/view/update_customer_profile_screen.dart';
 import 'package:socieaty/features/food_menu/customer/view/outlet_food_menu_screen.dart';
-import 'package:socieaty/features/food_order_chat/view/chat_screen.dart';
+import 'package:socieaty/features/transaction-message/view/chat_screen.dart';
 import 'package:socieaty/features/home/customer/view/home_screen.dart';
 import 'package:socieaty/features/home/restaurant/view/restaurant_dashboard_screen.dart';
 import 'package:socieaty/features/livestream/view/livestream_home_screen.dart';
@@ -27,10 +27,11 @@ import 'package:socieaty/features/reservation/customer/view/outlet_reserve_scree
 import 'package:socieaty/features/reservation/customer/view/reservation_food_selection_screen.dart';
 import 'package:socieaty/features/reservation/customer/view/reservations_history_screen.dart';
 import 'package:socieaty/features/reservation/customer/view/track_reservation_screen.dart';
-import 'package:socieaty/features/reservation/restaurant/view/incoming_reservation_offers_screen.dart';
+import 'package:socieaty/features/reservation/restaurant/view/reservation_management_screen.dart';
 import 'package:socieaty/features/reservation/restaurant/view/reservation_navigator_screen.dart';
 import 'package:socieaty/features/reservation/restaurant/view/reservation_schedule_calender_screen.dart';
 import 'package:socieaty/features/reservation/restaurant/view/reservations_schedule_screen.dart';
+import 'package:socieaty/features/reservation/restaurant/view/restaurant_reservation_history_screen.dart';
 import 'package:socieaty/features/restaurant/model/reservation_config.dart';
 import 'package:socieaty/features/restaurant/model/socieaty_restaurant.dart';
 import 'package:socieaty/features/restaurant/view/restaurant_scaffold_with_navbar.dart';
@@ -43,6 +44,7 @@ import 'package:socieaty/features/shop/customer/view/shop_search_screen.dart';
 import 'package:socieaty/features/food-order/customer/view/create_food_order_screen.dart';
 import 'package:socieaty/features/food-order/model/food_order_transaction.dart';
 import 'package:socieaty/features/food-order/restaurant/view/restaurant_food_order_screen.dart';
+import 'package:socieaty/features/transaction/model/transaction.dart';
 import 'package:socieaty/features/transaction_review/view/restaurant_rating_screen.dart';
 import 'package:socieaty/features/user/view/profile_loader_screen.dart';
 import 'package:socieaty/shared/widgets/create_screen.dart';
@@ -259,11 +261,20 @@ GoRouter router(Ref ref) {
                             ),
                           ]),
                       GoRoute(
-                        path: 'offers',
+                        path: 'manage',
                         parentNavigatorKey: rootNavigatorKey,
                         pageBuilder: (context, state) => const NoTransitionPage(
-                          child: IncomingReservationOffersScreen(),
+                          child: ReservationManagementScreen(),
                         ),
+                        routes: [
+                          GoRoute(
+                            path: 'history',
+                            parentNavigatorKey: rootNavigatorKey,
+                            pageBuilder: (context, state) => const NoTransitionPage(
+                              child: RestaurantReservationHistoryScreen(),
+                            ),
+                          ),
+                        ],
                       ),
                       GoRoute(
                         path: 'config/update',
@@ -325,9 +336,9 @@ GoRouter router(Ref ref) {
         ],
       ),
       GoRoute(
-        path: '/track-order/message',
+        path: '/transaction/message',
         builder: (context, state) => ChatScreen(
-          order: state.extra as FoodOrderTransaction,
+          transaction: state.extra as Transaction,
         ),
       ),
       GoRoute(

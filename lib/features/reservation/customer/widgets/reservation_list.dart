@@ -5,7 +5,7 @@ import 'package:socieaty/core/theme/app_pallete.dart';
 import 'package:socieaty/features/reservation/customer/provider/get_customer_reservations_provider.dart';
 import 'package:socieaty/features/reservation/customer/viewstate/get_reservations_history_query_state.dart';
 import 'package:socieaty/features/reservation/customer/widgets/reservation_card.dart';
-import 'package:socieaty/features/reservation/enum/reservation_status_enum.dart';
+import 'package:socieaty/shared/widgets/loading_indicator_widget.dart';
 
 class ReservationList extends ConsumerWidget {
   final GetReservationsHistoryQueryState queryState;
@@ -122,10 +122,7 @@ class ReservationList extends ConsumerWidget {
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          const CircularProgressIndicator(
-            strokeWidth: 2,
-            valueColor: AlwaysStoppedAnimation<Color>(AppPallete.primaryColor),
-          ),
+          const LoadingIndicatorWidget(size: 20),
           const SizedBox(height: 16),
           Text(
             'Loading your reservations...',

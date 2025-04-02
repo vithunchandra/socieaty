@@ -132,8 +132,9 @@ class _SignInPageState extends ConsumerState<SignInPage> {
                                 ref.read(signinViewmodelProvider.notifier).signin(_formData);
                               }
                             },
-                            child:
-                                isLoading ? const LoadingIndicatorWidget() : const Text("Sign in"),
+                            child: isLoading
+                                ? const LoadingIndicatorWidget(size: 16, color: Colors.white,)
+                                : const Text("Sign in"),
                           ),
                         ),
                         const SizedBox(

@@ -3,9 +3,9 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 import 'package:socieaty/core/constants.dart';
 import 'package:socieaty/core/network/websocket_client.dart';
-import 'package:socieaty/core/notifications/local_notification_service.dart';
 import 'package:socieaty/features/authentication/repository/auth_local_repository.dart';
-import 'package:socieaty/features/food-order/model/food_order_transaction_message.dart';
+import 'package:socieaty/features/transaction-message/model/transaction_message.dart';
+
 import 'package:socket_io_client/socket_io_client.dart';
 
 part 'transaction_messages_socket_service.g.dart';
@@ -17,8 +17,11 @@ TransactionMessagesSocketService transactionMessagesSocketService(Ref ref) {
 
   final service = TransactionMessagesSocketService(
     socket: ref.watch(
-        websocketClientProvider('${AppConstants.socieatyBackendUrl}food-order/message', token)),
-    notificationService: ref.watch(localNotificationServiceProvider),
+      websocketClientProvider(
+        '${AppConstants.socieatyBackendUrl}transaction/message',
+        token,
+      ),
+    ),
   );
 
   ref.onDispose(() {
@@ -29,72 +32,79 @@ TransactionMessagesSocketService transactionMessagesSocketService(Ref ref) {
 }
 
 class TransactionMessagesSocketService {
-  Socket socket;
+  final Socket _socket;
   bool _isConnected = false;
-  final LocalNotificationService notificationService;
-  Function? onConnected;
+  bool _isListening = false;
+  Function(TransactionMessage)? _onNewTransactionMessage;
 
   TransactionMessagesSocketService({
-    required this.socket,
-    required this.notificationService,
-  });
+    required Socket socket,
+  }) : _socket = socket;
 
   bool get isConnected => _isConnected;
 
-  void initConnection() {
-    if (_isConnected) {
-      onConnected?.call();
-      return;
-    }
+  void initConnection({
+    required Function(TransactionMessage) onNewTransactionMessage,
+    required Function onConnected,
+  }) {
+    if (_isConnected) return;
 
-    notificationService.init();
-
-    socket.connect();
-    socket.on('connection', (_) {
+    _socket.connect();
+    _socket.on('connection', (_) {
       debugPrint('connect ${_.toString()}');
     });
 
     debugPrint('Trying Connection');
-    socket.onConnect((_) {
+    _socket.onConnect((_) {
       debugPrint('connected to server');
       _isConnected = true;
-      onConnected?.call();
+      _onNewTransactionMessage = onNewTransactionMessage;
+      listenNewTransactionMessage();
+      onConnected();
     });
 
-    socket.onDisconnect((_) {
+    _socket.onDisconnect((_) {
       debugPrint('disconnected from server');
       _isConnected = false;
     });
 
-    socket.onerror((_) {
+    _socket.onerror((_) {
       debugPrint('Error Is ${_.toString()}');
       _isConnected = false;
     });
 
-    socket.on('welcome', (data) {
+    _socket.on('welcome', (data) {
       debugPrint('Welcome: ${data.toString()}');
     });
   }
 
-  void listenNewTransactionMessage(Function(FoodOrderTransactionMessage) onNewTransactionMessage) {
-    if (!_isConnected) {
-      initConnection();
+  void listenNewTransactionMessage() {
+    if (_isListening) {
+      return;
     }
-
-    socket.on('new-transaction-message', (data) {
-      debugPrint('New transaction message: ${data.toString()}');
-      final message = FoodOrderTransactionMessage.fromJson(data);
-      onNewTransactionMessage(message);
+    _isListening = true;
+    _socket.on('new-transaction-message', (data) {
+      debugPrint('New transaction message: ${DateTime.now()}');
+      final message = TransactionMessage.fromJson(data);
+      _socket.listenersAny().forEach((element) {
+        debugPrint('Listener: ${element.toString()}');
+      });
+      _onNewTransactionMessage!(message);
     });
   }
 
   void removeListener(String eventName) {
-    socket.off(eventName == 'transaction-message' ? 'new-transaction-message' : eventName);
+    _socket.off(eventName);
+    if (eventName == 'new-transaction-message') {
+      _onNewTransactionMessage = null;
+    }
   }
 
   void disconnect() {
-    socket.disconnect();
+    removeListener('new-transaction-message');
+    _socket.disconnect();
+    _socket.clearListeners();
+    _socket.dispose();
     _isConnected = false;
-    onConnected = null;
   }
 }

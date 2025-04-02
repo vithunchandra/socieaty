@@ -1,5 +1,6 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
+import 'package:socieaty/shared/widgets/loading_indicator_widget.dart';
 import 'package:video_player/video_player.dart';
 import 'package:socieaty/features/post/post/model/post.dart';
 import 'package:socieaty/shared/widgets/image_error_widget.dart';
@@ -20,7 +21,6 @@ class _PostCarouselItemWidgetState extends State<PostCarouselItemWidget> {
   void initState() {
     super.initState();
     if (widget.post.medias.first.type == "video") {
-      debugPrint("url: ${widget.post.medias.first.url}");
       _controller = VideoPlayerController.networkUrl(Uri.parse(widget.post.medias.first.url))
         ..initialize().then((_) {
           setState(() {});
@@ -53,9 +53,7 @@ class _PostCarouselItemWidgetState extends State<PostCarouselItemWidget> {
                   child: VideoPlayer(_controller!),
                 ),
               )
-            : const Center(
-                child: CircularProgressIndicator(),
-              );
+            : const LoadingIndicatorWidget(size: 36);
 
     return LayoutBuilder(
       builder: (context, constraints) {

@@ -45,7 +45,6 @@ class _UpdateCustomerProfileScreenState extends ConsumerState<UpdateCustomerProf
     ref.listen(updateCustomerProfileViewModelProvider, (previous, next) {
       switch (next.updateCustomerState) {
         case SuccessState<SocieatyCustomer>(data: final user):
-          debugPrint("Success: $user");
           context.pop();
         case ErrorState(message: final message):
           showSnackbar(context, message, state: SnackbarState.error);
@@ -69,7 +68,7 @@ class _UpdateCustomerProfileScreenState extends ConsumerState<UpdateCustomerProf
                   child: SizedBox(
                     width: 24,
                     height: 24,
-                    child: LoadingIndicatorWidget(),
+                    child: LoadingIndicatorWidget(size: 16),
                   ),
                 )
               : IconButton(
@@ -79,7 +78,7 @@ class _UpdateCustomerProfileScreenState extends ConsumerState<UpdateCustomerProf
         ],
       ),
       body: _isLoading
-          ? const LoadingIndicatorWidget()
+          ? const LoadingIndicatorWidget(size: 32)
           : SingleChildScrollView(
               padding: const EdgeInsets.all(20),
               child: Form(

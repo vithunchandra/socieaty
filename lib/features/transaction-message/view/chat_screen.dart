@@ -4,20 +4,21 @@ import 'package:socieaty/core/theme/app_pallete.dart';
 import 'package:socieaty/core/utils/converter.dart';
 import 'package:socieaty/core/utils/show_snackbar.dart';
 import 'package:socieaty/features/authentication/repository/auth_local_repository.dart';
-import 'package:socieaty/features/food_order_chat/provider/track_food_order_transaction_message_provider.dart';
-import 'package:socieaty/features/food_order_chat/socket/transaction_messages_socket_service.dart';
-import 'package:socieaty/features/food_order_chat/viewmodel/chat_view_model.dart';
-import 'package:socieaty/features/food-order/model/food_order_transaction.dart';
-import 'package:socieaty/features/food-order/model/food_order_transaction_message.dart';
+import 'package:socieaty/features/transaction-message/model/transaction_message.dart';
+import 'package:socieaty/features/transaction-message/provider/track_food_order_transaction_message_provider.dart';
+import 'package:socieaty/features/transaction-message/socket/transaction_messages_socket_service.dart';
+import 'package:socieaty/features/transaction-message/viewmodel/chat_view_model.dart';
+import 'package:socieaty/features/transaction/model/transaction.dart';
 import 'package:socieaty/features/user/model/socieaty_user.dart';
+import 'package:socieaty/shared/widgets/loading_indicator_widget.dart';
 import 'package:socieaty/shared/widgets/profile_picture_widget.dart';
 
 class ChatScreen extends ConsumerStatefulWidget {
-  final FoodOrderTransaction order;
+  final Transaction transaction;
 
   const ChatScreen({
     super.key,
-    required this.order,
+    required this.transaction,
   });
 
   @override
@@ -30,7 +31,7 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
   late TransactionMessagesSocketService _transactionMessagesSocketService;
   SocieatyUser? _currentUser;
 
-  List<FoodOrderTransactionMessage> _messages = List.empty(growable: true);
+  List<TransactionMessage> _messages = List.empty(growable: true);
   bool _isLoading = true;
   bool _hasError = false;
   String _errorMessage = '';
@@ -47,44 +48,39 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
   void dispose() {
     _messageController.dispose();
     _scrollController.dispose();
-    _transactionMessagesSocketService.removeListener('transaction-message');
     _transactionMessagesSocketService.disconnect();
     super.dispose();
   }
 
   void initializeSocketService() {
-    debugPrint('Initializing socket service...');
     _transactionMessagesSocketService = ref.read(transactionMessagesSocketServiceProvider);
 
-    _transactionMessagesSocketService.onConnected = () {
-      debugPrint('Socket connected! Now loading messages for order: ${widget.order.transactionId}');
-      if (mounted) {
-        setState(() {
-          _socketConnected = true;
-        });
+    _transactionMessagesSocketService.initConnection(
+      onNewTransactionMessage: (message) {
+        if (message.transactionId == widget.transaction.transactionId) {
+          if (mounted) {
+            setState(() {
+              _messages.add(message);
+            });
 
-        _loadMessages();
-      }
-    };
-
-    _transactionMessagesSocketService.initConnection();
-
-    _transactionMessagesSocketService.listenNewTransactionMessage((message) {
-      debugPrint('New transaction message: ${message.toString()}');
-      if (message.transactionId == widget.order.transactionId) {
+            _scrollToBottom();
+          }
+        }
+      },
+      onConnected: () {
         if (mounted) {
           setState(() {
-            _messages.add(message);
+            _socketConnected = true;
           });
 
-          _scrollToBottom();
+          _loadMessages();
         }
-      }
-    });
+      },
+    );
   }
 
   void _loadMessages() {
-    ref.invalidate(trackFoodOrderTransactionMessageProvider(widget.order.transactionId));
+    ref.invalidate(trackTransactionMessageProvider(widget.transaction.transactionId));
   }
 
   void _scrollToBottom() {
@@ -104,7 +100,7 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
 
     ref
         .read(chatViewModelProvider.notifier)
-        .createMessage(widget.order.transactionId, _messageController.text);
+        .createMessage(widget.transaction.transactionId, _messageController.text);
     _messageController.clear();
   }
 
@@ -123,12 +119,12 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
 
   @override
   Widget build(BuildContext context) {
-    ref.listen(trackFoodOrderTransactionMessageProvider(widget.order.transactionId),
+    ref.listen(trackTransactionMessageProvider(widget.transaction.transactionId),
         (previous, next) {
       switch (next) {
         case AsyncData(value: final data):
           setState(() {
-            _messages = List<FoodOrderTransactionMessage>.from(data);
+            _messages = List<TransactionMessage>.from(data);
             _isLoading = false;
             _hasError = false;
           });
@@ -154,7 +150,7 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
         title: Row(
           children: [
             ProfilePictureWidget(
-              user: UserConverter.restaurantToUser(widget.order.restaurant),
+              user: UserConverter.restaurantToUser(widget.transaction.restaurant),
               radius: 16,
             ),
             const SizedBox(width: 8),
@@ -164,19 +160,12 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
                 mainAxisSize: MainAxisSize.min,
                 children: [
                   Text(
-                    widget.order.restaurant.name,
+                    widget.transaction.restaurant.name,
                     style: const TextStyle(
                       fontWeight: FontWeight.bold,
                       fontSize: 14,
                     ),
                     overflow: TextOverflow.ellipsis,
-                  ),
-                  Text(
-                    'Order #${widget.order.orderId.substring(0, 8)}',
-                    style: TextStyle(
-                      fontSize: 12,
-                      color: Colors.white.withAlpha(200),
-                    ),
                   ),
                 ],
               ),
@@ -293,9 +282,7 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            CircularProgressIndicator(
-              color: AppPallete.primaryColor,
-            ),
+            const LoadingIndicatorWidget(size: 36),
             const SizedBox(height: 16),
             Text(
               _socketConnected ? 'Loading messages...' : 'Connecting to server...',

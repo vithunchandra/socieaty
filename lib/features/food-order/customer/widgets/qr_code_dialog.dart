@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:socieaty/core/constants.dart';
-import 'package:socieaty/core/theme/app_pallete.dart';
 import 'package:socieaty/features/food-order/model/food_order_transaction.dart';
 import 'package:socieaty/shared/widgets/dotted_divider.dart';
 

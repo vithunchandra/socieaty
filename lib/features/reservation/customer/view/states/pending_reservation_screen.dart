@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
 import 'package:intl/intl.dart';
 import 'package:socieaty/core/theme/app_pallete.dart';
 import 'package:socieaty/core/utils/converter.dart';
 import 'package:socieaty/core/utils/custom_extension.dart';
-import 'package:socieaty/features/reservation/enum/reservation_status_enum.dart';
 import 'package:socieaty/features/reservation/model/reservation.dart';
 import 'package:socieaty/shared/widgets/dotted_divider.dart';
 import 'package:socieaty/shared/widgets/profile_picture_widget.dart';
@@ -382,7 +382,10 @@ class _PendingReservationScreenState extends ConsumerState<PendingReservationScr
               const SizedBox(width: 12),
               Expanded(
                 child: ElevatedButton.icon(
-                  onPressed: () {},
+                  onPressed: () {
+                    context.push('/transaction/message',
+                        extra: TransactionConverter.reservationToTransaction(reservation));
+                  },
                   icon: const Icon(Icons.chat, size: 16, color: Colors.white),
                   label: const Text('Chat'),
                   style: ElevatedButton.styleFrom(

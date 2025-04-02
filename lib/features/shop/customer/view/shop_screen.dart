@@ -14,6 +14,7 @@ import 'package:socieaty/features/restaurant/view/outlet_card_widget.dart';
 import 'package:socieaty/features/restaurant/view/restaurant_highlight_item_widget.dart';
 import 'package:socieaty/features/restaurant/viewstate/paginate_restaurant_query_state.dart';
 import 'package:socieaty/shared/widgets/custom_error_widget.dart';
+import 'package:socieaty/shared/widgets/loading_indicator_widget.dart';
 import 'package:socieaty/shared/widgets/menu_filter_widget.dart';
 import 'package:socieaty/shared/widgets/search_bar_widget.dart';
 import 'package:dropdown_button2/dropdown_button2.dart';
@@ -41,7 +42,6 @@ class _ShopScreenState extends ConsumerState<ShopScreen> {
     ref.listen(getAllFoodMenuCategoriesProvider, (_, next) {
       switch (next) {
         case AsyncData<List<MenuCategory>>(value: final data):
-          debugPrint('data: $data');
           _menuCategories = data;
         case AsyncError<List<MenuCategory>>(error: final error):
           showSnackbar(context, error.toString(), state: SnackbarState.error);
@@ -164,7 +164,6 @@ class _ShopScreenState extends ConsumerState<ShopScreen> {
               const SliverToBoxAdapter(child: SizedBox(height: 8)),
               SliverToBoxAdapter(
                 child: restaurantHighlights.when(data: (data) {
-                  debugPrint("data: $data");
                   final partialData = data.restaurants;
                   return ExpandableCarousel(
                     options: ExpandableCarouselOptions(
@@ -203,7 +202,7 @@ class _ShopScreenState extends ConsumerState<ShopScreen> {
                     },
                   );
                 }, loading: () {
-                  return const Center(child: CircularProgressIndicator());
+                  return const LoadingIndicatorWidget(size: 36);
                 }),
               ),
               const SliverToBoxAdapter(child: SizedBox(height: 24)),
@@ -271,7 +270,7 @@ class _ShopScreenState extends ConsumerState<ShopScreen> {
                       },
                     );
                   },
-                  loading: () => const Center(child: CircularProgressIndicator()),
+                  loading: () => const LoadingIndicatorWidget(size: 36),
                 ),
               ),
               const SliverToBoxAdapter(child: SizedBox(height: 24)),
@@ -310,8 +309,7 @@ class _ShopScreenState extends ConsumerState<ShopScreen> {
                     ),
                   );
                 },
-                loading: () =>
-                    SliverToBoxAdapter(child: Center(child: CircularProgressIndicator())),
+                loading: () => SliverToBoxAdapter(child: const LoadingIndicatorWidget(size: 36)),
               ),
             ],
           ),

@@ -103,7 +103,7 @@ class _PostCommentsWidgetState extends ConsumerState<PostCommentsWidget> {
                   return Text("${object.toString()} \n ${stacktrace.toString()}");
                 },
                 loading: () {
-                  return const LoadingIndicatorWidget();
+                  return const LoadingIndicatorWidget(size: 24);
                 },
               ),
             ),

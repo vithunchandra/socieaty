@@ -21,6 +21,7 @@ import 'package:socieaty/shared/view_state.dart';
 import 'package:socieaty/shared/widgets/custom_text_field.dart';
 import 'package:socieaty/shared/widgets/dotted_divider.dart';
 import 'package:socieaty/core/utils/location_handler.dart';
+import 'package:socieaty/shared/widgets/loading_indicator_widget.dart';
 import 'package:socieaty/shared/widgets/profile_picture_widget.dart';
 
 class CreateFoodOrderScreen extends ConsumerStatefulWidget {
@@ -93,7 +94,6 @@ class _CreateFoodOrderScreenState extends ConsumerState<CreateFoodOrderScreen> {
           .toList(),
       note: _additionalNotes,
     );
-    debugPrint(_formState.toJson().toString());
     ref.read(createTransactionViewModelProvider.notifier).createTransaction(_formState);
   }
 
@@ -169,8 +169,7 @@ class _CreateFoodOrderScreenState extends ConsumerState<CreateFoodOrderScreen> {
       final locationData = await LocationHandler.getCurrentPosition();
 
       if (locationData == null) {
-        showSnackbar(
-            null, 'Gagal mengambil lokasi Anda. Silakan cek pengaturan izin lokasi Anda.',
+        showSnackbar(null, 'Gagal mengambil lokasi Anda. Silakan cek pengaturan izin lokasi Anda.',
             state: SnackbarState.error);
         return;
       }
@@ -214,7 +213,6 @@ class _CreateFoodOrderScreenState extends ConsumerState<CreateFoodOrderScreen> {
     ref.listen(createTransactionViewModelProvider, (_, next) {
       switch (next.formState) {
         case SuccessState<FoodOrderTransaction>(data: final data):
-          debugPrint(data.toString());
           ref.read(menuCartViewModelProvider(widget.restaurant.id).notifier).clearCart();
           context.push('/track-order', extra: data.orderId);
         case ErrorState(message: final message):
@@ -295,13 +293,7 @@ class _CreateFoodOrderScreenState extends ConsumerState<CreateFoodOrderScreen> {
                                 fit: BoxFit.cover,
                                 placeholder: (context, url) => Container(
                                   color: Colors.grey[300],
-                                  child: const Center(
-                                    child: SizedBox(
-                                      width: 20,
-                                      height: 20,
-                                      child: CircularProgressIndicator(strokeWidth: 2),
-                                    ),
-                                  ),
+                                  child: const LoadingIndicatorWidget(size: 20),
                                 ),
                                 errorWidget: (context, url, error) => Container(
                                   width: 50,

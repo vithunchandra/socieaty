@@ -8,6 +8,7 @@ import 'package:socieaty/features/restaurant/view/outlet_suggestion_item_widget.
 import 'package:socieaty/features/restaurant/viewstate/paginate_restaurant_query_state.dart';
 import 'package:socieaty/features/shop/customer/provider/recent_searches_provider.dart';
 import 'package:socieaty/shared/widgets/custom_error_widget.dart';
+import 'package:socieaty/shared/widgets/loading_indicator_widget.dart';
 import 'package:socieaty/shared/widgets/restaurant_filter_widget.dart';
 
 class ShopSearchScreen extends ConsumerStatefulWidget {
@@ -241,7 +242,7 @@ class _ShopSearchScreenState extends ConsumerState<ShopSearchScreen> {
                   child: SizedBox(
                     width: 20,
                     height: 20,
-                    child: CircularProgressIndicator(strokeWidth: 2),
+                    child: LoadingIndicatorWidget(size: 20),
                   ),
                 ),
               ),
@@ -281,7 +282,7 @@ class _ShopSearchScreenState extends ConsumerState<ShopSearchScreen> {
               error: error.toString(),
               onPressed: () => ref.refresh(paginateRestaurantProvider(_queryState)),
             ),
-            loading: () => const Center(child: CircularProgressIndicator()),
+            loading: () => const LoadingIndicatorWidget(size: 36),
           ),
           const SizedBox(height: 24),
         ],
@@ -361,7 +362,7 @@ class _ShopSearchScreenState extends ConsumerState<ShopSearchScreen> {
           child: SizedBox(
             width: 24,
             height: 24,
-            child: CircularProgressIndicator(strokeWidth: 2.0),
+            child: LoadingIndicatorWidget(size: 20),
           ),
         ),
       ),

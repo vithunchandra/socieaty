@@ -42,12 +42,10 @@ class TransactionReviewRepository {
     String restaurantId,
     GetRestaurantReviewsQuery? query,
   ) async {
-    debugPrint('query: ${query?.toJson()}');
     return executeRequest<GetAllRestaurantTransactionReviewsResponse>(
       requestFunction: () =>
           _dio.get('reviews/restaurants/$restaurantId', queryParameters: query?.toJson()),
       successParser: (data) {
-        debugPrint(data.toString());
         return GetAllRestaurantTransactionReviewsResponse.fromJson(data);
       },
     );

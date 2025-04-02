@@ -13,5 +13,3 @@ class GetFoodOrderTransactionResponse with _$GetFoodOrderTransactionResponse {
   factory GetFoodOrderTransactionResponse.fromJson(Map<String, dynamic> json) =>
       _$GetFoodOrderTransactionResponseFromJson(json);
 }
-
-

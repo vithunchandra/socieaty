@@ -24,13 +24,13 @@ class Reservation with _$Reservation {
     required SocieatyCustomer customer,
     required String reservationId,
     @ReservationStatusConverter() required ReservationStatus reservationStatus,
-    required DateTime reservationTime,
-    required DateTime endTimeEstimation,
+    @DateTimeConverter() required DateTime reservationTime,
+    @DateTimeConverter() required DateTime endTimeEstimation,
     required int peopleSize,
     required List<MenuItem> menuItems,
-    required DateTime createdAt,
-    required DateTime updatedAt,
-    required DateTime? finishedAt,
+    @DateTimeConverter() required DateTime createdAt,
+    @DateTimeConverter() required DateTime updatedAt,
+    @DateTimeConverter() required DateTime? finishedAt,
   }) = _Reservation;
 
   factory Reservation.fromJson(Map<String, dynamic> json) => _$ReservationFromJson(json);

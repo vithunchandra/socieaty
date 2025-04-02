@@ -247,7 +247,7 @@ class _LivestreamViewState extends ConsumerState<LivestreamWidget> {
             }
           },
           child: _isLoading
-              ? LoadingIndicatorWidget()
+              ? const LoadingIndicatorWidget(size: 32)
               : Scaffold(
                   body: Stack(
                     children: [
@@ -500,7 +500,7 @@ class _LivestreamViewState extends ConsumerState<LivestreamWidget> {
         return ErrorScreen(message: error.toString());
       },
       loading: () {
-        return LoadingIndicatorWidget();
+        return const LoadingIndicatorWidget(size: 32);
       },
     );
   }

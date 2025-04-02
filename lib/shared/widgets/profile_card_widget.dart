@@ -49,7 +49,7 @@ class _ProfileCardState extends ConsumerState<ProfileCardWidget> {
         return Text(error.toString());
       },
       loading: () {
-        return LoadingIndicatorWidget();
+        return const LoadingIndicatorWidget(size: 36);
       },
     );
   }

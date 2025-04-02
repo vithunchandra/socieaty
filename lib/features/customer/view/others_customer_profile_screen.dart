@@ -48,7 +48,6 @@ class _OtherCustomerProfileScreenState extends ConsumerState<OtherCustomerProfil
   }
 
   void _scrollListener() {
-    debugPrint('Profile header size: ${_profileHeaderSize?.height}');
     final threshold = _profileHeaderSize?.height ?? MediaQuery.of(context).size.height * 0.4;
     if (_scrollController.offset > threshold && !_showSmallProfile) {
       setState(() {
@@ -108,7 +107,7 @@ class _OtherCustomerProfileScreenState extends ConsumerState<OtherCustomerProfil
           centerTitle: true,
         ),
         body: isLoading
-            ? const LoadingIndicatorWidget()
+            ? const LoadingIndicatorWidget(size: 32)
             : NestedScrollView(
                 controller: _scrollController,
                 headerSliverBuilder: (context, innerBoxIsScrolled) {

@@ -7,9 +7,12 @@ import 'package:socieaty/core/enums/user_role.enum.dart';
 import 'package:socieaty/core/utils/custom_extension.dart';
 import 'package:socieaty/features/customer/model/socieaty_customer.dart';
 import 'package:socieaty/features/food-order/enum/food_order_status_enum.dart';
+import 'package:socieaty/features/food-order/model/food_order_transaction.dart';
 import 'package:socieaty/features/reservation/enum/reservation_sort_by_enum.dart';
 import 'package:socieaty/features/reservation/enum/reservation_status_enum.dart';
+import 'package:socieaty/features/reservation/model/reservation.dart';
 import 'package:socieaty/features/restaurant/model/socieaty_restaurant.dart';
+import 'package:socieaty/features/transaction/model/transaction.dart';
 import 'package:socieaty/features/user/model/socieaty_user.dart';
 
 class LatLngConverter implements JsonConverter<LatLng, Map<String, dynamic>> {
@@ -71,6 +74,38 @@ class BankConverter implements JsonConverter<BankEnum, String> {
   @override
   String toJson(BankEnum object) {
     return object.name;
+  }
+}
+
+class TransactionConverter {
+  static Transaction foodOrderToTransaction(FoodOrderTransaction foodOrder) {
+    return Transaction(
+      transactionId: foodOrder.transactionId,
+      status: foodOrder.status,
+      serviceType: foodOrder.serviceType,
+      grossAmount: foodOrder.grossAmount,
+      netAmount: foodOrder.netAmount,
+      refundAmount: foodOrder.refundAmount,
+      serviceFee: foodOrder.serviceFee,
+      note: foodOrder.note,
+      restaurant: foodOrder.restaurant,
+      customer: foodOrder.customer,
+    );
+  }
+
+  static Transaction reservationToTransaction(Reservation reservation) {
+    return Transaction(
+      transactionId: reservation.transactionId,
+      status: reservation.status,
+      serviceType: TransactionServiceType.reservation,
+      grossAmount: reservation.grossAmount,
+      netAmount: reservation.netAmount,
+      refundAmount: reservation.refundAmount,
+      serviceFee: reservation.serviceFee,
+      note: reservation.note,
+      restaurant: reservation.restaurant,
+      customer: reservation.customer,
+    );
   }
 }
 
@@ -237,4 +272,14 @@ class UserConverter {
       restaurantData: restaurant.restaurantData,
     );
   }
+}
+
+class DateTimeConverter implements JsonConverter<DateTime, String> {
+  const DateTimeConverter();
+
+  @override
+  DateTime fromJson(String json) => DateTime.parse(json).toLocal();
+
+  @override
+  String toJson(DateTime object) => object.toIso8601String();
 }

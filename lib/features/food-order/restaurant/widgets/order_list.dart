@@ -6,6 +6,7 @@ import 'package:socieaty/features/food-order/restaurant/provider/get_restaurant_
 import 'package:socieaty/features/food-order/restaurant/provider/new_order_notification_provider.dart';
 import 'package:socieaty/features/food-order/restaurant/provider/order_changes_notification_provider.dart';
 import 'package:socieaty/features/food-order/restaurant/widgets/order_card.dart';
+import 'package:socieaty/shared/widgets/loading_indicator_widget.dart';
 
 class OrderList extends ConsumerStatefulWidget {
   final List<FoodOrderStatus> statusFilter;
@@ -119,9 +120,7 @@ class _OrderListState extends ConsumerState<OrderList> {
         );
       },
       loading: () {
-        return const Center(
-          child: CircularProgressIndicator(),
-        );
+        return const LoadingIndicatorWidget(size: 36);
       },
     );
   }

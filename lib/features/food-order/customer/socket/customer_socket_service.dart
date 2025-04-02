@@ -52,7 +52,9 @@ class CustomerSocketService {
   }
 
   void disconnect() {
+    _socket.clearListeners();
     _socket.disconnect();
+    _socket.dispose();
     _isConnected = false;
   }
 

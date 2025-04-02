@@ -131,7 +131,7 @@ class _OrderDetailsSheetState extends ConsumerState<OrderDetailsSheet> {
                   ),
                   trailing: InkWell(
                     onTap: () {
-                      context.push('/track-order/message', extra: widget.order);
+                      context.push('/transaction/message', extra: TransactionConverter.foodOrderToTransaction(widget.order));
                     },
                     child: Container(
                       padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),

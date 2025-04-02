@@ -615,7 +615,9 @@ class _SignupRestaurantFinalPageState extends ConsumerState<SignupRestaurantFina
                         showSnackbar(context, "Masukan semua data yang diperlukan");
                       }
                     },
-                    child: !isSignupLoading ? const Text("Daftar") : LoadingIndicatorWidget(),
+                    child: !isSignupLoading
+                        ? const Text("Daftar")
+                        : const LoadingIndicatorWidget(size: 16, color: Colors.white),
                   ),
                 ),
               )

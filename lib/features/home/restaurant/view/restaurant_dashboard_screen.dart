@@ -83,7 +83,6 @@ class _RestaurantDashboardScreenState extends ConsumerState<RestaurantDashboardS
 
       final status = await Permission.notification.status;
       if (status.isGranted) {
-        debugPrint('Notification permission already granted');
         return;
       }
 

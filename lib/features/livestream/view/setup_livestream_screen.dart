@@ -159,7 +159,7 @@ class _SetupLiveStreamViewState extends ConsumerState<SetupLiveStreamScreen> {
                     _localVideoTrack!,
                     fit: RTCVideoViewObjectFit.RTCVideoViewObjectFitCover,
                   )
-                : LoadingIndicatorWidget(),
+                : const LoadingIndicatorWidget(size: 32),
           ),
           SafeArea(
             child: Padding(
@@ -256,7 +256,9 @@ class _SetupLiveStreamViewState extends ConsumerState<SetupLiveStreamScreen> {
                               ref.read(setupLivestreamViewModelProvider.notifier).startLivestream(formState);
                             }
                           },
-                          child: _isLoading ? LoadingIndicatorWidget() : Text("Go Live"),
+                          child: _isLoading
+                              ? const LoadingIndicatorWidget(size: 16, color: Colors.white)
+                              : const Text("Go Live"),
                         ),
                       ),
                     ],

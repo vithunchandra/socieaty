@@ -6,6 +6,7 @@ import 'package:socieaty/features/transaction_review/provider/get_all_restaurant
 import 'package:socieaty/features/transaction_review/viewstate/get_restaurant_reviews_query.dart';
 import 'package:intl/intl.dart';
 import 'package:socieaty/shared/widgets/custom_error_widget.dart';
+import 'package:socieaty/shared/widgets/loading_indicator_widget.dart';
 
 class SliverRestaurantReviewsWidget extends ConsumerStatefulWidget {
   final String restaurantId;
@@ -100,11 +101,7 @@ class _SliverRestaurantReviewsWidgetState extends ConsumerState<SliverRestaurant
 
               return Column(children: contentWidgets);
             },
-            loading: () => Container(
-              height: 300,
-              alignment: Alignment.center,
-              child: const CircularProgressIndicator(),
-            ),
+            loading: () => const LoadingIndicatorWidget(size: 36),
             error: (error, stackTrace) => CustomErrorWidget(
               error: error.toString(),
               title: 'Could not load reviews',
@@ -459,7 +456,6 @@ class _SliverRestaurantReviewsWidgetState extends ConsumerState<SliverRestaurant
 
   Widget _buildReviewItem(BuildContext context, TransactionReview review) {
     final dateFormat = DateFormat('MMM dd, yyyy');
-    debugPrint('review: ${review.reviewer.profilePictureUrl}');
     return Container(
       margin: const EdgeInsets.only(bottom: 20),
       padding: const EdgeInsets.all(20),

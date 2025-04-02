@@ -240,7 +240,9 @@ class CreateReservationConfigScreenState extends ConsumerState<CreateReservation
                   child: Padding(
                     padding: const EdgeInsets.symmetric(vertical: 8),
                     child: isLoading
-                        ? const LoadingIndicatorWidget()
+                        ? const LoadingIndicatorWidget(
+                            size: 16,
+                          )
                         : const Text('Save Configuration'),
                   ),
                 ),
@@ -316,7 +318,6 @@ class _FacilitySelectionDialogState extends ConsumerState<FacilitySelectionDialo
                   .where((facility) => !widget.existingFacilities.contains(facility))
                   .toList();
             } catch (e) {
-              debugPrint('Error fetching suggestions: $e');
               return const <String>[];
             }
           },

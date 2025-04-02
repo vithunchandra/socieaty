@@ -9,6 +9,7 @@ import 'package:socieaty/core/utils/map_camera_utils.dart';
 import 'package:socieaty/core/utils/map_markers_helper.dart';
 import 'package:socieaty/core/utils/route_progress_tracker.dart';
 import 'package:socieaty/core/utils/route_utils.dart';
+import 'package:socieaty/shared/widgets/loading_indicator_widget.dart';
 
 class TrackingMapSimulation extends StatefulWidget {
   final LatLng startLocation;
@@ -344,7 +345,6 @@ class _TrackingMapSimulationState extends State<TrackingMapSimulation> {
       final cameraUpdate = MapCameraUtils.fitToPointsList(_routeData!.points);
       _mapController!.animateCamera(cameraUpdate);
     } catch (e) {
-      debugPrint("Error fitting map to route: $e");
 
       // Fallback to simple two-point bounds
       final fallbackUpdate = MapCameraUtils.fitToPoints(_currentLocation, widget.targetLocation);
@@ -487,10 +487,7 @@ class _TrackingMapSimulationState extends State<TrackingMapSimulation> {
                             SizedBox(
                               width: 20,
                               height: 20,
-                              child: CircularProgressIndicator(
-                                strokeWidth: 2.0,
-                                valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
-                              ),
+                              child: LoadingIndicatorWidget(size: 20, color: Colors.white),
                             ),
                             SizedBox(width: 12),
                             Text(
@@ -694,7 +691,7 @@ class _TrackingMapSimulationState extends State<TrackingMapSimulation> {
                           const SizedBox(
                             width: 16,
                             height: 16,
-                            child: CircularProgressIndicator(strokeWidth: 2.0),
+                            child: LoadingIndicatorWidget(size: 16),
                           ),
                       ],
                     ),

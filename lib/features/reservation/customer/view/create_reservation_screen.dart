@@ -166,7 +166,6 @@ class _CreateReservationScreenState extends ConsumerState<CreateReservationScree
     ref.listen(createReservationViewModelProvider, (previous, next) {
       switch (next.createdReservation) {
         case SuccessState(data: final data):
-          debugPrint(data.toString());
           showSnackbar(context, 'Reservation created successfully');
           context.pushReplacement(
             '/${widget.args.restaurant.id}/shop/reserve/track',

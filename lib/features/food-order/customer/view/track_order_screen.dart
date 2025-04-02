@@ -60,20 +60,16 @@ class _TrackOrderScreenState extends ConsumerState<TrackOrderScreen> {
     ref.read(foodOrderRepositoryProvider).trackOrderTransaction(widget.orderId).then((value) {
       switch (value) {
         case Success(data: final data):
-          debugPrint('Order tracked: ${data.message}');
         case Error(error: final error):
-          debugPrint('Error tracking order: $error');
       }
     });
   }
 
   void _removeSocketListeners() {
-    _socketService.removeListener('track-order');
+    _socketService.disconnect();
   }
 
   void _handleOrderUpdate(dynamic data) {
-    debugPrint('Received order update: $data');
-
     try {
       final updatedOrder = FoodOrderTransaction.fromJson(data);
 
@@ -87,7 +83,6 @@ class _TrackOrderScreenState extends ConsumerState<TrackOrderScreen> {
         }
       }
     } catch (e) {
-      debugPrint('Error processing order update: $e');
       if (mounted) {
         setState(() {
           _errorMessage = 'Error processing order data';

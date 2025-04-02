@@ -12,6 +12,7 @@ import 'package:socieaty/features/transaction_review/viewstate/create_transactio
 import 'package:socieaty/shared/view_state.dart';
 import 'package:socieaty/shared/widgets/image_error_widget.dart';
 import 'package:socieaty/shared/widgets/image_loading_widget.dart';
+import 'package:socieaty/shared/widgets/loading_indicator_widget.dart';
 
 class RestaurantRatingScreen extends ConsumerStatefulWidget {
   final FoodOrderTransaction transaction;
@@ -157,10 +158,7 @@ class _RestaurantRatingScreenState extends ConsumerState<RestaurantRatingScreen>
                                   ? const SizedBox(
                                       height: 24,
                                       width: 24,
-                                      child: CircularProgressIndicator(
-                                        color: Colors.white,
-                                        strokeWidth: 2,
-                                      ),
+                                      child: LoadingIndicatorWidget(size: 20, color: Colors.white),
                                     )
                                   : const Text(
                                       'Submit Review',

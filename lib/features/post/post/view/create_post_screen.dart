@@ -288,7 +288,9 @@ class _CreatePostScreenState extends ConsumerState<CreatePostScreen> {
                         ref.read(createPostViewModelProvider.notifier).createPost(formData, files);
                       }
                     },
-                    child: isLoading ? LoadingIndicatorWidget() : Text("Unggah"),
+                    child: isLoading
+                        ? const LoadingIndicatorWidget(size: 16, color: Colors.white)
+                        : const Text("Unggah"),
                   ),
                 ),
               ),

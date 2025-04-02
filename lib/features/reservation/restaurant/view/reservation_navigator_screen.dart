@@ -31,7 +31,6 @@ class ReservationNavigatorScreen extends ConsumerWidget {
     );
     return reservationConfig.when(
       data: (data) {
-        debugPrint("data: $data");
         if (data == null) {
           return const CreateReservationConfigScreen();
         } else {
@@ -48,7 +47,7 @@ class ReservationNavigatorScreen extends ConsumerWidget {
         );
       },
       loading: () => const Scaffold(
-        body: LoadingIndicatorWidget(),
+        body: LoadingIndicatorWidget(size: 36),
       ),
     );
   }

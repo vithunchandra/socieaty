@@ -1,12 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
 import 'package:intl/intl.dart';
 import 'package:socieaty/core/constants.dart';
 import 'package:socieaty/core/theme/app_pallete.dart';
 import 'package:socieaty/core/utils/converter.dart';
 import 'package:socieaty/core/utils/custom_extension.dart';
 import 'package:socieaty/features/authentication/repository/auth_local_repository.dart';
-import 'package:socieaty/features/reservation/enum/reservation_status_enum.dart';
 import 'package:socieaty/features/reservation/model/reservation.dart';
 import 'package:socieaty/shared/widgets/dotted_divider.dart';
 import 'package:socieaty/shared/widgets/profile_picture_widget.dart';
@@ -68,6 +68,7 @@ class _ConfirmedReservationScreenState extends ConsumerState<ConfirmedReservatio
 
   @override
   Widget build(BuildContext context) {
+
     return NotificationListener<ScrollNotification>(
       onNotification: (ScrollNotification notification) {
         if (notification is ScrollUpdateNotification) {
@@ -156,7 +157,7 @@ class _ConfirmedReservationScreenState extends ConsumerState<ConfirmedReservatio
                     ),
                     const SizedBox(width: 8),
                     Text(
-                      '${reservation.endTimeEstimation.difference(reservation.reservationTime).inHours} jam durasi',
+                      '${reservation.endTimeEstimation.difference(reservation.reservationTime).inMinutes} menit durasi',
                       style: TextStyle(
                         color: AppPallete.neutralColor.shade600,
                         fontWeight: FontWeight.w500,
@@ -394,7 +395,10 @@ class _ConfirmedReservationScreenState extends ConsumerState<ConfirmedReservatio
               const SizedBox(width: 12),
               Expanded(
                 child: ElevatedButton.icon(
-                  onPressed: () {},
+                  onPressed: () {
+                    context.push('/transaction/message',
+                        extra: TransactionConverter.reservationToTransaction(reservation));
+                  },
                   icon: const Icon(Icons.chat, size: 16, color: Colors.white),
                   label: const Text('Chat'),
                   style: ElevatedButton.styleFrom(
@@ -456,7 +460,7 @@ class _ConfirmedReservationScreenState extends ConsumerState<ConfirmedReservatio
           _buildDetailRow('Jumlah Orang', '${reservation.peopleSize} orang'),
           const SizedBox(height: 12),
           _buildDetailRow('Durasi',
-              '${reservation.endTimeEstimation.difference(reservation.reservationTime).inHours} jam'),
+              '${reservation.endTimeEstimation.difference(reservation.reservationTime).inMinutes} menit'),
           if (reservation.note.isNotEmpty) ...[
             const SizedBox(height: 12),
             _buildDetailRow('Catatan', reservation.note),

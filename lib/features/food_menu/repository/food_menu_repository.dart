@@ -111,7 +111,6 @@ class FoodMenuRepository {
       'offset': query?.offset,
       'limit': query?.limit,
     };
-    debugPrint('queryData: $queryData');
     return executeRequest<PaginateFoodMenuResponse>(
       requestFunction: () => dio.get('menu', queryParameters: queryData),
       successParser: (data) => PaginateFoodMenuResponse.fromJson(data),
@@ -126,7 +125,6 @@ class FoodMenuRepository {
       'priceConditionIds[]': query?.priceRanges.toList() ?? [],
       'categoryIds[]': query?.categories.toList() ?? [],
     };
-    debugPrint('queryData: $queryData');
     return executeRequest<GetAllFoodMenuResponse>(
       requestFunction: () => dio.get(
         'menu/$restaurantId',

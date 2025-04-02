@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:socieaty/shared/widgets/loading_indicator_widget.dart';
 import 'package:video_player/video_player.dart';
 
 class VideoThumbailWidget extends StatefulWidget {
@@ -39,9 +40,7 @@ class _VideoThumbailWidgetState extends State<VideoThumbailWidget> {
           height: widget.size.height,
           child: _videoPlayerController.value.isInitialized
               ? VideoPlayer(_videoPlayerController)
-              : Center(
-                  child: CircularProgressIndicator(),
-                ),
+              : const LoadingIndicatorWidget(size: 24),
         ),
       ),
     );

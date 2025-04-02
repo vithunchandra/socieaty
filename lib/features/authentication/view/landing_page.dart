@@ -15,7 +15,7 @@ class LandingPage extends ConsumerWidget {
     return Scaffold(
       backgroundColor: AppPallete.primaryColor.shade100,
       body: ref.watch(getSessionDataProvider).isLoading
-          ? LoadingIndicatorWidget()
+          ? const LoadingIndicatorWidget(size: 32)
           : SafeArea(
               child: SizedBox(
                 width: double.infinity,

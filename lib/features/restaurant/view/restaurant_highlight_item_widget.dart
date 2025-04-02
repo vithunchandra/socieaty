@@ -34,8 +34,6 @@ class _RestaurantHighlightItemWidgetState extends State<RestaurantHighlightItemW
 
   @override
   Widget build(BuildContext context) {
-    debugPrint(widget.restaurant.restaurantData.restaurantBannerUrl);
-
     return PhysicalModel(
       color: Colors.transparent,
       borderRadius: BorderRadius.circular(12),

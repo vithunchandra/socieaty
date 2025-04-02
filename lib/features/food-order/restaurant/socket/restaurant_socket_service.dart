@@ -86,9 +86,10 @@ class RestaurantSocketService {
   void disconnect() {
     removeListener('new-order');
     removeListener('order-changes');
+    socket.clearListeners();
     socket.disconnect();
+    socket.dispose();
     _isConnected = false;
-    _onNewOrderCallback = null;
   }
 
   void _setupNewOrderListener() {

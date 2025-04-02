@@ -11,6 +11,7 @@ import 'package:socieaty/features/reservation/restaurant/viewmodel/restaurant_re
 import 'package:socieaty/features/reservation/restaurant/widgets/reservation_details_sheet.dart';
 import 'package:socieaty/features/reservation/restaurant/widgets/status_chip.dart';
 import 'package:socieaty/shared/view_state.dart';
+import 'package:socieaty/shared/widgets/loading_indicator_widget.dart';
 import 'package:socieaty/shared/widgets/profile_picture_widget.dart';
 
 class ReservationCard extends ConsumerStatefulWidget {
@@ -351,60 +352,48 @@ class PendingReservationCardActions extends StatelessWidget {
     return Row(
       children: [
         Expanded(
-          child: OutlinedButton(
+          child: OutlinedButton.icon(
             onPressed: isLoading ? null : () => onUpdateStatus(ReservationStatus.rejected),
-            style: OutlinedButton.styleFrom(
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(10),
-              ),
-              side: BorderSide(color: AppPallete.errorColor),
-              padding: const EdgeInsets.symmetric(vertical: 12),
-            ),
-            child: isLoading && lastUpdatedStatus == ReservationStatus.rejected
-                ? const SizedBox(
-                    height: 16,
-                    width: 16,
-                    child: CircularProgressIndicator(
-                      strokeWidth: 2,
-                      color: AppPallete.errorColor,
-                    ),
+            icon: isLoading && lastUpdatedStatus == ReservationStatus.rejected
+                ? LoadingIndicatorWidget(
+                    size: 16,
+                    color: AppPallete.errorColor
                   )
-                : Text(
-                    'Decline',
-                    style: TextStyle(
-                      color: AppPallete.errorColor,
-                      fontWeight: FontWeight.bold,
-                    ),
+                : const Icon(
+                    Icons.close_outlined,
+                    size: 16,
+                    color: AppPallete.errorColor,
                   ),
+            label: const Text(
+              'Decline',
+              style: TextStyle(
+                color: AppPallete.errorColor,
+                fontWeight: FontWeight.bold,
+              ),
+            ),
           ),
         ),
         const SizedBox(width: 16),
         Expanded(
-          child: ElevatedButton(
+          child: FilledButton.icon(
             onPressed: isLoading ? null : () => onUpdateStatus(ReservationStatus.confirmed),
-            style: ElevatedButton.styleFrom(
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(10),
-              ),
-              backgroundColor: AppPallete.primaryColor,
-              padding: const EdgeInsets.symmetric(vertical: 12),
-            ),
-            child: isLoading && lastUpdatedStatus == ReservationStatus.confirmed
-                ? const SizedBox(
-                    height: 16,
-                    width: 16,
-                    child: CircularProgressIndicator(
-                      strokeWidth: 2,
-                      color: Colors.white,
-                    ),
+            icon: isLoading && lastUpdatedStatus == ReservationStatus.confirmed
+                ? LoadingIndicatorWidget(
+                    size: 16,
+                    color: Colors.white,
                   )
-                : const Text(
-                    'Accept',
-                    style: TextStyle(
-                      color: Colors.white,
-                      fontWeight: FontWeight.bold,
-                    ),
+                : const Icon(
+                    Icons.check_circle_outline,
+                    size: 16,
+                    color: Colors.white,
                   ),
+            label: const Text(
+              'Accept',
+              style: TextStyle(
+                color: Colors.white,
+                fontWeight: FontWeight.bold,
+              ),
+            ),
           ),
         ),
       ],
@@ -437,28 +426,17 @@ class ConfirmedReservationCardActions extends StatelessWidget {
             },
             icon: const Icon(Icons.calendar_month),
             label: const Text('See Schedule'),
-            style: OutlinedButton.styleFrom(
-              foregroundColor: AppPallete.primaryColor,
-              side: BorderSide(color: AppPallete.primaryColor),
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(10),
-              ),
-              padding: const EdgeInsets.symmetric(vertical: 12),
-            ),
           ),
         ),
         const SizedBox(width: 16),
         Expanded(
-          child: ElevatedButton.icon(
+          child: FilledButton.icon(
             onPressed: isLoading ? null : () => onUpdateStatus(ReservationStatus.dining),
             icon: isLoading && lastUpdatedStatus == ReservationStatus.dining
                 ? const SizedBox(
                     height: 16,
                     width: 16,
-                    child: CircularProgressIndicator(
-                      strokeWidth: 2,
-                      color: Colors.white,
-                    ),
+                    child: LoadingIndicatorWidget(size: 16, color: Colors.white),
                   )
                 : const Icon(
                     Icons.restaurant,
@@ -470,14 +448,6 @@ class ConfirmedReservationCardActions extends StatelessWidget {
               style: TextStyle(
                 fontWeight: FontWeight.bold,
               ),
-            ),
-            style: ElevatedButton.styleFrom(
-              backgroundColor: AppPallete.primaryColor,
-              foregroundColor: Colors.white,
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(10),
-              ),
-              padding: const EdgeInsets.symmetric(vertical: 12),
             ),
           ),
         ),
@@ -511,28 +481,17 @@ class DiningReservationCardActions extends StatelessWidget {
             },
             icon: const Icon(Icons.restaurant_menu),
             label: const Text('Add Order'),
-            style: OutlinedButton.styleFrom(
-              foregroundColor: AppPallete.primaryColor,
-              side: BorderSide(color: AppPallete.primaryColor),
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(10),
-              ),
-              padding: const EdgeInsets.symmetric(vertical: 12),
-            ),
           ),
         ),
         const SizedBox(width: 16),
         Expanded(
-          child: ElevatedButton.icon(
+          child: FilledButton.icon(
             onPressed: isLoading ? null : () => onUpdateStatus(ReservationStatus.completed),
             icon: isLoading && lastUpdatedStatus == ReservationStatus.completed
                 ? const SizedBox(
                     height: 16,
                     width: 16,
-                    child: CircularProgressIndicator(
-                      strokeWidth: 2,
-                      color: Colors.white,
-                    ),
+                    child: LoadingIndicatorWidget(size: 16, color: Colors.white),
                   )
                 : const Icon(
                     Icons.check_circle_outline,
@@ -544,14 +503,6 @@ class DiningReservationCardActions extends StatelessWidget {
               style: TextStyle(
                 fontWeight: FontWeight.bold,
               ),
-            ),
-            style: ElevatedButton.styleFrom(
-              backgroundColor: AppPallete.primaryColor,
-              foregroundColor: Colors.white,
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(10),
-              ),
-              padding: const EdgeInsets.symmetric(vertical: 12),
             ),
           ),
         ),

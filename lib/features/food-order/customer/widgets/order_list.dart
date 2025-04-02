@@ -5,6 +5,7 @@ import 'package:socieaty/core/theme/app_pallete.dart';
 import 'package:socieaty/features/food-order/customer/provider/get_all_food_order_transactions_provider.dart';
 import 'package:socieaty/features/food-order/customer/widgets/order_card.dart';
 import 'package:socieaty/features/food-order/enum/food_order_status_enum.dart';
+import 'package:socieaty/shared/widgets/loading_indicator_widget.dart';
 
 class OrderList extends ConsumerWidget {
   final List<FoodOrderStatus> statuses;
@@ -121,10 +122,7 @@ class OrderList extends ConsumerWidget {
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          const CircularProgressIndicator(
-            strokeWidth: 2,
-            valueColor: AlwaysStoppedAnimation<Color>(AppPallete.primaryColor),
-          ),
+          const LoadingIndicatorWidget(size: 36),
           const SizedBox(height: 16),
           Text(
             'Loading your orders...',

@@ -25,7 +25,8 @@ class _RestaurantReservationHomeScreenState extends ConsumerState<RestaurantRese
   Widget build(BuildContext context) {
     final restaurant =
         UserConverter.userToRestaurant(ref.watch(authLocalRepositoryProvider).getUserData()!);
-    final reservationConfig = ref.watch(getRestaurantReservationConfigProvider(restaurant.restaurantData.id));
+    final reservationConfig =
+        ref.watch(getRestaurantReservationConfigProvider(restaurant.restaurantData.id));
 
     return reservationConfig.when(
       data: (config) {
@@ -67,11 +68,11 @@ class _RestaurantReservationHomeScreenState extends ConsumerState<RestaurantRese
             ),
             floatingActionButton: FloatingActionButton.extended(
               onPressed: () {
-                context.push('/restaurant/dashboard/reservation/offers');
+                context.push('/restaurant/dashboard/reservation/manage');
               },
               backgroundColor: AppPallete.primaryColor,
               icon: const Icon(Icons.notifications),
-              label: const Text('New Offers'),
+              label: const Text('Kelola'),
             ),
           );
         }
@@ -88,7 +89,7 @@ class _RestaurantReservationHomeScreenState extends ConsumerState<RestaurantRese
         );
       },
       loading: () => Scaffold(
-        body: LoadingIndicatorWidget(),
+        body: LoadingIndicatorWidget(size: 36),
       ),
     );
   }

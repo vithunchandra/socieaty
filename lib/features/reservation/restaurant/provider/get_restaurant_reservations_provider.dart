@@ -12,7 +12,6 @@ part 'get_restaurant_reservations_provider.g.dart';
 Future<List<Reservation>> getRestaurantReservations(Ref ref, List<ReservationStatus> status) async {
   final repository = ref.watch(reservationRepositoryProvider);
   final result = await repository.getRestaurantReservations(status);
-  debugPrint(result.toString());
 
   switch (result) {
     case Success(data: var data):

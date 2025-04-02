@@ -87,7 +87,6 @@ class _PostSliverGridWidgetState extends ConsumerState<PostSliverGridWidget> {
       ),
       builderDelegate: PagedChildBuilderDelegate<Post>(
         itemBuilder: (context, post, index) {
-          debugPrint("post: ${post.medias.first}");
           return GestureDetector(
             onTap: () {
               ref.read(appThemeProvider.notifier).setTheme(SocieatyAppTheme.darkTheme);
@@ -106,8 +105,8 @@ class _PostSliverGridWidgetState extends ConsumerState<PostSliverGridWidget> {
             child: PostCardWidget(post: post),
           );
         },
-        firstPageProgressIndicatorBuilder: (context) => LoadingIndicatorWidget(),
-        newPageProgressIndicatorBuilder: (context) => LoadingIndicatorWidget(),
+        firstPageProgressIndicatorBuilder: (context) => const LoadingIndicatorWidget(size: 36),
+        newPageProgressIndicatorBuilder: (context) => const LoadingIndicatorWidget(size: 36),
         noItemsFoundIndicatorBuilder: (context) => const Center(child: Text("No posts found")),
       ),
     );

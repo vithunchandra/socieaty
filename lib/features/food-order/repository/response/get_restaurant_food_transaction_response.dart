@@ -10,5 +10,6 @@ class GetRestaurantFoodTransactionResponse with _$GetRestaurantFoodTransactionRe
     required List<FoodOrderTransaction> transactions,
   }) = _GetRestaurantFoodTransactionResponse;
 
-  factory GetRestaurantFoodTransactionResponse.fromJson(Map<String, dynamic> json) => _$GetRestaurantFoodTransactionResponseFromJson(json);
+  factory GetRestaurantFoodTransactionResponse.fromJson(Map<String, dynamic> json) =>
+      _$GetRestaurantFoodTransactionResponseFromJson(json);
 }

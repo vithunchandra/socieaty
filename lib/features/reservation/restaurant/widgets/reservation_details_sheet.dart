@@ -146,7 +146,8 @@ class _ReservationDetailsSheetState extends ConsumerState<ReservationDetailsShee
                   ),
                   trailing: InkWell(
                     onTap: () {
-                      context.push('/track-reservation/message', extra: widget.reservation);
+                      context.push('/transaction/message',
+                          extra: TransactionConverter.reservationToTransaction(widget.reservation));
                     },
                     child: Container(
                       padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
@@ -451,7 +452,7 @@ class _PendingReservationActionsState extends ConsumerState<PendingReservationAc
       child: Row(
         children: [
           Expanded(
-            child: OutlinedButton(
+            child: OutlinedButton.icon(
               onPressed: isLoading
                   ? null
                   : () {
@@ -460,19 +461,15 @@ class _PendingReservationActionsState extends ConsumerState<PendingReservationAc
                       });
                       widget.onUpdateReservationStatus(ReservationStatus.canceled);
                     },
-              style: OutlinedButton.styleFrom(
-                foregroundColor: Colors.red,
-                side: const BorderSide(color: Colors.red),
-                padding: const EdgeInsets.symmetric(vertical: 12),
-              ),
-              child: isLoading && _lastUpdatedStatus == ReservationStatus.canceled
-                  ? const LoadingIndicatorWidget(size: 16)
-                  : const Text('Tolak Reservasi'),
+              icon: isLoading && _lastUpdatedStatus == ReservationStatus.canceled
+                  ? const LoadingIndicatorWidget(size: 16, color: Colors.white)
+                  : const Icon(Icons.close_outlined, size: 18),
+              label: const Text('Tolak Reservasi'),
             ),
           ),
           const SizedBox(width: 16),
           Expanded(
-            child: FilledButton(
+            child: FilledButton.icon(
               onPressed: isLoading
                   ? null
                   : () {
@@ -481,9 +478,10 @@ class _PendingReservationActionsState extends ConsumerState<PendingReservationAc
                       });
                       widget.onUpdateReservationStatus(ReservationStatus.confirmed);
                     },
-              child: isLoading && _lastUpdatedStatus == ReservationStatus.confirmed
-                  ? const LoadingIndicatorWidget(size: 16)
-                  : const Text('Terima Reservasi'),
+              icon: isLoading && _lastUpdatedStatus == ReservationStatus.confirmed
+                  ? const LoadingIndicatorWidget(size: 16, color: Colors.white)
+                  : const Icon(Icons.check_circle_outline, size: 18),
+              label: const Text('Terima Reservasi'),
             ),
           ),
         ],
@@ -525,11 +523,6 @@ class _ConfirmedReservationActionsState extends ConsumerState<ConfirmedReservati
               },
               icon: const Icon(Icons.calendar_month, size: 18),
               label: const Text('Lihat Jadwal'),
-              style: OutlinedButton.styleFrom(
-                foregroundColor: AppPallete.primaryColor,
-                side: BorderSide(color: AppPallete.primaryColor),
-                padding: const EdgeInsets.symmetric(vertical: 12),
-              ),
             ),
           ),
           const SizedBox(width: 16),
@@ -544,14 +537,7 @@ class _ConfirmedReservationActionsState extends ConsumerState<ConfirmedReservati
                       widget.onUpdateReservationStatus(ReservationStatus.dining);
                     },
               icon: isLoading && _lastUpdatedStatus == ReservationStatus.dining
-                  ? const SizedBox(
-                      height: 16,
-                      width: 16,
-                      child: CircularProgressIndicator(
-                        strokeWidth: 2,
-                        color: Colors.white,
-                      ),
-                    )
+                  ? const LoadingIndicatorWidget(size: 16, color: Colors.white)
                   : const Icon(Icons.check_circle_outline, size: 18),
               label: const Text('Layani'),
             ),
@@ -599,14 +585,7 @@ class _DiningReservationActionsState extends ConsumerState<DiningReservationActi
                       widget.onUpdateReservationStatus(ReservationStatus.completed);
                     },
               icon: isLoading && _lastUpdatedStatus == ReservationStatus.completed
-                  ? const SizedBox(
-                      height: 16,
-                      width: 16,
-                      child: CircularProgressIndicator(
-                        strokeWidth: 2,
-                        color: Colors.white,
-                      ),
-                    )
+                  ? const LoadingIndicatorWidget(size: 16, color: Colors.white)
                   : const Icon(Icons.check_circle_outline, size: 18),
               label: const Text('Selesai'),
             ),

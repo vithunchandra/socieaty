@@ -15,6 +15,7 @@ import 'package:socieaty/features/transaction_review/provider/get_all_restaurant
 import 'package:socieaty/features/transaction_review/view/widgets/restaurant_reviews_widget.dart';
 import 'package:socieaty/shared/widgets/create_screen.dart';
 import 'package:socieaty/shared/widgets/header_icon_widget.dart';
+import 'package:socieaty/shared/widgets/loading_indicator_widget.dart';
 
 class OwnerOutletScreen extends ConsumerStatefulWidget {
   final SocieatyRestaurant restaurant;
@@ -306,10 +307,7 @@ class _OwnerOutletScreenState extends ConsumerState<OwnerOutletScreen>
                                     child: SizedBox(
                                       width: 20,
                                       height: 20,
-                                      child: CircularProgressIndicator(
-                                        strokeWidth: 2,
-                                        color: Colors.white,
-                                      ),
+                                      child: const LoadingIndicatorWidget(size: 20, color: Colors.white),
                                     ),
                                   ),
                                 ),

@@ -52,18 +52,18 @@ class CustomerReservationSocketService {
   }
 
   void disconnect() {
+    _socket.clearListeners();
     _socket.disconnect();
+    _socket.dispose();
     _isConnected = false;
   }
 
   void trackReservation(String reservationId) {
-    debugPrint('Tracking Reservation: $reservationId');
     _socket.emit('track-reservation', reservationId);
   }
 
   void listenReservationUpdate(String reservationId, Function(dynamic) onReservationUpdate) {
     _socket.on('track-reservation', (data) {
-      debugPrint('Reservation Tracking: $data');
       onReservationUpdate(data);
     });
   }

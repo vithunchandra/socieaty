@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:mobile_scanner/mobile_scanner.dart';
 import 'package:socieaty/core/theme/app_pallete.dart';
+import 'package:socieaty/shared/widgets/loading_indicator_widget.dart';
 
 class QrCodeScannerArgs {
   final String title;
@@ -215,10 +216,7 @@ class _QrCodeScannerScreenState extends ConsumerState<QrCodeScannerScreen>
                         SizedBox(
                           width: 50,
                           height: 50,
-                          child: CircularProgressIndicator(
-                            color: AppPallete.primaryColor,
-                            strokeWidth: 4,
-                          ),
+                          child: const LoadingIndicatorWidget(size: 36),
                         ),
                         const SizedBox(height: 20),
                         Text(

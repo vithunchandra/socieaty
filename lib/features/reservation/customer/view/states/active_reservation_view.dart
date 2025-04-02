@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
 import 'package:intl/intl.dart';
 import 'package:socieaty/core/constants.dart';
 import 'package:socieaty/core/theme/app_pallete.dart';
@@ -403,7 +404,10 @@ class _ActiveReservationViewState extends ConsumerState<ActiveReservationView> {
               const SizedBox(width: 12),
               Expanded(
                 child: ElevatedButton.icon(
-                  onPressed: () {},
+                  onPressed: () {
+                    context.push('/transaction/message',
+                        extra: TransactionConverter.reservationToTransaction(reservation));
+                  },
                   icon: const Icon(Icons.chat, size: 16, color: Colors.white),
                   label: const Text('Chat'),
                   style: ElevatedButton.styleFrom(

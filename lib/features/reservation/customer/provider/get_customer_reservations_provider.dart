@@ -20,7 +20,6 @@ Future<List<Reservation>> getCustomerReservations(
 
   switch (result) {
     case Success(data: final data):
-      debugPrint('data: $data');
       return data.reservations;
     case Error(error: final error):
       throw Exception(error.message);

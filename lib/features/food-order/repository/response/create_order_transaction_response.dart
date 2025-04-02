@@ -13,4 +13,3 @@ class CreateOrderTransactionResponse with _$CreateOrderTransactionResponse {
   factory CreateOrderTransactionResponse.fromJson(Map<String, dynamic> json) =>
       _$CreateOrderTransactionResponseFromJson(json);
 }
-

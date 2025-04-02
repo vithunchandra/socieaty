@@ -68,7 +68,6 @@ class _OutletHomeWidgetState extends ConsumerState<OutletHomeWidget> {
             ),
             SizedBox(height: 12),
             restaurantMenus.when(data: (data) {
-              debugPrint("data: $data");
               final partialData = data.take(5).toList();
               return ExpandableCarousel(
                 options: ExpandableCarouselOptions(
@@ -112,7 +111,7 @@ class _OutletHomeWidgetState extends ConsumerState<OutletHomeWidget> {
             }, error: (error, stacktrace) {
               return Text("erorr");
             }, loading: () {
-              return const Center(child: CircularProgressIndicator());
+              return const LoadingIndicatorWidget(size: 36);
             }),
             SizedBox(height: 24),
             Padding(
@@ -171,10 +170,7 @@ class _OutletHomeWidgetState extends ConsumerState<OutletHomeWidget> {
                     );
                   },
                   loading: () {
-                    return SizedBox(
-                      height: 300,
-                      child: LoadingIndicatorWidget(),
-                    );
+                    return const LoadingIndicatorWidget(size: 36);
                   },
                 ),
               ),

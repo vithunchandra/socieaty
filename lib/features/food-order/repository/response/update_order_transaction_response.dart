@@ -10,6 +10,6 @@ class UpdateOrderTransactionResponse with _$UpdateOrderTransactionResponse {
     required FoodOrderTransaction transaction,
   }) = _UpdateOrderTransactionResponse;
 
-  factory UpdateOrderTransactionResponse.fromJson(Map<String, dynamic> json) => _$UpdateOrderTransactionResponseFromJson(json);
+  factory UpdateOrderTransactionResponse.fromJson(Map<String, dynamic> json) =>
+      _$UpdateOrderTransactionResponseFromJson(json);
 }
-

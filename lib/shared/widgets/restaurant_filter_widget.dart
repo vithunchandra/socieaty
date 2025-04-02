@@ -66,7 +66,6 @@ class _RestaurantFilterWidgetState extends ConsumerState<RestaurantFilterWidget>
         foodCategories: _selectedFoodCategories,
         themes: _selectedThemes,
       );
-      debugPrint('menuFilterFormState: $_restaurantFilterFormState');
       context.pop(_restaurantFilterFormState);
     }
 
@@ -74,10 +73,7 @@ class _RestaurantFilterWidgetState extends ConsumerState<RestaurantFilterWidget>
     final themes = ref.watch(getAllRestaurantThemesProvider);
 
     return ref.watch(getAllFoodMenuCategoriesProvider).isLoading
-        ? SizedBox(
-            height: screenHeight * 0.7,
-            child: LoadingIndicatorWidget(),
-          )
+        ? const LoadingIndicatorWidget(size: 36)
         : Container(
             height: screenHeight * 0.8,
             decoration: BoxDecoration(

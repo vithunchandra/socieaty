@@ -66,17 +66,13 @@ class _MenuFilterWidgetState extends ConsumerState<MenuFilterWidget> {
         minRating: _minRating,
         categories: _selectedCategories,
       );
-      debugPrint('menuFilterFormState: $_menuFilterFormState');
       context.pop(_menuFilterFormState);
     }
 
     final menuCategories = ref.watch(getAllFoodMenuCategoriesProvider);
 
     return ref.watch(getAllFoodMenuCategoriesProvider).isLoading
-        ? SizedBox(
-            height: screenHeight * 0.7,
-            child: LoadingIndicatorWidget(),
-          )
+        ? const LoadingIndicatorWidget(size: 36)
         : Container(
             height: screenHeight * 0.8,
             decoration: BoxDecoration(
