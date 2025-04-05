@@ -8,10 +8,14 @@ import 'package:socieaty/core/utils/execute_request.dart';
 import 'package:socieaty/features/authentication/repository/auth_local_repository.dart';
 import 'package:socieaty/features/food-order/customer/viewstate/create_food_order_form_state.dart';
 import 'package:socieaty/features/food-order/enum/food_order_status_enum.dart';
+import 'package:socieaty/features/food-order/repository/request/get_orders_request_query.dart';
+import 'package:socieaty/features/food-order/repository/request/paginate_orders_request_query.dart';
 import 'package:socieaty/features/food-order/repository/response/create_order_transaction_response.dart';
 import 'package:socieaty/features/food-order/repository/response/get_customer_food_order_transaction_response.dart';
 import 'package:socieaty/features/food-order/repository/response/get_food_order_transaction_response.dart';
+import 'package:socieaty/features/food-order/repository/response/get_orders_response.dart';
 import 'package:socieaty/features/food-order/repository/response/get_restaurant_food_transaction_response.dart';
+import 'package:socieaty/features/food-order/repository/response/paginate_orders_response.dart';
 import 'package:socieaty/features/food-order/repository/response/track_order_transaction_response.dart';
 import 'package:socieaty/features/food-order/repository/response/update_order_transaction_response.dart';
 
@@ -40,6 +44,39 @@ class FoodOrderRepository {
         data: data.toJson(),
       ),
       successParser: (data) => CreateOrderTransactionResponse.fromJson(data),
+    );
+  }
+
+  Future<ApiResult<GetOrdersResponse>> getOrders(GetOrdersRequestQuery query) async {
+    final queryData = {
+      'customerId': query.customerId,
+      'restaurantId': query.restaurantId,
+      'createdAt': query.createdAt,
+      'finishedAt': query.finishedAt,
+      'status[]': List.generate(query.status.length, (index) => query.status[index].name),
+      'sortBy': query.sortBy?.name,
+      'sortOrder': query.sortOrder?.name,
+    };
+    return executeRequest<GetOrdersResponse>(
+      requestFunction: () => _dio.get('food-orders', queryParameters: queryData),
+      successParser: (data) => GetOrdersResponse.fromJson(data),
+    );
+  }
+
+  Future<ApiResult<PaginateOrdersResponse>> paginateOrders(PaginateOrdersRequestQuery query) async {
+    final queryData = {
+      'customerId': query.customerId,
+      'restaurantId': query.restaurantId,
+      'createdAt': query.createdAt,
+      'finishedAt': query.finishedAt,
+      'status[]': List.generate(query.status.length, (index) => query.status[index].name),
+      'sortBy': query.sortBy?.name,
+      'sortOrder': query.sortOrder?.name,
+      'paginationQuery': query.paginationQuery.toJson(),
+    };
+    return executeRequest<PaginateOrdersResponse>(
+      requestFunction: () => _dio.get('food-orders/paginate', queryParameters: queryData),
+      successParser: (data) => PaginateOrdersResponse.fromJson(data),
     );
   }
 

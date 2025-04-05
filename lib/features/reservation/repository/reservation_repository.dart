@@ -11,9 +11,13 @@ import 'package:socieaty/features/authentication/repository/auth_local_repositor
 import 'package:socieaty/features/reservation/customer/viewstate/create_reservation_form_state.dart';
 import 'package:socieaty/features/reservation/enum/reservation_sort_by_enum.dart';
 import 'package:socieaty/features/reservation/enum/reservation_status_enum.dart';
+import 'package:socieaty/features/reservation/repository/request/get_reservations_query.dart';
+import 'package:socieaty/features/reservation/repository/request/paginate_reservations_query.dart';
 import 'package:socieaty/features/reservation/repository/responses/create_reservation_response.dart';
 import 'package:socieaty/features/reservation/repository/responses/get_reservation_response.dart';
+import 'package:socieaty/features/reservation/repository/responses/get_reservations_response.dart';
 import 'package:socieaty/features/reservation/repository/responses/get_restaurant_reservations_response.dart';
+import 'package:socieaty/features/reservation/repository/responses/paginate_reservations_response.dart';
 import 'package:socieaty/features/reservation/repository/responses/scan_customer_reservation.dart';
 import 'package:socieaty/features/reservation/repository/responses/track_reservation_response.dart';
 import 'package:socieaty/features/reservation/repository/responses/update_reservation_response.dart';
@@ -46,6 +50,45 @@ class ReservationRepository {
     return executeRequest<GetReservationResponse>(
       requestFunction: () => _dio.get('reservation/$reservationId'),
       successParser: (data) => GetReservationResponse.fromJson(data),
+    );
+  }
+
+  Future<ApiResult<GetReservationsResponse>> getReservations(GetReservationsQuery query) {
+    final queryData = {
+      'customerId': query.customerId,
+      'restaurantId': query.restaurantId,
+      'createdAt': query.createdAt,
+      'finishedAt': query.finishedAt,
+      'reservationTime': query.reservationTime,
+      'status[]': List.generate(
+          query.reservationStatus.length, (index) => query.reservationStatus[index].name),
+      'sortBy': query.sortBy?.name,
+      'sortOrder': query.sortOrder?.name,
+    };
+
+    return executeRequest<GetReservationsResponse>(
+      requestFunction: () => _dio.get('reservation', queryParameters: queryData),
+      successParser: (data) => GetReservationsResponse.fromJson(data),
+    );
+  }
+
+  Future<ApiResult<PaginateReservationsResponse>> paginateReservations(PaginateReservationsQuery query) {
+    final queryData = {
+      'customerId': query.customerId,
+      'restaurantId': query.restaurantId,
+      'createdAt': query.createdAt,
+      'finishedAt': query.finishedAt,
+      'reservationTime': query.reservationTime,
+      'status[]': List.generate(
+          query.reservationStatus.length, (index) => query.reservationStatus[index].name),
+      'sortBy': query.sortBy?.name,
+      'sortOrder': query.sortOrder?.name,
+      'paginationQuery': query.paginationQuery.toJson(),
+    };
+
+    return executeRequest<PaginateReservationsResponse>(
+      requestFunction: () => _dio.get('reservation/paginate', queryParameters: queryData),
+      successParser: (data) => PaginateReservationsResponse.fromJson(data),
     );
   }
 

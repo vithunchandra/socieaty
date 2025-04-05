@@ -1,0 +1,4 @@
+enum FoodOrderSortBy {
+  createdAt,
+  finishedAt,
+}

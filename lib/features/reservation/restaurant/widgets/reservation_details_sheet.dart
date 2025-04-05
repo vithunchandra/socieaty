@@ -5,7 +5,6 @@ import 'package:socieaty/core/utils/converter.dart';
 import 'package:socieaty/core/utils/custom_extension.dart';
 import 'package:socieaty/core/utils/show_snackbar.dart';
 import 'package:socieaty/features/reservation/model/reservation.dart';
-import 'package:socieaty/features/reservation/restaurant/provider/get_restaurant_reservations_provider.dart';
 import 'package:socieaty/features/reservation/restaurant/viewmodel/restaurant_reservation_view_model.dart';
 import 'package:socieaty/shared/view_state.dart';
 import 'package:socieaty/core/theme/app_pallete.dart';
@@ -17,13 +16,14 @@ import 'package:socieaty/features/reservation/enum/reservation_status_enum.dart'
 class ReservationDetailsSheet extends ConsumerStatefulWidget {
   final Reservation reservation;
   final ScrollController scrollController;
-  final List<ReservationStatus> statusFilter;
+  final Function(Reservation)? onUpdatedReservation;
 
-  const ReservationDetailsSheet(
-      {super.key,
-      required this.reservation,
-      required this.scrollController,
-      required this.statusFilter});
+  const ReservationDetailsSheet({
+    super.key,
+    required this.reservation,
+    required this.scrollController,
+    this.onUpdatedReservation,
+  });
 
   @override
   ConsumerState<ReservationDetailsSheet> createState() => _ReservationDetailsSheetState();
@@ -58,7 +58,9 @@ class _ReservationDetailsSheetState extends ConsumerState<ReservationDetailsShee
         (previous, next) {
       switch (next.updatedReservation) {
         case SuccessState<Reservation>(data: final data):
-          ref.invalidate(getRestaurantReservationsProvider(widget.statusFilter));
+          if (widget.onUpdatedReservation != null) {
+            widget.onUpdatedReservation!(data);
+          }
           showSnackbar(
             context,
             'Reservasi berhasil ${data.reservationStatus.getStatusName()}',

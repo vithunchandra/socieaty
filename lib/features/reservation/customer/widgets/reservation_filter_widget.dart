@@ -42,7 +42,7 @@ class _ReservationFilterWidgetState extends ConsumerState<ReservationFilterWidge
   final List<Map<String, dynamic>> _sortByOptions = [
     {'value': ReservationSortBy.reservationTime, 'label': 'Tanggal Reservasi'},
     {'value': ReservationSortBy.createdAt, 'label': 'Tanggal Dibuat'},
-    {'value': ReservationSortBy.updatedAt, 'label': 'Tanggal Diperbarui'},
+    {'value': ReservationSortBy.finishedAt, 'label': 'Tanggal Selesai'},
   ];
 
   final List<Map<String, dynamic>> _sortOrderOptions = [

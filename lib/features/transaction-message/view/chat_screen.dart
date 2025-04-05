@@ -40,7 +40,6 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
   @override
   void initState() {
     super.initState();
-    _transactionMessagesSocketService = ref.read(transactionMessagesSocketServiceProvider);
 
     WidgetsBinding.instance.addPostFrameCallback((_) {
       initializeSocketService();
@@ -57,6 +56,8 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
   }
 
   void initializeSocketService() {
+    _transactionMessagesSocketService = ref.read(transactionMessagesSocketServiceProvider);
+
     debugPrint('Initializing socket service');
     _transactionMessagesSocketService.initConnection(
       onNewTransactionMessage: (data) {

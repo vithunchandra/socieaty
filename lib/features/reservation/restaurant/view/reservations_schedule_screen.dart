@@ -4,7 +4,8 @@ import 'package:intl/intl.dart';
 import 'package:socieaty/core/theme/app_pallete.dart';
 import 'package:socieaty/core/utils/custom_extension.dart';
 import 'package:socieaty/features/reservation/enum/reservation_status_enum.dart';
-import 'package:socieaty/features/reservation/model/reservation.dart';
+import 'package:socieaty/features/reservation/repository/request/get_reservations_query.dart';
+import 'package:socieaty/features/reservation/restaurant/widgets/reservation_list.dart';
 import 'package:socieaty/features/restaurant/model/reservation_config.dart';
 import 'package:socieaty/shared/widgets/custom_date_picker.dart';
 
@@ -92,7 +93,8 @@ class _ReservationsScheduleScreenState extends State<ReservationsScheduleScreen>
         actions: [
           IconButton(
             onPressed: () {
-              context.push('/restaurant/dashboard/reservation/view/calender', extra: widget.reservationConfig);
+              context.push('/restaurant/dashboard/reservation/view/calender',
+                  extra: widget.reservationConfig);
             },
             icon: const Icon(Icons.calendar_month),
           )
@@ -224,304 +226,42 @@ class _ReservationsScheduleScreenState extends State<ReservationsScheduleScreen>
   }
 
   Widget _buildSliverReservationsList() {
-    // final filteredReservations = _getFilteredReservations();
-    final filteredReservations = [];
-
-    if (filteredReservations.isEmpty) {
-      return SliverFillRemaining(
-        child: Center(
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              Icon(
-                Icons.event_busy,
-                size: 70,
-                color: AppPallete.neutralColor.shade300,
-              ),
-              const SizedBox(height: 12),
-              Text(
-                _selectedStatusFilter == null
-                    ? 'No reservations for this date'
-                    : 'No ${_selectedStatusFilter!.name} reservations',
-                style: TextStyle(
-                  fontSize: 15,
-                  fontWeight: FontWeight.w500,
-                  color: AppPallete.neutralColor.shade600,
-                ),
-              ),
-            ],
-          ),
-        ),
-      );
+    List<ReservationStatus> statusFilter = [];
+    if (_selectedStatusFilter != null) {
+      statusFilter.add(_selectedStatusFilter!);
+    } else {
+      statusFilter = [
+        ReservationStatus.confirmed,
+        ReservationStatus.completed,
+        ReservationStatus.canceled,
+      ];
     }
 
-    // Group reservations by time
-    final Map<String, List<Reservation>> reservationsByTime = {};
-    for (var reservation in filteredReservations) {
-      final timeKey = DateFormat('HH:mm').format(reservation.reservationTime);
-      if (!reservationsByTime.containsKey(timeKey)) {
-        reservationsByTime[timeKey] = [];
-      }
-      reservationsByTime[timeKey]!.add(reservation);
-    }
+    // Normalize date to the start of the day to prevent timezone issues
+    final DateTime normalizedDate = DateTime(
+      _selectedDate.year,
+      _selectedDate.month,
+      _selectedDate.day,
+      0,
+      0,
+      0,
+    );
 
-    // Sort time keys
-    final sortedTimeKeys = reservationsByTime.keys.toList()..sort();
+    debugPrint('Date: $normalizedDate');
 
-    return SliverPadding(
-      padding: const EdgeInsets.fromLTRB(16, 12, 16, 16),
-      sliver: SliverList(
-        delegate: SliverChildBuilderDelegate(
-          (context, index) {
-            final timeKey = sortedTimeKeys[index];
-            final reservationsForTime = reservationsByTime[timeKey]!;
+    final query = GetReservationsQuery(
+      restaurantId: widget.reservationConfig.restaurantId,
+      reservationStatus: statusFilter,
+      reservationTime: normalizedDate,
+    );
 
-            return Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Padding(
-                  padding: EdgeInsets.only(bottom: 8, top: index > 0 ? 16 : 0, left: 4),
-                  child: Row(
-                    children: [
-                      Container(
-                        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 5),
-                        decoration: BoxDecoration(
-                          color: AppPallete.primaryColor.withAlpha(25),
-                          borderRadius: BorderRadius.circular(16),
-                        ),
-                        child: Text(
-                          timeKey,
-                          style: TextStyle(
-                            fontWeight: FontWeight.bold,
-                            color: AppPallete.primaryColor,
-                            fontSize: 13,
-                          ),
-                        ),
-                      ),
-                      const SizedBox(width: 8),
-                      Text(
-                        '${reservationsForTime.length} ${reservationsForTime.length > 1 ? 'reservations' : 'reservation'}',
-                        style: TextStyle(
-                          fontSize: 13,
-                          color: AppPallete.neutralColor.shade600,
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-                ...reservationsForTime.map(
-                  (reservation) => Padding(
-                    padding: const EdgeInsets.only(bottom: 10),
-                    child: _buildReservationCard(context, reservation),
-                  ),
-                ),
-              ],
-            );
-          },
-          childCount: sortedTimeKeys.length,
-        ),
+    return SliverToBoxAdapter(
+      child: SizedBox(
+        height: MediaQuery.of(context).size.height - 300,
+        child: ReservationList(query: query),
       ),
     );
   }
-
-  Widget _buildReservationCard(BuildContext context, Reservation reservation) {
-    Color statusColor = reservation.reservationStatus.getStatusColor();
-
-    final durationInMinutes =
-        reservation.endTimeEstimation.difference(reservation.reservationTime).inMinutes;
-
-    return Container(
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(12),
-        boxShadow: [
-          BoxShadow(
-            color: AppPallete.neutralColor.withAlpha(128),
-            blurRadius: 2,
-            spreadRadius: 1,
-            offset: const Offset(0, 2),
-          ),
-        ],
-      ),
-      child: ClipRRect(
-        borderRadius: BorderRadius.circular(12),
-        child: Column(
-          children: [
-            Container(
-              padding: const EdgeInsets.all(16),
-              decoration: BoxDecoration(
-                color: Colors.white,
-              ),
-              child: Row(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  // Customer avatar
-                  CircleAvatar(
-                    backgroundColor: AppPallete.neutralColor.shade100,
-                    radius: 20,
-                    child: Text(
-                      reservation.customer.name.substring(0, 2).toUpperCase(),
-                      style: TextStyle(
-                        color: AppPallete.neutralColor.shade800,
-                        fontWeight: FontWeight.bold,
-                        fontSize: 13,
-                      ),
-                    ),
-                  ),
-                  const SizedBox(width: 12),
-                  // Customer info
-                  Expanded(
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Row(
-                          children: [
-                            Expanded(
-                              child: Text(
-                                reservation.customer.name,
-                                style: Theme.of(context).textTheme.titleSmall?.copyWith(
-                                      fontWeight: FontWeight.bold,
-                                      fontSize: 15,
-                                      color: AppPallete.neutralColor.shade800,
-                                    ),
-                              ),
-                            ),
-                            Container(
-                              padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
-                              decoration: BoxDecoration(
-                                color: statusColor.withAlpha(40),
-                                borderRadius: BorderRadius.circular(6),
-                              ),
-                              child: Text(
-                                reservation.reservationStatus.name.toUpperCase(),
-                                style: TextStyle(
-                                  color: statusColor,
-                                  fontWeight: FontWeight.w600,
-                                  fontSize: 10,
-                                  letterSpacing: 0.3,
-                                ),
-                              ),
-                            ),
-                          ],
-                        ),
-                        const SizedBox(height: 8),
-                        // Reservation details
-                        Row(
-                          children: [
-                            _buildInfoItem(
-                              Icons.timer_outlined,
-                              '$durationInMinutes min',
-                              AppPallete.primaryColor,
-                            ),
-                            const SizedBox(width: 16),
-                            _buildInfoItem(
-                              Icons.people_outline,
-                              '${reservation.peopleSize}',
-                              AppPallete.neutralColor.shade600,
-                            ),
-                          ],
-                        ),
-                        const SizedBox(height: 4),
-                        Row(
-                          children: [
-                            _buildInfoItem(
-                              Icons.phone_outlined,
-                              reservation.customer.phoneNumber,
-                              AppPallete.neutralColor.shade600,
-                            ),
-                          ],
-                        ),
-                        if (reservation.note.isNotEmpty) ...[
-                          const SizedBox(height: 8),
-                          Row(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Icon(
-                                Icons.note_outlined,
-                                size: 14,
-                                color: AppPallete.neutralColor.shade600,
-                              ),
-                              const SizedBox(width: 4),
-                              Expanded(
-                                child: Text(
-                                  reservation.note,
-                                  style: TextStyle(
-                                    color: AppPallete.neutralColor.shade600,
-                                    fontSize: 12,
-                                    fontStyle: FontStyle.italic,
-                                  ),
-                                  maxLines: 2,
-                                  overflow: TextOverflow.ellipsis,
-                                ),
-                              ),
-                            ],
-                          ),
-                        ],
-                      ],
-                    ),
-                  ),
-                ],
-              ),
-            ),
-            // Status indicator
-            Container(
-              height: 4,
-              decoration: BoxDecoration(
-                color: statusColor,
-              ),
-            ),
-          ],
-        ),
-      ),
-    );
-  }
-
-  Widget _buildInfoItem(IconData icon, String text, Color color) {
-    return Row(
-      mainAxisSize: MainAxisSize.min,
-      children: [
-        Icon(
-          icon,
-          size: 14,
-          color: color,
-        ),
-        const SizedBox(width: 4),
-        Text(
-          text,
-          style: TextStyle(
-            fontSize: 12,
-            color: color,
-            fontWeight: FontWeight.w500,
-          ),
-        ),
-      ],
-    );
-  }
-
-  // List<Reservation> _getFilteredReservations() {
-  //   final date = _selectedDate;
-  //   final formattedSelectedDate = DateFormat('yyyy-MM-dd').format(date);
-
-  //   // First filter by date
-  //   final dateFilteredReservations = dummyReservations.where((reservation) {
-  //     final formattedReservationDate = DateFormat('yyyy-MM-dd').format(reservation.reservationTime);
-  //     return formattedReservationDate == formattedSelectedDate;
-  //   }).toList();
-
-  //   // Then exclude pending reservations (only show confirmed, completed, or cancelled)
-  //   final statusFilteredReservations = dateFilteredReservations.where((reservation) {
-  //     return reservation.reservationStatus != ReservationStatus.pending;
-  //   }).toList();
-
-  //   // Then apply additional status filter if selected
-  //   if (_selectedStatusFilter == null) {
-  //     return statusFilteredReservations;
-  //   }
-
-  //   return statusFilteredReservations
-  //       .where((reservation) => reservation.reservationStatus == _selectedStatusFilter)
-  //       .toList();
-  // }
 }
 
 class _SliverStatusFilterDelegate extends SliverPersistentHeaderDelegate {

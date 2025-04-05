@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:socieaty/features/food-order/enum/food_order_status_enum.dart';
-import 'package:socieaty/features/food-order/restaurant/widgets/order_list.dart';
+import 'package:socieaty/features/food-order/restaurant/widgets/paginated_order_list.dart';
 
 class RestaurantFoodOrderHistoryScreen extends StatefulWidget {
   const RestaurantFoodOrderHistoryScreen({super.key});
@@ -52,10 +52,10 @@ class _RestaurantFoodOrderHistoryScreenState extends State<RestaurantFoodOrderHi
       body: TabBarView(
         controller: _tabController,
         children: const [
-          OrderList(
+          PaginatedOrderList(
             statusFilter: [FoodOrderStatus.completed],
           ),
-          OrderList(
+          PaginatedOrderList(
             statusFilter: [FoodOrderStatus.rejected],
           ),
         ],

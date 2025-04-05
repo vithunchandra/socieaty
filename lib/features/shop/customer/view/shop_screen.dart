@@ -13,6 +13,7 @@ import 'package:socieaty/features/restaurant/provider/paginate_restaurant_provid
 import 'package:socieaty/features/restaurant/view/outlet_card_widget.dart';
 import 'package:socieaty/features/restaurant/view/restaurant_highlight_item_widget.dart';
 import 'package:socieaty/features/restaurant/viewstate/paginate_restaurant_query_state.dart';
+import 'package:socieaty/shared/models/pagination_query.dart';
 import 'package:socieaty/shared/widgets/custom_error_widget.dart';
 import 'package:socieaty/shared/widgets/loading_indicator_widget.dart';
 import 'package:socieaty/shared/widgets/menu_filter_widget.dart';
@@ -59,15 +60,19 @@ class _ShopScreenState extends ConsumerState<ShopScreen> {
 
     final restaurantHighlights = ref.watch(paginateRestaurantProvider(
       PaginateRestaurantQueryState(
-        offset: 0,
-        limit: 5,
+        paginationQuery: PaginationQuery(
+          offset: 0,
+          limit: 5,
+        ),
       ),
     ));
 
     final paginateOutlet = ref.watch(paginateRestaurantProvider(
       PaginateRestaurantQueryState(
-        offset: 0,
-        limit: 20,
+        paginationQuery: PaginationQuery(
+          offset: 0,
+          limit: 20,
+        ),
       ),
     ));
 
@@ -301,8 +306,10 @@ class _ShopScreenState extends ConsumerState<ShopScreen> {
                       onPressed: () {
                         ref.invalidate(paginateRestaurantProvider(
                           PaginateRestaurantQueryState(
-                            offset: 0,
-                            limit: 20,
+                            paginationQuery: PaginationQuery(
+                              offset: 0,
+                              limit: 20,
+                            ),
                           ),
                         ));
                       },

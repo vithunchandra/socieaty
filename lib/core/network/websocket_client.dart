@@ -6,5 +6,8 @@ part 'websocket_client.g.dart';
 
 @riverpod
 Socket websocketClient(Ref ref, String url, String? token) {
-  return io(url, OptionBuilder().setTransports(['websocket']).setExtraHeaders({'authorization': 'Bearer $token'}).build());
+  return io(
+      url,
+      OptionBuilder().setTransports(['websocket']).setExtraHeaders(
+          {'authorization': 'Bearer $token'}).build());
 }

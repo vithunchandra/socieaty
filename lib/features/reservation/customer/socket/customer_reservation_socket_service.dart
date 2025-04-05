@@ -21,12 +21,16 @@ CustomerReservationSocketService customerReservationSocketService(Ref ref) {
 class CustomerReservationSocketService {
   final Socket _socket;
   bool _isConnected = false;
+  Function(dynamic)? _onReservationUpdate;
 
   CustomerReservationSocketService({required Socket socket}) : _socket = socket;
 
   bool get isConnected => _isConnected;
 
-  initConnection() {
+  initConnection({
+    required Function(dynamic) onReservationUpdate,
+    required Function() onConnected,
+  }) {
     if (_isConnected) return;
 
     _socket.connect();
@@ -38,6 +42,9 @@ class CustomerReservationSocketService {
     _socket.onConnect((_) {
       debugPrint('Connected to server');
       _isConnected = true;
+      _onReservationUpdate = onReservationUpdate;
+      _listenReservationUpdate();
+      onConnected();
     });
 
     _socket.onDisconnect((_) {
@@ -52,8 +59,6 @@ class CustomerReservationSocketService {
   }
 
   void disconnect() {
-    _socket.clearListeners();
-    _socket.disconnect();
     _socket.dispose();
     _isConnected = false;
   }
@@ -62,9 +67,9 @@ class CustomerReservationSocketService {
     _socket.emit('track-reservation', reservationId);
   }
 
-  void listenReservationUpdate(String reservationId, Function(dynamic) onReservationUpdate) {
+  void _listenReservationUpdate() {
     _socket.on('track-reservation', (data) {
-      onReservationUpdate(data);
+      _onReservationUpdate!(data);
     });
   }
 

@@ -1,5 +1,5 @@
 enum ReservationSortBy {
   reservationTime,
   createdAt,
-  updatedAt,
+  finishedAt,
 }

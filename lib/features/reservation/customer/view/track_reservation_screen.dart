@@ -45,8 +45,6 @@ class _TrackReservationScreenState extends ConsumerState<TrackReservationScreen>
     super.initState();
     _scrollController.addListener(_handleScroll);
 
-    _socketService = ref.read(customerReservationSocketServiceProvider);
-
     WidgetsBinding.instance.addPostFrameCallback((_) {
       _setupSocketListeners();
     });
@@ -61,18 +59,24 @@ class _TrackReservationScreenState extends ConsumerState<TrackReservationScreen>
   }
 
   void _setupSocketListeners() {
-    _socketService.initConnection();
-    _socketService.listenReservationUpdate(widget.reservationId, _handleReservationUpdate);
-    ref.read(reservationRepositoryProvider).trackReservation(widget.reservationId).then((value) {
-      switch (value) {
-        case Success(data: final data):
-        case Error(error: final error):
-      }
-    });
+    _socketService = ref.read(customerReservationSocketServiceProvider);
+    _socketService.initConnection(
+        onReservationUpdate: _handleReservationUpdate,
+        onConnected: () {
+          ref
+              .read(reservationRepositoryProvider)
+              .trackReservation(widget.reservationId)
+              .then((value) {
+            switch (value) {
+              case Success(data: final data):
+              case Error(error: final error):
+            }
+          });
+        });
   }
 
   void _removeSocketListeners() {
-    _socketService.removeListener('track-reservation');
+    _socketService.disconnect();
   }
 
   void _handleReservationUpdate(dynamic data) async {

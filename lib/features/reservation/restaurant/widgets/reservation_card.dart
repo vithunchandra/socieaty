@@ -6,7 +6,6 @@ import 'package:socieaty/core/utils/converter.dart';
 import 'package:socieaty/core/utils/show_snackbar.dart';
 import 'package:socieaty/features/reservation/enum/reservation_status_enum.dart';
 import 'package:socieaty/features/reservation/model/reservation.dart';
-import 'package:socieaty/features/reservation/restaurant/provider/get_restaurant_reservations_provider.dart';
 import 'package:socieaty/features/reservation/restaurant/viewmodel/restaurant_reservation_view_model.dart';
 import 'package:socieaty/features/reservation/restaurant/widgets/reservation_details_sheet.dart';
 import 'package:socieaty/features/reservation/restaurant/widgets/status_chip.dart';
@@ -16,12 +15,12 @@ import 'package:socieaty/shared/widgets/profile_picture_widget.dart';
 
 class ReservationCard extends ConsumerStatefulWidget {
   final Reservation reservation;
-  final List<ReservationStatus> statusFilter;
+  final Function(Reservation)? onUpdatedReservation;
 
   const ReservationCard({
     super.key,
     required this.reservation,
-    required this.statusFilter,
+    this.onUpdatedReservation,
   });
 
   @override
@@ -31,13 +30,11 @@ class ReservationCard extends ConsumerStatefulWidget {
 class _ReservationCardState extends ConsumerState<ReservationCard> {
   ReservationStatus? _lastUpdatedStatus;
   late Reservation _reservation;
-  late List<ReservationStatus> _statusFilter;
 
   @override
   void initState() {
     super.initState();
     _reservation = widget.reservation;
-    _statusFilter = widget.statusFilter;
   }
 
   @override
@@ -45,9 +42,6 @@ class _ReservationCardState extends ConsumerState<ReservationCard> {
     super.didUpdateWidget(oldWidget);
     if (oldWidget.reservation != widget.reservation) {
       _reservation = widget.reservation;
-    }
-    if (oldWidget.statusFilter != widget.statusFilter) {
-      _statusFilter = widget.statusFilter;
     }
   }
 
@@ -67,7 +61,7 @@ class _ReservationCardState extends ConsumerState<ReservationCard> {
           return ReservationDetailsSheet(
             reservation: reservation,
             scrollController: scrollController,
-            statusFilter: _statusFilter,
+            onUpdatedReservation: widget.onUpdatedReservation,
           );
         },
       ),
@@ -93,7 +87,9 @@ class _ReservationCardState extends ConsumerState<ReservationCard> {
         (previous, next) {
       switch (next.updatedReservation) {
         case SuccessState<Reservation>():
-          ref.invalidate(getRestaurantReservationsProvider(_statusFilter));
+          if (widget.onUpdatedReservation != null) {
+            widget.onUpdatedReservation!(_reservation);
+          }
         case ErrorState(message: var message):
           showSnackbar(context, message, state: SnackbarState.error);
         case LoadingState<Reservation>():
@@ -355,10 +351,7 @@ class PendingReservationCardActions extends StatelessWidget {
           child: OutlinedButton.icon(
             onPressed: isLoading ? null : () => onUpdateStatus(ReservationStatus.rejected),
             icon: isLoading && lastUpdatedStatus == ReservationStatus.rejected
-                ? LoadingIndicatorWidget(
-                    size: 16,
-                    color: AppPallete.errorColor
-                  )
+                ? LoadingIndicatorWidget(size: 16, color: AppPallete.errorColor)
                 : const Icon(
                     Icons.close_outlined,
                     size: 16,

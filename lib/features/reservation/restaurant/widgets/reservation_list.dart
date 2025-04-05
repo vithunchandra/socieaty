@@ -2,16 +2,17 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:socieaty/core/theme/app_pallete.dart';
 import 'package:socieaty/features/reservation/enum/reservation_status_enum.dart';
-import 'package:socieaty/features/reservation/restaurant/provider/get_restaurant_reservations_provider.dart';
+import 'package:socieaty/features/reservation/provider/get_reservations_provider.dart';
+import 'package:socieaty/features/reservation/repository/request/get_reservations_query.dart';
 import 'package:socieaty/features/reservation/restaurant/provider/new_reservation_notification_provider.dart';
 import 'package:socieaty/features/reservation/restaurant/provider/reservation_changes_notification_provider.dart';
 import 'package:socieaty/features/reservation/restaurant/widgets/reservation_card.dart';
 import 'package:socieaty/shared/widgets/loading_indicator_widget.dart';
 
 class ReservationList extends ConsumerStatefulWidget {
-  final List<ReservationStatus> status;
+  final GetReservationsQuery query;
 
-  const ReservationList({super.key, required this.status});
+  const ReservationList({super.key, required this.query});
 
   @override
   ConsumerState<ReservationList> createState() => _ReservationListState();
@@ -21,19 +22,19 @@ class _ReservationListState extends ConsumerState<ReservationList> {
   @override
   Widget build(BuildContext context) {
     ref.listen(newReservationNotificationProvider, (previous, next) {
-      if (next != null && widget.status.contains(next.reservationStatus)) {
-        ref.invalidate(getRestaurantReservationsProvider(widget.status));
+      if (next != null && widget.query.reservationStatus.contains(next.reservationStatus)) {
+        ref.invalidate(getReservationsProvider(widget.query));
       }
     });
 
     ref.listen(reservationChangesNotificationProvider, (previous, next) {
       if (next != null) {
-        ref.invalidate(getRestaurantReservationsProvider(widget.status));
+        ref.invalidate(getReservationsProvider(widget.query));
       }
     });
 
-    return ref.watch(getRestaurantReservationsProvider(widget.status)).when(data: (data) {
-      if (data.isEmpty) {
+    return ref.watch(getReservationsProvider(widget.query)).when(data: (data) {
+      if (data.reservations.isEmpty) {
         return Center(
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
@@ -56,16 +57,18 @@ class _ReservationListState extends ConsumerState<ReservationList> {
       }
 
       return RefreshIndicator(
-        onRefresh: () => ref.refresh(getRestaurantReservationsProvider(widget.status).future),
+        onRefresh: () => ref.refresh(getReservationsProvider(widget.query).future),
         child: ListView.separated(
           padding: const EdgeInsets.all(16),
-          itemCount: data.length,
+          itemCount: data.reservations.length,
           separatorBuilder: (context, index) => const SizedBox(height: 16),
           itemBuilder: (context, index) {
-            final reservation = data[index];
+            final reservation = data.reservations[index];
             return ReservationCard(
               reservation: reservation,
-              statusFilter: widget.status,
+              onUpdatedReservation: (reservation) {
+                ref.invalidate(getReservationsProvider(widget.query));
+              },
             );
           },
         ),
@@ -89,7 +92,7 @@ class _ReservationListState extends ConsumerState<ReservationList> {
             ),
             const SizedBox(height: 8),
             TextButton(
-              onPressed: () => ref.invalidate(getRestaurantReservationsProvider(widget.status)),
+              onPressed: () => ref.invalidate(getReservationsProvider(widget.query)),
               child: const Text('Retry'),
             ),
           ],

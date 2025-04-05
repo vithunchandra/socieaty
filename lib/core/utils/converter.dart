@@ -12,6 +12,7 @@ import 'package:socieaty/features/reservation/enum/reservation_sort_by_enum.dart
 import 'package:socieaty/features/reservation/enum/reservation_status_enum.dart';
 import 'package:socieaty/features/reservation/model/reservation.dart';
 import 'package:socieaty/features/restaurant/model/socieaty_restaurant.dart';
+import 'package:socieaty/features/topup/enum/topup_status_enum.dart';
 import 'package:socieaty/features/transaction/model/transaction.dart';
 import 'package:socieaty/features/user/model/socieaty_user.dart';
 
@@ -161,6 +162,34 @@ class ReservationStatusConverter implements JsonConverter<ReservationStatus, Str
 
   @override
   String toJson(ReservationStatus object) {
+    return object.name;
+  }
+}
+
+class ListReservationStatusConverter implements JsonConverter<List<ReservationStatus>, List<String>> {
+  const ListReservationStatusConverter();
+
+  @override
+  List<ReservationStatus> fromJson(List<String> json) {
+    return json.map((e) => ReservationStatus.values.firstWhere((element) => element.name == e)).toList();
+  }
+
+  @override
+  List<String> toJson(List<ReservationStatus> object) {
+    return object.map((e) => e.name).toList();
+  }
+}
+
+class TopupStatusConverter implements JsonConverter<TopupStatusEnum, String> {
+  const TopupStatusConverter();
+
+  @override
+  TopupStatusEnum fromJson(String json) {
+    return TopupStatusEnum.values.firstWhere((element) => element.name == json);
+  } 
+
+  @override
+  String toJson(TopupStatusEnum object) {
     return object.name;
   }
 }

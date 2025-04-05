@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:socieaty/features/reservation/enum/reservation_status_enum.dart';
+import 'package:socieaty/features/reservation/restaurant/widgets/restaurant_paginated_reservation_list.dart';
 import 'package:socieaty/features/reservation/restaurant/widgets/reservation_list.dart';
 
 class RestaurantReservationHistoryScreen extends StatefulWidget {
@@ -53,10 +54,10 @@ class _RestaurantReservationHistoryScreenState extends State<RestaurantReservati
       body: TabBarView(
         controller: _tabController,
         children: const [
-          ReservationList(
+          RestaurantPaginatedReservationList(
             status: [ReservationStatus.completed],
           ),
-          ReservationList(
+          RestaurantPaginatedReservationList(
             status: [ReservationStatus.rejected],
           ),
         ],

@@ -69,8 +69,7 @@ class RestaurantRespository {
       'priceConditionIds[]': query.priceRanges,
       'categoryIds[]': query.foodCategories,
       'themeIds[]': query.themes,
-      'offset': query.offset,
-      'limit': query.limit,
+      'paginationQuery': query.paginationQuery.toJson(),
     };
     return executeRequest<PaginateRestaurantResponse>(
       requestFunction: () => _dio.get('restaurant', queryParameters: queryData),

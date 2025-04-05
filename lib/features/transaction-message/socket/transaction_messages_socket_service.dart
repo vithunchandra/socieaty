@@ -16,11 +16,7 @@ TransactionMessagesSocketService transactionMessagesSocketService(Ref ref) {
 
   final service = TransactionMessagesSocketService(
     socket: ref.watch(
-      websocketClientProvider(
-        '${AppConstants.socieatyBackendUrl}transaction/message',
-        token,
-      ),
-    ),
+        websocketClientProvider('${AppConstants.socieatyBackendUrl}transaction/message', token)),
   );
 
   debugPrint('Transaction Messages Socket Service created');
@@ -31,8 +27,8 @@ TransactionMessagesSocketService transactionMessagesSocketService(Ref ref) {
 class TransactionMessagesSocketService {
   final Socket _socket;
   bool _isConnected = false;
-  Function(dynamic)? _onNewTransactionMessage;
   bool _isListening = false;
+  Function(dynamic)? _onNewTransactionMessage;
 
   TransactionMessagesSocketService({
     required Socket socket,
@@ -55,11 +51,8 @@ class TransactionMessagesSocketService {
     });
 
     _socket.onConnect((_) {
-      if (_isListening || _isConnected) {
-        debugPrint('Already listening to New Transaction Message');
-        return;
-      }
-
+      if (_isConnected || _isListening) return;
+      debugPrint('Connected to server');
       _isConnected = true;
       _onNewTransactionMessage = onNewTransactionMessage;
       listenNewTransactionMessage("from socket");
@@ -69,7 +62,6 @@ class TransactionMessagesSocketService {
     _socket.onDisconnect((_) {
       debugPrint('disconnected from server');
       _isConnected = false;
-      _isListening = false;
     });
 
     _socket.onerror((_) {
@@ -79,8 +71,6 @@ class TransactionMessagesSocketService {
   }
 
   void handler(data) {
-    debugPrint("Hallo");
-    debugPrint('New transaction message: ${DateTime.now()}');
     _socket.listenersAny().forEach((element) {
       debugPrint('Listener: ${element.toString()}');
     });
@@ -88,23 +78,19 @@ class TransactionMessagesSocketService {
   }
 
   void listenNewTransactionMessage(String message) {
-    debugPrint('Listening New Transaction Message $message');
-
+    _isListening = true;
     _socket.off('new-transaction-message', handler);
     _socket.on('new-transaction-message', handler);
-    _isListening = true;
   }
 
   void removeListener(String eventName) {
     _socket.off(eventName, handler);
     if (eventName == 'new-transaction-message') {
       _onNewTransactionMessage = null;
-      _isListening = false;
     }
   }
 
   void disconnect() {
-    removeListener('new-transaction-message');
     _socket.dispose();
     _isConnected = false;
     _isListening = false;

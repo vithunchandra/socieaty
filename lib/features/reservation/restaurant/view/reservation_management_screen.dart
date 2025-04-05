@@ -2,14 +2,19 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:socieaty/core/theme/app_pallete.dart';
+import 'package:socieaty/core/utils/converter.dart';
 import 'package:socieaty/core/utils/show_snackbar.dart';
+import 'package:socieaty/features/authentication/repository/auth_local_repository.dart';
 import 'package:socieaty/features/qr_code_scanner/view/qr_code_scanner_screen.dart';
 import 'package:socieaty/features/reservation/customer/view/states/loading_view.dart';
 import 'package:socieaty/features/reservation/enum/reservation_status_enum.dart';
 import 'package:socieaty/features/reservation/model/reservation.dart';
 import 'package:socieaty/features/reservation/provider/get_reservation_provider.dart';
+import 'package:socieaty/features/reservation/provider/get_reservations_provider.dart';
+import 'package:socieaty/features/reservation/repository/request/get_reservations_query.dart';
 import 'package:socieaty/features/reservation/restaurant/widgets/reservation_details_sheet.dart';
 import 'package:socieaty/features/reservation/restaurant/widgets/reservation_list.dart';
+import 'package:socieaty/features/restaurant/model/socieaty_restaurant.dart';
 
 class ReservationManagementScreen extends ConsumerStatefulWidget {
   final Reservation? initialReservation;
@@ -24,11 +29,28 @@ class _ReservationManagementScreenState extends ConsumerState<ReservationManagem
     with SingleTickerProviderStateMixin {
   late TabController _tabController;
   bool _isScanning = false;
+  late SocieatyRestaurant _owner;
+  late GetReservationsQuery _pendingQuery;
+  late GetReservationsQuery _confirmedQuery;
+  late GetReservationsQuery _diningQuery;
 
   @override
   void initState() {
     super.initState();
     _tabController = TabController(length: 3, vsync: this);
+    _owner = UserConverter.userToRestaurant(ref.read(authLocalRepositoryProvider).getUserData()!);
+    _pendingQuery = GetReservationsQuery(
+      restaurantId: _owner.restaurantData.id,
+      reservationStatus: [ReservationStatus.pending],
+    );
+    _confirmedQuery = GetReservationsQuery(
+      restaurantId: _owner.restaurantData.id,
+      reservationStatus: [ReservationStatus.confirmed],
+    );
+    _diningQuery = GetReservationsQuery(
+      restaurantId: _owner.restaurantData.id,
+      reservationStatus: [ReservationStatus.dining],
+    );
   }
 
   @override
@@ -107,7 +129,11 @@ class _ReservationManagementScreenState extends ConsumerState<ReservationManagem
         builder: (_, scrollController) => ReservationDetailsSheet(
           reservation: reservation,
           scrollController: scrollController,
-          statusFilter: [reservation.reservationStatus],
+          onUpdatedReservation: (reservation) {
+            ref.invalidate(getReservationsProvider(_pendingQuery));
+            ref.invalidate(getReservationsProvider(_confirmedQuery));
+            ref.invalidate(getReservationsProvider(_diningQuery));
+          },
         ),
       ),
     );
@@ -158,9 +184,15 @@ class _ReservationManagementScreenState extends ConsumerState<ReservationManagem
           : TabBarView(
               controller: _tabController,
               children: [
-                ReservationList(status: [ReservationStatus.pending]),
-                ReservationList(status: [ReservationStatus.confirmed]),
-                ReservationList(status: [ReservationStatus.dining]),
+                ReservationList(
+                  query: _pendingQuery,
+                ),
+                ReservationList(
+                  query: _confirmedQuery,
+                ),
+                ReservationList(
+                  query: _diningQuery,
+                ),
               ],
             ),
       floatingActionButton: _buildFloatingActionButton(),

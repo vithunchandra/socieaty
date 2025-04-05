@@ -63,8 +63,10 @@ class LocalNotificationService {
 
       if (androidImplementation != null) {
         final bool? granted = await androidImplementation.requestNotificationsPermission();
+        debugPrint('Android notification permission granted: $granted');
       }
     } catch (e) {
+      debugPrint('Error requesting Android notification permission: $e');
     }
 
     try {
@@ -77,6 +79,7 @@ class LocalNotificationService {
           badge: true,
           sound: true,
         );
+        debugPrint('iOS notification permission granted: $granted');
       }
     } catch (e) {
       debugPrint('Error requesting iOS notification permission: $e');
