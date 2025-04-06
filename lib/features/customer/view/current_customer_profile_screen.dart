@@ -175,6 +175,7 @@ class _CurrentCustomerProfileScreenState extends ConsumerState<CurrentCustomerPr
                 onChanged: (value) {
                   switch (value) {
                     case 'balance':
+                      context.push('/customer/profile/wallet');
                       break;
                     case 'logout':
                       ref.read(accountViewModelProvider.notifier).signout();

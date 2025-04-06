@@ -15,6 +15,8 @@ class Topup with _$Topup {
     @Default(null) String? paymentMethod,
     @Default(null) String? transactionId,
     @Default(null) DateTime? settlemantTime,
+    required String snapToken,
+    required String snapRedirectUrl,
     required DateTime createdAt,
   }) = _Topup;
 

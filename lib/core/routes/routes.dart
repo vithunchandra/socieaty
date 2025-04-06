@@ -13,8 +13,11 @@ import 'package:socieaty/features/authentication/view/signup_restaurant_first_pa
 import 'package:socieaty/features/authentication/view/splash_screen.dart';
 import 'package:socieaty/features/authentication/viewstate/signup_restaurant_form_state.dart';
 import 'package:socieaty/features/customer/model/socieaty_customer.dart';
+import 'package:socieaty/features/customer/view/customer_wallet_screen.dart';
 import 'package:socieaty/features/customer/view/update_customer_profile_screen.dart';
 import 'package:socieaty/features/food_menu/customer/view/outlet_food_menu_screen.dart';
+import 'package:socieaty/features/topup/model/topup.dart';
+import 'package:socieaty/features/topup/view/track_topup_screen.dart';
 import 'package:socieaty/features/transaction-message/view/chat_screen.dart';
 import 'package:socieaty/features/home/customer/view/home_screen.dart';
 import 'package:socieaty/features/home/restaurant/view/restaurant_dashboard_screen.dart';
@@ -180,7 +183,21 @@ GoRouter router(Ref ref) {
                     pageBuilder: (context, state) => NoTransitionPage(
                       child: UpdateCustomerProfileScreen(user: state.extra as SocieatyCustomer),
                     ),
-                  )
+                  ),
+                  GoRoute(
+                    path: 'wallet',
+                    pageBuilder: (context, state) => NoTransitionPage(
+                      child: CustomerWalletScreen(),
+                    ),
+                    routes: [
+                      GoRoute(
+                        path: 'topup',
+                        pageBuilder: (context, state) => NoTransitionPage(
+                          child: TrackTopupScreen(topupId: state.extra as String),
+                        ),
+                      ),
+                    ],
+                  ),
                 ],
               ),
             ],

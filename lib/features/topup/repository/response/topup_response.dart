@@ -8,7 +8,6 @@ part 'topup_response.g.dart';
 class TopupResponse with _$TopupResponse {
   const factory TopupResponse({
     required Topup topup,
-
   }) = _TopupResponse;
 
   factory TopupResponse.fromJson(Map<String, dynamic> json) => _$TopupResponseFromJson(json);
