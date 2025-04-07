@@ -9,18 +9,24 @@ import 'package:socieaty/core/utils/custom_extension.dart';
 import 'package:socieaty/features/authentication/repository/auth_local_repository.dart';
 import 'package:socieaty/features/reservation/model/reservation.dart';
 import 'package:socieaty/shared/widgets/dotted_divider.dart';
+import 'package:socieaty/shared/widgets/loading_indicator_widget.dart';
 import 'package:socieaty/shared/widgets/profile_picture_widget.dart';
+import 'package:socieaty/core/utils/location_handler.dart';
 
 class ConfirmedReservationScreen extends ConsumerStatefulWidget {
   final Reservation reservation;
   final VoidCallback? onReschedule;
   final VoidCallback? onShowQR;
+  final VoidCallback? navigateToMapScreen;
+  final bool isLoadingLocation;
 
   const ConfirmedReservationScreen({
     super.key,
     required this.reservation,
     this.onReschedule,
     this.onShowQR,
+    this.navigateToMapScreen,
+    this.isLoadingLocation = false,
   });
 
   @override
@@ -30,11 +36,13 @@ class ConfirmedReservationScreen extends ConsumerStatefulWidget {
 class _ConfirmedReservationScreenState extends ConsumerState<ConfirmedReservationScreen> {
   final ScrollController _scrollController = ScrollController();
   bool _isHeaderCollapsed = false;
+  String _locationAddress = "Lokasi restoran";
 
   @override
   void initState() {
     super.initState();
     _scrollController.addListener(_handleScroll);
+    _getRestaurantAddress();
   }
 
   @override
@@ -58,6 +66,16 @@ class _ConfirmedReservationScreenState extends ConsumerState<ConfirmedReservatio
     }
   }
 
+  void _getRestaurantAddress() async {
+    final location = await LocationHandler.getAddressFromLatLng(
+        widget.reservation.restaurant.restaurantData.location);
+    if (location != null && mounted) {
+      setState(() {
+        _locationAddress = "${location.street}, ${location.locality}";
+      });
+    }
+  }
+
   void _showQRCodeDialog() {
     final token = ref.watch(authLocalRepositoryProvider).getToken();
     showDialog(
@@ -68,7 +86,6 @@ class _ConfirmedReservationScreenState extends ConsumerState<ConfirmedReservatio
 
   @override
   Widget build(BuildContext context) {
-
     return NotificationListener<ScrollNotification>(
       onNotification: (ScrollNotification notification) {
         if (notification is ScrollUpdateNotification) {
@@ -248,7 +265,6 @@ class _ConfirmedReservationScreenState extends ConsumerState<ConfirmedReservatio
   }
 
   Widget _buildRestaurantSection(Reservation reservation) {
-    final restaurant = reservation.restaurant;
     return Container(
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
@@ -270,7 +286,7 @@ class _ConfirmedReservationScreenState extends ConsumerState<ConfirmedReservatio
               Stack(
                 children: [
                   ProfilePictureWidget(
-                    user: UserConverter.restaurantToUser(restaurant),
+                    user: UserConverter.restaurantToUser(reservation.restaurant),
                     radius: 28,
                   ),
                   Positioned(
@@ -298,7 +314,7 @@ class _ConfirmedReservationScreenState extends ConsumerState<ConfirmedReservatio
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
-                      restaurant.name,
+                      reservation.restaurant.name,
                       style: Theme.of(context).textTheme.titleMedium?.copyWith(
                             fontWeight: FontWeight.bold,
                             color: AppPallete.neutralColor.shade800,
@@ -314,7 +330,7 @@ class _ConfirmedReservationScreenState extends ConsumerState<ConfirmedReservatio
                         ),
                         const SizedBox(width: 4),
                         Text(
-                          '${restaurant.restaurantData.openTime} - ${restaurant.restaurantData.closeTime}',
+                          '${reservation.restaurant.restaurantData.openTime} - ${reservation.restaurant.restaurantData.closeTime}',
                           style: Theme.of(context).textTheme.bodySmall?.copyWith(
                                 color: AppPallete.neutralColor.shade600,
                               ),
@@ -332,7 +348,7 @@ class _ConfirmedReservationScreenState extends ConsumerState<ConfirmedReservatio
                         const SizedBox(width: 4),
                         Expanded(
                           child: Text(
-                            'Lokasi restoran',
+                            _locationAddress,
                             style: Theme.of(context).textTheme.bodySmall?.copyWith(
                                   color: AppPallete.neutralColor.shade600,
                                 ),
@@ -379,9 +395,18 @@ class _ConfirmedReservationScreenState extends ConsumerState<ConfirmedReservatio
             children: [
               Expanded(
                 child: ElevatedButton.icon(
-                  onPressed: () {},
-                  icon: const Icon(Icons.place, size: 16, color: Colors.white),
-                  label: const Text('Lihat Lokasi'),
+                  onPressed: widget.isLoadingLocation ? null : widget.navigateToMapScreen,
+                  icon: widget.isLoadingLocation
+                      ? SizedBox(
+                          width: 16,
+                          height: 16,
+                          child: LoadingIndicatorWidget(
+                            size: 16,
+                            color: Colors.white,
+                          ),
+                        )
+                      : const Icon(Icons.place, size: 16, color: Colors.white),
+                  label: Text(widget.isLoadingLocation ? 'Memuat...' : 'Lihat Lokasi'),
                   style: ElevatedButton.styleFrom(
                     backgroundColor: AppPallete.primaryColor,
                     foregroundColor: Colors.white,

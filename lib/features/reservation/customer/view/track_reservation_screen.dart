@@ -1,9 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
+import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:socieaty/core/network/api_result.dart';
 import 'package:socieaty/core/theme/app_pallete.dart';
 import 'package:socieaty/core/utils/show_snackbar.dart';
+import 'package:socieaty/core/utils/location_handler.dart';
+import 'package:socieaty/features/map/view/tracking_map.dart';
 import 'package:socieaty/features/reservation/customer/socket/customer_reservation_socket_service.dart';
 import 'package:socieaty/features/reservation/enum/reservation_status_enum.dart';
 import 'package:socieaty/features/reservation/model/reservation.dart';
@@ -39,6 +42,7 @@ class _TrackReservationScreenState extends ConsumerState<TrackReservationScreen>
   Reservation? _reservationData;
   bool _isLoading = true;
   String? _errorMessage;
+  bool _isLoadingLocation = false;
 
   @override
   void initState() {
@@ -98,6 +102,69 @@ class _TrackReservationScreenState extends ConsumerState<TrackReservationScreen>
           _errorMessage = 'Error processing reservation data';
           _isLoading = false;
         });
+      }
+    }
+  }
+
+  void _navigateToMapScreen() async {
+    if (_reservationData == null) return;
+
+    setState(() {
+      _isLoadingLocation = true;
+    });
+
+    try {
+      // Get the restaurant location from the reservation data
+      // Use fallback coordinates for Jakarta if location not available
+      LatLng restaurantLocation;
+      try {
+        restaurantLocation = _reservationData!.restaurant.restaurantData.location;
+      } catch (e) {
+        // Fallback to central Jakarta coordinates
+        restaurantLocation = const LatLng(-6.175110, 106.865036);
+      }
+
+      final String restaurantName = _reservationData!.restaurant.name;
+      final String restaurantAddress = "Lokasi Restoran";
+
+      // Request location permission and get current location
+      final locationData = await LocationHandler.getCurrentPosition();
+
+      if (!mounted) return;
+
+      setState(() {
+        _isLoadingLocation = false;
+      });
+
+      if (locationData == null) {
+        showSnackbar(
+            context, 'Gagal mengambil lokasi Anda. Silakan cek pengaturan izin lokasi Anda.',
+            state: SnackbarState.error);
+        return;
+      }
+
+      // Use the user's actual location
+      final LatLng customerLocation = LatLng(
+        locationData.latitude!,
+        locationData.longitude!,
+      );
+
+      // Navigate to the tracking map screen
+      context.push(
+        '/track-map',
+        extra: TrackingMapArgs(
+          customerLocation: customerLocation,
+          targetLocation: restaurantLocation,
+          targetName: restaurantName,
+          targetAddress: restaurantAddress,
+        ),
+      );
+    } catch (e) {
+      if (mounted) {
+        setState(() {
+          _isLoadingLocation = false;
+        });
+        showSnackbar(context, 'Error opening map: ${e.toString()}', state: SnackbarState.error);
       }
     }
   }
@@ -232,6 +299,8 @@ class _TrackReservationScreenState extends ConsumerState<TrackReservationScreen>
           state: SnackbarState.info,
         ),
         onShowQR: () => {},
+        navigateToMapScreen: _navigateToMapScreen,
+        isLoadingLocation: _isLoadingLocation,
       );
     } else if (reservation.reservationStatus == ReservationStatus.pending) {
       return PendingReservationScreen(
@@ -241,6 +310,8 @@ class _TrackReservationScreenState extends ConsumerState<TrackReservationScreen>
           'Fitur pembatalan reservasi akan diimplementasikan secara terpisah',
           state: SnackbarState.info,
         ),
+        navigateToMapScreen: _navigateToMapScreen,
+        isLoadingLocation: _isLoadingLocation,
       );
     } else {
       return ActiveReservationView(
@@ -248,6 +319,8 @@ class _TrackReservationScreenState extends ConsumerState<TrackReservationScreen>
         onCancel: () => {},
         onReschedule: () => {},
         onShowQR: () => {},
+        navigateToMapScreen: _navigateToMapScreen,
+        isLoadingLocation: _isLoadingLocation,
       );
     }
   }

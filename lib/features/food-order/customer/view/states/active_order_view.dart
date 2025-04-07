@@ -9,17 +9,20 @@ import 'package:socieaty/shared/widgets/dotted_divider.dart';
 import 'package:socieaty/core/utils/custom_extension.dart';
 import 'package:socieaty/features/authentication/repository/auth_local_repository.dart';
 import 'package:socieaty/features/food-order/customer/widgets/qr_code_dialog.dart';
+import 'package:socieaty/shared/widgets/loading_indicator_widget.dart';
 
 class ActiveOrderView extends ConsumerStatefulWidget {
   final FoodOrderTransaction order;
   final ScrollController scrollController;
   final Function() navigateToMapScreen;
+  final bool isLoadingLocation;
 
   const ActiveOrderView({
     super.key,
     required this.order,
     required this.scrollController,
     required this.navigateToMapScreen,
+    this.isLoadingLocation = false,
   });
 
   @override
@@ -148,9 +151,18 @@ class _ActiveOrderViewState extends ConsumerState<ActiveOrderView> {
                   ),
                 ),
                 ElevatedButton.icon(
-                  onPressed: widget.navigateToMapScreen,
-                  icon: const Icon(Icons.map, size: 16, color: Colors.white),
-                  label: const Text('Lihat Peta'),
+                  onPressed: widget.isLoadingLocation ? null : widget.navigateToMapScreen,
+                  icon: widget.isLoadingLocation
+                      ? SizedBox(
+                          width: 16,
+                          height: 16,
+                          child: LoadingIndicatorWidget(
+                            size: 16,
+                            color: Colors.white,
+                          ),
+                        )
+                      : const Icon(Icons.map, size: 16, color: Colors.white),
+                  label: Text(widget.isLoadingLocation ? 'Memuat...' : 'Lihat Peta'),
                   style: ElevatedButton.styleFrom(
                     backgroundColor: AppPallete.primaryColor,
                     foregroundColor: Colors.white,
@@ -338,7 +350,8 @@ class _ActiveOrderViewState extends ConsumerState<ActiveOrderView> {
           ),
           InkWell(
             onTap: () {
-              context.push('/transaction/message', extra: TransactionConverter.foodOrderToTransaction(order));
+              context.push('/transaction/message',
+                  extra: TransactionConverter.foodOrderToTransaction(order));
             },
             child: Container(
               padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),

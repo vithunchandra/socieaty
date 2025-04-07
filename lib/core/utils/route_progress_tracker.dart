@@ -6,7 +6,7 @@ import 'package:socieaty/core/utils/route_utils.dart';
 /// Class to track progress along a route and handle re-routing
 class RouteProgressTracker {
   /// Default re-routing threshold in meters
-  static const double defaultRerouteThreshold = 20.0;
+  static const double defaultRerouteThreshold = 50.0;
 
   /// Check if a location is off-route (too far from any route point)
   static bool isOffRoute({
@@ -17,9 +17,8 @@ class RouteProgressTracker {
     if (routePoints.isEmpty) {
       return false;
     }
-
-    double minDistance = double.infinity;
-
+    debugPrint("==========================");
+    debugPrint("Route Points: $routePoints");
     for (final point in routePoints) {
       double distance = RouteUtils.calculateDistance(
         currentLocation.latitude,
@@ -28,18 +27,15 @@ class RouteProgressTracker {
         point.longitude,
       );
 
-      if (distance < minDistance) {
-        minDistance = distance;
-      }
-
+      // debugPrint("Distance: $distance, threshold: $threshold");
       // If we found a point within threshold, user is not off-route
-      if (minDistance <= threshold) {
+      if (distance <= threshold) {
         return false;
       }
     }
 
     // If the closest point is still further than threshold, user is off-route
-    return minDistance > threshold;
+    return true;
   }
 
   /// Find the index of the closest point on the route to the current location

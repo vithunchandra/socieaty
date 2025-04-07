@@ -66,7 +66,7 @@ class _RestaurantDashboardScreenState extends ConsumerState<RestaurantDashboardS
             .setReservationChanges(reservation);
       },
       onReservationChangesNotificationTap: (reservationId) {
-        context.push('/restaurant/dashboard/reservation/offers', extra: reservationId);
+        context.push('/restaurant/dashboard/reservation/manage', extra: reservationId);
       },
     );
   }

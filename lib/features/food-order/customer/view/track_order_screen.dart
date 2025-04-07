@@ -16,6 +16,7 @@ import 'package:socieaty/features/food-order/customer/view/states/generic_error_
 import 'package:socieaty/features/food-order/customer/view/states/loading_view.dart';
 import 'package:socieaty/features/food-order/customer/view/states/rejected_order_screen.dart';
 import 'package:socieaty/features/food-order/enum/food_order_status_enum.dart';
+import 'package:socieaty/core/utils/location_handler.dart';
 
 class TrackOrderScreen extends ConsumerStatefulWidget {
   final String orderId;
@@ -35,6 +36,7 @@ class _TrackOrderScreenState extends ConsumerState<TrackOrderScreen> {
   bool _isLoading = true;
   String? _errorMessage;
   final bool _isConnected = false;
+  bool _isLoadingLocation = false;
 
   final ScrollController _scrollController = ScrollController();
 
@@ -101,6 +103,10 @@ class _TrackOrderScreenState extends ConsumerState<TrackOrderScreen> {
   void _navigateToMapScreen() async {
     if (_orderData == null) return;
 
+    setState(() {
+      _isLoadingLocation = true;
+    });
+
     try {
       // Get the restaurant location from the order data
       // Use fallback coordinates for Jakarta if location not available
@@ -115,26 +121,45 @@ class _TrackOrderScreenState extends ConsumerState<TrackOrderScreen> {
       final String restaurantName = _orderData!.restaurant.name;
       final String restaurantAddress = "Lokasi Restoran";
 
-      // Use dummy location data for the customer location
-      // This is approximately 500 meters south of the restaurant location
+      // Request location permission and get current location
+      final locationData = await LocationHandler.getCurrentPosition();
+
+      if (!mounted) return;
+
+      setState(() {
+        _isLoadingLocation = false;
+      });
+
+      if (locationData == null) {
+        showSnackbar(
+            context, 'Gagal mengambil lokasi Anda. Silakan cek pengaturan izin lokasi Anda.',
+            state: SnackbarState.error);
+        return;
+      }
+
+      // Use the user's actual location
       final LatLng customerLocation = LatLng(
-        restaurantLocation.latitude - 0.005,
-        restaurantLocation.longitude - 0.002,
+        locationData.latitude!,
+        locationData.longitude!,
       );
 
       // Navigate to the tracking map screen
-      Navigator.of(context).push(
-        MaterialPageRoute(
-          builder: (context) => TrackingMap(
-            customerLocation: customerLocation,
-            targetLocation: restaurantLocation,
-            targetName: restaurantName,
-            targetAddress: restaurantAddress,
-          ),
+      context.push(
+        '/track-map',
+        extra: TrackingMapArgs(
+          customerLocation: customerLocation,
+          targetLocation: restaurantLocation,
+          targetName: restaurantName,
+          targetAddress: restaurantAddress,
         ),
       );
     } catch (e) {
-      showSnackbar(context, 'Error opening map: ${e.toString()}', state: SnackbarState.error);
+      if (mounted) {
+        setState(() {
+          _isLoadingLocation = false;
+        });
+        showSnackbar(context, 'Error opening map: ${e.toString()}', state: SnackbarState.error);
+      }
     }
   }
 
@@ -213,6 +238,7 @@ class _TrackOrderScreenState extends ConsumerState<TrackOrderScreen> {
           order: _orderData!,
           scrollController: _scrollController,
           navigateToMapScreen: _navigateToMapScreen,
+          isLoadingLocation: _isLoadingLocation,
         );
 
       case FoodOrderStatus.completed:

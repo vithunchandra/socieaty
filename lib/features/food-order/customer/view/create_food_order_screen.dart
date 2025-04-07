@@ -40,6 +40,7 @@ class _CreateFoodOrderScreenState extends ConsumerState<CreateFoodOrderScreen> {
   bool _isCollapsed = false;
   String _additionalNotes = "";
   late CreateFoodOrderFormState _formState;
+  bool _isLoadingLocation = false;
 
   @override
   void initState() {
@@ -158,6 +159,10 @@ class _CreateFoodOrderScreenState extends ConsumerState<CreateFoodOrderScreen> {
   }
 
   void _navigateToMapScreen() async {
+    setState(() {
+      _isLoadingLocation = true;
+    });
+
     try {
       // Get the restaurant location
       final LatLng restaurantLocation = widget.restaurant.restaurantData.location;
@@ -168,8 +173,15 @@ class _CreateFoodOrderScreenState extends ConsumerState<CreateFoodOrderScreen> {
       // Request location permission and get current location
       final locationData = await LocationHandler.getCurrentPosition();
 
+      if (!mounted) return;
+
+      setState(() {
+        _isLoadingLocation = false;
+      });
+
       if (locationData == null) {
-        showSnackbar(null, 'Gagal mengambil lokasi Anda. Silakan cek pengaturan izin lokasi Anda.',
+        showSnackbar(
+            context, 'Gagal mengambil lokasi Anda. Silakan cek pengaturan izin lokasi Anda.',
             state: SnackbarState.error);
         return;
       }
@@ -181,18 +193,22 @@ class _CreateFoodOrderScreenState extends ConsumerState<CreateFoodOrderScreen> {
       );
 
       // Navigate to the tracking map screen
-      Navigator.of(context).push(
-        MaterialPageRoute(
-          builder: (context) => TrackingMap(
-            customerLocation: customerLocation,
-            targetLocation: restaurantLocation,
-            targetName: restaurantName,
-            targetAddress: restaurantAddress,
-          ),
-        ),
-      );
+      if (mounted) {
+        context.push('/track-map',
+            extra: TrackingMapArgs(
+              customerLocation: customerLocation,
+              targetLocation: restaurantLocation,
+              targetName: restaurantName,
+              targetAddress: restaurantAddress,
+            ));
+      }
     } catch (e) {
-      showSnackbar(null, 'Gagal membuka peta: ${e.toString()}', state: SnackbarState.error);
+      if (mounted) {
+        setState(() {
+          _isLoadingLocation = false;
+        });
+        showSnackbar(context, 'Gagal membuka peta: ${e.toString()}', state: SnackbarState.error);
+      }
     }
   }
 
@@ -428,14 +444,23 @@ class _CreateFoodOrderScreenState extends ConsumerState<CreateFoodOrderScreen> {
                         SizedBox(
                           width: double.infinity,
                           child: OutlinedButton.icon(
-                            onPressed: _navigateToMapScreen,
-                            icon: Icon(
-                              Icons.my_location,
-                              size: 16,
-                              color: AppPallete.primaryColor,
-                            ),
+                            onPressed: _isLoadingLocation ? null : _navigateToMapScreen,
+                            icon: _isLoadingLocation
+                                ? SizedBox(
+                                    width: 16,
+                                    height: 16,
+                                    child: LoadingIndicatorWidget(
+                                      size: 16,
+                                      color: AppPallete.primaryColor,
+                                    ),
+                                  )
+                                : Icon(
+                                    Icons.my_location,
+                                    size: 16,
+                                    color: AppPallete.primaryColor,
+                                  ),
                             label: Text(
-                              "Lihat di Map",
+                              _isLoadingLocation ? "Memuat..." : "Lihat di Map",
                               style: Theme.of(context).textTheme.labelMedium?.copyWith(
                                     color: AppPallete.primaryColor,
                                     fontWeight: FontWeight.w500,

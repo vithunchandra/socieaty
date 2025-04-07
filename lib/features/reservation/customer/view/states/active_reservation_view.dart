@@ -10,13 +10,17 @@ import 'package:socieaty/features/authentication/repository/auth_local_repositor
 import 'package:socieaty/features/reservation/enum/reservation_status_enum.dart';
 import 'package:socieaty/features/reservation/model/reservation.dart';
 import 'package:socieaty/shared/widgets/dotted_divider.dart';
+import 'package:socieaty/shared/widgets/loading_indicator_widget.dart';
 import 'package:socieaty/shared/widgets/profile_picture_widget.dart';
+import 'package:socieaty/core/utils/location_handler.dart';
 
 class ActiveReservationView extends ConsumerStatefulWidget {
   final Reservation reservation;
   final VoidCallback? onCancel;
   final VoidCallback? onReschedule;
   final VoidCallback? onShowQR;
+  final VoidCallback? navigateToMapScreen;
+  final bool isLoadingLocation;
 
   const ActiveReservationView({
     super.key,
@@ -24,6 +28,8 @@ class ActiveReservationView extends ConsumerStatefulWidget {
     this.onCancel,
     this.onReschedule,
     this.onShowQR,
+    this.navigateToMapScreen,
+    this.isLoadingLocation = false,
   });
 
   @override
@@ -33,11 +39,13 @@ class ActiveReservationView extends ConsumerStatefulWidget {
 class _ActiveReservationViewState extends ConsumerState<ActiveReservationView> {
   final ScrollController _scrollController = ScrollController();
   bool _isHeaderCollapsed = false;
+  String _locationAddress = "Lokasi restoran";
 
   @override
   void initState() {
     super.initState();
     _scrollController.addListener(_handleScroll);
+    _getRestaurantAddress();
   }
 
   @override
@@ -57,6 +65,16 @@ class _ActiveReservationViewState extends ConsumerState<ActiveReservationView> {
     if (isCollapsed != _isHeaderCollapsed) {
       setState(() {
         _isHeaderCollapsed = isCollapsed;
+      });
+    }
+  }
+
+  void _getRestaurantAddress() async {
+    final location = await LocationHandler.getAddressFromLatLng(
+        widget.reservation.restaurant.restaurantData.location);
+    if (location != null && mounted) {
+      setState(() {
+        _locationAddress = "${location.street}, ${location.locality}";
       });
     }
   }
@@ -201,6 +219,10 @@ class _ActiveReservationViewState extends ConsumerState<ActiveReservationView> {
             padding: const EdgeInsets.fromLTRB(16.0, 8.0, 16.0, 24.0),
             child: _buildReservationDetails(reservation),
           ),
+          Padding(
+            padding: const EdgeInsets.fromLTRB(16.0, 0.0, 16.0, 16.0),
+            child: _buildLocationCard(reservation),
+          ),
         ],
       ),
     );
@@ -341,7 +363,7 @@ class _ActiveReservationViewState extends ConsumerState<ActiveReservationView> {
                         const SizedBox(width: 4),
                         Expanded(
                           child: Text(
-                            'Lokasi restoran',
+                            _locationAddress,
                             style: Theme.of(context).textTheme.bodySmall?.copyWith(
                                   color: AppPallete.neutralColor.shade600,
                                 ),
@@ -388,9 +410,18 @@ class _ActiveReservationViewState extends ConsumerState<ActiveReservationView> {
             children: [
               Expanded(
                 child: ElevatedButton.icon(
-                  onPressed: () {},
-                  icon: const Icon(Icons.place, size: 16, color: Colors.white),
-                  label: const Text('Lihat Lokasi'),
+                  onPressed: widget.isLoadingLocation ? null : widget.navigateToMapScreen,
+                  icon: widget.isLoadingLocation
+                      ? SizedBox(
+                          width: 16,
+                          height: 16,
+                          child: LoadingIndicatorWidget(
+                            size: 16,
+                            color: Colors.white,
+                          ),
+                        )
+                      : const Icon(Icons.place, size: 16, color: Colors.white),
+                  label: Text(widget.isLoadingLocation ? 'Memuat...' : 'Lihat Lokasi'),
                   style: ElevatedButton.styleFrom(
                     backgroundColor: AppPallete.primaryColor,
                     foregroundColor: Colors.white,
@@ -619,6 +650,88 @@ class _ActiveReservationViewState extends ConsumerState<ActiveReservationView> {
           ),
         ),
       ],
+    );
+  }
+
+  Widget _buildLocationCard(Reservation reservation) {
+    return Container(
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(12),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.grey.withOpacity(0.1),
+            blurRadius: 6,
+            offset: const Offset(0, 3),
+          ),
+        ],
+      ),
+      padding: const EdgeInsets.all(16),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            children: [
+              Icon(
+                Icons.location_on,
+                color: AppPallete.primaryColor,
+                size: 20,
+              ),
+              const SizedBox(width: 8),
+              Text(
+                'Lokasi Restoran',
+                style: TextStyle(
+                  fontSize: 16,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+            ],
+          ),
+          const SizedBox(height: 12),
+          Text(
+            "Lokasi: ${reservation.restaurant.name}",
+            style: TextStyle(
+              color: Colors.grey[700],
+              fontSize: 14,
+            ),
+          ),
+          const SizedBox(height: 16),
+          OutlinedButton.icon(
+            onPressed: widget.isLoadingLocation || widget.navigateToMapScreen == null
+                ? null
+                : widget.navigateToMapScreen,
+            style: OutlinedButton.styleFrom(
+              side: BorderSide(color: AppPallete.primaryColor.withAlpha(127)),
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(8),
+              ),
+              padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 16),
+              minimumSize: const Size(double.infinity, 48),
+            ),
+            icon: widget.isLoadingLocation
+                ? SizedBox(
+                    width: 16,
+                    height: 16,
+                    child: LoadingIndicatorWidget(
+                      size: 16,
+                      color: AppPallete.primaryColor,
+                    ),
+                  )
+                : Icon(
+                    Icons.map_outlined,
+                    color: AppPallete.primaryColor,
+                    size: 18,
+                  ),
+            label: Text(
+              widget.isLoadingLocation ? 'Memuat...' : 'Lihat di Peta',
+              style: TextStyle(
+                color: AppPallete.primaryColor,
+                fontWeight: FontWeight.w500,
+              ),
+            ),
+          ),
+        ],
+      ),
     );
   }
 

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:socieaty/core/theme/app_pallete.dart';
 import 'package:socieaty/features/map/view/tracking_map.dart';
@@ -405,16 +406,12 @@ class MapTestScreen extends StatelessWidget {
         child: InkWell(
           borderRadius: BorderRadius.circular(12),
           onTap: () {
-            Navigator.of(context).push(
-              MaterialPageRoute(
-                builder: (context) => TrackingMap(
-                  customerLocation: customerLocation,
-                  targetLocation: targetLocation,
-                  targetName: targetName,
-                  targetAddress: targetAddress,
-                ),
-              ),
-            );
+            context.push('/track-map', extra: TrackingMapArgs(
+              customerLocation: customerLocation,
+              targetLocation: targetLocation,
+              targetName: targetName,
+              targetAddress: targetAddress,
+            ));
           },
           child: Padding(
             padding: const EdgeInsets.all(16.0),

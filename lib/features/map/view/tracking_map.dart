@@ -10,19 +10,28 @@ import 'package:socieaty/core/utils/map_markers_helper.dart';
 import 'package:socieaty/features/map/view/map_test_screen.dart';
 import 'package:go_router/go_router.dart' as go;
 import 'package:socieaty/shared/widgets/loading_indicator_widget.dart';
+import 'package:socieaty/core/utils/route_progress_tracker.dart';
 
-class TrackingMap extends StatefulWidget {
+class TrackingMapArgs {
   final LatLng customerLocation;
   final LatLng targetLocation;
   final String targetName;
   final String targetAddress;
 
-  const TrackingMap({
-    super.key,
+  const TrackingMapArgs({
     required this.customerLocation,
     required this.targetLocation,
     required this.targetName,
     required this.targetAddress,
+  });
+}
+
+class TrackingMap extends StatefulWidget {
+  final TrackingMapArgs args;
+
+  const TrackingMap({
+    super.key,
+    required this.args,
   });
 
   @override
@@ -45,16 +54,19 @@ class _TrackingMapState extends State<TrackingMap> {
   bool _isRerouting = false;
   DateTime? _lastRerouteTime;
 
+  // API call control
+  static const int minimumRerouteIntervalSeconds = 5; // Minimum time between API calls
+
   // Progress tracking
   int _lastPassedPointIndex = -1;
 
   // Set to true to enable real-time location updates
-  final bool _useRealTimeLocation = false;
+  final bool _useRealTimeLocation = true;
 
   @override
   void initState() {
     super.initState();
-    _currentLocation = widget.customerLocation;
+    _currentLocation = widget.args.customerLocation;
     _setupRouteAndMarkers();
 
     // Only start location updates if we're using real-time location
@@ -74,7 +86,7 @@ class _TrackingMapState extends State<TrackingMap> {
     try {
       _locationService.changeSettings(
         accuracy: LocationAccuracy.high,
-        interval: 5000,
+        interval: 3000,
         distanceFilter: 5,
       );
 
@@ -85,11 +97,13 @@ class _TrackingMapState extends State<TrackingMap> {
             _currentLocation = LatLng(locationData.latitude!, locationData.longitude!);
             _updateCurrentLocationMarker();
 
-            // Check if the user is off-route and needs re-routing
-            _checkAndHandleRerouting();
-
-            // Update route progress
+            // Update route progress (doesn't make API calls)
             _updateRouteProgress();
+
+             // Check if rerouting is needed (but only if not already rerouting)
+            if (!_isRerouting) {
+              _checkAndHandleRerouting();
+            }
           });
         }
       });
@@ -100,28 +114,45 @@ class _TrackingMapState extends State<TrackingMap> {
 
   // Check if rerouting is needed and handle it
   void _checkAndHandleRerouting() {
-    // Skip if already rerouting or not enabled
-    if (_isRerouting || !_useRealTimeLocation || _routeData == null) {
+    // Skip if not enabled or no route data
+    if (!_useRealTimeLocation || _routeData == null) {
       return;
     }
 
-    // Avoid too frequent rerouting (minimum 30 seconds between reroutes)
+    // Enforce minimum time between API calls
     final now = DateTime.now();
     if (_lastRerouteTime != null) {
       final timeSinceLastReroute = now.difference(_lastRerouteTime!);
-      if (timeSinceLastReroute.inSeconds < 30) {
+      if (timeSinceLastReroute.inSeconds < minimumRerouteIntervalSeconds) {
         return;
       }
     }
 
-    // Check if user is off route using the utility class
-    if (LocationHandler.needsRerouting(_currentLocation, _routeData!.points)) {
+    // Check if user is off route
+    if (RouteProgressTracker.isOffRoute(
+      currentLocation: _currentLocation,
+      routePoints: _routeData!.points,
+    )) {
+      debugPrint("Rerouting: User is off route. Calling API...");
       _lastRerouteTime = now;
-      _isRerouting = true;
+      _isRerouting = true; // Set flag to prevent multiple simultaneous reroutings
 
       // Get a new route from current location to destination
       _setupRoute(forceReroute: true).then((_) {
-        _isRerouting = false;
+        // Only reset the flag when the API call is complete
+        if (mounted) {
+          setState(() {
+            _isRerouting = false;
+          });
+        }
+      }).catchError((error) {
+        // Make sure to reset the flag even if there's an error
+        if (mounted) {
+          setState(() {
+            _isRerouting = false;
+          });
+        }
+        debugPrint("Error during rerouting: $error");
       });
     }
   }
@@ -132,19 +163,25 @@ class _TrackingMapState extends State<TrackingMap> {
       return;
     }
 
-    // Use LocationHandler utility to update progress
-    final updatedRouteData = LocationHandler.updateRouteProgress(
-      _routeData!,
+    // Find the closest point index
+    final closestPointIndex = RouteProgressTracker.findClosestPointIndex(
       _currentLocation,
-      _lastPassedPointIndex,
+      _routeData!.points,
     );
 
-    // If we've made progress, update state
-    if (updatedRouteData != _routeData) {
+    if (closestPointIndex > _lastPassedPointIndex) {
+      // We've made progress along the route
+      final updatedPassedPoints = RouteProgressTracker.updatePassedPoints(
+        _routeData!.passedPoints,
+        _lastPassedPointIndex,
+        closestPointIndex,
+      );
+
+      _lastPassedPointIndex = closestPointIndex;
+
+      // Update route data with new progress
       setState(() {
-        _routeData = updatedRouteData;
-        // Find the new last passed point index
-        _lastPassedPointIndex = updatedRouteData.passedPoints.lastIndexWhere((passed) => passed);
+        _routeData = _routeData!.copyWith(passedPoints: updatedPassedPoints);
         _updateRouteDisplay();
       });
     }
@@ -157,7 +194,10 @@ class _TrackingMapState extends State<TrackingMap> {
     }
 
     setState(() {
-      _polylines = LocationHandler.createRoutePolylines(_routeData!);
+      _polylines = RouteProgressTracker.createRouteSegments(
+        _routeData!.points,
+        _routeData!.passedPoints,
+      ).toSet();
     });
   }
 
@@ -175,9 +215,9 @@ class _TrackingMapState extends State<TrackingMap> {
     setState(() {
       _markers = LocationHandler.createRouteMarkers(
         origin: _currentLocation,
-        destination: widget.targetLocation,
-        destinationTitle: widget.targetName,
-        destinationSnippet: widget.targetAddress,
+        destination: widget.args.targetLocation,
+        destinationTitle: widget.args.targetName,
+        destinationSnippet: widget.args.targetAddress,
       );
     });
 
@@ -193,7 +233,7 @@ class _TrackingMapState extends State<TrackingMap> {
       // Use the new helper method with fallback
       final routeData = await LocationHandler.getRouteCoordinatesWithFallback(
         _currentLocation,
-        widget.targetLocation,
+        widget.args.targetLocation,
       );
 
       if (mounted) {
@@ -206,7 +246,13 @@ class _TrackingMapState extends State<TrackingMap> {
           _updateRouteDisplay();
         });
 
-        _fitMapToRoute();
+        // Only fit to the entire route if this isn't a reroute.
+        // During rerouting, keep camera on current location
+        if (!forceReroute) {
+          _fitMapToRoute();
+        } else {
+          _centerOnCurrentLocation();
+        }
       }
     } catch (e) {
       setState(() {
@@ -225,7 +271,8 @@ class _TrackingMapState extends State<TrackingMap> {
       _mapController!.animateCamera(cameraUpdate);
     } catch (e) {
       // Fallback to simple two-point bounds
-      final fallbackUpdate = MapCameraUtils.fitToPoints(_currentLocation, widget.targetLocation);
+      final fallbackUpdate =
+          MapCameraUtils.fitToPoints(_currentLocation, widget.args.targetLocation);
       _mapController!.animateCamera(fallbackUpdate);
     }
   }
@@ -472,12 +519,12 @@ class _TrackingMapState extends State<TrackingMap> {
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
                             Text(
-                              widget.targetName,
+                              widget.args.targetName,
                               style: Theme.of(context).textTheme.titleLarge,
                             ),
                             const SizedBox(height: 8.0),
                             Text(
-                              widget.targetAddress,
+                              widget.args.targetAddress,
                               style: Theme.of(context).textTheme.bodyMedium,
                             ),
                           ],

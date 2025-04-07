@@ -7,16 +7,22 @@ import 'package:socieaty/core/utils/converter.dart';
 import 'package:socieaty/core/utils/custom_extension.dart';
 import 'package:socieaty/features/reservation/model/reservation.dart';
 import 'package:socieaty/shared/widgets/dotted_divider.dart';
+import 'package:socieaty/shared/widgets/loading_indicator_widget.dart';
 import 'package:socieaty/shared/widgets/profile_picture_widget.dart';
+import 'package:socieaty/core/utils/location_handler.dart';
 
 class PendingReservationScreen extends ConsumerStatefulWidget {
   final Reservation reservation;
   final VoidCallback? onCancel;
+  final VoidCallback? navigateToMapScreen;
+  final bool isLoadingLocation;
 
   const PendingReservationScreen({
     super.key,
     required this.reservation,
     this.onCancel,
+    this.navigateToMapScreen,
+    this.isLoadingLocation = false,
   });
 
   @override
@@ -26,18 +32,13 @@ class PendingReservationScreen extends ConsumerStatefulWidget {
 class _PendingReservationScreenState extends ConsumerState<PendingReservationScreen> {
   final ScrollController _scrollController = ScrollController();
   bool _isHeaderCollapsed = false;
+  String _locationAddress = "Lokasi restoran";
 
   @override
   void initState() {
     super.initState();
     _scrollController.addListener(_handleScroll);
-  }
-
-  @override
-  void dispose() {
-    _scrollController.removeListener(_handleScroll);
-    _scrollController.dispose();
-    super.dispose();
+    _getRestaurantAddress();
   }
 
   void _handleScroll() {
@@ -52,6 +53,23 @@ class _PendingReservationScreenState extends ConsumerState<PendingReservationScr
         _isHeaderCollapsed = isCollapsed;
       });
     }
+  }
+
+  void _getRestaurantAddress() async {
+    final location = await LocationHandler.getAddressFromLatLng(
+        widget.reservation.restaurant.restaurantData.location);
+    if (location != null && mounted) {
+      setState(() {
+        _locationAddress = "${location.street}, ${location.locality}";
+      });
+    }
+  }
+
+  @override
+  void dispose() {
+    _scrollController.removeListener(_handleScroll);
+    _scrollController.dispose();
+    super.dispose();
   }
 
   @override
@@ -319,7 +337,7 @@ class _PendingReservationScreenState extends ConsumerState<PendingReservationScr
                         const SizedBox(width: 4),
                         Expanded(
                           child: Text(
-                            'Lokasi restoran',
+                            _locationAddress,
                             style: Theme.of(context).textTheme.bodySmall?.copyWith(
                                   color: AppPallete.neutralColor.shade600,
                                 ),
@@ -366,9 +384,18 @@ class _PendingReservationScreenState extends ConsumerState<PendingReservationScr
             children: [
               Expanded(
                 child: ElevatedButton.icon(
-                  onPressed: () {},
-                  icon: const Icon(Icons.place, size: 16, color: Colors.white),
-                  label: const Text('Lihat Lokasi'),
+                  onPressed: widget.navigateToMapScreen,
+                  icon: widget.isLoadingLocation
+                      ? SizedBox(
+                          width: 16,
+                          height: 16,
+                          child: LoadingIndicatorWidget(
+                            size: 16,
+                            color: Colors.white,
+                          ),
+                        )
+                      : const Icon(Icons.place, size: 16, color: Colors.white),
+                  label: Text(widget.isLoadingLocation ? 'Memuat...' : 'Lihat Lokasi'),
                   style: ElevatedButton.styleFrom(
                     backgroundColor: AppPallete.primaryColor,
                     foregroundColor: Colors.white,
