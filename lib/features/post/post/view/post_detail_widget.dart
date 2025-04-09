@@ -11,11 +11,13 @@ import 'package:socieaty/core/utils/location_handler.dart';
 import 'package:socieaty/core/utils/show_snackbar.dart';
 import 'package:socieaty/features/post/post/repository/response/like_post_response.dart';
 import 'package:socieaty/features/post/post/model/post.dart';
+import 'package:socieaty/features/post/post/view/update_post_screen.dart';
 import 'package:socieaty/features/post/post/viewmodel/post_detail_view_model.dart';
 import 'package:socieaty/features/post/post_comment/view/post_comments_widget.dart';
 import 'package:socieaty/features/post/post_media/model/post_media.dart';
 import 'package:socieaty/shared/view_state.dart';
 import 'package:socieaty/shared/widgets/video_player_widget.dart';
+import 'package:dropdown_button2/dropdown_button2.dart';
 
 typedef PostUpdateCallback = void Function(Post updatedPost);
 
@@ -245,6 +247,78 @@ class _PostDetailWidgetState extends ConsumerState<PostDetailWidget> {
                           ),
                         ),
                       ),
+                      SizedBox(height: 16),
+                      if (widget.userId == widget.post.authorId)
+                        DropdownButtonHideUnderline(
+                          child: DropdownButton2(
+                            customButton: Icon(
+                              Icons.more_vert,
+                              color: Colors.white,
+                            ),
+                            items: [
+                              DropdownMenuItem(
+                                value: 'edit',
+                                child: Row(
+                                  children: [
+                                    Icon(Icons.edit_outlined,
+                                        color: AppPallete.neutralColor.shade800),
+                                    const SizedBox(width: 10),
+                                    Text('Edit',
+                                        style: Theme.of(context)
+                                            .textTheme
+                                            .titleSmall
+                                            ?.copyWith(color: Colors.black)),
+                                  ],
+                                ),
+                              ),
+                              DropdownMenuItem(
+                                value: 'delete',
+                                child: Row(
+                                  children: [
+                                    Icon(Icons.delete_outline,
+                                        color: AppPallete.neutralColor.shade800),
+                                    const SizedBox(width: 10),
+                                    Text(
+                                      'Delete',
+                                      style: Theme.of(context)
+                                          .textTheme
+                                          .titleSmall
+                                          ?.copyWith(color: Colors.black),
+                                    ),
+                                  ],
+                                ),
+                              ),
+                            ],
+                            onChanged: (value) {
+                              switch (value) {
+                                case 'edit':
+                                  ref
+                                      .read(appThemeProvider.notifier)
+                                      .setTheme(SocieatyAppTheme.lightTheme);
+                                  context.push(
+                                    '/posts/update',
+                                    extra: UpdatePostScreenArgs(
+                                      post: widget.post,
+                                      lastTheme: SocieatyAppTheme.darkTheme,
+                                    ),
+                                  );
+                                  break;
+                                case 'delete':
+                                  break;
+                              }
+                            },
+                            dropdownStyleData: DropdownStyleData(
+                              width: 160,
+                              padding: const EdgeInsets.symmetric(vertical: 6),
+                              elevation: 1,
+                              decoration: BoxDecoration(
+                                borderRadius: BorderRadius.circular(12),
+                                color: Colors.white,
+                              ),
+                              offset: const Offset(0, 8),
+                            ),
+                          ),
+                        ),
                       SizedBox(height: 4),
                       IconButton(
                         onPressed: () {

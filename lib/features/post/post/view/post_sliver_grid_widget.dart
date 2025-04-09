@@ -5,12 +5,13 @@ import 'package:infinite_scroll_pagination/infinite_scroll_pagination.dart';
 import 'package:socieaty/app_theme_provider.dart';
 import 'package:socieaty/core/theme/theme.dart';
 import 'package:socieaty/core/utils/show_snackbar.dart';
-import 'package:socieaty/features/post/post/repository/response/paginate_post_query.dart';
 import 'package:socieaty/features/post/post/model/post.dart';
 import 'package:socieaty/features/post/post/provider/paginate_posts_provider.dart';
+import 'package:socieaty/features/post/post/repository/request/paginate_post_query.dart';
 import 'package:socieaty/features/post/post/view/post_card_widget.dart';
 import 'package:socieaty/features/post/post/view/post_screen.dart';
 import 'package:socieaty/features/post/post/viewmodel/posts_widget_view_model.dart';
+import 'package:socieaty/shared/models/pagination_query.dart';
 import 'package:socieaty/shared/widgets/loading_indicator_widget.dart';
 
 class PostSliverGridWidget extends ConsumerStatefulWidget {
@@ -48,8 +49,7 @@ class _PostSliverGridWidgetState extends ConsumerState<PostSliverGridWidget> {
         final response = await ref.read(
           paginatePostsProvider(
             PaginatePostQuery(
-              offset: pageKey,
-              limit: _pageSize,
+              paginationQuery: PaginationQuery(offset: pageKey, limit: _pageSize),
               authorId: widget.authorId,
             ),
           ).future,
@@ -70,7 +70,7 @@ class _PostSliverGridWidgetState extends ConsumerState<PostSliverGridWidget> {
       } catch (error) {
         if (!_isDisposed) {
           _pagingController.error = error;
-          showSnackbar(context, error.toString(), state: SnackbarState.error);
+          showSnackbar(null, error.toString(), state: SnackbarState.error);
         }
       }
     }
@@ -97,7 +97,10 @@ class _PostSliverGridWidgetState extends ConsumerState<PostSliverGridWidget> {
                 '/posts',
                 extra: PostScreenArgs(
                   previousTheme: SocieatyAppTheme.lightTheme,
-                  paginatePostQuery: PaginatePostQuery(authorId: widget.authorId, offset: index),
+                  paginatePostQuery: PaginatePostQuery(
+                    authorId: widget.authorId,
+                    paginationQuery: PaginationQuery(offset: index, limit: _pageSize),
+                  ),
                   posts: _pagingController.itemList,
                 ),
               );

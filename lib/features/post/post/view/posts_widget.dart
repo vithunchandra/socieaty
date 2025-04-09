@@ -2,11 +2,11 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:infinite_scroll_pagination/infinite_scroll_pagination.dart';
 import 'package:socieaty/features/authentication/repository/auth_local_repository.dart';
-import 'package:socieaty/features/home/customer/viewmodel/home_screen_view_model.dart';
-import 'package:socieaty/features/post/post/repository/response/paginate_post_query.dart';
 import 'package:socieaty/features/post/post/model/post.dart';
 import 'package:socieaty/features/post/post/provider/paginate_posts_provider.dart';
+import 'package:socieaty/features/post/post/repository/request/paginate_post_query.dart';
 import 'package:socieaty/features/post/post/view/post_detail_widget.dart';
+import 'package:socieaty/shared/models/pagination_query.dart';
 import 'package:socieaty/shared/widgets/custom_error_widget.dart';
 import 'package:socieaty/shared/widgets/loading_indicator_widget.dart';
 
@@ -40,10 +40,10 @@ class _PostsWidgetState extends ConsumerState<PostsWidget> {
   void initState() {
     super.initState();
 
-    _query = widget.initialQuery ?? PaginatePostQuery(offset: 0, limit: 5);
+    _query = widget.initialQuery ?? PaginatePostQuery(paginationQuery: PaginationQuery(offset: 0, limit: 5));
 
-    _pagingController = PagingController<int, Post>(firstPageKey: _query.offset);
-    _pageController = PageController(initialPage: _query.offset);
+    _pagingController = PagingController<int, Post>(firstPageKey: _query.paginationQuery.offset);
+    _pageController = PageController(initialPage: _query.paginationQuery.offset);
 
     if (widget.initialPosts != null) {
       _pagingController.appendPage(widget.initialPosts!, widget.initialPosts!.length);
@@ -52,14 +52,16 @@ class _PostsWidgetState extends ConsumerState<PostsWidget> {
     _pagingController.addPageRequestListener((pageKey) {
       _fetchPosts(pageKey);
     });
+
   }
 
   Future<void> _fetchPosts(int pageKey) async {
     try {
-      final newQuery = _query.copyWith(offset: pageKey, limit: _query.limit);
+      final newQuery = _query.copyWith(paginationQuery: PaginationQuery(offset: pageKey, limit: _query.paginationQuery.limit));
       final response = await ref.read(paginatePostsProvider(newQuery).future);
       final newPosts = response.posts;
       final isLastPage = !response.pagination.hasNext;
+      debugPrint('isLastPage: $isLastPage');
 
       if (isLastPage) {
         _pagingController.appendLastPage(newPosts);
@@ -94,7 +96,7 @@ class _PostsWidgetState extends ConsumerState<PostsWidget> {
       firstPageProgressIndicatorBuilder: (_) => const LoadingIndicatorWidget(size: 36),
       newPageProgressIndicatorBuilder: (_) => const LoadingIndicatorWidget(size: 36),
       firstPageErrorIndicatorBuilder: (context) => CustomErrorWidget(
-        error: _pagingController.error,
+        error: _pagingController.error.toString(),
         title: 'Posts',
         onPressed: _pagingController.refresh,
       ),
@@ -111,9 +113,9 @@ class _PostsWidgetState extends ConsumerState<PostsWidget> {
       pagingController: _pagingController,
       scrollDirection: Axis.vertical,
       onPageChanged: (index) {
-        ref
-            .read(homeScreenViewModelProvider.notifier)
-            .setCurrentPostId(_pagingController.itemList?[index].id ?? '');
+        // ref
+        //     .read(homeScreenViewModelProvider.notifier)
+        //     .setCurrentPostId(_pagingController.itemList?[index].id ?? '');
       },
       builderDelegate: builderDelegate,
     );

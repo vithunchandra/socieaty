@@ -3,11 +3,12 @@ import 'package:flutter_carousel_widget/flutter_carousel_widget.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:socieaty/core/theme/app_pallete.dart';
 import 'package:socieaty/features/food_menu/customer/view/food_menu_highlight_item_widget.dart';
-import 'package:socieaty/features/post/post/repository/response/paginate_post_query.dart';
 import 'package:socieaty/features/post/post/provider/paginate_posts_provider.dart';
+import 'package:socieaty/features/post/post/repository/request/paginate_post_query.dart';
 import 'package:socieaty/features/post/post/view/post_carousel_item_widget.dart';
 import 'package:socieaty/features/food_menu/provider/get_food_menu_provider.dart';
 import 'package:socieaty/features/restaurant/model/socieaty_restaurant.dart';
+import 'package:socieaty/shared/models/pagination_query.dart';
 import 'package:socieaty/shared/widgets/custom_error_widget.dart';
 import 'package:socieaty/shared/widgets/loading_indicator_widget.dart';
 import 'package:socieaty/shared/widgets/menu_filter_widget.dart';
@@ -41,7 +42,10 @@ class _OutletHomeWidgetState extends ConsumerState<OutletHomeWidget> {
       query: MenuFilterFormState(),
     ));
     final posts = ref.watch(
-      paginatePostsProvider(PaginatePostQuery(offset: 0, limit: 5, authorId: widget.restaurant.id)),
+      paginatePostsProvider(PaginatePostQuery(
+        paginationQuery: PaginationQuery(offset: 0, limit: 5),
+        authorId: widget.restaurant.id,
+      )),
     );
 
     return SizedBox(
@@ -163,7 +167,7 @@ class _OutletHomeWidgetState extends ConsumerState<OutletHomeWidget> {
                       title: "Posts items",
                       onPressed: () {
                         ref.invalidate(
-                          paginatePostsProvider(PaginatePostQuery(offset: 0, limit: 5)),
+                          paginatePostsProvider(PaginatePostQuery()),
                         );
                         FocusScope.of(context).focusedChild?.unfocus();
                       },

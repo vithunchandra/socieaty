@@ -6,6 +6,7 @@ part 'post_media.g.dart';
 @freezed
 class PostMedia with _$PostMedia {
   factory PostMedia({
+    required String id,
     required String url,
     required String type,
     required String postId,

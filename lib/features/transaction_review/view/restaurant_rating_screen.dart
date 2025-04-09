@@ -4,7 +4,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:socieaty/core/theme/app_pallete.dart';
 import 'package:socieaty/core/utils/show_snackbar.dart';
-import 'package:socieaty/features/food-order/model/food_order_transaction.dart';
+import 'package:socieaty/features/transaction/model/transaction.dart';
 import 'package:socieaty/features/transaction_review/model/transaction_review.dart';
 import 'package:socieaty/features/transaction_review/view/widgets/rating_star.dart';
 import 'package:socieaty/features/transaction_review/viewmodel/restaurant_rating_screen_view_model.dart';
@@ -15,7 +15,7 @@ import 'package:socieaty/shared/widgets/image_loading_widget.dart';
 import 'package:socieaty/shared/widgets/loading_indicator_widget.dart';
 
 class RestaurantRatingScreen extends ConsumerStatefulWidget {
-  final FoodOrderTransaction transaction;
+  final Transaction transaction;
 
   const RestaurantRatingScreen({
     super.key,
@@ -225,7 +225,7 @@ class _RestaurantRatingScreenState extends ConsumerState<RestaurantRatingScreen>
               ),
               const SizedBox(height: 4),
               Text(
-                'Order #${widget.transaction.orderId.substring(0, 6)}',
+                'Order #${widget.transaction.transactionId.substring(0, 6)}',
                 style: TextStyle(
                   fontSize: 14,
                   color: AppPallete.neutralColor.shade600,

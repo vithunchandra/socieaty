@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 import 'package:intl/intl.dart';
 import 'package:socieaty/core/theme/app_pallete.dart';
+import 'package:socieaty/core/utils/converter.dart';
 import 'package:socieaty/features/menu_item/model/menu_item.dart';
 import 'package:socieaty/features/reservation/model/reservation.dart';
 
@@ -51,6 +53,11 @@ class _CompletedReservationScreenState extends State<CompletedReservationScreen>
   void dispose() {
     _animationController.dispose();
     super.dispose();
+  }
+
+  void _navigateToRatingScreen() {
+    context.push('/transaction/review',
+        extra: TransactionConverter.reservationToTransaction(widget.reservation));
   }
 
   @override
@@ -117,7 +124,7 @@ class _CompletedReservationScreenState extends State<CompletedReservationScreen>
             ),
             const SizedBox(height: 24),
             ElevatedButton(
-              onPressed: widget.onRateRestaurant,
+              onPressed: _navigateToRatingScreen,
               style: ElevatedButton.styleFrom(
                 backgroundColor: AppPallete.primaryColor,
                 foregroundColor: Colors.white,

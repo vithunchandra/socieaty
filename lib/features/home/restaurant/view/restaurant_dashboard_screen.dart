@@ -2,8 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:permission_handler/permission_handler.dart';
+import 'package:socieaty/app_theme_provider.dart';
 import 'package:socieaty/core/notifications/local_notification_service.dart';
 import 'package:socieaty/core/theme/app_pallete.dart';
+import 'package:socieaty/core/theme/theme.dart';
 import 'package:socieaty/core/utils/show_snackbar.dart';
 import 'package:socieaty/features/authentication/repository/auth_local_repository.dart';
 import 'package:socieaty/features/food-order/restaurant/provider/order_changes_notification_provider.dart';
@@ -17,6 +19,7 @@ import 'package:socieaty/features/reservation/restaurant/socket/restaurant_reser
 import 'package:socieaty/features/restaurant/view/restaurant_scaffold_with_navbar.dart';
 import 'package:socieaty/features/food-order/restaurant/view/food_order_item_summary_widget.dart';
 import 'package:socieaty/features/food-order/restaurant/provider/new_order_notification_provider.dart';
+import 'package:socieaty/shared/widgets/create_screen.dart';
 import 'package:socieaty/shared/widgets/profile_picture_widget.dart';
 import 'package:toastification/toastification.dart';
 
@@ -266,7 +269,15 @@ class _RestaurantDashboardScreenState extends ConsumerState<RestaurantDashboardS
                               icon: Icons.live_tv,
                               label: 'Konten',
                               color: Colors.red,
-                              onTap: () {},
+                              onTap: () {
+                                context.push('/create_content', extra: CreateScreenArgs(
+                                  onPop: (bool value, Object? object) {
+                                    ref
+                                        .read(appThemeProvider.notifier)
+                                        .setTheme(SocieatyAppTheme.lightTheme);
+                                  },
+                                ));
+                              },
                             ),
                           ],
                         ),

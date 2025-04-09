@@ -8,11 +8,14 @@ import 'package:socieaty/core/network/api_client.dart';
 import 'package:socieaty/core/network/api_result.dart';
 import 'package:socieaty/core/utils/execute_request.dart';
 import 'package:socieaty/features/authentication/repository/auth_local_repository.dart';
+import 'package:socieaty/features/post/post/repository/request/create_post_form_state.dart';
+import 'package:socieaty/features/post/post/repository/request/paginate_post_query.dart';
+import 'package:socieaty/features/post/post/repository/request/update_post_request.dart';
 import 'package:socieaty/features/post/post/repository/response/create_post_response.dart';
 import 'package:socieaty/features/post/post/repository/response/get_post_response.dart';
 import 'package:socieaty/features/post/post/repository/response/like_post_response.dart';
 import 'package:socieaty/features/post/post/repository/response/paginate_post_response.dart';
-import 'package:socieaty/features/post/post/viewstate/create_post_form_state.dart';
+import 'package:socieaty/features/post/post/repository/response/update_post_response.dart';
 import 'package:socieaty/features/user/model/socieaty_user.dart';
 
 part 'post_repository.g.dart';
@@ -55,6 +58,27 @@ class PostRepository {
     );
   }
 
+  Future<ApiResult<UpdatePostResponse>> updatePost(String postId, UpdatePostRequest data, List<File> medias) async {
+    FormData formData = FormData.fromMap({
+      ...data.toJson(),
+      'hashtags[]': data.hashtags.isEmpty ? [''] : data.hashtags,
+      'deleteMediaIds[]': data.deleteMediaIds.isEmpty ? [''] : data.deleteMediaIds,
+    });
+    for (File media in medias) {
+      formData.files.addAll([
+        MapEntry(
+            "medias",
+            await MultipartFile.fromFile(media.path,
+                filename: "${user.name}_${data.title}_${media.path}")),
+      ]);
+    }
+
+    return executeRequest<UpdatePostResponse>(
+      requestFunction: () => dio.put('post/$postId', data: formData),
+      successParser: (data) => UpdatePostResponse.fromJson(data),
+    );
+  }
+
   Future<ApiResult<GetPostResponse>> getPost(String postId) {
     return executeRequest<GetPostResponse>(
       requestFunction: () => dio.get('post/$postId'),
@@ -62,12 +86,12 @@ class PostRepository {
     );
   }
 
-  Future<ApiResult<PaginatePostResponse>> paginatePost(int offset, int limit, String? authorId) {
+  Future<ApiResult<PaginatePostResponse>> paginatePost(PaginatePostQuery query) {
     return executeRequest<PaginatePostResponse>(
       requestFunction: () => dio.get('post/paginate', queryParameters: {
-        'offset': offset,
-        'limit': limit,
-        if (authorId != null) 'authorId': authorId,
+        'paginationQuery': query.paginationQuery.toJson(),
+        if (query.authorId != null) 'authorId': query.authorId,
+        if (query.userRole != null) 'userRole': query.userRole,
       }),
       successParser: (data) => PaginatePostResponse.fromJson(data),
     );

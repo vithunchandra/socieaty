@@ -17,6 +17,7 @@ import 'package:socieaty/features/customer/view/customer_wallet_screen.dart';
 import 'package:socieaty/features/customer/view/update_customer_profile_screen.dart';
 import 'package:socieaty/features/food_menu/customer/view/outlet_food_menu_screen.dart';
 import 'package:socieaty/features/map/view/tracking_map.dart';
+import 'package:socieaty/features/post/post/view/update_post_screen.dart';
 import 'package:socieaty/features/topup/view/track_topup_screen.dart';
 import 'package:socieaty/features/transaction-message/view/chat_screen.dart';
 import 'package:socieaty/features/home/customer/view/home_screen.dart';
@@ -45,7 +46,6 @@ import 'package:socieaty/features/restaurant/view/update_reservation_config_scre
 import 'package:socieaty/features/shop/customer/view/shop_screen.dart';
 import 'package:socieaty/features/shop/customer/view/shop_search_screen.dart';
 import 'package:socieaty/features/food-order/customer/view/create_food_order_screen.dart';
-import 'package:socieaty/features/food-order/model/food_order_transaction.dart';
 import 'package:socieaty/features/food-order/restaurant/view/restaurant_food_order_screen.dart';
 import 'package:socieaty/features/transaction/model/transaction.dart';
 import 'package:socieaty/features/transaction_review/view/restaurant_rating_screen.dart';
@@ -101,6 +101,12 @@ GoRouter router(Ref ref) {
         builder: (context, state) => PostScreen(
           args: state.extra as PostScreenArgs,
         ),
+        routes: [
+          GoRoute(
+            path: 'update',
+            builder: (context, state) => UpdatePostScreen(args: state.extra as UpdatePostScreenArgs),
+          ),
+        ],
       ),
       StatefulShellRoute.indexedStack(
         builder: (context, state, navigationShell) {
@@ -349,18 +355,17 @@ GoRouter router(Ref ref) {
         builder: (context, state) => TrackOrderScreen(
           orderId: state.extra as String,
         ),
-        routes: [
-          GoRoute(
-            path: 'review',
-            builder: (context, state) => RestaurantRatingScreen(
-              transaction: state.extra as FoodOrderTransaction,
-            ),
-          ),
-        ],
+        routes: [],
       ),
       GoRoute(
         path: '/transaction/message',
         builder: (context, state) => ChatScreen(
+          transaction: state.extra as Transaction,
+        ),
+      ),
+      GoRoute(
+        path: '/transaction/review',
+        builder: (context, state) => RestaurantRatingScreen(
           transaction: state.extra as Transaction,
         ),
       ),
