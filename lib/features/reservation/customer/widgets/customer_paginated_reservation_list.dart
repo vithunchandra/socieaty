@@ -48,8 +48,8 @@ class _CustomerPaginatedReservationListState
     try {
       // Use the provided query but update pagination offset
       final paginationQuery = widget.query.paginationQuery.copyWith(
-        offset: pageKey,
-        limit: widget.pageSize,
+        page: pageKey,
+        pageSize: widget.pageSize,
       );
 
       final query = widget.query.copyWith(

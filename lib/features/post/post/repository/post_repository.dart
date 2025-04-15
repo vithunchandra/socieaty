@@ -6,6 +6,7 @@ import 'package:riverpod_annotation/riverpod_annotation.dart';
 import 'package:socieaty/core/constants.dart';
 import 'package:socieaty/core/network/api_client.dart';
 import 'package:socieaty/core/network/api_result.dart';
+import 'package:socieaty/core/utils/custom_extension.dart';
 import 'package:socieaty/core/utils/execute_request.dart';
 import 'package:socieaty/features/authentication/repository/auth_local_repository.dart';
 import 'package:socieaty/features/post/post/repository/request/create_post_form_state.dart';
@@ -58,7 +59,8 @@ class PostRepository {
     );
   }
 
-  Future<ApiResult<UpdatePostResponse>> updatePost(String postId, UpdatePostRequest data, List<File> medias) async {
+  Future<ApiResult<UpdatePostResponse>> updatePost(
+      String postId, UpdatePostRequest data, List<File> medias) async {
     FormData formData = FormData.fromMap({
       ...data.toJson(),
       'hashtags[]': data.hashtags.isEmpty ? [''] : data.hashtags,
@@ -91,7 +93,7 @@ class PostRepository {
       requestFunction: () => dio.get('post/paginate', queryParameters: {
         'paginationQuery': query.paginationQuery.toJson(),
         if (query.authorId != null) 'authorId': query.authorId,
-        if (query.userRole != null) 'userRole': query.userRole,
+        if (query.userRole != null) 'role': query.userRole!.name.toCapitalized(),
       }),
       successParser: (data) => PaginatePostResponse.fromJson(data),
     );

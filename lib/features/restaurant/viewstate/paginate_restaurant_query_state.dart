@@ -7,7 +7,7 @@ part 'paginate_restaurant_query_state.g.dart';
 @freezed
 class PaginateRestaurantQueryState with _$PaginateRestaurantQueryState {
   const factory PaginateRestaurantQueryState({
-    @Default(PaginationQuery(offset: 0, limit: 5)) PaginationQuery paginationQuery,
+    @Default(PaginationQuery(page: 0, pageSize: 5)) PaginationQuery paginationQuery,
     @Default(null) String? name,
     @Default([]) List<String> priceRanges,
     @Default([]) List<int> foodCategories,

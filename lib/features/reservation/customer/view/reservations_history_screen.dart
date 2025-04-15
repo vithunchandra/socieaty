@@ -52,13 +52,13 @@ class _ReservationsHistoryScreenState extends ConsumerState<ReservationsHistoryS
     _activePaginationQuery = PaginateReservationsQuery(
       customerId: customerId,
       reservationStatus: _activeStatuses,
-      paginationQuery: const PaginationQuery(offset: 0, limit: 5),
+      paginationQuery: const PaginationQuery(page: 0, pageSize: 5),
     );
 
     _pastPaginationQuery = PaginateReservationsQuery(
       customerId: customerId,
       reservationStatus: _pastStatuses,
-      paginationQuery: const PaginationQuery(offset: 0, limit: 5),
+      paginationQuery: const PaginationQuery(page: 0, pageSize: 5),
     );
   }
 

@@ -2,11 +2,12 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:socieaty/core/utils/show_snackbar.dart';
+import 'package:socieaty/features/post/post_comment/model/post_comment.dart';
 import 'package:socieaty/features/post/post_comment/repository/response/like_post_comment_response.dart';
-import 'package:socieaty/features/post/post_comment/repository/response/post_comment.dart';
 import 'package:socieaty/features/post/post_comment/viewmodel/post_comment_detail_view_model.dart';
 import 'package:socieaty/shared/view_state.dart';
 import 'package:socieaty/shared/widgets/custom_circle_avatar_widget.dart';
+import 'package:socieaty/shared/widgets/profile_picture_widget.dart';
 
 class PostCommentItemWidget extends ConsumerStatefulWidget {
   final PostComment postComment;
@@ -70,12 +71,17 @@ class _PostCommentItemWidgetState extends ConsumerState<PostCommentItemWidget> {
       }
     });
 
+    
+
     return SizedBox(
       width: double.infinity,
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          CustomCircleAvatarWidget(radius: 20, imageUrl: 'assets/images/person_dummy.jpg'),
+          ProfilePictureWidget(
+            user: widget.postComment.author,
+            radius: 20,
+          ),
           Expanded(
             child: Padding(
               padding: const EdgeInsets.symmetric(horizontal: 12.0),
@@ -84,7 +90,7 @@ class _PostCommentItemWidgetState extends ConsumerState<PostCommentItemWidget> {
                 mainAxisAlignment: MainAxisAlignment.start,
                 children: [
                   Text(
-                    widget.postComment.userName,
+                    widget.postComment.author.name,
                     style: Theme.of(context).textTheme.bodyMedium,
                   ),
                   SizedBox(height: 2),

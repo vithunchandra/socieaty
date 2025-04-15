@@ -28,7 +28,8 @@ class RestaurantPaginatedReservationList extends ConsumerStatefulWidget {
       _RestaurantPaginatedReservationListState();
 }
 
-class _RestaurantPaginatedReservationListState extends ConsumerState<RestaurantPaginatedReservationList> {
+class _RestaurantPaginatedReservationListState
+    extends ConsumerState<RestaurantPaginatedReservationList> {
   late final PagingController<int, Reservation> _pagingController;
   bool _isDisposed = false;
 
@@ -49,7 +50,7 @@ class _RestaurantPaginatedReservationListState extends ConsumerState<RestaurantP
       final query = PaginateReservationsQuery(
         restaurantId: user?.restaurantData?.id,
         reservationStatus: widget.status,
-        paginationQuery: PaginationQuery(offset: pageKey, limit: widget.pageSize),
+        paginationQuery: PaginationQuery(page: pageKey, pageSize: widget.pageSize),
       );
 
       final result = await ref.read(paginateReservationsProvider(query).future);
@@ -60,7 +61,7 @@ class _RestaurantPaginatedReservationListState extends ConsumerState<RestaurantP
       if (isLastPage) {
         _pagingController.appendLastPage(reservations);
       } else {
-        final nextPageKey = result.pagination.nextOffset;
+        final nextPageKey = result.pagination.nextPage;
         _pagingController.appendPage(reservations, nextPageKey);
       }
     } catch (error) {

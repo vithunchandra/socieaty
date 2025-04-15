@@ -20,9 +20,9 @@ class PaginateReservationsQuery with _$PaginateReservationsQuery {
     @ListReservationStatusConverter() @Default([]) List<ReservationStatus> reservationStatus,
     @ReservationSortByConverter() @Default(null) ReservationSortBy? sortBy,
     @SortOrderConverter() @Default(null) SortOrder? sortOrder,
-    @Default(PaginationQuery(offset: 0, limit: 5)) PaginationQuery paginationQuery,
+    @Default(PaginationQuery(page: 0, pageSize: 5)) PaginationQuery paginationQuery,
   }) = _PaginateReservationsQuery;
 
-  factory PaginateReservationsQuery.fromJson(Map<String, dynamic> json) => _$PaginateReservationsQueryFromJson(json);
+  factory PaginateReservationsQuery.fromJson(Map<String, dynamic> json) =>
+      _$PaginateReservationsQueryFromJson(json);
 }
-

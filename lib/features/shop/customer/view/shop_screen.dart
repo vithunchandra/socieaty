@@ -61,8 +61,8 @@ class _ShopScreenState extends ConsumerState<ShopScreen> {
     final restaurantHighlights = ref.watch(paginateRestaurantProvider(
       PaginateRestaurantQueryState(
         paginationQuery: PaginationQuery(
-          offset: 0,
-          limit: 5,
+          page: 0,
+          pageSize: 5,
         ),
       ),
     ));
@@ -70,8 +70,8 @@ class _ShopScreenState extends ConsumerState<ShopScreen> {
     final paginateOutlet = ref.watch(paginateRestaurantProvider(
       PaginateRestaurantQueryState(
         paginationQuery: PaginationQuery(
-          offset: 0,
-          limit: 20,
+          page: 0,
+          pageSize: 20,
         ),
       ),
     ));
@@ -307,8 +307,8 @@ class _ShopScreenState extends ConsumerState<ShopScreen> {
                         ref.invalidate(paginateRestaurantProvider(
                           PaginateRestaurantQueryState(
                             paginationQuery: PaginationQuery(
-                              offset: 0,
-                              limit: 20,
+                              page: 0,
+                              pageSize: 20,
                             ),
                           ),
                         ));

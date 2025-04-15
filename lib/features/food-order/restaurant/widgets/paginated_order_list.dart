@@ -51,7 +51,7 @@ class _PaginatedOrderListState extends ConsumerState<PaginatedOrderList> {
       final query = PaginateOrdersRequestQuery(
         restaurantId: restaurant.restaurantData.id,
         status: widget.statusFilter,
-        paginationQuery: PaginationQuery(offset: pageKey, limit: widget.pageSize),
+        paginationQuery: PaginationQuery(page: pageKey, pageSize: widget.pageSize),
       );
 
       final result = await ref.read(paginateFoodOrdersProvider(query: query).future);

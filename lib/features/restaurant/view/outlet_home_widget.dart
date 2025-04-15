@@ -43,7 +43,7 @@ class _OutletHomeWidgetState extends ConsumerState<OutletHomeWidget> {
     ));
     final posts = ref.watch(
       paginatePostsProvider(PaginatePostQuery(
-        paginationQuery: PaginationQuery(offset: 0, limit: 5),
+        paginationQuery: PaginationQuery(page: 0, pageSize: 5),
         authorId: widget.restaurant.id,
       )),
     );

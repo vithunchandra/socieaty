@@ -9,6 +9,7 @@ import 'package:socieaty/core/theme/theme.dart';
 import 'package:socieaty/core/utils/custom_extension.dart';
 import 'package:socieaty/core/utils/location_handler.dart';
 import 'package:socieaty/core/utils/show_snackbar.dart';
+import 'package:socieaty/features/authentication/provider/get_user_data_provider.dart';
 import 'package:socieaty/features/post/post/repository/response/like_post_response.dart';
 import 'package:socieaty/features/post/post/model/post.dart';
 import 'package:socieaty/features/post/post/view/update_post_screen.dart';
@@ -16,6 +17,9 @@ import 'package:socieaty/features/post/post/viewmodel/post_detail_view_model.dar
 import 'package:socieaty/features/post/post_comment/view/post_comments_widget.dart';
 import 'package:socieaty/features/post/post_media/model/post_media.dart';
 import 'package:socieaty/shared/view_state.dart';
+import 'package:socieaty/shared/widgets/loading_indicator_widget.dart';
+import 'package:socieaty/shared/widgets/profile_avatar_placeholder_widget.dart';
+import 'package:socieaty/shared/widgets/profile_picture_widget.dart';
 import 'package:socieaty/shared/widgets/video_player_widget.dart';
 import 'package:dropdown_button2/dropdown_button2.dart';
 
@@ -110,6 +114,7 @@ class _PostDetailWidgetState extends ConsumerState<PostDetailWidget> {
     final screenWidth = MediaQuery.of(context).size.width;
     int stateComments = ref.watch(postDetailViewModelProvider(postId: widget.post.id)).comments;
     comments = stateComments == -1 ? widget.post.comments : stateComments;
+    final author = ref.watch(getUserDataProvider(widget.post.authorId));
 
     ref.listen(postDetailViewModelProvider(postId: widget.post.id), (_, next) {
       switch (next.likeState) {
@@ -235,16 +240,17 @@ class _PostDetailWidgetState extends ConsumerState<PostDetailWidget> {
                       GestureDetector(
                         onTap: () async {
                           ref.read(appThemeProvider.notifier).setTheme(SocieatyAppTheme.lightTheme);
-                          context.pushReplacement('/${widget.post.authorId}');
+                          context.push('/${widget.post.authorId}');
                         },
-                        child: Material(
-                          color: AppPallete.neutralColor.shade50,
-                          borderRadius: BorderRadius.circular(25),
-                          elevation: 2.0,
-                          child: CircleAvatar(
-                            radius: 22.5,
-                            backgroundImage: AssetImage('assets/images/person_dummy.jpg'),
+                        child: author.when(
+                          data: (data) => ProfilePictureWidget(
+                            user: data,
+                            radius: 20,
                           ),
+                          error: (error, stackTrace) => ProfileAvatarPlaceholderWidget(
+                            name: widget.post.authorName,
+                          ),
+                          loading: () => LoadingIndicatorWidget(size: 20),
                         ),
                       ),
                       SizedBox(height: 16),

@@ -6,8 +6,8 @@ part 'pagination.g.dart';
 @freezed
 class Pagination with _$Pagination {
   const factory Pagination({
-    required int nextOffset,
-    required int previousOffset,
+    required int nextPage,
+    required int previousPage,
     required bool hasNext,
     required bool hasPrevious,
     required int count,

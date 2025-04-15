@@ -49,7 +49,7 @@ class _PostSliverGridWidgetState extends ConsumerState<PostSliverGridWidget> {
         final response = await ref.read(
           paginatePostsProvider(
             PaginatePostQuery(
-              paginationQuery: PaginationQuery(offset: pageKey, limit: _pageSize),
+              paginationQuery: PaginationQuery(page: pageKey, pageSize: _pageSize),
               authorId: widget.authorId,
             ),
           ).future,
@@ -62,7 +62,7 @@ class _PostSliverGridWidgetState extends ConsumerState<PostSliverGridWidget> {
             _pagingController.appendLastPage(newItems);
           }
         } else {
-          final nextPageKey = response.pagination.nextOffset;
+          final nextPageKey = response.pagination.nextPage;
           if (!_isDisposed) {
             _pagingController.appendPage(newItems, nextPageKey);
           }
@@ -99,9 +99,10 @@ class _PostSliverGridWidgetState extends ConsumerState<PostSliverGridWidget> {
                   previousTheme: SocieatyAppTheme.lightTheme,
                   paginatePostQuery: PaginatePostQuery(
                     authorId: widget.authorId,
-                    paginationQuery: PaginationQuery(offset: index, limit: _pageSize),
+                    paginationQuery: PaginationQuery(page: index, pageSize: _pageSize),
                   ),
-                  posts: _pagingController.itemList,
+                  // posts: _pagingController.itemList,
+                  pagingController: _pagingController,
                 ),
               );
             },

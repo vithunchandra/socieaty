@@ -9,7 +9,7 @@ class PostComment with _$PostComment {
   factory PostComment({
     required String id,
     required String postId,
-    required String userName,
+    required SocieatyUser author,
     required String text,
     required List<SocieatyUser> likes,
   }) = _PostComment;

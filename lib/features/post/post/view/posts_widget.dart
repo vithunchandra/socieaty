@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:infinite_scroll_pagination/infinite_scroll_pagination.dart';
 import 'package:socieaty/features/authentication/repository/auth_local_repository.dart';
+import 'package:socieaty/features/home/customer/viewmodel/home_screen_view_model.dart';
 import 'package:socieaty/features/post/post/model/post.dart';
 import 'package:socieaty/features/post/post/provider/paginate_posts_provider.dart';
 import 'package:socieaty/features/post/post/repository/request/paginate_post_query.dart';
@@ -12,8 +13,10 @@ import 'package:socieaty/shared/widgets/loading_indicator_widget.dart';
 
 class PostsWidget extends ConsumerStatefulWidget {
   final PaginatePostQuery? initialQuery;
-  final List<Post>? initialPosts;
-  const PostsWidget({super.key, this.initialQuery, this.initialPosts});
+  final int? initialPostIndex;
+  // final List<Post>? initialPosts;
+  final PagingController<int, Post>? pagingController;
+  const PostsWidget({super.key, this.initialQuery, this.initialPostIndex, this.pagingController});
 
   @override
   ConsumerState<PostsWidget> createState() => _PostsWidgetState();
@@ -40,24 +43,36 @@ class _PostsWidgetState extends ConsumerState<PostsWidget> {
   void initState() {
     super.initState();
 
-    _query = widget.initialQuery ?? PaginatePostQuery(paginationQuery: PaginationQuery(offset: 0, limit: 5));
+    _query = widget.initialQuery ??
+        PaginatePostQuery(paginationQuery: PaginationQuery(page: 0, pageSize: 5));
 
-    _pagingController = PagingController<int, Post>(firstPageKey: _query.paginationQuery.offset);
-    _pageController = PageController(initialPage: _query.paginationQuery.offset);
+    // _pagingController = PagingController<int, Post>(firstPageKey: _query.paginationQuery.page);
 
-    if (widget.initialPosts != null) {
-      _pagingController.appendPage(widget.initialPosts!, widget.initialPosts!.length);
+    if (widget.initialPostIndex != null) {
+      _pageController = PageController(initialPage: widget.initialPostIndex!);
+    } else {
+      _pageController = PageController();
     }
 
-    _pagingController.addPageRequestListener((pageKey) {
-      _fetchPosts(pageKey);
-    });
+    // if (widget.initialPosts != null) {
+    //   _pagingController.appendPage(widget.initialPosts!, widget.initialPosts!.length);
+    // }
 
+    if (widget.pagingController != null) {
+      _pagingController = widget.pagingController!;
+    } else {
+      _pagingController = PagingController<int, Post>(firstPageKey: _query.paginationQuery.page);
+      _pagingController.addPageRequestListener((pageKey) {
+        _fetchPosts(pageKey);
+      });
+    }
   }
 
   Future<void> _fetchPosts(int pageKey) async {
     try {
-      final newQuery = _query.copyWith(paginationQuery: PaginationQuery(offset: pageKey, limit: _query.paginationQuery.limit));
+      final newQuery = _query.copyWith(
+          paginationQuery:
+              PaginationQuery(page: pageKey, pageSize: _query.paginationQuery.pageSize));
       final response = await ref.read(paginatePostsProvider(newQuery).future);
       final newPosts = response.posts;
       final isLastPage = !response.pagination.hasNext;
@@ -66,7 +81,7 @@ class _PostsWidgetState extends ConsumerState<PostsWidget> {
       if (isLastPage) {
         _pagingController.appendLastPage(newPosts);
       } else {
-        final nextPageKey = pageKey + newPosts.length;
+        final nextPageKey = response.pagination.nextPage;
         _pagingController.appendPage(newPosts, nextPageKey);
       }
     } catch (error) {
@@ -76,7 +91,9 @@ class _PostsWidgetState extends ConsumerState<PostsWidget> {
 
   @override
   void dispose() {
-    _pagingController.dispose();
+    if (widget.pagingController == null) {
+      _pagingController.dispose();
+    }
     _pageController.dispose();
     super.dispose();
   }
@@ -113,9 +130,11 @@ class _PostsWidgetState extends ConsumerState<PostsWidget> {
       pagingController: _pagingController,
       scrollDirection: Axis.vertical,
       onPageChanged: (index) {
-        // ref
-        //     .read(homeScreenViewModelProvider.notifier)
-        //     .setCurrentPostId(_pagingController.itemList?[index].id ?? '');
+        if (_pagingController.itemList != null && index < _pagingController.itemList!.length) {
+          ref
+              .read(homeScreenViewModelProvider.notifier)
+              .setCurrentPostId(_pagingController.itemList![index].id);
+        }
       },
       builderDelegate: builderDelegate,
     );

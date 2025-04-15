@@ -50,8 +50,8 @@ class _PostGridWidgetState extends ConsumerState<PostGridWidget> {
           paginatePostsProvider(
             PaginatePostQuery(
               paginationQuery: PaginationQuery(
-                offset: pageKey,
-                limit: _pageSize,
+                page: pageKey,
+                pageSize: _pageSize,
               ),
               authorId: widget.authorId,
             ),
@@ -65,7 +65,7 @@ class _PostGridWidgetState extends ConsumerState<PostGridWidget> {
             _pagingController.appendLastPage(newItems);
           }
         } else {
-          final nextPageKey = response.pagination.nextOffset;
+          final nextPageKey = response.pagination.nextPage;
           if (!_isDisposed) {
             _pagingController.appendPage(newItems, nextPageKey);
           }
@@ -103,11 +103,13 @@ class _PostGridWidgetState extends ConsumerState<PostGridWidget> {
                   paginatePostQuery: PaginatePostQuery(
                     authorId: widget.authorId,
                     paginationQuery: PaginationQuery(
-                      offset: index,
-                      limit: _pageSize,
+                      page: _pagingController.nextPageKey ?? 0,
+                      pageSize: _pageSize,
                     ),
                   ),
-                  posts: _pagingController.itemList,
+                  // posts: _pagingController.itemList,
+                  pagingController: _pagingController,
+                  initialPostIndex: index,
                 ),
               );
             },
