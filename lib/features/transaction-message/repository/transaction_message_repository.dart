@@ -29,7 +29,7 @@ class TransactionMessageRepository {
     String message,
   ) async {
     return executeRequest<CreateTransactionMessageResponse>(
-      requestFunction: () => _dio.post('transactions/order/$transactionId/messages', data: {
+      requestFunction: () => _dio.post('transactions/$transactionId/messages', data: {
         'message': message,
       }),
       successParser: (data) => CreateTransactionMessageResponse.fromJson(data),
@@ -40,7 +40,7 @@ class TransactionMessageRepository {
     String transactionId,
   ) async {
     return executeRequest<TrackTransactionMessageResponse>(
-      requestFunction: () => _dio.get('transactions/order/$transactionId/messages/track'),
+      requestFunction: () => _dio.get('transactions/$transactionId/messages/track'),
       successParser: (data) => TrackTransactionMessageResponse.fromJson(data),
     );
   }

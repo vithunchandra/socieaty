@@ -67,6 +67,7 @@ class _AppState extends ConsumerState<App> {
 
     return ToastificationWrapper(
       child: MaterialApp.router(
+        debugShowCheckedModeBanner: false,
         key: rootNavigatorKey,
         theme: ref.watch(appThemeProvider),
         themeAnimationDuration: const Duration(milliseconds: 0),

@@ -206,7 +206,7 @@ class _OutletReserveScreenState extends ConsumerState<OutletReserveScreen> {
                       ),
                     ),
                     child: Text(
-                      'Proceed to Reservation',
+                      'Konfirmasi Reservasi',
                       style: Theme.of(context).textTheme.titleMedium?.copyWith(
                             color: Colors.white,
                             fontSize: 16,

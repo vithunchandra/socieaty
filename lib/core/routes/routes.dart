@@ -16,8 +16,10 @@ import 'package:socieaty/features/customer/model/socieaty_customer.dart';
 import 'package:socieaty/features/customer/view/customer_wallet_screen.dart';
 import 'package:socieaty/features/customer/view/update_customer_profile_screen.dart';
 import 'package:socieaty/features/food_menu/customer/view/outlet_food_menu_screen.dart';
+import 'package:socieaty/features/livestream/view/live_screen.dart';
 import 'package:socieaty/features/map/view/tracking_map.dart';
 import 'package:socieaty/features/post/post/view/update_post_screen.dart';
+import 'package:socieaty/features/shop/customer/view/map_exploration.screen.dart';
 import 'package:socieaty/features/topup/view/track_topup_screen.dart';
 import 'package:socieaty/features/transaction-message/view/chat_screen.dart';
 import 'package:socieaty/features/home/customer/view/home_screen.dart';
@@ -89,6 +91,14 @@ GoRouter router(Ref ref) {
             child: CreateScreen(args: args),
           );
         },
+        routes: [
+          GoRoute(
+            path: 'live',
+            pageBuilder: (context, state) => NoTransitionPage(
+              child: LiveScreen(args: state.extra as LiveScreenArgs),
+            ),
+          ),
+        ],
       ),
       GoRoute(
         path: '/livestreams',
@@ -167,6 +177,13 @@ GoRouter router(Ref ref) {
                     path: 'history/reservation',
                     pageBuilder: (context, state) => const NoTransitionPage(
                       child: ReservationsHistoryScreen(),
+                    ),
+                  ),
+                  GoRoute(
+                    parentNavigatorKey: rootNavigatorKey,
+                    path: 'map-exploration',
+                    pageBuilder: (context, state) => const NoTransitionPage(
+                      child: MapExplorationScreen(),
                     ),
                   ),
                 ],

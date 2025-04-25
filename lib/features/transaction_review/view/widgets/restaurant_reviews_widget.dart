@@ -56,7 +56,7 @@ class _SliverRestaurantReviewsWidgetState extends ConsumerState<SliverRestaurant
               borderRadius: BorderRadius.circular(50),
             ),
             child: Text(
-              reviewsAsync.value?.length.toString() ?? '0',
+              reviewsAsync.value?.count.toString() ?? '0',
               style: Theme.of(context).textTheme.bodyMedium?.copyWith(
                     fontWeight: FontWeight.w500,
                   ),
@@ -76,27 +76,27 @@ class _SliverRestaurantReviewsWidgetState extends ConsumerState<SliverRestaurant
           ...headerWidgets,
           // Content area that changes based on loading state
           reviewsAsync.when(
-            data: (reviews) {
+            data: (data) {
               // Show rating summary only if there are reviews and showRatingSummary is true
               List<Widget> contentWidgets = [];
 
-              if (reviews.isNotEmpty && widget.showRatingSummary) {
+              if (data.count > 0 && widget.showRatingSummary) {
                 contentWidgets.addAll([
                   _buildRatingSummary(
                       context,
-                      reviews.map((r) => r.rating).reduce((a, b) => a + b) / reviews.length,
-                      reviews.length),
+                      data.rating / data.count,
+                      data.count),
                   const SizedBox(height: 24),
-                  _buildRatingDistribution(context, reviews),
+                  _buildRatingDistribution(context, data.reviews),
                   const SizedBox(height: 32),
                 ]);
               }
 
               // Reviews or empty state
-              if (reviews.isEmpty) {
+              if (data.count == 0) {
                 contentWidgets.add(_buildEmptyState(context));
               } else {
-                contentWidgets.addAll(reviews.map((review) => _buildReviewItem(context, review)));
+                contentWidgets.addAll(data.reviews.map((review) => _buildReviewItem(context, review)));
               }
 
               return Column(children: contentWidgets);

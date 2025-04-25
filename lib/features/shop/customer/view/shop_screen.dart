@@ -103,6 +103,10 @@ class _ShopScreenState extends ConsumerState<ShopScreen> {
                           onTap: () {
                             context.push('/customer/shop/search');
                           },
+                          onRightIconTap: () {
+                            context.push('/customer/shop/map-exploration');
+                          },
+                          rightIcon: Icons.map,
                         ),
                       ),
                       Padding(

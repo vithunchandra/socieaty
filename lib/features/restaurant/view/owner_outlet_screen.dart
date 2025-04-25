@@ -237,10 +237,9 @@ class _OwnerOutletScreenState extends ConsumerState<OwnerOutletScreen>
                               ),
                               reviewsAsync.when(
                                 data: (reviews) {
-                                  final reviewCount = reviews.length;
+                                  final reviewCount = reviews.count;
                                   final averageRating = reviewCount > 0
-                                      ? reviews.map((r) => r.rating).reduce((a, b) => a + b) /
-                                          reviewCount
+                                      ? reviews.rating / reviewCount
                                       : 0.0;
 
                                   return ClipRRect(

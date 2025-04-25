@@ -7,8 +7,10 @@ import 'package:socieaty/core/network/api_client.dart';
 import 'package:socieaty/core/network/api_result.dart';
 import 'package:socieaty/core/utils/execute_request.dart';
 import 'package:socieaty/features/authentication/repository/auth_local_repository.dart';
+import 'package:socieaty/features/restaurant/repository/request/get_nearest_restaurant_request_query.dart';
 import 'package:socieaty/features/restaurant/repository/response/create_reservation_config_response.dart';
 import 'package:socieaty/features/restaurant/repository/response/get_all_restaurant_themes_response.dart';
+import 'package:socieaty/features/restaurant/repository/response/get_nearest_restaurant_response.dart';
 import 'package:socieaty/features/restaurant/repository/response/get_reservation_config_response.dart';
 import 'package:socieaty/features/restaurant/repository/response/get_reservation_facilities_suggestion_response.dart';
 import 'package:socieaty/features/restaurant/repository/response/paginate_restaurant_response.dart';
@@ -74,6 +76,14 @@ class RestaurantRespository {
     return executeRequest<PaginateRestaurantResponse>(
       requestFunction: () => _dio.get('restaurant', queryParameters: queryData),
       successParser: (data) => PaginateRestaurantResponse.fromJson(data),
+    );
+  }
+
+  Future<ApiResult<GetNearestRestaurantResponse>> getNearestRestaurant(
+      GetNearestRestaurantRequestQuery query) {
+    return executeRequest<GetNearestRestaurantResponse>(
+      requestFunction: () => _dio.get('restaurant/nearest', queryParameters: query.toJson()),
+      successParser: (data) => GetNearestRestaurantResponse.fromJson(data),
     );
   }
 

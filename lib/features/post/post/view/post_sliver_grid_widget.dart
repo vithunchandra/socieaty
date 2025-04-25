@@ -99,10 +99,14 @@ class _PostSliverGridWidgetState extends ConsumerState<PostSliverGridWidget> {
                   previousTheme: SocieatyAppTheme.lightTheme,
                   paginatePostQuery: PaginatePostQuery(
                     authorId: widget.authorId,
-                    paginationQuery: PaginationQuery(page: index, pageSize: _pageSize),
+                    paginationQuery: PaginationQuery(
+                      page: _pagingController.nextPageKey ?? 0,
+                      pageSize: _pageSize,
+                    ),
                   ),
                   // posts: _pagingController.itemList,
                   pagingController: _pagingController,
+                  initialPostIndex: index,
                 ),
               );
             },

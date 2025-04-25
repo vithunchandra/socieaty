@@ -195,8 +195,11 @@ class _OwnerFoodMenuScreenState extends ConsumerState<OwnerFoodMenuScreen> {
                                         Icon(Icons.location_on,
                                             color: AppPallete.primaryColor, size: 16),
                                         const SizedBox(width: 4),
-                                        Text(_locationName,
-                                            style: Theme.of(context).textTheme.bodyMedium),
+                                        Expanded(
+                                          child: Text(_locationName,
+                                              style: Theme.of(context).textTheme.bodyMedium,
+                                              overflow: TextOverflow.ellipsis),
+                                        ),
                                       ],
                                     ),
                                     const SizedBox(height: 8),
