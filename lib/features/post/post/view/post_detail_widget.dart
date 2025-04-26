@@ -240,7 +240,8 @@ class _PostDetailWidgetState extends ConsumerState<PostDetailWidget> {
                       GestureDetector(
                         onTap: () async {
                           ref.read(appThemeProvider.notifier).setTheme(SocieatyAppTheme.lightTheme);
-                          context.push('/${widget.post.authorId}');
+                          await context.push('/${widget.post.authorId}');
+                          ref.read(appThemeProvider.notifier).setTheme(SocieatyAppTheme.darkTheme);
                         },
                         child: author.when(
                           data: (data) => ProfilePictureWidget(

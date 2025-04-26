@@ -16,6 +16,7 @@ import 'package:socieaty/features/customer/model/socieaty_customer.dart';
 import 'package:socieaty/features/customer/view/customer_wallet_screen.dart';
 import 'package:socieaty/features/customer/view/update_customer_profile_screen.dart';
 import 'package:socieaty/features/food_menu/customer/view/outlet_food_menu_screen.dart';
+import 'package:socieaty/features/home/admin/view/admin_dashboard_screen.dart';
 import 'package:socieaty/features/livestream/view/live_screen.dart';
 import 'package:socieaty/features/map/view/tracking_map.dart';
 import 'package:socieaty/features/post/post/view/update_post_screen.dart';
@@ -117,6 +118,12 @@ GoRouter router(Ref ref) {
             builder: (context, state) => UpdatePostScreen(args: state.extra as UpdatePostScreenArgs),
           ),
         ],
+      ),
+      GoRoute(
+        path: '/admin',
+        pageBuilder: (context, state) => const NoTransitionPage(
+          child: AdminDashboardScreen(),
+        ),
       ),
       StatefulShellRoute.indexedStack(
         builder: (context, state, navigationShell) {

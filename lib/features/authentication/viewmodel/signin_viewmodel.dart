@@ -31,7 +31,7 @@ class SigninViewmodel extends _$SigninViewmodel {
       case Success(data: final result):
         await _authLocalRepository.setToken(result.token);
         await _authLocalRepository.setUserData(result.user);
-        ref.invalidate(getSessionDataProvider);
+        final session = ref.refresh(getSessionDataProvider);
         state = state.copyWith(signinState: SuccessState(data: result.user));
       case Error(error: final error):
         state = state.copyWith(signinState: ErrorState(message: error.message));

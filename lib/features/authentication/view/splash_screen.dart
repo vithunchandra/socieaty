@@ -38,31 +38,29 @@ class _InitPageState extends ConsumerState<SplashScreen> {
   Widget build(BuildContext context) {
     ref.listen(getSessionDataProvider, (_, next) {
       next.when(
-        data: (data) async {
-          switch (data) {
-            case Success<SocieatyUser>(data: final user):
-              await ref.watch(authLocalRepositoryProvider).setUserData(user);
+        data: (user) async {
+          await ref.watch(authLocalRepositoryProvider).setUserData(user);
 
-              if (user.role == UserRole.customer) {
-                Future.delayed(Duration(seconds: 3), () {
-                  if (context.mounted) {
-                    ref.read(appThemeProvider.notifier).setTheme(SocieatyAppTheme.darkTheme);
-                    context.pushReplacement("/customer/home");
-                  }
-                });
-              } else {
-                Future.delayed(Duration(seconds: 3), () {
-                  if (context.mounted) {
-                    context.pushReplacement("/restaurant/dashboard");
-                  }
-                });
+          if (user.role == UserRole.customer) {
+            Future.delayed(Duration(seconds: 3), () {
+              if (context.mounted) {
+                ref.read(appThemeProvider.notifier).setTheme(SocieatyAppTheme.darkTheme);
+                context.pushReplacement("/customer/home");
               }
-            case Error():
-              Future.delayed(Duration(seconds: 3), () {
-                if (context.mounted) {
-                  context.pushReplacement("/landing");
-                }
-              });
+            });
+          } else if (user.role == UserRole.restaurant) {
+            Future.delayed(Duration(seconds: 3), () {
+              if (context.mounted) {
+                context.pushReplacement("/restaurant/dashboard");
+              }
+            });
+          } else if (user.role == UserRole.admin) {
+            debugPrint("Admin");
+            Future.delayed(Duration(seconds: 3), () {
+              if (context.mounted) {
+                context.pushReplacement("/admin");
+              }
+            });
           }
         },
         error: (message, stackTrace) {

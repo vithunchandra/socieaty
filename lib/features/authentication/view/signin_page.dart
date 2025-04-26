@@ -6,6 +6,7 @@ import 'package:socieaty/core/enums/user_role.enum.dart';
 import 'package:socieaty/core/theme/app_pallete.dart';
 import 'package:socieaty/core/theme/theme.dart';
 import 'package:socieaty/core/utils/show_snackbar.dart';
+import 'package:socieaty/features/authentication/provider/session_provider.dart';
 import 'package:socieaty/features/authentication/viewmodel/signin_viewmodel.dart';
 import 'package:socieaty/features/authentication/viewstate/signin_form_state.dart';
 import 'package:socieaty/shared/view_state.dart';
@@ -37,8 +38,10 @@ class _SignInPageState extends ConsumerState<SignInPage> {
           if (user.role == UserRole.customer) {
             ref.read(appThemeProvider.notifier).setTheme(SocieatyAppTheme.darkTheme);
             context.replace('/customer/home');
-          } else {
+          } else if (user.role == UserRole.restaurant) {
             context.replace('/restaurant/dashboard');
+          } else if (user.role == UserRole.admin) {
+            context.replace('/admin');
           }
           isLoading = false;
         case ErrorState(message: final message):
@@ -133,7 +136,10 @@ class _SignInPageState extends ConsumerState<SignInPage> {
                               }
                             },
                             child: isLoading
-                                ? const LoadingIndicatorWidget(size: 16, color: Colors.white,)
+                                ? const LoadingIndicatorWidget(
+                                    size: 16,
+                                    color: Colors.white,
+                                  )
                                 : const Text("Sign in"),
                           ),
                         ),

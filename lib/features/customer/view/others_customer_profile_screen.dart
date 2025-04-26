@@ -1,14 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:go_router/go_router.dart';
 import 'package:socieaty/core/theme/app_pallete.dart';
 import 'package:socieaty/core/utils/converter.dart';
-import 'package:socieaty/features/account/customer/viewmodel/account_view_model.dart';
-import 'package:socieaty/features/authentication/provider/session_provider.dart';
 import 'package:socieaty/features/customer/model/socieaty_customer.dart';
 import 'package:socieaty/features/post/post/view/post_grid_widget.dart';
-import 'package:socieaty/shared/view_state.dart';
-import 'package:socieaty/shared/widgets/loading_indicator_widget.dart';
 import 'package:socieaty/shared/widgets/profile_picture_widget.dart';
 
 class OtherCustomerProfileScreen extends ConsumerStatefulWidget {
@@ -70,20 +65,6 @@ class _OtherCustomerProfileScreenState extends ConsumerState<OtherCustomerProfil
   @override
   Widget build(BuildContext context) {
     final screenWidth = MediaQuery.of(context).size.width;
-    bool isLoading = ref.watch(accountViewModelProvider).isSignedOut is LoadingState;
-
-    ref.listen(accountViewModelProvider, (_, next) {
-      switch (next.isSignedOut) {
-        case SuccessState<bool>():
-          ref.invalidate(getSessionDataProvider);
-          context.go('/landing');
-        case ErrorState():
-          ref.invalidate(getSessionDataProvider);
-          context.go('/landing');
-        case LoadingState():
-        case IdleState():
-      }
-    });
 
     return DefaultTabController(
       length: 2,
@@ -106,76 +87,73 @@ class _OtherCustomerProfileScreenState extends ConsumerState<OtherCustomerProfil
               : Text(widget.user.name),
           centerTitle: true,
         ),
-        body: isLoading
-            ? const LoadingIndicatorWidget(size: 32)
-            : NestedScrollView(
-                controller: _scrollController,
-                headerSliverBuilder: (context, innerBoxIsScrolled) {
-                  return [
-                    SliverToBoxAdapter(
-                      child: Container(
-                        key: _profileHeaderKey,
-                        child: Column(
-                          children: [
-                            const SizedBox(height: 20),
-                            PhysicalModel(
-                              color: AppPallete.neutralColor.shade50,
-                              elevation: 2.0,
-                              shadowColor: AppPallete.neutralColor,
-                              borderRadius: BorderRadius.circular(50),
-                              child: ProfilePictureWidget(
-                                radius: 50,
-                                user: UserConverter.customerToUser(widget.user),
-                              ),
-                            ),
-                            const SizedBox(height: 8),
-                            Text("@${widget.user.email}",
-                                style: Theme.of(context).textTheme.titleMedium),
-                            const SizedBox(height: 20),
-                            Row(
-                              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                              children: [
-                                _buildStatColumn("Following", "1"),
-                                _buildStatColumn("Followers", "0"),
-                                _buildStatColumn("Likes", "0"),
-                              ],
-                            ),
-                            const SizedBox(height: 20),
-                            SizedBox(
-                              width: screenWidth * 0.6,
-                              child: Text(
-                                widget.user.customerData.bio,
-                                textAlign: TextAlign.center,
-                              ),
-                            ),
-                            const SizedBox(height: 20),
-                          ],
+        body: NestedScrollView(
+          controller: _scrollController,
+          headerSliverBuilder: (context, innerBoxIsScrolled) {
+            return [
+              SliverToBoxAdapter(
+                child: Container(
+                  key: _profileHeaderKey,
+                  child: Column(
+                    children: [
+                      const SizedBox(height: 20),
+                      PhysicalModel(
+                        color: AppPallete.neutralColor.shade50,
+                        elevation: 2.0,
+                        shadowColor: AppPallete.neutralColor,
+                        borderRadius: BorderRadius.circular(50),
+                        child: ProfilePictureWidget(
+                          radius: 50,
+                          user: UserConverter.customerToUser(widget.user),
                         ),
                       ),
-                    ),
-                    SliverPersistentHeader(
-                      pinned: true,
-                      delegate: _SliverAppBarDelegate(
-                        TabBar(
-                          indicatorColor: AppPallete.primaryColor,
-                          labelColor: AppPallete.primaryColor,
-                          unselectedLabelColor: AppPallete.neutralColor.shade400,
-                          tabs: const [
-                            Tab(icon: Icon(Icons.grid_on)),
-                            Tab(icon: Icon(Icons.favorite_border)),
-                          ],
+                      const SizedBox(height: 8),
+                      Text("@${widget.user.email}", style: Theme.of(context).textTheme.titleMedium),
+                      const SizedBox(height: 20),
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                        children: [
+                          _buildStatColumn("Following", "1"),
+                          _buildStatColumn("Followers", "0"),
+                          _buildStatColumn("Likes", "0"),
+                        ],
+                      ),
+                      const SizedBox(height: 20),
+                      SizedBox(
+                        width: screenWidth * 0.6,
+                        child: Text(
+                          widget.user.customerData.bio,
+                          textAlign: TextAlign.center,
                         ),
                       ),
-                    ),
-                  ];
-                },
-                body: TabBarView(
-                  children: [
-                    PostGridWidget(authorId: widget.user.id),
-                    Center(child: Text("Favorite Content")),
-                  ],
+                      const SizedBox(height: 20),
+                    ],
+                  ),
                 ),
               ),
+              SliverPersistentHeader(
+                pinned: true,
+                delegate: _SliverAppBarDelegate(
+                  TabBar(
+                    indicatorColor: AppPallete.primaryColor,
+                    labelColor: AppPallete.primaryColor,
+                    unselectedLabelColor: AppPallete.neutralColor.shade400,
+                    tabs: const [
+                      Tab(icon: Icon(Icons.grid_on)),
+                      Tab(icon: Icon(Icons.favorite_border)),
+                    ],
+                  ),
+                ),
+              ),
+            ];
+          },
+          body: TabBarView(
+            children: [
+              PostGridWidget(authorId: widget.user.id),
+              Center(child: Text("Favorite Content")),
+            ],
+          ),
+        ),
       ),
     );
   }

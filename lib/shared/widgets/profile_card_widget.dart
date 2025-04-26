@@ -1,8 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:socieaty/core/network/api_result.dart';
 import 'package:socieaty/features/authentication/provider/session_provider.dart';
-import 'package:socieaty/features/user/model/socieaty_user.dart';
 import 'package:socieaty/shared/widgets/loading_indicator_widget.dart';
 import 'package:socieaty/shared/widgets/profile_picture_widget.dart';
 
@@ -18,13 +16,11 @@ class _ProfileCardState extends ConsumerState<ProfileCardWidget> {
   Widget build(BuildContext context) {
     return ref.watch(getSessionDataProvider).when(
       data: (user) {
-        switch (user) {
-          case Success<SocieatyUser>(data: final user):
-            return Row(
+        return Row(
               mainAxisAlignment: MainAxisAlignment.start,
               children: [
                 ProfilePictureWidget(radius: 22.5, user: user),
-                SizedBox(width: 12),
+                const SizedBox(width: 12),
                 Column(
                   mainAxisAlignment: MainAxisAlignment.start,
                   crossAxisAlignment: CrossAxisAlignment.start,
@@ -41,9 +37,6 @@ class _ProfileCardState extends ConsumerState<ProfileCardWidget> {
                 )
               ],
             );
-          case Error(error: final error):
-            return Text(error.message);
-        }
       },
       error: (error, stack) {
         return Text(error.toString());
