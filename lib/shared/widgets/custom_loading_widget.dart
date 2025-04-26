@@ -5,7 +5,13 @@ import 'package:socieaty/shared/widgets/loading_indicator_widget.dart';
 class CustomLoadingWidget extends StatelessWidget {
   final String title;
   final String subtitle;
-  const CustomLoadingWidget({super.key, required this.title, required this.subtitle});
+  final double? size;
+  const CustomLoadingWidget({
+    super.key,
+    required this.title,
+    required this.subtitle,
+    this.size = 36,
+  });
 
   @override
   Widget build(BuildContext context) {

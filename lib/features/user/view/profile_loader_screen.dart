@@ -52,11 +52,11 @@ class _ProfileLoaderScreenState extends ConsumerState<ProfileLoaderScreen> {
             return OtherOutletScreen(restaurant: UserConverter.userToRestaurant(userData));
           }
         } else {
-          return const Scaffold(
-            body: Center(
-              child: Text('User not found'),
-            ),
-          );
+          if (userData.role == UserRole.customer || userData.role == UserRole.admin) {
+            return OtherCustomerProfileScreen(user: UserConverter.userToCustomer(userData));
+          } else {
+            return OtherOutletScreen(restaurant: UserConverter.userToRestaurant(userData));
+          }
         }
       },
       error: (error, stackTrace) => Scaffold(

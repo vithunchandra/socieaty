@@ -3,6 +3,8 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 import 'package:socieaty/features/account/restaurant/view/restaurant_account_screen.dart';
+import 'package:socieaty/features/admin/view/configure_content_screen.dart';
+import 'package:socieaty/features/admin/view/configure_user_screen.dart';
 import 'package:socieaty/features/authentication/repository/auth_local_repository.dart';
 import 'package:socieaty/features/authentication/view/landing_page.dart';
 import 'package:socieaty/features/authentication/view/signin_page.dart';
@@ -124,6 +126,20 @@ GoRouter router(Ref ref) {
         pageBuilder: (context, state) => const NoTransitionPage(
           child: AdminDashboardScreen(),
         ),
+        routes: [
+          GoRoute(
+            path: 'configure-user',
+            pageBuilder: (context, state) => const NoTransitionPage(
+              child: ConfigureUserScreen(),
+            ),
+          ),
+          GoRoute(
+            path: 'configure-content',
+            pageBuilder: (context, state) => const NoTransitionPage(
+              child: ConfigureContentScreen(),
+            ),
+          ),
+        ],
       ),
       StatefulShellRoute.indexedStack(
         builder: (context, state, navigationShell) {

@@ -6,7 +6,6 @@ import 'package:socieaty/core/enums/user_role.enum.dart';
 import 'package:socieaty/core/theme/app_pallete.dart';
 import 'package:socieaty/core/theme/theme.dart';
 import 'package:socieaty/core/utils/show_snackbar.dart';
-import 'package:socieaty/features/authentication/provider/session_provider.dart';
 import 'package:socieaty/features/authentication/viewmodel/signin_viewmodel.dart';
 import 'package:socieaty/features/authentication/viewstate/signin_form_state.dart';
 import 'package:socieaty/shared/view_state.dart';

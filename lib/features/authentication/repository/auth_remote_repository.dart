@@ -81,12 +81,12 @@ class AuthRemoteRepository {
     );
   }
 
-  Future<ApiResult<SocieatyUser>> getUserData(String id) {
-    return executeRequest<SocieatyUser>(
-      requestFunction: () => dio.get(
-        'auth/$id',
-      ),
-      successParser: (data) => SocieatyUser.fromJson(data),
-    );
-  }
+  // Future<ApiResult<SocieatyUser>> getUserData(String id) {
+  //   return executeRequest<SocieatyUser>(
+  //     requestFunction: () => dio.get(
+  //       'auth/$id',
+  //     ),
+  //     successParser: (data) => SocieatyUser.fromJson(data),
+  //   );
+  // }
 }

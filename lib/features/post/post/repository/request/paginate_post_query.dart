@@ -10,6 +10,7 @@ part 'paginate_post_query.g.dart';
 class PaginatePostQuery with _$PaginatePostQuery {
   const factory PaginatePostQuery({
     @Default(PaginationQuery()) PaginationQuery paginationQuery,
+    String? searchQuery,
     String? authorId,
     @UserRoleConverter() UserRole? userRole,
   }) = _PaginatePostQuery;

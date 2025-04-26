@@ -7,6 +7,7 @@ import 'package:socieaty/features/authentication/provider/get_user_data_provider
 import 'package:socieaty/features/authentication/provider/session_provider.dart';
 import 'package:socieaty/features/authentication/repository/auth_local_repository.dart';
 import 'package:socieaty/shared/view_state.dart';
+import 'package:socieaty/shared/widgets/custom_loading_widget.dart';
 import 'package:socieaty/shared/widgets/loading_indicator_widget.dart';
 
 class AdminDashboardScreen extends ConsumerStatefulWidget {
@@ -26,26 +27,32 @@ class _AdminDashboardScreenState extends ConsumerState<AdminDashboardScreen> {
       switch (next.isSignedOut) {
         case SuccessState<bool>():
           ref.invalidate(getSessionDataProvider);
-          context.go('/landing');
+          context.go('/signin');
         case ErrorState():
           ref.invalidate(getSessionDataProvider);
-          context.go('/landing');
+          context.go('/signin');
         case LoadingState():
         case IdleState():
       }
     });
 
-    if (admin == null) {
-      context.go('/landing');
+    if (isLoading || admin == null) {
+      return Scaffold(
+        body: const CustomLoadingWidget(
+          title: 'Signing out...',
+          subtitle: 'Please wait while we sign you out',
+        ),
+      );
     }
 
-    return ref.watch(getUserDataProvider(admin!.id)).when(
+    return ref.watch(getUserDataProvider(admin.id)).when(
           data: (userData) {
             return _buildDashboardScreen(context, userData.name, isLoading);
           },
           loading: () => const Scaffold(
-            body: Center(
-              child: CircularProgressIndicator(),
+            body: CustomLoadingWidget(
+              title: 'Loading admin data...',
+              subtitle: 'Please wait while we load the admin data',
             ),
           ),
           error: (error, stackTrace) {
@@ -206,7 +213,7 @@ class _AdminDashboardScreenState extends ConsumerState<AdminDashboardScreen> {
           'User Configuration',
           AppPallete.secondaryColor,
           onTap: () {
-            // Navigate to user configuration screen
+            context.push('/admin/configure-user');
           },
         ),
         _buildOptionCard(
@@ -224,7 +231,7 @@ class _AdminDashboardScreenState extends ConsumerState<AdminDashboardScreen> {
           'Content Configuration',
           AppPallete.warningColor,
           onTap: () {
-            // Navigate to content configuration screen
+            context.push('/admin/configure-content');
           },
         ),
         _buildOptionCard(

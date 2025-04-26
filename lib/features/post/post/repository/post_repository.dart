@@ -13,6 +13,7 @@ import 'package:socieaty/features/post/post/repository/request/create_post_form_
 import 'package:socieaty/features/post/post/repository/request/paginate_post_query.dart';
 import 'package:socieaty/features/post/post/repository/request/update_post_request.dart';
 import 'package:socieaty/features/post/post/repository/response/create_post_response.dart';
+import 'package:socieaty/features/post/post/repository/response/delete_post_response.dart';
 import 'package:socieaty/features/post/post/repository/response/get_post_response.dart';
 import 'package:socieaty/features/post/post/repository/response/like_post_response.dart';
 import 'package:socieaty/features/post/post/repository/response/paginate_post_response.dart';
@@ -103,6 +104,13 @@ class PostRepository {
     return executeRequest<LikePostResponse>(
       requestFunction: () => dio.put('post/$postId/like', data: {'isLiked': isLiked}),
       successParser: (data) => LikePostResponse.fromJson(data),
+    );
+  }
+
+  Future<ApiResult<DeletePostResponse>> deletePost(String postId) {
+    return executeRequest<DeletePostResponse>(
+      requestFunction: () => dio.delete('post/$postId'),
+      successParser: (data) => DeletePostResponse.fromJson(data),
     );
   }
 }

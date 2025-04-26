@@ -255,12 +255,12 @@ class _MapExplorationScreenState extends ConsumerState<MapExplorationScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final screenWidth = MediaQuery.of(context).size.width;
-
     if (_isLoadingRestaurants && _isFirstLoading) {
-      return const CustomLoadingWidget(
-        title: "Mencari restoran...",
-        subtitle: "Mohon tunggu sebentar",
+      return Scaffold(
+        body: const CustomLoadingWidget(
+          title: "Mencari restoran...",
+          subtitle: "Mohon tunggu sebentar",
+        ),
       );
     }
 

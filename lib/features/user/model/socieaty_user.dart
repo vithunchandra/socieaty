@@ -18,6 +18,7 @@ class SocieatyUser with _$SocieatyUser {
     @UserRoleConverter() required UserRole role,
     @Default(null) RestaurantData? restaurantData,
     @Default(null) CustomerData? customerData,
+    @Default(false) bool isDeleted,
   }) = _SocieatyUser;
 
   factory SocieatyUser.fromJson(Map<String, dynamic> json) => _$SocieatyUserFromJson(json);
