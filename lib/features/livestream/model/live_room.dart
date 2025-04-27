@@ -10,6 +10,9 @@ class LiveRoom with _$LiveRoom {
     required String roomName,
     required LiveRoomMetadata metadata,
     required SocieatyUser owner,
+    required int views,
+    required int likesCount,
+    required int commentsCount,
     required DateTime createdAt,
   }) = _LiveRoom;
 

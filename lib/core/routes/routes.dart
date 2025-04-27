@@ -4,6 +4,7 @@ import 'package:go_router/go_router.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 import 'package:socieaty/features/account/restaurant/view/restaurant_account_screen.dart';
 import 'package:socieaty/features/admin/view/configure_content_screen.dart';
+import 'package:socieaty/features/admin/view/configure_livestreams_screen.dart';
 import 'package:socieaty/features/admin/view/configure_user_screen.dart';
 import 'package:socieaty/features/authentication/repository/auth_local_repository.dart';
 import 'package:socieaty/features/authentication/view/landing_page.dart';
@@ -19,8 +20,11 @@ import 'package:socieaty/features/customer/view/customer_wallet_screen.dart';
 import 'package:socieaty/features/customer/view/update_customer_profile_screen.dart';
 import 'package:socieaty/features/food_menu/customer/view/outlet_food_menu_screen.dart';
 import 'package:socieaty/features/home/admin/view/admin_dashboard_screen.dart';
+import 'package:socieaty/features/livestream/model/live_room.dart';
 import 'package:socieaty/features/livestream/view/live_screen.dart';
+import 'package:socieaty/features/livestream/view/livestream_widget.dart';
 import 'package:socieaty/features/map/view/tracking_map.dart';
+import 'package:socieaty/features/post/post/view/post_detail_widget.dart';
 import 'package:socieaty/features/post/post/view/update_post_screen.dart';
 import 'package:socieaty/features/shop/customer/view/map_exploration.screen.dart';
 import 'package:socieaty/features/topup/view/track_topup_screen.dart';
@@ -117,7 +121,8 @@ GoRouter router(Ref ref) {
         routes: [
           GoRoute(
             path: 'update',
-            builder: (context, state) => UpdatePostScreen(args: state.extra as UpdatePostScreenArgs),
+            builder: (context, state) =>
+                UpdatePostScreen(args: state.extra as UpdatePostScreenArgs),
           ),
         ],
       ),
@@ -138,6 +143,30 @@ GoRouter router(Ref ref) {
             pageBuilder: (context, state) => const NoTransitionPage(
               child: ConfigureContentScreen(),
             ),
+            routes: [
+              GoRoute(
+                path: 'detail',
+                pageBuilder: (context, state) => NoTransitionPage(
+                  child: PostDetailWidget(
+                    args: state.extra as PostDetailWidgetArgs,
+                  ),
+                ),
+              ),
+              GoRoute(
+                path: 'livestream',
+                pageBuilder: (context, state) => const NoTransitionPage(
+                  child: ConfigureLivestreamsScreen(),
+                ),
+                routes: [
+                  GoRoute(
+                    path: 'detail',
+                    pageBuilder: (context, state) => NoTransitionPage(
+                      child: LivestreamWidget(state.extra as LiveRoom),
+                    ),
+                  ),
+                ],
+              ),
+            ],
           ),
         ],
       ),

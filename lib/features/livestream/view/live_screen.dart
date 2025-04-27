@@ -236,7 +236,7 @@ class _LiveScreenState extends ConsumerState<LiveScreen> {
     ref.listen(liveScreenViewModelProvider, (_, next) {
       switch (next.isDeleted) {
         case SuccessState<bool>():
-          context.popUntilPath('/create_screen');
+          context.popUntilPath('/create_content');
         case ErrorState(message: final message):
           showSnackbar(context, "error: $message");
         case LoadingState():

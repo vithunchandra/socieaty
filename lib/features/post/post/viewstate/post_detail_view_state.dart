@@ -1,4 +1,5 @@
 import 'package:freezed_annotation/freezed_annotation.dart';
+import 'package:socieaty/features/post/post/repository/response/delete_post_response.dart';
 import 'package:socieaty/features/post/post/repository/response/like_post_response.dart';
 import 'package:socieaty/shared/view_state.dart';
 
@@ -10,5 +11,6 @@ class PostDetailViewState with _$PostDetailViewState {
     required String postId,
     required int comments,
     required ViewState<LikePostResponse> likeState,
+    required ViewState<String> deleteState,
   }) = _PostDetailViewState;
 }

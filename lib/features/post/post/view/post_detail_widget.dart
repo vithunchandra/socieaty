@@ -23,18 +23,18 @@ import 'package:socieaty/shared/widgets/profile_picture_widget.dart';
 import 'package:socieaty/shared/widgets/video_player_widget.dart';
 import 'package:dropdown_button2/dropdown_button2.dart';
 
-typedef PostUpdateCallback = void Function(Post updatedPost);
-
-class PostDetailWidget extends ConsumerStatefulWidget {
+class PostDetailWidgetArgs {
   final Post post;
   final String userId;
-  final PostUpdateCallback onUpdate;
-  const PostDetailWidget({
-    super.key,
-    required this.post,
-    required this.userId,
-    required this.onUpdate,
-  });
+  final void Function(Post post)? onUpdate;
+  final void Function(Post post)? onDelete;
+  PostDetailWidgetArgs({required this.post, required this.userId, this.onUpdate, this.onDelete});
+}
+
+class PostDetailWidget extends ConsumerStatefulWidget {
+  final PostDetailWidgetArgs args;
+  const PostDetailWidget({super.key, required this.args});
+
   @override
   ConsumerState<PostDetailWidget> createState() => _PostDetailWidgetState();
 }
@@ -54,32 +54,32 @@ class _PostDetailWidgetState extends ConsumerState<PostDetailWidget> {
   void initState() {
     super.initState();
     _pageController = PageController();
-    if (widget.post.location != null) {
+    if (widget.args.post.location != null) {
       getLocationName();
     }
-    isLiked = widget.post.likes.any((like) => like.id == widget.userId);
-    likes = widget.post.likes.length;
-    hashtags = widget.post.hashtags.map((hashtag) => hashtag.tag).toList().toHashtags();
-    postMedia = widget.post.medias;
+    isLiked = widget.args.post.likes.any((like) => like.id == widget.args.userId);
+    likes = widget.args.post.likes.length;
+    hashtags = widget.args.post.hashtags.map((hashtag) => hashtag.tag).toList().toHashtags();
+    postMedia = widget.args.post.medias;
   }
 
   @override
   void didUpdateWidget(covariant PostDetailWidget oldWidget) {
     super.didUpdateWidget(oldWidget);
-    ref.invalidate(postDetailViewModelProvider(postId: oldWidget.post.id));
+    ref.invalidate(postDetailViewModelProvider(postId: oldWidget.args.post.id));
     _pageController = PageController();
-    if (widget.post.location != null) {
+    if (widget.args.post.location != null) {
       getLocationName();
     }
-    if (oldWidget.post.likes.any((like) => like.id == widget.userId) !=
-        widget.post.likes.any((like) => like.id == widget.userId)) {
-      isLiked = widget.post.likes.any((like) => like.id == widget.userId);
+    if (oldWidget.args.post.likes.any((like) => like.id == widget.args.userId) !=
+        widget.args.post.likes.any((like) => like.id == widget.args.userId)) {
+      isLiked = widget.args.post.likes.any((like) => like.id == widget.args.userId);
     }
-    if (oldWidget.post.likes.length != widget.post.likes.length) {
-      likes = widget.post.likes.length;
+    if (oldWidget.args.post.likes.length != widget.args.post.likes.length) {
+      likes = widget.args.post.likes.length;
     }
-    hashtags = widget.post.hashtags.map((hashtag) => hashtag.tag).toList().toHashtags();
-    postMedia = widget.post.medias;
+    hashtags = widget.args.post.hashtags.map((hashtag) => hashtag.tag).toList().toHashtags();
+    postMedia = widget.args.post.medias;
   }
 
   @override
@@ -93,13 +93,13 @@ class _PostDetailWidgetState extends ConsumerState<PostDetailWidget> {
       _debounce?.cancel();
     }
     _debounce = Timer(_debounceDuration, () {
-      ref.read(postDetailViewModelProvider(postId: widget.post.id).notifier).likePost(isLiked);
+      ref.read(postDetailViewModelProvider(postId: widget.args.post.id).notifier).likePost(isLiked);
     });
   }
 
   void getLocationName() async {
-    if (widget.post.location != null) {
-      var location = await LocationHandler.getAddressFromLatLng(widget.post.location!);
+    if (widget.args.post.location != null) {
+      var location = await LocationHandler.getAddressFromLatLng(widget.args.post.location!);
       locationName = "${location?.street}, ${location?.locality}, ${location?.country}";
       if (mounted) {
         WidgetsBinding.instance.addPostFrameCallback((_) {
@@ -112,11 +112,16 @@ class _PostDetailWidgetState extends ConsumerState<PostDetailWidget> {
   @override
   Widget build(BuildContext context) {
     final screenWidth = MediaQuery.of(context).size.width;
-    int stateComments = ref.watch(postDetailViewModelProvider(postId: widget.post.id)).comments;
-    comments = stateComments == -1 ? widget.post.comments : stateComments;
-    final author = ref.watch(getUserDataProvider(widget.post.authorId));
+    int stateComments =
+        ref.watch(postDetailViewModelProvider(postId: widget.args.post.id)).comments;
+    comments = stateComments == -1 ? widget.args.post.comments : stateComments;
+    final author = ref.watch(getUserDataProvider(widget.args.post.authorId));
 
-    ref.listen(postDetailViewModelProvider(postId: widget.post.id), (_, next) {
+    final isDeleteStateLoading = ref
+        .watch(postDetailViewModelProvider(postId: widget.args.post.id))
+        .deleteState is LoadingState;
+
+    ref.listen(postDetailViewModelProvider(postId: widget.args.post.id), (_, next) {
       switch (next.likeState) {
         case SuccessState<LikePostResponse>(data: final data):
           WidgetsBinding.instance.addPostFrameCallback((_) {
@@ -126,7 +131,9 @@ class _PostDetailWidgetState extends ConsumerState<PostDetailWidget> {
                 likes = data.likes;
               });
             }
-            widget.onUpdate(data.updatedPost);
+            if (widget.args.onUpdate != null) {
+              widget.args.onUpdate!(data.updatedPost);
+            }
           });
           break;
         case ErrorState(message: final message):
@@ -138,44 +145,51 @@ class _PostDetailWidgetState extends ConsumerState<PostDetailWidget> {
         case IdleState():
           break;
       }
+
+      switch (next.deleteState) {
+        case SuccessState<String>(data: final data):
+          if (widget.args.onDelete != null) {
+            widget.args.onDelete!(widget.args.post);
+          }
+          showSnackbar(context, "Sukses menghapus postingan");
+          break;
+        case ErrorState(message: final message):
+          showSnackbar(context, message);
+        default:
+          break;
+      }
     });
 
-    return SizedBox(
-      width: double.infinity,
-      height: double.infinity,
-      child: Stack(
+    return Scaffold(
+      body: Stack(
         children: [
-          SizedBox(
-            width: double.infinity,
-            height: double.infinity,
-            child: PageView(
-              controller: _pageController,
-              children: [
-                ...postMedia.map(
-                  (media) => media.type == "image"
-                      ? Align(
-                          alignment: Alignment.center,
-                          child: Image.network(
-                            media.url,
-                            fit: BoxFit.contain,
-                            errorBuilder: (context, error, stackTrace) {
-                              return SizedBox(
-                                width: screenWidth * 0.5,
-                                height: screenWidth * 0.5,
-                                child: Icon(Icons.image_not_supported_outlined),
-                              );
-                            },
-                          ),
-                        )
-                      : Center(
-                          child: VideoPlayerWidget(
-                            videoUrl: media.url,
-                            postId: widget.post.id,
-                          ),
+          PageView(
+            controller: _pageController,
+            children: [
+              ...postMedia.map(
+                (media) => media.type == "image"
+                    ? Align(
+                        alignment: Alignment.center,
+                        child: Image.network(
+                          media.url,
+                          fit: BoxFit.contain,
+                          errorBuilder: (context, error, stackTrace) {
+                            return SizedBox(
+                              width: screenWidth * 0.5,
+                              height: screenWidth * 0.5,
+                              child: Icon(Icons.image_not_supported_outlined),
+                            );
+                          },
                         ),
-                ),
-              ],
-            ),
+                      )
+                    : Center(
+                        child: VideoPlayerWidget(
+                          videoUrl: media.url,
+                          postId: widget.args.post.id,
+                        ),
+                      ),
+              ),
+            ],
           ),
           Positioned(
             bottom: 0,
@@ -193,7 +207,7 @@ class _PostDetailWidgetState extends ConsumerState<PostDetailWidget> {
                       children: [
                         SizedBox(height: 12.0),
                         Text(
-                          widget.post.title,
+                          widget.args.post.title,
                           style: Theme.of(context).textTheme.titleSmall?.copyWith(
                             shadows: <Shadow>[
                               Shadow(
@@ -206,7 +220,7 @@ class _PostDetailWidgetState extends ConsumerState<PostDetailWidget> {
                         ),
                         SizedBox(height: 4.0),
                         Text(
-                          widget.post.caption,
+                          widget.args.post.caption,
                           style: Theme.of(context).textTheme.bodyMedium?.copyWith(
                             shadows: <Shadow>[
                               Shadow(
@@ -240,7 +254,7 @@ class _PostDetailWidgetState extends ConsumerState<PostDetailWidget> {
                       GestureDetector(
                         onTap: () async {
                           ref.read(appThemeProvider.notifier).setTheme(SocieatyAppTheme.lightTheme);
-                          await context.push('/${widget.post.authorId}');
+                          await context.push('/${widget.args.post.authorId}');
                           ref.read(appThemeProvider.notifier).setTheme(SocieatyAppTheme.darkTheme);
                         },
                         child: author.when(
@@ -249,13 +263,15 @@ class _PostDetailWidgetState extends ConsumerState<PostDetailWidget> {
                             radius: 20,
                           ),
                           error: (error, stackTrace) => ProfileAvatarPlaceholderWidget(
-                            name: widget.post.authorName,
+                            name: widget.args.post.authorName,
                           ),
                           loading: () => LoadingIndicatorWidget(size: 20),
                         ),
                       ),
                       SizedBox(height: 16),
-                      if (widget.userId == widget.post.authorId)
+                      if (isDeleteStateLoading)
+                        LoadingIndicatorWidget(size: 20)
+                      else if (widget.args.userId == widget.args.post.authorId)
                         DropdownButtonHideUnderline(
                           child: DropdownButton2(
                             customButton: Icon(
@@ -305,13 +321,16 @@ class _PostDetailWidgetState extends ConsumerState<PostDetailWidget> {
                                   context.push(
                                     '/posts/update',
                                     extra: UpdatePostScreenArgs(
-                                      post: widget.post,
+                                      post: widget.args.post,
                                       lastTheme: SocieatyAppTheme.darkTheme,
                                     ),
                                   );
                                   break;
                                 case 'delete':
-                                  break;
+                                  ref
+                                      .read(postDetailViewModelProvider(postId: widget.args.post.id)
+                                          .notifier)
+                                      .deletePost();
                               }
                             },
                             dropdownStyleData: DropdownStyleData(
@@ -358,15 +377,17 @@ class _PostDetailWidgetState extends ConsumerState<PostDetailWidget> {
                               return Padding(
                                 padding: EdgeInsets.only(
                                     bottom: MediaQuery.of(context).viewInsets.bottom),
-                                child: PostCommentsWidget(postId: widget.post.id),
+                                child: PostCommentsWidget(postId: widget.args.post.id),
                               );
                             },
                           );
 
-                          ref.invalidate(getPostProvider(widget.post.id));
+                          ref.invalidate(getPostProvider(widget.args.post.id));
                           final updatedPost =
-                              await ref.watch(getPostProvider(widget.post.id).future);
-                          widget.onUpdate(updatedPost);
+                              await ref.watch(getPostProvider(widget.args.post.id).future);
+                          if (widget.args.onUpdate != null) {
+                            widget.args.onUpdate!(updatedPost);
+                          }
                         },
                         iconSize: 28,
                         icon: Icon(Icons.comment_outlined),

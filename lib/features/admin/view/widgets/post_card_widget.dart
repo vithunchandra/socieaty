@@ -2,10 +2,14 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
+import 'package:socieaty/app_theme_provider.dart';
 import 'package:socieaty/core/theme/app_pallete.dart';
+import 'package:socieaty/core/theme/theme.dart';
 import 'package:socieaty/core/utils/show_snackbar.dart';
 import 'package:socieaty/features/admin/viewmodel/post_configuration_card_view_model.dart';
+import 'package:socieaty/features/authentication/repository/auth_local_repository.dart';
 import 'package:socieaty/features/post/post/model/post.dart';
+import 'package:socieaty/features/post/post/view/post_detail_widget.dart';
 import 'package:socieaty/shared/view_state.dart';
 import 'package:socieaty/shared/widgets/image_error_widget.dart';
 import 'package:socieaty/shared/widgets/image_loading_widget.dart';
@@ -29,9 +33,6 @@ class _PostCardWidgetState extends ConsumerState<PostCardWidget> {
 
   @override
   Widget build(BuildContext context) {
-    final viewModel = ref.watch(postConfigurationCardViewModelProvider(widget.post.id));
-    final deleteResponse = viewModel.deleteResponse;
-
     ref.listen(postConfigurationCardViewModelProvider(widget.post.id), (previous, next) {
       final deleteResponse = next.deleteResponse;
 
@@ -56,20 +57,36 @@ class _PostCardWidgetState extends ConsumerState<PostCardWidget> {
       }
     });
 
-    return Card(
-      elevation: 2,
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(12),
-      ),
-      clipBehavior: Clip.antiAlias,
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          _buildPostHeader(),
-          if (widget.post.medias.isNotEmpty) _buildMediaPreview(),
-          _buildPostDetails(),
-          _buildActionButtons(context, ref),
-        ],
+    final userId = ref.watch(authLocalRepositoryProvider).getUserData()!.id;
+
+    return InkWell(
+      onTap: () async {
+        ref.read(appThemeProvider.notifier).setTheme(SocieatyAppTheme.darkTheme);
+        await context.push(
+          "/admin/configure-content/detail",
+          extra: PostDetailWidgetArgs(
+            post: widget.post,
+            userId: userId,
+          ),
+        );
+        ref.read(appThemeProvider.notifier).setTheme(SocieatyAppTheme.lightTheme);
+      },
+      child: Card(
+        elevation: 2,
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(12),
+        ),
+        color: Colors.white,
+        clipBehavior: Clip.antiAlias,
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            _buildPostHeader(),
+            if (widget.post.medias.isNotEmpty) _buildMediaPreview(),
+            _buildPostDetails(),
+            _buildActionButtons(context, ref),
+          ],
+        ),
       ),
     );
   }

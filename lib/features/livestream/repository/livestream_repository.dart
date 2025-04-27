@@ -4,8 +4,10 @@ import 'package:riverpod_annotation/riverpod_annotation.dart';
 import 'package:socieaty/core/constants.dart';
 import 'package:socieaty/core/network/api_client.dart';
 import 'package:socieaty/core/network/api_result.dart';
+import 'package:socieaty/core/utils/custom_extension.dart';
 import 'package:socieaty/core/utils/execute_request.dart';
 import 'package:socieaty/features/authentication/repository/auth_local_repository.dart';
+import 'package:socieaty/features/livestream/repository/request/get_all_livestream_request_query.dart';
 import 'package:socieaty/features/livestream/repository/response/delete_livestream_room_response.dart';
 import 'package:socieaty/features/livestream/repository/response/get_livestream_comments_response.dart';
 import 'package:socieaty/features/livestream/repository/response/get_livestream_likes_response.dart';
@@ -47,42 +49,48 @@ class LivestreamRepository {
     );
   }
 
-  Future<ApiResult<GetLivestreamRoomsResponse>> getLivestreamRooms() {
+  Future<ApiResult<GetLivestreamRoomsResponse>> getLivestreamRooms(
+      GetAllLivestreamRequestQuery query) {
+    final queryData = {
+      if (query.searchQuery != null) 'searchQuery': query.searchQuery,
+      if (query.role != null) 'role': query.role!.name.toCapitalized(),
+    };
     return executeRequest<GetLivestreamRoomsResponse>(
-      requestFunction: () => _dio.get('livestream/'),
+      requestFunction: () => _dio.get('livestream/', queryParameters: queryData),
       successParser: (data) => GetLivestreamRoomsResponse.fromJson(data),
     );
   }
 
-  Future<ApiResult<SendLivestreamCommentResponse>> sendLivestreamComment(String roomName, String text){
+  Future<ApiResult<SendLivestreamCommentResponse>> sendLivestreamComment(
+      String roomName, String text) {
     return executeRequest<SendLivestreamCommentResponse>(
       requestFunction: () => _dio.post('livestream/$roomName/comment', data: {'text': text}),
       successParser: (data) => SendLivestreamCommentResponse.fromJson(data),
     );
   }
 
-  Future<ApiResult<GetLivestreamCommentsResponse>> getLivestreamComments(String roomName){
+  Future<ApiResult<GetLivestreamCommentsResponse>> getLivestreamComments(String roomName) {
     return executeRequest<GetLivestreamCommentsResponse>(
       requestFunction: () => _dio.get('livestream/$roomName/comment'),
       successParser: (data) => GetLivestreamCommentsResponse.fromJson(data),
     );
   }
 
-  Future<ApiResult<SendLivestreamLikeResponse>> sendLivestreamLike(String roomName, bool isLiked){
+  Future<ApiResult<SendLivestreamLikeResponse>> sendLivestreamLike(String roomName, bool isLiked) {
     return executeRequest<SendLivestreamLikeResponse>(
       requestFunction: () => _dio.post('livestream/$roomName/like', data: {'isLiked': isLiked}),
       successParser: (data) => SendLivestreamLikeResponse.fromJson(data),
     );
   }
 
-  Future<ApiResult<GetLivestreamLikesResponse>> getLivestreamLikes(String roomName){
+  Future<ApiResult<GetLivestreamLikesResponse>> getLivestreamLikes(String roomName) {
     return executeRequest<GetLivestreamLikesResponse>(
       requestFunction: () => _dio.get('livestream/$roomName/like'),
       successParser: (data) => GetLivestreamLikesResponse.fromJson(data),
     );
   }
 
-  Future<ApiResult<DeleteLivestreamRoomResponse>> deleteLivestreamRoom(String roomName){
+  Future<ApiResult<DeleteLivestreamRoomResponse>> deleteLivestreamRoom(String roomName) {
     return executeRequest<DeleteLivestreamRoomResponse>(
       requestFunction: () => _dio.delete('livestream/$roomName'),
       successParser: (data) => DeleteLivestreamRoomResponse.fromJson(data),

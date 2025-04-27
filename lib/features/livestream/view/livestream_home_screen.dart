@@ -6,6 +6,7 @@ import 'package:socieaty/core/theme/theme.dart';
 import 'package:socieaty/core/utils/show_snackbar.dart';
 import 'package:socieaty/features/livestream/model/live_room.dart';
 import 'package:socieaty/features/livestream/provider/livestream_room_provider.dart';
+import 'package:socieaty/features/livestream/repository/request/get_all_livestream_request_query.dart';
 import 'package:socieaty/shared/provider/navigation_provider.dart';
 import 'package:socieaty/features/livestream/view/livestream_widget.dart';
 import 'package:socieaty/shared/widgets/custom_scroll_physics.dart';
@@ -22,6 +23,13 @@ class _LivestreamHomeScreenState extends ConsumerState<LivestreamHomeScreen> {
   final PageController _pageController = PageController();
   List<LiveRoom> _rooms = [];
   bool _isLoading = false;
+  late GetAllLivestreamRequestQuery _query;
+
+  @override
+  void initState() {
+    super.initState();
+    _query = GetAllLivestreamRequestQuery();
+  }
 
   @override
   void dispose() {
@@ -31,8 +39,8 @@ class _LivestreamHomeScreenState extends ConsumerState<LivestreamHomeScreen> {
 
   @override
   Widget build(BuildContext context) {
-    _isLoading = ref.watch(getLivestreamRoomsProvider) is AsyncLoading;
-    ref.listen(getLivestreamRoomsProvider, (previous, next) {
+    _isLoading = ref.watch(getLivestreamRoomsProvider(_query)) is AsyncLoading;
+    ref.listen(getLivestreamRoomsProvider(_query), (previous, next) {
       switch (next) {
         case AsyncData(value: final value):
           _rooms = value;

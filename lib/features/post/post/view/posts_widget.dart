@@ -39,6 +39,14 @@ class _PostsWidgetState extends ConsumerState<PostsWidget> {
     }
   }
 
+  void _deletePostInPagingController(Post deletedPost) {
+    final itemList = _pagingController.itemList;
+    if (itemList != null) {
+      itemList.removeWhere((post) => post.id == deletedPost.id);
+      _pagingController.itemList = List<Post>.from(itemList);
+    }
+  }
+
   @override
   void initState() {
     super.initState();
@@ -103,11 +111,16 @@ class _PostsWidgetState extends ConsumerState<PostsWidget> {
     final builderDelegate = PagedChildBuilderDelegate<Post>(
       itemBuilder: (context, item, index) {
         return PostDetailWidget(
-          post: item,
-          userId: ref.watch(authLocalRepositoryProvider).getUserData()!.id,
-          onUpdate: (post) {
-            _updatePostInPagingController(post);
-          },
+          args: PostDetailWidgetArgs(
+            post: item,
+            userId: ref.watch(authLocalRepositoryProvider).getUserData()!.id,
+            onUpdate: (post) {
+              _updatePostInPagingController(post);
+            },
+            onDelete: (post) {
+              _deletePostInPagingController(post);
+            },
+          ),
         );
       },
       firstPageProgressIndicatorBuilder: (_) => const LoadingIndicatorWidget(size: 36),

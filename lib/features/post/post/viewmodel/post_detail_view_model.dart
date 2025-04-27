@@ -1,6 +1,7 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 import 'package:socieaty/core/network/api_result.dart';
+import 'package:socieaty/features/post/post/repository/response/delete_post_response.dart';
 import 'package:socieaty/features/post/post/repository/response/get_post_response.dart';
 import 'package:socieaty/features/post/post/repository/response/like_post_response.dart';
 import 'package:socieaty/features/post/post/model/post.dart';
@@ -28,7 +29,12 @@ class PostDetailViewModel extends _$PostDetailViewModel {
   @override
   PostDetailViewState build({required String postId}) {
     _postRepository = ref.watch(postRepositoryProvider);
-    return PostDetailViewState(postId: postId, likeState: IdleState(), comments: -1);
+    return PostDetailViewState(
+      postId: postId,
+      likeState: IdleState(),
+      comments: -1,
+      deleteState: IdleState(),
+    );
   }
 
   Future<void> likePost(bool isLiked) async {
@@ -44,5 +50,16 @@ class PostDetailViewModel extends _$PostDetailViewModel {
 
   Future<void> setComments(int comments) async {
     state = state.copyWith(comments: comments);
+  }
+
+  Future<void> deletePost() async {
+    state = state.copyWith(deleteState: LoadingState());
+    final result = await _postRepository.deletePost(state.postId);
+    switch (result) {
+      case Success<DeletePostResponse>(data: final data):
+        state = state.copyWith(deleteState: SuccessState(data: data.message));
+      case Error(error: final error):
+        state = state.copyWith(deleteState: ErrorState(message: error.message));
+    }
   }
 }

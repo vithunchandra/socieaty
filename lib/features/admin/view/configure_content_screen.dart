@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
 import 'package:infinite_scroll_pagination/infinite_scroll_pagination.dart';
 import 'package:socieaty/core/enums/user_role.enum.dart';
 import 'package:socieaty/core/theme/app_pallete.dart';
@@ -92,6 +93,15 @@ class _ConfigureContentScreenState extends ConsumerState<ConfigureContentScreen>
         centerTitle: true,
         backgroundColor: Colors.white,
         elevation: 0,
+        actions: [
+          IconButton(
+            icon: const Icon(Icons.live_tv),
+            tooltip: 'Manage Livestreams',
+            onPressed: () {
+              context.go('/admin/configure-content/livestream');
+            },
+          ),
+        ],
       ),
       body: Column(
         children: [
