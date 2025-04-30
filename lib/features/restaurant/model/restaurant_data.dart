@@ -2,6 +2,7 @@ import 'package:freezed_annotation/freezed_annotation.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:socieaty/core/enums/bank.enum.dart';
 import 'package:socieaty/core/utils/converter.dart';
+import 'package:socieaty/features/restaurant/enum/restaurant_verification_status_enum.dart';
 import 'package:socieaty/features/restaurant/model/restaurant_theme.dart';
 
 part 'restaurant_data.freezed.dart';
@@ -20,6 +21,7 @@ class RestaurantData with _$RestaurantData {
     required String openTime,
     required String closeTime,
     required bool isReservationAvailable,
+    @RestaurantVerificationStatusConverter() required RestaurantVerificationStatus isAccountVerified,
   }) = _RestaurantData;
 
   factory RestaurantData.fromJson(Map<String, dynamic> json) => _$RestaurantDataFromJson(json);

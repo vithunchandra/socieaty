@@ -51,7 +51,11 @@ class _InitPageState extends ConsumerState<SplashScreen> {
           } else if (user.role == UserRole.restaurant) {
             Future.delayed(Duration(seconds: 3), () {
               if (context.mounted) {
-                context.pushReplacement("/restaurant/dashboard");
+                if (user.restaurantData!.isAccountVerified) {
+                  context.pushReplacement("/restaurant/dashboard");
+                } else {
+                  context.pushReplacement("/restaurant/verify");
+                }
               }
             });
           } else if (user.role == UserRole.admin) {

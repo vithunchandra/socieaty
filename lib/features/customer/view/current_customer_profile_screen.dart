@@ -162,6 +162,16 @@ class _CurrentCustomerProfileScreenState extends ConsumerState<CurrentCustomerPr
                     ),
                   ),
                   DropdownMenuItem(
+                    value: 'support',
+                    child: Row(
+                      children: [
+                        Icon(Icons.support_agent_outlined, color: AppPallete.neutralColor.shade800),
+                        const SizedBox(width: 10),
+                        Text('Support', style: Theme.of(context).textTheme.titleSmall),
+                      ],
+                    ),
+                  ),
+                  DropdownMenuItem(
                     value: 'logout',
                     child: Row(
                       children: [
@@ -176,6 +186,9 @@ class _CurrentCustomerProfileScreenState extends ConsumerState<CurrentCustomerPr
                   switch (value) {
                     case 'balance':
                       context.push('/customer/profile/wallet');
+                      break;
+                    case 'support':
+                      context.push('/customer-support');
                       break;
                     case 'logout':
                       ref.read(accountViewModelProvider.notifier).signout();

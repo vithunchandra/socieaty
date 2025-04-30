@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:socieaty/core/theme/app_pallete.dart';
-import 'package:socieaty/features/reservation/enum/reservation_status_enum.dart';
 import 'package:socieaty/features/reservation/provider/get_reservations_provider.dart';
 import 'package:socieaty/features/reservation/repository/request/get_reservations_query.dart';
 import 'package:socieaty/features/reservation/restaurant/provider/new_reservation_notification_provider.dart';

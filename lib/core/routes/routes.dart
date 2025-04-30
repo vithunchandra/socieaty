@@ -27,6 +27,10 @@ import 'package:socieaty/features/map/view/tracking_map.dart';
 import 'package:socieaty/features/post/post/view/post_detail_widget.dart';
 import 'package:socieaty/features/post/post/view/update_post_screen.dart';
 import 'package:socieaty/features/shop/customer/view/map_exploration.screen.dart';
+import 'package:socieaty/features/support-ticket/model/support_ticket.dart';
+import 'package:socieaty/features/support-ticket/view/create_support_ticket_screen.dart';
+import 'package:socieaty/features/support-ticket/view/customer_support_screen.dart';
+import 'package:socieaty/features/support-ticket/view/support_chat_screen.dart';
 import 'package:socieaty/features/topup/view/track_topup_screen.dart';
 import 'package:socieaty/features/transaction-message/view/chat_screen.dart';
 import 'package:socieaty/features/home/customer/view/home_screen.dart';
@@ -165,6 +169,18 @@ GoRouter router(Ref ref) {
                     ),
                   ),
                 ],
+              ),
+            ],
+          ),
+          GoRoute(
+            path: 'customer-support',
+            pageBuilder: (context, state) => const NoTransitionPage(child: CustomerSupportScreen()),
+            routes: [
+              GoRoute(
+                path: ':ticketId',
+                pageBuilder: (context, state) => NoTransitionPage(
+                  child: SupportChatScreen(ticket: state.extra as SupportTicket),
+                ),
               ),
             ],
           ),
@@ -410,6 +426,26 @@ GoRouter router(Ref ref) {
                 ),
               ),
             ],
+          ),
+        ],
+      ),
+      GoRoute(
+        path: '/customer-support',
+        pageBuilder: (context, state) => const NoTransitionPage(
+          child: CustomerSupportScreen(),
+        ),
+        routes: [
+          GoRoute(
+            path: 'create',
+            pageBuilder: (context, state) => const NoTransitionPage(
+              child: CreateSupportTicketScreen(),
+            ),
+          ),
+          GoRoute(
+            path: ':ticketId',
+            pageBuilder: (context, state) => NoTransitionPage(
+              child: SupportChatScreen(ticket: state.extra as SupportTicket),
+            ),
           ),
         ],
       ),

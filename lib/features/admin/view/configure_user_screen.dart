@@ -1,19 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:go_router/go_router.dart';
 import 'package:infinite_scroll_pagination/infinite_scroll_pagination.dart';
 import 'package:socieaty/core/enums/user_role.enum.dart';
 import 'package:socieaty/core/theme/app_pallete.dart';
-import 'package:socieaty/core/utils/show_snackbar.dart';
-import 'package:socieaty/features/admin/viewmodel/user_configuration_card_view_model.dart';
 import 'package:socieaty/features/user/model/socieaty_user.dart';
 import 'package:socieaty/features/user/provider/paginate_users_provider.dart';
 import 'package:socieaty/features/user/repository/request/paginate_users_request_query.dart';
 import 'package:socieaty/shared/models/pagination_query.dart';
-import 'package:socieaty/shared/view_state.dart';
 import 'package:socieaty/shared/widgets/custom_error_widget.dart';
 import 'package:socieaty/shared/widgets/custom_loading_widget.dart';
-import 'package:socieaty/shared/widgets/loading_indicator_widget.dart';
 import 'package:socieaty/features/admin/view/widgets/user_card_widget.dart';
 
 class ConfigureUserScreen extends ConsumerStatefulWidget {

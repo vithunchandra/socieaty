@@ -12,9 +12,11 @@ import 'package:socieaty/features/reservation/enum/reservation_sort_by_enum.dart
 import 'package:socieaty/features/reservation/enum/reservation_status_enum.dart';
 import 'package:socieaty/features/reservation/model/reservation.dart';
 import 'package:socieaty/features/restaurant/model/socieaty_restaurant.dart';
+import 'package:socieaty/features/support-ticket/enum/support_ticket_status_enum.dart';
 import 'package:socieaty/features/topup/enum/topup_status_enum.dart';
 import 'package:socieaty/features/transaction/model/transaction.dart';
 import 'package:socieaty/features/user/model/socieaty_user.dart';
+import 'package:socieaty/features/restaurant/enum/restaurant_verification_status_enum.dart';
 
 class LatLngConverter implements JsonConverter<LatLng, Map<String, dynamic>> {
   const LatLngConverter();
@@ -194,6 +196,20 @@ class TopupStatusConverter implements JsonConverter<TopupStatusEnum, String> {
   }
 }
 
+class SupportTicketStatusConverter implements JsonConverter<SupportTicketStatus, String> {
+  const SupportTicketStatusConverter();
+
+  @override
+  SupportTicketStatus fromJson(String json) {
+    return SupportTicketStatus.values.firstWhere((element) => element.name == json);
+  }
+
+  @override
+  String toJson(SupportTicketStatus object) {
+    return object.name;
+  }
+}
+
 class ReservationSortByConverter implements JsonConverter<ReservationSortBy, String> {
   const ReservationSortByConverter();
 
@@ -218,6 +234,20 @@ class SortOrderConverter implements JsonConverter<SortOrder, String> {
 
   @override
   String toJson(SortOrder object) {
+    return object.name;
+  }
+}
+
+class RestaurantVerificationStatusConverter implements JsonConverter<RestaurantVerificationStatus, String> {
+  const RestaurantVerificationStatusConverter();
+
+  @override
+  RestaurantVerificationStatus fromJson(String json) {
+    return RestaurantVerificationStatus.values.firstWhere((element) => element.name == json);
+  }
+
+  @override
+  String toJson(RestaurantVerificationStatus object) {
     return object.name;
   }
 }

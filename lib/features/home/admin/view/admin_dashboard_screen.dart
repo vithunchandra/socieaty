@@ -240,7 +240,7 @@ class _AdminDashboardScreenState extends ConsumerState<AdminDashboardScreen> {
           'Customer Support',
           AppPallete.errorColor,
           onTap: () {
-            // Navigate to customer support screen
+            context.push('/admin/customer-support');
           },
         ),
       ],

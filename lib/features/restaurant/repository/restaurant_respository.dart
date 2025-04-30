@@ -7,14 +7,17 @@ import 'package:socieaty/core/network/api_client.dart';
 import 'package:socieaty/core/network/api_result.dart';
 import 'package:socieaty/core/utils/execute_request.dart';
 import 'package:socieaty/features/authentication/repository/auth_local_repository.dart';
+import 'package:socieaty/features/restaurant/repository/request/get_all_unverified_restaurant_request_query.dart';
 import 'package:socieaty/features/restaurant/repository/request/get_nearest_restaurant_request_query.dart';
 import 'package:socieaty/features/restaurant/repository/response/create_reservation_config_response.dart';
 import 'package:socieaty/features/restaurant/repository/response/get_all_restaurant_themes_response.dart';
+import 'package:socieaty/features/restaurant/repository/response/get_all_unverified_restaurant_response.dart';
 import 'package:socieaty/features/restaurant/repository/response/get_nearest_restaurant_response.dart';
 import 'package:socieaty/features/restaurant/repository/response/get_reservation_config_response.dart';
 import 'package:socieaty/features/restaurant/repository/response/get_reservation_facilities_suggestion_response.dart';
 import 'package:socieaty/features/restaurant/repository/response/paginate_restaurant_response.dart';
 import 'package:socieaty/features/restaurant/repository/response/update_reservation_config_response.dart';
+import 'package:socieaty/features/restaurant/repository/response/verify_resturant_account_response.dart';
 import 'package:socieaty/features/restaurant/viewstate/create_reservation_config_form_state.dart';
 import 'package:socieaty/features/restaurant/viewstate/paginate_restaurant_query_state.dart';
 import 'package:socieaty/features/restaurant/viewstate/update_reservation_config_form_state.dart';
@@ -79,6 +82,19 @@ class RestaurantRespository {
     );
   }
 
+  Future<ApiResult<GetAllUnverifiedRestaurantResponse>> getAllUnverifiedRestaurant(
+    GetAllUnverifiedRestaurantRequestQuery query,
+  ) {
+    final queryData = {
+      'name': query.name,
+      'themes[]': query.themes,
+    };
+    return executeRequest<GetAllUnverifiedRestaurantResponse>(
+      requestFunction: () => _dio.get('restaurant/unverified', queryParameters: queryData),
+      successParser: (data) => GetAllUnverifiedRestaurantResponse.fromJson(data),
+    );
+  }
+
   Future<ApiResult<GetNearestRestaurantResponse>> getNearestRestaurant(
       GetNearestRestaurantRequestQuery query) {
     return executeRequest<GetNearestRestaurantResponse>(
@@ -99,6 +115,13 @@ class RestaurantRespository {
     return executeRequest<GetReservationFacilitiesSuggestionResponse>(
       requestFunction: () => _dio.get('restaurant/facilities', queryParameters: {'name': name}),
       successParser: (data) => GetReservationFacilitiesSuggestionResponse.fromJson(data),
+    );
+  }
+
+  Future<ApiResult<VerifyRestaurantAccountResponse>> verifyRestaurantAccount(String restaurantId) {
+    return executeRequest<VerifyRestaurantAccountResponse>(
+      requestFunction: () => _dio.post('restaurant/verify/$restaurantId'),
+      successParser: (data) => VerifyRestaurantAccountResponse.fromJson(data),
     );
   }
 }

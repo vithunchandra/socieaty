@@ -4,6 +4,7 @@ import 'package:go_router/go_router.dart';
 import 'package:socieaty/core/theme/app_pallete.dart';
 import 'package:socieaty/features/menu_item/model/menu_item.dart';
 import 'package:socieaty/features/reservation/enum/reservation_status_enum.dart';
+import 'package:socieaty/features/support-ticket/enum/support_ticket_status_enum.dart';
 
 extension StringCasingExtension on String {
   String toCapitalized() {
@@ -131,6 +132,17 @@ extension ReservationStatusExtension on ReservationStatus {
         return 'menunggu';
       case ReservationStatus.rejected:
         return 'ditolak';
+    }
+  }
+}
+
+extension SupportTicketStatusExtension on SupportTicketStatus {
+  Color getStatusColor() {
+    switch (this) {
+      case SupportTicketStatus.open:
+        return AppPallete.successColor;
+      case SupportTicketStatus.closed:
+        return AppPallete.neutralColor.shade500;
     }
   }
 }
