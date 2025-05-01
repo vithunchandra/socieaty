@@ -9,6 +9,7 @@ import 'package:socieaty/core/theme/app_pallete.dart';
 import 'package:socieaty/core/theme/theme.dart';
 import 'package:socieaty/features/authentication/provider/session_provider.dart';
 import 'package:socieaty/features/authentication/repository/auth_local_repository.dart';
+import 'package:socieaty/features/restaurant/enum/restaurant_verification_status_enum.dart';
 import 'package:socieaty/features/user/model/socieaty_user.dart';
 
 class SplashScreen extends ConsumerStatefulWidget {
@@ -51,10 +52,13 @@ class _InitPageState extends ConsumerState<SplashScreen> {
           } else if (user.role == UserRole.restaurant) {
             Future.delayed(Duration(seconds: 3), () {
               if (context.mounted) {
-                if (user.restaurantData!.isAccountVerified) {
+                if (user.restaurantData!.verificationStatus == RestaurantVerificationStatus.verified) {
                   context.pushReplacement("/restaurant/dashboard");
+                } else if (user.restaurantData!.verificationStatus ==
+                    RestaurantVerificationStatus.unverified) {
+                  context.pushReplacement("/restaurant/unverified");
                 } else {
-                  context.pushReplacement("/restaurant/verify");
+                  context.pushReplacement("/restaurant/rejected");
                 }
               }
             });

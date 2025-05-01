@@ -5,7 +5,9 @@ import 'package:riverpod_annotation/riverpod_annotation.dart';
 import 'package:socieaty/features/account/restaurant/view/restaurant_account_screen.dart';
 import 'package:socieaty/features/admin/view/configure_content_screen.dart';
 import 'package:socieaty/features/admin/view/configure_livestreams_screen.dart';
+import 'package:socieaty/features/admin/view/configure_unverified_restaurant_screen.dart';
 import 'package:socieaty/features/admin/view/configure_user_screen.dart';
+import 'package:socieaty/features/admin/view/verify_restaurant_screen.dart';
 import 'package:socieaty/features/authentication/repository/auth_local_repository.dart';
 import 'package:socieaty/features/authentication/view/landing_page.dart';
 import 'package:socieaty/features/authentication/view/signin_page.dart';
@@ -26,6 +28,9 @@ import 'package:socieaty/features/livestream/view/livestream_widget.dart';
 import 'package:socieaty/features/map/view/tracking_map.dart';
 import 'package:socieaty/features/post/post/view/post_detail_widget.dart';
 import 'package:socieaty/features/post/post/view/update_post_screen.dart';
+import 'package:socieaty/features/restaurant/view/rejected_restaurant_screen.dart';
+import 'package:socieaty/features/restaurant/view/unverified_restaurant_screen.dart';
+import 'package:socieaty/features/restaurant/view/update_restaurant_data_screen.dart';
 import 'package:socieaty/features/shop/customer/view/map_exploration.screen.dart';
 import 'package:socieaty/features/support-ticket/model/support_ticket.dart';
 import 'package:socieaty/features/support-ticket/view/create_support_ticket_screen.dart';
@@ -68,6 +73,7 @@ import 'package:socieaty/features/customer/view/customer_scaffold_with_navbar.da
 import 'package:socieaty/features/food-order/customer/view/track_order_screen.dart';
 import 'package:socieaty/features/food-order/restaurant/view/restaurant_food_order_history_screen.dart';
 import 'package:socieaty/features/food-order/customer/view/order_history_screen.dart';
+import 'package:socieaty/features/map/view/restaurant_location_screen.dart';
 
 part 'routes.g.dart';
 
@@ -94,6 +100,13 @@ GoRouter router(Ref ref) {
             }),
       ]),
       GoRoute(path: '/select_location', builder: (context, state) => const SelectLocation()),
+      GoRoute(
+        path: '/restaurant-location',
+        builder: (context, state) {
+          final args = state.extra as RestaurantLocationScreenArgs;
+          return RestaurantLocationScreen(args: args);
+        },
+      ),
       GoRoute(
         path: '/create_content',
         pageBuilder: (context, state) {
@@ -180,6 +193,22 @@ GoRouter router(Ref ref) {
                 path: ':ticketId',
                 pageBuilder: (context, state) => NoTransitionPage(
                   child: SupportChatScreen(ticket: state.extra as SupportTicket),
+                ),
+              ),
+            ],
+          ),
+          GoRoute(
+            path: 'restaurant-verification',
+            pageBuilder: (context, state) => const NoTransitionPage(
+              child: ConfigureUnverifiedRestaurantScreen(),
+            ),
+            routes: [
+              GoRoute(
+                path: 'detail',
+                pageBuilder: (context, state) => NoTransitionPage(
+                  child: VerifyRestaurantScreen(
+                    args: state.extra as VerifyRestaurantScreenArgs,
+                  ),
                 ),
               ),
             ],
@@ -426,6 +455,28 @@ GoRouter router(Ref ref) {
                 ),
               ),
             ],
+          ),
+        ],
+      ),
+      GoRoute(
+        path: '/restaurant/unverified',
+        pageBuilder: (context, state) => const NoTransitionPage(
+          child: UnverifiedRestaurantScreen(),
+        ),
+      ),
+      GoRoute(
+        path: '/restaurant/rejected',
+        pageBuilder: (context, state) => const NoTransitionPage(
+          child: RejectedRestaurantScreen(),
+        ),
+        routes: [
+          GoRoute(
+            path: 'update',
+            pageBuilder: (context, state) => NoTransitionPage(
+              child: UpdateRestaurantDataScreen(
+                restaurant: state.extra as SocieatyRestaurant,
+              ),
+            ),
           ),
         ],
       ),

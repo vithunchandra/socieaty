@@ -21,7 +21,7 @@ class RestaurantData with _$RestaurantData {
     required String openTime,
     required String closeTime,
     required bool isReservationAvailable,
-    @RestaurantVerificationStatusConverter() required RestaurantVerificationStatus isAccountVerified,
+    @RestaurantVerificationStatusConverter() required RestaurantVerificationStatus verificationStatus,
   }) = _RestaurantData;
 
   factory RestaurantData.fromJson(Map<String, dynamic> json) => _$RestaurantDataFromJson(json);

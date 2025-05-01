@@ -243,6 +243,15 @@ class _AdminDashboardScreenState extends ConsumerState<AdminDashboardScreen> {
             context.push('/admin/customer-support');
           },
         ),
+        _buildOptionCard(
+          context,
+          Icons.verified,
+          'Restaurant Verification',
+          AppPallete.successColor,
+          onTap: () {
+            context.push('/admin/restaurant-verification');
+          },
+        ),
       ],
     );
   }

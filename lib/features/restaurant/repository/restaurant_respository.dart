@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -7,8 +9,12 @@ import 'package:socieaty/core/network/api_client.dart';
 import 'package:socieaty/core/network/api_result.dart';
 import 'package:socieaty/core/utils/execute_request.dart';
 import 'package:socieaty/features/authentication/repository/auth_local_repository.dart';
+import 'package:socieaty/features/restaurant/enum/restaurant_verification_status_enum.dart';
+import 'package:socieaty/features/restaurant/model/socieaty_restaurant.dart';
 import 'package:socieaty/features/restaurant/repository/request/get_all_unverified_restaurant_request_query.dart';
 import 'package:socieaty/features/restaurant/repository/request/get_nearest_restaurant_request_query.dart';
+import 'package:socieaty/features/restaurant/repository/request/update_restaurant_data_request.dart';
+import 'package:socieaty/features/restaurant/repository/request/update_restaurant_verification_status_request.dart';
 import 'package:socieaty/features/restaurant/repository/response/create_reservation_config_response.dart';
 import 'package:socieaty/features/restaurant/repository/response/get_all_restaurant_themes_response.dart';
 import 'package:socieaty/features/restaurant/repository/response/get_all_unverified_restaurant_response.dart';
@@ -17,6 +23,7 @@ import 'package:socieaty/features/restaurant/repository/response/get_reservation
 import 'package:socieaty/features/restaurant/repository/response/get_reservation_facilities_suggestion_response.dart';
 import 'package:socieaty/features/restaurant/repository/response/paginate_restaurant_response.dart';
 import 'package:socieaty/features/restaurant/repository/response/update_reservation_config_response.dart';
+import 'package:socieaty/features/restaurant/repository/response/update_restaurant_data_response.dart';
 import 'package:socieaty/features/restaurant/repository/response/verify_resturant_account_response.dart';
 import 'package:socieaty/features/restaurant/viewstate/create_reservation_config_form_state.dart';
 import 'package:socieaty/features/restaurant/viewstate/paginate_restaurant_query_state.dart';
@@ -48,6 +55,31 @@ class RestaurantRespository {
     return executeRequest<CreateReservationConfigResponse>(
       requestFunction: () => _dio.post('restaurant/reservation-config', data: formState.toJson()),
       successParser: (data) => CreateReservationConfigResponse.fromJson(data),
+    );
+  }
+
+  Future<ApiResult<UpdateRestaurantDataResponse>> updateRestaurantData(
+    SocieatyRestaurant restaurant,
+    UpdateRestaurantDataRequest data,
+    File? profilePicture,
+    File? restaurantBanner,
+  ) async {
+    debugPrint("formData: ${data.toJson()}");
+    String profilePictureExtension = profilePicture?.path.split('.').last ?? "";
+    String restaurantBannerExtension = restaurantBanner?.path.split('.').last ?? "";
+    FormData formData = FormData.fromMap({
+      ...data.toJson(),
+      'themes[]': List.generate(data.themes.length, (index) => data.themes[index]),
+      if (profilePicture != null)
+        'profilePicture': await MultipartFile.fromFile(profilePicture.path,
+            filename: "${restaurant.email}.$profilePictureExtension"),
+      if (restaurantBanner != null)
+        'restaurantBanner': await MultipartFile.fromFile(restaurantBanner.path,
+            filename: "${restaurant.email}.$restaurantBannerExtension"),
+    });
+    return executeRequest<UpdateRestaurantDataResponse>(
+      requestFunction: () => _dio.put("restaurant/${restaurant.restaurantData.id}", data: formData),
+      successParser: (data) => UpdateRestaurantDataResponse.fromJson(data),
     );
   }
 
@@ -118,9 +150,10 @@ class RestaurantRespository {
     );
   }
 
-  Future<ApiResult<VerifyRestaurantAccountResponse>> verifyRestaurantAccount(String restaurantId) {
+  Future<ApiResult<VerifyRestaurantAccountResponse>> updateRestaurantVerificationStatus(
+      String restaurantId, UpdateRestaurantVerificationStatusRequest form) {
     return executeRequest<VerifyRestaurantAccountResponse>(
-      requestFunction: () => _dio.post('restaurant/verify/$restaurantId'),
+      requestFunction: () => _dio.put('restaurant/verify/$restaurantId', data: form.toJson()),
       successParser: (data) => VerifyRestaurantAccountResponse.fromJson(data),
     );
   }

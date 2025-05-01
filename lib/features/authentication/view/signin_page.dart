@@ -8,6 +8,7 @@ import 'package:socieaty/core/theme/theme.dart';
 import 'package:socieaty/core/utils/show_snackbar.dart';
 import 'package:socieaty/features/authentication/viewmodel/signin_viewmodel.dart';
 import 'package:socieaty/features/authentication/viewstate/signin_form_state.dart';
+import 'package:socieaty/features/restaurant/enum/restaurant_verification_status_enum.dart';
 import 'package:socieaty/shared/view_state.dart';
 import 'package:socieaty/shared/widgets/banner_image_widget.dart';
 import 'package:socieaty/shared/widgets/custom_text_field.dart';
@@ -34,11 +35,19 @@ class _SignInPageState extends ConsumerState<SignInPage> {
     ref.listen(signinViewmodelProvider, (_, nextState) {
       switch (nextState.signinState) {
         case SuccessState(data: final user):
+          debugPrint("user: $user");
           if (user.role == UserRole.customer) {
             ref.read(appThemeProvider.notifier).setTheme(SocieatyAppTheme.darkTheme);
             context.replace('/customer/home');
           } else if (user.role == UserRole.restaurant) {
-            context.replace('/restaurant/dashboard');
+            if (user.restaurantData!.verificationStatus == RestaurantVerificationStatus.verified) {
+              context.pushReplacement("/restaurant/dashboard");
+            } else if (user.restaurantData!.verificationStatus ==
+                RestaurantVerificationStatus.unverified) {
+              context.pushReplacement("/restaurant/unverified");
+            } else {
+              context.pushReplacement("/restaurant/rejected");
+            }
           } else if (user.role == UserRole.admin) {
             context.replace('/admin');
           }

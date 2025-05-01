@@ -1,36 +1,68 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
 import 'package:socieaty/core/theme/app_pallete.dart';
+import 'package:socieaty/core/utils/converter.dart';
+import 'package:socieaty/features/account/customer/viewmodel/account_view_model.dart';
+import 'package:socieaty/features/authentication/provider/session_provider.dart';
+import 'package:socieaty/features/authentication/repository/auth_local_repository.dart';
+import 'package:socieaty/features/food-order/restaurant/socket/restaurant_socket_service.dart';
+import 'package:socieaty/shared/view_state.dart';
 
-class RejectedRestaurantScreen extends StatelessWidget {
-  final String? rejectionReason;
-  const RejectedRestaurantScreen({super.key, this.rejectionReason});
+class RejectedRestaurantScreen extends ConsumerStatefulWidget {
+  const RejectedRestaurantScreen({super.key});
+
+  @override
+  ConsumerState<RejectedRestaurantScreen> createState() => _RejectedRestaurantScreenState();
+}
+
+class _RejectedRestaurantScreenState extends ConsumerState<RejectedRestaurantScreen> {
+  void handleLogout() {
+    ref.read(restaurantSocketServiceProvider).disconnect();
+    ref.invalidate(getSessionDataProvider);
+    context.go('/landing');
+  }
 
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     final screenSize = MediaQuery.of(context).size;
 
+    ref.listen(accountViewModelProvider, (_, next) {
+      switch (next.isSignedOut) {
+        case SuccessState<bool>():
+          handleLogout();
+        case ErrorState():
+          handleLogout();
+
+        case LoadingState():
+        case IdleState():
+      }
+    });
+
     return Scaffold(
       backgroundColor: theme.scaffoldBackgroundColor,
       body: SafeArea(
-        child: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 32),
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            crossAxisAlignment: CrossAxisAlignment.center,
-            children: [
-              _buildHeader(theme),
-              SizedBox(height: screenSize.height * 0.05),
-              _buildIllustration(screenSize),
-              SizedBox(height: screenSize.height * 0.05),
-              _buildRejectionInfo(theme),
-              const SizedBox(height: 16),
-              _buildRejectionReason(theme),
-              const SizedBox(height: 24),
-              _buildDescription(theme),
-              const Spacer(),
-              _buildReapplyButton(context, theme),
-            ],
+        child: SingleChildScrollView(
+          child: SizedBox(
+            height: screenSize.height - 60, // Accounting for SafeArea padding
+            child: Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 32),
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                crossAxisAlignment: CrossAxisAlignment.center,
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  _buildHeader(theme),
+                  SizedBox(height: screenSize.height * 0.03),
+                  _buildIllustration(screenSize),
+                  SizedBox(height: screenSize.height * 0.03),
+                  _buildRejectionInfo(theme),
+                  SizedBox(height: screenSize.height * 0.05),
+                  _buildButtonActions(context, theme),
+                ],
+              ),
+            ),
           ),
         ),
       ),
@@ -79,46 +111,17 @@ class RejectedRestaurantScreen extends StatelessWidget {
   }
 
   Widget _buildIllustration(Size screenSize) {
-    return Container(
+    return SizedBox(
       height: screenSize.height * 0.25,
-      width: double.infinity,
-      alignment: Alignment.center,
-      child: Stack(
-        alignment: Alignment.center,
-        children: [
-          CircleAvatar(
-            radius: screenSize.width * 0.25,
-            backgroundColor: AppPallete.errorColor.withAlpha(30),
-          ),
-          Icon(
-            Icons.restaurant_rounded,
-            size: screenSize.width * 0.25,
-            color: AppPallete.neutralColor[400],
-          ),
-          Positioned(
-            right: screenSize.width * 0.15,
-            bottom: screenSize.height * 0.02,
-            child: Container(
-              padding: const EdgeInsets.all(12),
-              decoration: BoxDecoration(
-                color: Colors.white,
-                shape: BoxShape.circle,
-                boxShadow: [
-                  BoxShadow(
-                    color: AppPallete.neutralColor[300]!,
-                    blurRadius: 10,
-                    offset: const Offset(0, 4),
-                  ),
-                ],
-              ),
-              child: Icon(
-                Icons.close_rounded,
-                color: AppPallete.errorColor,
-                size: screenSize.width * 0.08,
-              ),
-            ),
-          ),
-        ],
+      width: screenSize.width * 0.5,
+      child: CircleAvatar(
+        radius: screenSize.width * 0.25,
+        backgroundColor: AppPallete.errorColor.withAlpha(30),
+        child: Icon(
+          Icons.close_rounded,
+          size: screenSize.width * 0.25,
+          color: AppPallete.errorColor,
+        ),
       ),
     );
   }
@@ -134,73 +137,60 @@ class RejectedRestaurantScreen extends StatelessWidget {
     );
   }
 
-  Widget _buildRejectionReason(ThemeData theme) {
-    if (rejectionReason == null || rejectionReason!.isEmpty) {
-      return const SizedBox.shrink();
-    }
-
-    return Container(
-      width: double.infinity,
-      padding: const EdgeInsets.all(16),
-      decoration: BoxDecoration(
-        color: AppPallete.neutralColor[100],
-        borderRadius: BorderRadius.circular(12),
-        border: Border.all(color: AppPallete.neutralColor[300]!),
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Text(
-            'Alasan Penolakan:',
-            style: theme.textTheme.titleSmall?.copyWith(
-              fontWeight: FontWeight.bold,
-            ),
+  Widget _buildButtonActions(BuildContext context, ThemeData theme) {
+    final user = ref.read(authLocalRepositoryProvider).getUserData();
+    return Column(
+      children: [
+        FilledButton(
+          onPressed: () {
+            context.go('/restaurant/rejected/update', extra: UserConverter.userToRestaurant(user!));
+          },
+          style: FilledButton.styleFrom(
+            minimumSize: const Size(double.infinity, 50),
           ),
-          const SizedBox(height: 8),
-          Text(
-            rejectionReason ?? '',
-            style: theme.textTheme.bodyMedium,
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Icon(
+                Icons.edit_rounded,
+                color: Colors.white,
+              ),
+              const SizedBox(width: 8),
+              Text(
+                'Perbarui Data Restoran',
+                style: theme.textTheme.labelLarge?.copyWith(
+                  color: Colors.white,
+                ),
+              ),
+            ],
           ),
-        ],
-      ),
-    );
-  }
-
-  Widget _buildDescription(ThemeData theme) {
-    return Text(
-      'Anda dapat mengajukan pendaftaran ulang dengan memperbarui informasi restoran Anda sesuai dengan pedoman kami. Pastikan semua dokumen dan informasi yang diperlukan sudah lengkap dan akurat.',
-      style: theme.textTheme.bodyLarge?.copyWith(
-        color: AppPallete.neutralColor[600],
-      ),
-      textAlign: TextAlign.center,
-    );
-  }
-
-  Widget _buildReapplyButton(BuildContext context, ThemeData theme) {
-    return FilledButton(
-      onPressed: () {
-        // Reapply implementation
-      },
-      style: FilledButton.styleFrom(
-        minimumSize: const Size(double.infinity, 50),
-        backgroundColor: AppPallete.primaryColor,
-      ),
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          Icon(
-            Icons.restart_alt_rounded,
-            color: Colors.white,
+        ),
+        const SizedBox(height: 16),
+        OutlinedButton(
+          onPressed: () {
+            ref.read(accountViewModelProvider.notifier).signout();
+          },
+          style: OutlinedButton.styleFrom(
+            minimumSize: const Size(double.infinity, 50),
           ),
-          const SizedBox(width: 8),
-          Text(
-            'Daftar Ulang',
-            style: theme.textTheme.labelLarge?.copyWith(
-              color: Colors.white,
-            ),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Icon(
+                Icons.logout_rounded,
+                color: AppPallete.neutralColor[700],
+              ),
+              const SizedBox(width: 8),
+              Text(
+                'Keluar',
+                style: theme.textTheme.labelLarge?.copyWith(
+                  color: AppPallete.neutralColor[700],
+                ),
+              ),
+            ],
           ),
-        ],
-      ),
+        ),
+      ],
     );
   }
 }

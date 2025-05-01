@@ -72,7 +72,13 @@ class _OutletHomeWidgetState extends ConsumerState<OutletHomeWidget> {
             ),
             SizedBox(height: 12),
             restaurantMenus.when(data: (data) {
-              final partialData = data.take(5).toList();
+              if (data.isEmpty) {
+                return _buildEmptyMenuState(context, screenWidth);
+              }
+
+              final carouselLength = data.length > 5 ? 5 : data.length;
+              final partialData = data.take(carouselLength).toList();
+
               return ExpandableCarousel(
                 options: ExpandableCarouselOptions(
                   scrollDirection: Axis.horizontal,
@@ -141,6 +147,10 @@ class _OutletHomeWidgetState extends ConsumerState<OutletHomeWidget> {
                 padding: const EdgeInsets.symmetric(horizontal: 12.0, vertical: 12.0),
                 child: posts.when(
                   data: (data) {
+                    if (data.posts.isEmpty) {
+                      return _buildEmptyPostsState(context);
+                    }
+
                     if (!_hasSetInitialPage && data.posts.length > 2) {
                       WidgetsBinding.instance.addPostFrameCallback((_) {
                         carouselController.jumpTo(screenWidth * 0.1);
@@ -197,6 +207,96 @@ class _OutletHomeWidgetState extends ConsumerState<OutletHomeWidget> {
               ),
             ),
             SizedBox(height: 24),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildEmptyMenuState(BuildContext context, double screenWidth) {
+    return Container(
+      clipBehavior: Clip.none,
+      margin: EdgeInsets.all(12),
+      width: screenWidth - 24,
+      height: 200,
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(12),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withAlpha(25),
+            blurRadius: 4,
+            spreadRadius: 0.1,
+            offset: Offset(0, 4),
+          ),
+        ],
+      ),
+      child: Center(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Icon(
+              Icons.restaurant_menu,
+              size: 48,
+              color: AppPallete.neutralColor[300],
+            ),
+            SizedBox(height: 16),
+            Text(
+              "No menu items available",
+              style: Theme.of(context).textTheme.bodyLarge?.copyWith(
+                    color: AppPallete.neutralColor[500],
+                  ),
+            ),
+            SizedBox(height: 8),
+            Text(
+              "This restaurant hasn't added any menu items yet",
+              style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                    color: AppPallete.neutralColor[400],
+                  ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildEmptyPostsState(BuildContext context) {
+    return Container(
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(12),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withAlpha(25),
+            blurRadius: 4,
+            spreadRadius: 0.1,
+            offset: Offset(0, 4),
+          ),
+        ],
+      ),
+      child: Center(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Icon(
+              Icons.photo_library,
+              size: 48,
+              color: AppPallete.neutralColor[300],
+            ),
+            SizedBox(height: 16),
+            Text(
+              "No posts available",
+              style: Theme.of(context).textTheme.bodyLarge?.copyWith(
+                    color: AppPallete.neutralColor[500],
+                  ),
+            ),
+            SizedBox(height: 8),
+            Text(
+              "This restaurant hasn't shared any posts yet",
+              style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                    color: AppPallete.neutralColor[400],
+                  ),
+            ),
           ],
         ),
       ),
