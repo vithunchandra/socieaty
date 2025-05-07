@@ -14,9 +14,6 @@ import 'package:socieaty/features/topup/view/widgets/failed_view.dart';
 import 'package:socieaty/features/topup/view/widgets/loading_view.dart';
 import 'package:socieaty/features/topup/view/widgets/pending_view.dart';
 import 'package:socieaty/features/topup/view/widgets/success_view.dart';
-import 'package:socieaty/shared/widgets/url_display_bar.dart';
-import 'package:socieaty/shared/widgets/webview_navigation_bar.dart';
-import 'package:webview_flutter/webview_flutter.dart';
 
 class TrackTopupScreen extends ConsumerStatefulWidget {
   final String topupId;
@@ -37,6 +34,7 @@ class _TrackTopupScreenState extends ConsumerState<TrackTopupScreen> {
   @override
   void initState() {
     super.initState();
+    debugPrint('init state');
     _socketService = ref.read(topupSocketServiceProvider);
 
     WidgetsBinding.instance.addPostFrameCallback((_) {
@@ -56,6 +54,7 @@ class _TrackTopupScreenState extends ConsumerState<TrackTopupScreen> {
   }
 
   void _fetchTopupData() {
+    debugPrint('fetching topup data');
     ref.read(topupRepositoryProvider).trackTopup(widget.topupId).then((value) {
       switch (value) {
         case Success(data: final data):

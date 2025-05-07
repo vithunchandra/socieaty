@@ -238,9 +238,7 @@ class _OwnerOutletScreenState extends ConsumerState<OwnerOutletScreen>
                               reviewsAsync.when(
                                 data: (reviews) {
                                   final reviewCount = reviews.count;
-                                  final averageRating = reviewCount > 0
-                                      ? reviews.rating / reviewCount
-                                      : 0.0;
+                                  final averageRating = reviewCount > 0 ? reviews.rating : 0.0;
 
                                   return ClipRRect(
                                     borderRadius: BorderRadius.circular(12),
@@ -306,7 +304,8 @@ class _OwnerOutletScreenState extends ConsumerState<OwnerOutletScreen>
                                     child: SizedBox(
                                       width: 20,
                                       height: 20,
-                                      child: const LoadingIndicatorWidget(size: 20, color: Colors.white),
+                                      child: const LoadingIndicatorWidget(
+                                          size: 20, color: Colors.white),
                                     ),
                                   ),
                                 ),
@@ -407,7 +406,9 @@ class _OwnerOutletScreenState extends ConsumerState<OwnerOutletScreen>
                                     onPressed: () {
                                       context.push('/create_content', extra: CreateScreenArgs(
                                         onPop: (bool value, Object? object) {
-                                          ref.read(appThemeProvider.notifier).setTheme(SocieatyAppTheme.lightTheme);
+                                          ref
+                                              .read(appThemeProvider.notifier)
+                                              .setTheme(SocieatyAppTheme.lightTheme);
                                         },
                                       ));
                                     },

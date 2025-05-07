@@ -171,45 +171,45 @@ class _DiningReservationScreenState extends State<DiningReservationScreen>
               child: _buildReservationSummaryCard(widget.reservation),
             ),
             const SizedBox(height: 24),
-            Row(
-              children: [
-                Expanded(
-                  child: ElevatedButton.icon(
-                    onPressed: widget.onViewBill,
-                    icon: const Icon(Icons.receipt_long),
-                    label: const Text('Lihat Tagihan'),
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: AppPallete.primaryColor,
-                      foregroundColor: Colors.white,
-                      minimumSize: const Size(double.infinity, 48),
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(8),
-                      ),
-                    ),
-                  ),
-                ),
-              ],
-            ),
-            const SizedBox(height: 12),
-            Row(
-              children: [
-                Expanded(
-                  child: OutlinedButton.icon(
-                    onPressed: widget.onCallWaiter,
-                    icon: const Icon(Icons.person),
-                    label: const Text('Panggil Pelayan'),
-                    style: OutlinedButton.styleFrom(
-                      foregroundColor: AppPallete.primaryColor,
-                      side: BorderSide(color: AppPallete.primaryColor),
-                      minimumSize: const Size(double.infinity, 48),
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(8),
-                      ),
-                    ),
-                  ),
-                ),
-              ],
-            ),
+            // Row(
+            //   children: [
+            //     Expanded(
+            //       child: ElevatedButton.icon(
+            //         onPressed: widget.onViewBill,
+            //         icon: const Icon(Icons.receipt_long),
+            //         label: const Text('Lihat Tagihan'),
+            //         style: ElevatedButton.styleFrom(
+            //           backgroundColor: AppPallete.primaryColor,
+            //           foregroundColor: Colors.white,
+            //           minimumSize: const Size(double.infinity, 48),
+            //           shape: RoundedRectangleBorder(
+            //             borderRadius: BorderRadius.circular(8),
+            //           ),
+            //         ),
+            //       ),
+            //     ),
+            //   ],
+            // ),
+            // const SizedBox(height: 12),
+            // Row(
+            //   children: [
+            //     Expanded(
+            //       child: OutlinedButton.icon(
+            //         onPressed: widget.onCallWaiter,
+            //         icon: const Icon(Icons.person),
+            //         label: const Text('Panggil Pelayan'),
+            //         style: OutlinedButton.styleFrom(
+            //           foregroundColor: AppPallete.primaryColor,
+            //           side: BorderSide(color: AppPallete.primaryColor),
+            //           minimumSize: const Size(double.infinity, 48),
+            //           shape: RoundedRectangleBorder(
+            //             borderRadius: BorderRadius.circular(8),
+            //           ),
+            //         ),
+            //       ),
+            //     ),
+            //   ],
+            // ),
           ],
         ),
       ),

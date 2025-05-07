@@ -204,7 +204,7 @@ class _ReservationManagementScreenState extends ConsumerState<ReservationManagem
       _tabController.addListener(() {
         setState(() {});
       });
-      return _tabController.index == 2
+      return _tabController.index == 1
           ? FloatingActionButton(
               onPressed: () {
                 _handleReservationScan(context);

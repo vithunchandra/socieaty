@@ -93,6 +93,7 @@ class PostRepository {
     return executeRequest<PaginatePostResponse>(
       requestFunction: () => dio.get('post/paginate', queryParameters: {
         'paginationQuery': query.paginationQuery.toJson(),
+        if (query.searchQuery != null) 'searchQuery': query.searchQuery,
         if (query.authorId != null) 'authorId': query.authorId,
         if (query.userRole != null) 'role': query.userRole!.name.toCapitalized(),
       }),

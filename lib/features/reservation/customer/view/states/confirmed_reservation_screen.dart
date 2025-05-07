@@ -660,22 +660,22 @@ class _ConfirmedReservationScreenState extends ConsumerState<ConfirmedReservatio
                   ),
                 ),
               ),
-              const SizedBox(width: 12),
-              Expanded(
-                child: OutlinedButton.icon(
-                  onPressed: widget.onReschedule,
-                  icon: const Icon(Icons.edit_calendar, size: 18),
-                  label: const Text('Atur Ulang'),
-                  style: OutlinedButton.styleFrom(
-                    foregroundColor: AppPallete.primaryColor,
-                    side: BorderSide(color: AppPallete.primaryColor),
-                    padding: const EdgeInsets.symmetric(vertical: 12),
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(8),
-                    ),
-                  ),
-                ),
-              ),
+              // const SizedBox(width: 12),
+              // Expanded(
+              //   child: OutlinedButton.icon(
+              //     onPressed: widget.onReschedule,
+              //     icon: const Icon(Icons.edit_calendar, size: 18),
+              //     label: const Text('Atur Ulang'),
+              //     style: OutlinedButton.styleFrom(
+              //       foregroundColor: AppPallete.primaryColor,
+              //       side: BorderSide(color: AppPallete.primaryColor),
+              //       padding: const EdgeInsets.symmetric(vertical: 12),
+              //       shape: RoundedRectangleBorder(
+              //         borderRadius: BorderRadius.circular(8),
+              //       ),
+              //     ),
+              //   ),
+              // ),
             ],
           ),
         ],

@@ -247,9 +247,7 @@ class _OtherOutletScreenState extends ConsumerState<OtherOutletScreen>
                                 reviewsAsync.when(
                                   data: (reviews) {
                                     final reviewCount = reviews.count;
-                                    final averageRating = reviewCount > 0
-                                        ? reviews.rating / reviewCount
-                                        : 0.0;
+                                    final averageRating = reviewCount > 0 ? reviews.rating : 0.0;
 
                                     return ClipRRect(
                                       borderRadius: BorderRadius.circular(12),
@@ -315,7 +313,8 @@ class _OtherOutletScreenState extends ConsumerState<OtherOutletScreen>
                                       child: SizedBox(
                                         width: 20,
                                         height: 20,
-                                        child: const LoadingIndicatorWidget(size: 20, color: Colors.white),
+                                        child: const LoadingIndicatorWidget(
+                                            size: 20, color: Colors.white),
                                       ),
                                     ),
                                   ),

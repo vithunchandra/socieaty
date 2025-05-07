@@ -22,18 +22,17 @@ part 'livestream_repository.g.dart';
 
 @riverpod
 LivestreamRepository livestreamRepository(Ref ref) {
-  final token = ref.watch(authLocalRepositoryProvider).getToken();
+  final AuthLocalRepository authLocalRepository = ref.watch(authLocalRepositoryProvider);
+  final token = authLocalRepository.getToken();
   return LivestreamRepository(
-    ref.watch(apiClientProvider(url: AppConstants.socieatyBackendUrl, token: token)),
+    dio: ref.watch(apiClientProvider(url: AppConstants.socieatyBackendUrl, token: token)),
   );
 }
 
 class LivestreamRepository {
-  late final Dio _dio;
+  final Dio _dio;
 
-  LivestreamRepository(Dio dio) {
-    _dio = dio;
-  }
+  LivestreamRepository({required Dio dio}) : _dio = dio;
 
   Future<ApiResult<StartLivestreamResponse>> startLivestream(SetupLivestreamFormState data) {
     return executeRequest<StartLivestreamResponse>(

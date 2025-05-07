@@ -91,7 +91,8 @@ class _SetupLiveStreamViewState extends ConsumerState<SetupLiveStreamScreen> {
   }
 
   Future<void> _toggleCameraPosition() async {
-    _cameraPosition = _cameraPosition == CameraPosition.front ? CameraPosition.back : CameraPosition.front;
+    _cameraPosition =
+        _cameraPosition == CameraPosition.front ? CameraPosition.back : CameraPosition.front;
     _initializeCamera();
     setState(() {});
   }
@@ -211,7 +212,10 @@ class _SetupLiveStreamViewState extends ConsumerState<SetupLiveStreamScreen> {
                                 style: Theme.of(context).textTheme.bodyMedium,
                                 decoration: InputDecoration.collapsed(
                                   hintText: "Your title here...",
-                                  hintStyle: Theme.of(context).textTheme.bodyMedium?.copyWith(color: AppPallete.neutralColor.shade400),
+                                  hintStyle: Theme.of(context)
+                                      .textTheme
+                                      .bodyMedium
+                                      ?.copyWith(color: AppPallete.neutralColor.shade400),
                                   border: InputBorder.none,
                                 ),
                                 validator: (value) {
@@ -249,11 +253,14 @@ class _SetupLiveStreamViewState extends ConsumerState<SetupLiveStreamScreen> {
                         height: 45,
                         child: FilledButton(
                           onPressed: () {
-                            if (_formKey.currentState != null && _formKey.currentState!.validate()) {
+                            if (_formKey.currentState != null &&
+                                _formKey.currentState!.validate()) {
                               _formKey.currentState!.save();
                               _isLoading = true;
                               setState(() {});
-                              ref.read(setupLivestreamViewModelProvider.notifier).startLivestream(formState);
+                              ref
+                                  .read(setupLivestreamViewModelProvider.notifier)
+                                  .startLivestream(formState);
                             }
                           },
                           child: _isLoading

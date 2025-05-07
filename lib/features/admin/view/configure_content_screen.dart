@@ -46,6 +46,8 @@ class _ConfigureContentScreenState extends ConsumerState<ConfigureContentScreen>
         userRole: _selectedRole,
       );
 
+      debugPrint("query: $query");
+
       final response = await ref.read(paginatePostsProvider(query).future);
       final posts = response.posts;
       final pagination = response.pagination;

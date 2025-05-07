@@ -14,8 +14,7 @@ TopupSocketService topupSocketService(Ref ref) {
   final token = authLocalRepository.getToken();
 
   final service = TopupSocketService(
-    socket: ref.watch(
-        websocketClientProvider('${AppConstants.socieatyBackendUrl}topup', token)),
+    socket: ref.watch(websocketClientProvider('${AppConstants.socieatyBackendUrl}topup', token)),
   );
 
   debugPrint('Topup Socket Service created');
@@ -34,12 +33,12 @@ class TopupSocketService {
   }) : _socket = socket;
 
   bool get isConnected => _isConnected;
-  
+
   initConnection({
     required Function(dynamic) onTopupNotification,
     required Function onConnected,
   }) {
-   if (_isConnected) return;
+    if (_isConnected) return;
 
     debugPrint('Connecting to socket');
 
@@ -69,7 +68,8 @@ class TopupSocketService {
     });
   }
 
-  void _handler(data){
+  void _handler(data) {
+    debugPrint('topup notification received');
     _onTopupNotification!(data);
   }
 
