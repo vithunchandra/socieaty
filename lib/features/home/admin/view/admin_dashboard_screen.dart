@@ -222,7 +222,7 @@ class _AdminDashboardScreenState extends ConsumerState<AdminDashboardScreen> {
           'Income Report',
           AppPallete.infoColor,
           onTap: () {
-            // Navigate to income report screen
+            context.push('/admin/transaction-report');
           },
         ),
         _buildOptionCard(

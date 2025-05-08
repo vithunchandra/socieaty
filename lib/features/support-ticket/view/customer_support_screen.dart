@@ -60,12 +60,10 @@ class _CustomerSupportScreenState extends ConsumerState<CustomerSupportScreen> {
   void _handleNewSupportTicket(SupportTicket ticket) {
     if (!mounted || _isDisposed) return;
 
-    // Only add the ticket to the list if it matches the current filter
     if (_selectedStatus != null && ticket.status != _selectedStatus) {
       return;
     }
 
-    // Add the new ticket to the beginning of the list
     final updatedItems = List<SupportTicket>.from(_pagingController.itemList ?? []);
     updatedItems.insert(0, ticket);
 
@@ -79,7 +77,6 @@ class _CustomerSupportScreenState extends ConsumerState<CustomerSupportScreen> {
     final currentItems = _pagingController.itemList;
     if (currentItems == null) return;
 
-    // Find if the ticket is in the current list
     final ticketIndex = currentItems.indexWhere((t) => t.id == ticket.id);
 
     if (ticketIndex >= 0) {

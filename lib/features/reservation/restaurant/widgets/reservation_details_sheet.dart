@@ -16,6 +16,7 @@ import 'package:socieaty/features/reservation/enum/reservation_status_enum.dart'
 class ReservationDetailsSheet extends ConsumerStatefulWidget {
   final Reservation reservation;
   final ScrollController scrollController;
+  final bool isActionEnabled;
   final Function(Reservation)? onUpdatedReservation;
 
   const ReservationDetailsSheet({
@@ -23,6 +24,7 @@ class ReservationDetailsSheet extends ConsumerStatefulWidget {
     required this.reservation,
     required this.scrollController,
     this.onUpdatedReservation,
+    this.isActionEnabled = true,
   });
 
   @override
@@ -353,21 +355,23 @@ class _ReservationDetailsSheetState extends ConsumerState<ReservationDetailsShee
               ],
             ),
           ),
-          if (widget.reservation.reservationStatus == ReservationStatus.pending)
-            PendingReservationActions(
-              reservation: widget.reservation,
-              onUpdateReservationStatus: _updateReservationStatus,
-            ),
-          if (widget.reservation.reservationStatus == ReservationStatus.confirmed)
-            ConfirmedReservationActions(
-              reservation: widget.reservation,
-              onUpdateReservationStatus: _updateReservationStatus,
-            ),
-          if (widget.reservation.reservationStatus == ReservationStatus.dining)
-            DiningReservationActions(
-              reservation: widget.reservation,
-              onUpdateReservationStatus: _updateReservationStatus,
-            ),
+          if (widget.isActionEnabled) ...[
+            if (widget.reservation.reservationStatus == ReservationStatus.pending)
+              PendingReservationActions(
+                reservation: widget.reservation,
+                onUpdateReservationStatus: _updateReservationStatus,
+              ),
+            if (widget.reservation.reservationStatus == ReservationStatus.confirmed)
+              ConfirmedReservationActions(
+                reservation: widget.reservation,
+                onUpdateReservationStatus: _updateReservationStatus,
+              ),
+            if (widget.reservation.reservationStatus == ReservationStatus.dining)
+              DiningReservationActions(
+                reservation: widget.reservation,
+                onUpdateReservationStatus: _updateReservationStatus,
+              ),
+          ],
         ],
       ),
     );

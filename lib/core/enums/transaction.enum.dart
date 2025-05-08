@@ -7,6 +7,12 @@ enum TransactionServiceType {
   const TransactionServiceType(this.value);
 }
 
+enum TransactionSortBy {
+  createdAt,
+  finishedAt,
+  grossAmount,
+}
+
 enum TransactionStatus{
   success,
   failed,

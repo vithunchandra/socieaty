@@ -56,6 +56,7 @@ class _ConfigureUnverifiedRestaurantScreenState
     showModalBottomSheet(
       context: context,
       isScrollControlled: true,
+      backgroundColor: Colors.white,
       builder: (context) => RestaurantThemeFilterSheet(
         initialSelectedThemes: _selectedThemes,
         onApply: (selectedThemes) {

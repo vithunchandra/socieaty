@@ -2,9 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:socieaty/core/theme/app_pallete.dart';
 
 class CustomEmptyWidget extends StatelessWidget {
+  final IconData icon;
   final String description;
   final String title;
-  const CustomEmptyWidget({super.key, required this.description, required this.title});
+  const CustomEmptyWidget({super.key, required this.description, required this.title, required this.icon});
 
   @override
   Widget build(BuildContext context) {
@@ -14,7 +15,7 @@ class CustomEmptyWidget extends StatelessWidget {
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
           Icon(
-            Icons.article_outlined,
+            icon,
             size: 48,
             color: AppPallete.neutralColor.shade300,
           ),

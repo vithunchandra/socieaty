@@ -255,7 +255,9 @@ class _RestaurantDashboardScreenState extends ConsumerState<RestaurantDashboardS
                               icon: Icons.point_of_sale,
                               label: 'Penjualan',
                               color: Colors.green,
-                              onTap: () {},
+                              onTap: () {
+                                context.push('/restaurant/dashboard/transaction-report');
+                              },
                             ),
                             GridMenuButtonWidget(
                               icon: Icons.calendar_today,

@@ -17,9 +17,15 @@ class OrderDetailsSheet extends ConsumerStatefulWidget {
   final FoodOrderTransaction order;
   final ScrollController scrollController;
   final List<FoodOrderStatus> statusFilter;
+  final bool isActionEnabled;
 
-  const OrderDetailsSheet(
-      {super.key, required this.order, required this.scrollController, required this.statusFilter});
+  const OrderDetailsSheet({
+    super.key,
+    required this.order,
+    required this.scrollController,
+    required this.statusFilter,
+    this.isActionEnabled = true,
+  });
 
   @override
   ConsumerState<OrderDetailsSheet> createState() => _OrderDetailsSheetState();
@@ -131,7 +137,8 @@ class _OrderDetailsSheetState extends ConsumerState<OrderDetailsSheet> {
                   ),
                   trailing: InkWell(
                     onTap: () {
-                      context.push('/transaction/message', extra: TransactionConverter.foodOrderToTransaction(widget.order));
+                      context.push('/transaction/message',
+                          extra: TransactionConverter.foodOrderToTransaction(widget.order));
                     },
                     child: Container(
                       padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
@@ -295,12 +302,14 @@ class _OrderDetailsSheetState extends ConsumerState<OrderDetailsSheet> {
               ],
             ),
           ),
-          if (widget.order.foodOrderStatus == FoodOrderStatus.pending)
-            PendingOrderDetailsActions(order: widget.order),
-          if (widget.order.foodOrderStatus == FoodOrderStatus.preparing)
-            PreparingOrderDetailsActions(order: widget.order),
-          if (widget.order.foodOrderStatus == FoodOrderStatus.ready)
-            ReadyOrderDetailsActions(order: widget.order),
+          if (widget.isActionEnabled) ...[
+            if (widget.order.foodOrderStatus == FoodOrderStatus.pending)
+              PendingOrderDetailsActions(order: widget.order),
+            if (widget.order.foodOrderStatus == FoodOrderStatus.preparing)
+              PreparingOrderDetailsActions(order: widget.order),
+            if (widget.order.foodOrderStatus == FoodOrderStatus.ready)
+              ReadyOrderDetailsActions(order: widget.order),
+          ],
         ],
       ),
     );

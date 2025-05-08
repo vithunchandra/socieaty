@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:socieaty/core/theme/app_pallete.dart';
-import 'package:socieaty/core/theme/custom_themes/button_theme.dart';
 import 'package:socieaty/core/utils/converter.dart';
 import 'package:socieaty/core/utils/location_handler.dart';
 import 'package:socieaty/core/utils/show_snackbar.dart';

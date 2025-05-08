@@ -2,6 +2,7 @@ import 'package:freezed_annotation/freezed_annotation.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:socieaty/core/enums/bank.enum.dart';
 import 'package:socieaty/core/enums/sort_order_enum.dart';
+import 'package:socieaty/core/enums/time_scale.dart';
 import 'package:socieaty/core/enums/transaction.enum.dart';
 import 'package:socieaty/core/enums/user_role.enum.dart';
 import 'package:socieaty/core/utils/custom_extension.dart';
@@ -15,6 +16,7 @@ import 'package:socieaty/features/restaurant/model/socieaty_restaurant.dart';
 import 'package:socieaty/features/support-ticket/enum/support_ticket_status_enum.dart';
 import 'package:socieaty/features/topup/enum/topup_status_enum.dart';
 import 'package:socieaty/features/transaction/model/transaction.dart';
+import 'package:socieaty/features/transaction/model/transaction_data.dart';
 import 'package:socieaty/features/user/model/socieaty_user.dart';
 import 'package:socieaty/features/restaurant/enum/restaurant_verification_status_enum.dart';
 
@@ -168,12 +170,15 @@ class ReservationStatusConverter implements JsonConverter<ReservationStatus, Str
   }
 }
 
-class ListReservationStatusConverter implements JsonConverter<List<ReservationStatus>, List<String>> {
+class ListReservationStatusConverter
+    implements JsonConverter<List<ReservationStatus>, List<String>> {
   const ListReservationStatusConverter();
 
   @override
   List<ReservationStatus> fromJson(List<String> json) {
-    return json.map((e) => ReservationStatus.values.firstWhere((element) => element.name == e)).toList();
+    return json
+        .map((e) => ReservationStatus.values.firstWhere((element) => element.name == e))
+        .toList();
   }
 
   @override
@@ -188,7 +193,7 @@ class TopupStatusConverter implements JsonConverter<TopupStatusEnum, String> {
   @override
   TopupStatusEnum fromJson(String json) {
     return TopupStatusEnum.values.firstWhere((element) => element.name == json);
-  } 
+  }
 
   @override
   String toJson(TopupStatusEnum object) {
@@ -224,6 +229,34 @@ class ReservationSortByConverter implements JsonConverter<ReservationSortBy, Str
   }
 }
 
+class TransactionSortByConverter implements JsonConverter<TransactionSortBy, String> {
+  const TransactionSortByConverter();
+
+  @override
+  TransactionSortBy fromJson(String json) {
+    return TransactionSortBy.values.firstWhere((element) => element.name == json);
+  }
+
+  @override
+  String toJson(TransactionSortBy object) {
+    return object.name;
+  }
+}
+
+class TimeScaleConverter implements JsonConverter<TimeScale, String> {
+  const TimeScaleConverter();
+
+  @override
+  TimeScale fromJson(String json) {
+    return TimeScale.values.firstWhere((element) => element.name == json);
+  }
+
+  @override
+  String toJson(TimeScale object) {
+    return object.name;
+  }
+}
+
 class SortOrderConverter implements JsonConverter<SortOrder, String> {
   const SortOrderConverter();
 
@@ -238,7 +271,8 @@ class SortOrderConverter implements JsonConverter<SortOrder, String> {
   }
 }
 
-class RestaurantVerificationStatusConverter implements JsonConverter<RestaurantVerificationStatus, String> {
+class RestaurantVerificationStatusConverter
+    implements JsonConverter<RestaurantVerificationStatus, String> {
   const RestaurantVerificationStatusConverter();
 
   @override
@@ -329,6 +363,53 @@ class UserConverter {
       profilePictureUrl: restaurant.profilePictureUrl,
       role: UserRole.restaurant,
       restaurantData: restaurant.restaurantData,
+    );
+  }
+}
+
+class TransactionDataConverter {
+  static Reservation transactionDataToReservation(TransactionData transaction) {
+    return Reservation(
+      reservationId: transaction.reservationData!.reservationId,
+      transactionId: transaction.transactionId,
+      serviceType: transaction.serviceType,
+      status: transaction.status,
+      reservationTime: transaction.reservationData!.reservationTime,
+      grossAmount: transaction.grossAmount,
+      netAmount: transaction.netAmount,
+      refundAmount: transaction.refundAmount,
+      serviceFee: transaction.serviceFee,
+      note: transaction.note,
+      restaurant: transaction.restaurant,
+      customer: transaction.customer,
+      reservationStatus: transaction.reservationData!.reservationStatus,
+      endTimeEstimation: transaction.reservationData!.endTimeEstimation,
+      peopleSize: transaction.reservationData!.peopleSize,
+      menuItems: transaction.reservationData!.menuItems,
+      createdAt: transaction.createdAt,
+      updatedAt: transaction.updatedAt,
+      finishedAt: transaction.finishedAt,
+    );
+  }
+
+  static FoodOrderTransaction transactionDataToFoodOrder(TransactionData transaction) {
+    return FoodOrderTransaction(
+      orderId: transaction.foodOrderData!.orderId,
+      transactionId: transaction.transactionId,
+      serviceType: transaction.serviceType,
+      status: transaction.status,
+      foodOrderStatus: transaction.foodOrderData!.foodOrderStatus,
+      menuItems: transaction.foodOrderData!.menuItems,
+      grossAmount: transaction.grossAmount,
+      netAmount: transaction.netAmount,
+      refundAmount: transaction.refundAmount,
+      serviceFee: transaction.serviceFee,
+      note: transaction.note,
+      restaurant: transaction.restaurant,
+      customer: transaction.customer,
+      createdAt: transaction.createdAt,
+      updatedAt: transaction.updatedAt,
+      finishedAt: transaction.finishedAt,
     );
   }
 }

@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:socieaty/core/theme/app_pallete.dart';
-import 'package:socieaty/features/restaurant/model/restaurant_theme.dart';
 import 'package:socieaty/features/restaurant/provider/get_all_restaurant_themes_provider.dart';
 import 'package:socieaty/shared/widgets/loading_indicator_widget.dart';
 

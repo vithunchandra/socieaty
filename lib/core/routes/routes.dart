@@ -66,6 +66,8 @@ import 'package:socieaty/features/shop/customer/view/shop_search_screen.dart';
 import 'package:socieaty/features/food-order/customer/view/create_food_order_screen.dart';
 import 'package:socieaty/features/food-order/restaurant/view/restaurant_food_order_screen.dart';
 import 'package:socieaty/features/transaction/model/transaction.dart';
+import 'package:socieaty/features/transaction/view/transaction_report_screen.dart';
+import 'package:socieaty/features/transaction/view/transaction_list_screen.dart';
 import 'package:socieaty/features/transaction_review/view/restaurant_rating_screen.dart';
 import 'package:socieaty/features/user/view/profile_loader_screen.dart';
 import 'package:socieaty/shared/widgets/create_screen.dart';
@@ -209,6 +211,20 @@ GoRouter router(Ref ref) {
                   child: VerifyRestaurantScreen(
                     args: state.extra as VerifyRestaurantScreenArgs,
                   ),
+                ),
+              ),
+            ],
+          ),
+          GoRoute(
+            path: 'transaction-report',
+            pageBuilder: (context, state) => const NoTransitionPage(
+              child: TransactionReportScreen(),
+            ),
+            routes: [
+              GoRoute(
+                path: 'history',
+                pageBuilder: (context, state) => const NoTransitionPage(
+                  child: TransactionListScreen(),
                 ),
               ),
             ],
@@ -423,7 +439,22 @@ GoRouter router(Ref ref) {
                         ),
                       ),
                     ],
-                  )
+                  ),
+                  GoRoute(
+                    path: 'transaction-report',
+                    parentNavigatorKey: rootNavigatorKey,
+                    pageBuilder: (context, state) => const NoTransitionPage(
+                      child: TransactionReportScreen(),
+                    ),
+                    routes: [
+                      GoRoute(
+                        path: 'history',
+                        pageBuilder: (context, state) => const NoTransitionPage(
+                          child: TransactionListScreen(),
+                        ),
+                      ),
+                    ],
+                  ),
                 ],
               ),
             ],
