@@ -22,10 +22,12 @@ import 'package:socieaty/shared/widgets/menu_filter_widget.dart';
 class OwnerFoodMenuDetailWidget extends ConsumerStatefulWidget {
   final String restaurantId;
   final FoodMenu restaurantMenu;
+  final VoidCallback onUpdated;
   const OwnerFoodMenuDetailWidget({
     super.key,
     required this.restaurantId,
     required this.restaurantMenu,
+    required this.onUpdated,
   });
 
   @override
@@ -364,6 +366,7 @@ class _OwnerFoodMenuDetailWidgetState extends ConsumerState<OwnerFoodMenuDetailW
                         extra: UpdateFoodMenuScreenArgs(
                           restaurantId: _menu.restaurantId,
                           restaurantMenu: _menu,
+                          onUpdated: widget.onUpdated,
                         ),
                       );
                       if (result != null) {

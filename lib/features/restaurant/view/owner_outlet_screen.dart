@@ -40,7 +40,6 @@ class _OwnerOutletScreenState extends ConsumerState<OwnerOutletScreen>
 
   @override
   void dispose() {
-    SystemChrome.setSystemUIOverlayStyle(SystemUiOverlayStyle.dark);
     _scrollController.dispose();
     super.dispose();
   }

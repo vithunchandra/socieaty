@@ -5,14 +5,24 @@ import 'package:socieaty/core/theme/app_pallete.dart';
 import 'dart:io';
 import 'package:socieaty/core/utils/show_picker_modal.dart';
 import 'package:socieaty/core/utils/show_snackbar.dart';
+import 'package:socieaty/features/food_menu/model/menu_category.dart';
+import 'package:socieaty/features/food_menu/provider/get_all_food_menu_categories_provider.dart';
 import 'package:socieaty/features/food_menu/restaurant/viewmodel/create_food_menu_view_model.dart';
 import 'package:socieaty/features/food_menu/restaurant/viewstate/create_food_menu_form_state.dart';
 import 'package:socieaty/shared/view_state.dart';
 import 'package:socieaty/shared/widgets/custom_text_field.dart';
 import 'package:socieaty/shared/widgets/loading_indicator_widget.dart';
 
+class CreateFoodMenuScreenArgs {
+  final String restaurantId;
+  final VoidCallback onCreated;
+
+  CreateFoodMenuScreenArgs({required this.restaurantId, required this.onCreated});
+}
+
 class CreateFoodMenuScreen extends ConsumerStatefulWidget {
-  const CreateFoodMenuScreen({super.key});
+  final CreateFoodMenuScreenArgs args;
+  const CreateFoodMenuScreen({super.key, required this.args});
 
   @override
   CreateFoodMenuScreenState createState() => CreateFoodMenuScreenState();
@@ -20,24 +30,7 @@ class CreateFoodMenuScreen extends ConsumerStatefulWidget {
 
 class CreateFoodMenuScreenState extends ConsumerState<CreateFoodMenuScreen> {
   final _formKey = GlobalKey<FormState>();
-  final List<String> _menuTypes = [
-    'Drink',
-    'Rice',
-    'Noodles',
-    'Soup',
-    'Salad',
-    'Sandwich',
-    'Burger',
-    'Pizza',
-    'Cake',
-    'Ice Cream',
-    'Smoothie',
-    'Juice',
-    'Tea',
-    'Coffee',
-    'Alcohol'
-  ];
-  final List<int> _selectedCategories = [];
+  final List<MenuCategory> _selectedCategories = [];
   CreateFoodMenuFormState _formData = CreateFoodMenuFormState();
 
   File? _selectedMenuImage;
@@ -46,80 +39,103 @@ class CreateFoodMenuScreenState extends ConsumerState<CreateFoodMenuScreen> {
     showDialog(
       context: context,
       builder: (BuildContext context) {
-        return PopScope(
-          onPopInvokedWithResult: (didPop, result) {
-            FocusManager.instance.primaryFocus?.unfocus();
-          },
-          child: AlertDialog(
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(20.0),
-            ),
-            title: Text(
-              'Pilih Tipe Menu',
-              style: Theme.of(context).textTheme.headlineSmall,
-            ),
-            content: SizedBox(
-              height: 300,
-              child: Scrollbar(
-                interactive: true,
-                radius: const Radius.circular(10),
-                child: SingleChildScrollView(
-                  child: Column(
-                    children: _menuTypes
-                        .asMap()
-                        .entries
-                        .map(
-                          (entry) => ListTile(
-                            dense: true,
-                            splashColor: AppPallete.primaryColor,
-                            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
-                            title: Text(
-                              entry.value,
-                              style: Theme.of(context).textTheme.titleSmall?.copyWith(
-                                    color: _selectedCategories.contains(entry.key)
-                                        ? AppPallete.primaryColor
-                                        : Colors.black87,
-                                    fontWeight: _selectedCategories.contains(entry.key)
-                                        ? FontWeight.bold
-                                        : FontWeight.normal,
-                                  ),
-                            ),
-                            trailing: _selectedCategories.contains(entry.key)
-                                ? Icon(
-                                    Icons.check_circle,
-                                    color: AppPallete.primaryColor,
-                                  )
-                                : null,
-                            onTap: () {
-                              setState(() {
-                                if (_selectedCategories.contains(entry.key)) {
-                                  _selectedCategories.remove(entry.key);
-                                } else {
-                                  _selectedCategories.add(entry.key);
-                                }
-                              });
+        return StatefulBuilder(
+          builder: (context, childSetState) {
+            return Consumer(
+              builder: (context, ref, child) {
+                final menuCategories = ref.watch(getAllFoodMenuCategoriesProvider);
 
-                              context.pop();
-                            },
+                return PopScope(
+                  onPopInvokedWithResult: (didPop, result) {
+                    FocusManager.instance.primaryFocus?.unfocus();
+                  },
+                  child: AlertDialog(
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(20.0),
+                    ),
+                    title: Text(
+                      'Pilih Tipe Menu',
+                      style: Theme.of(context).textTheme.headlineSmall,
+                    ),
+                    content: SizedBox(
+                      height: 300,
+                      child: Scrollbar(
+                        interactive: true,
+                        radius: const Radius.circular(10),
+                        child: SingleChildScrollView(
+                          child: Column(
+                            children: menuCategories.when(
+                              data: (value) {
+                                return value
+                                    .asMap()
+                                    .entries
+                                    .map(
+                                      (entry) => ListTile(
+                                        dense: true,
+                                        splashColor: AppPallete.primaryColor,
+                                        shape: RoundedRectangleBorder(
+                                            borderRadius: BorderRadius.circular(10)),
+                                        title: Text(
+                                          entry.value.name,
+                                          style: Theme.of(context).textTheme.titleSmall?.copyWith(
+                                                color: _selectedCategories.contains(entry.value)
+                                                    ? AppPallete.primaryColor
+                                                    : Colors.black87,
+                                                fontWeight:
+                                                    _selectedCategories.contains(entry.value)
+                                                        ? FontWeight.bold
+                                                        : FontWeight.normal,
+                                              ),
+                                        ),
+                                        trailing: _selectedCategories.contains(entry.value)
+                                            ? Icon(
+                                                Icons.check_circle,
+                                                color: AppPallete.primaryColor,
+                                              )
+                                            : null,
+                                        onTap: () {
+                                          setState(() {
+                                            if (_selectedCategories.contains(entry.value)) {
+                                              _selectedCategories.remove(entry.value);
+                                            } else {
+                                              _selectedCategories.add(entry.value);
+                                            }
+                                          });
+
+                                          context.pop();
+                                        },
+                                      ),
+                                    )
+                                    .toList();
+                              },
+                              error: (error, stacktrace) {
+                                showSnackbar(context, error.toString(), state: SnackbarState.error);
+                                return [];
+                              },
+                              loading: () {
+                                return [];
+                              },
+                            ),
                           ),
-                        )
-                        .toList(),
+                        ),
+                      ),
+                    ),
+                    actions: [
+                      TextButton(
+                        onPressed: () {
+                          context.pop();
+                        },
+                        child: Text(
+                          'Tutup',
+                          style: TextStyle(color: AppPallete.primaryColor),
+                        ),
+                      ),
+                    ],
                   ),
-                ),
-              ),
-            ),
-            actions: [
-              TextButton(
-                onPressed: () {
-                  context.pop();
-                },
-                child: Text(
-                  'Tutup',
-                  style: TextStyle(color: AppPallete.primaryColor),
-                ),
-              ),
-            ],
-          ),
+                );
+              },
+            );
+          },
         );
       },
     );
@@ -134,6 +150,7 @@ class CreateFoodMenuScreenState extends ConsumerState<CreateFoodMenuScreen> {
     ref.listen(createFoodMenuViewModelProvider, (_, next) {
       switch (next.createMenuState) {
         case SuccessState():
+          widget.args.onCreated();
           context.pop();
         case ErrorState(message: final message):
           showSnackbar(context, message, state: SnackbarState.error);
@@ -245,7 +262,7 @@ class CreateFoodMenuScreenState extends ConsumerState<CreateFoodMenuScreen> {
                 children: [
                   ..._selectedCategories.map(
                     (type) => Chip(
-                      label: Text(_menuTypes[type]),
+                      label: Text(type.name),
                       onDeleted: () {
                         _selectedCategories.remove(type);
                         setState(() {});
@@ -347,7 +364,8 @@ class CreateFoodMenuScreenState extends ConsumerState<CreateFoodMenuScreen> {
                     }
                     if (_formKey.currentState!.validate() && _selectedCategories.isNotEmpty) {
                       _formKey.currentState!.save();
-                      _formData = _formData.copyWith(categories: _selectedCategories);
+                      _formData = _formData.copyWith(
+                          categories: _selectedCategories.map((e) => e.id).toList());
                       ref
                           .read(createFoodMenuViewModelProvider.notifier)
                           .createFoodMenu(_formData, _selectedMenuImage!);

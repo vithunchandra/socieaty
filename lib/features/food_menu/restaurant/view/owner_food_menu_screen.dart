@@ -12,9 +12,11 @@ import 'package:socieaty/features/food_menu/model/food_menu.dart';
 import 'package:socieaty/features/food_menu/provider/get_all_food_menu_categories_provider.dart';
 import 'package:socieaty/features/food_menu/provider/get_food_menu_provider.dart';
 import 'package:socieaty/features/food_menu/provider/get_single_food_menu_provider.dart';
+import 'package:socieaty/features/food_menu/restaurant/view/create_food_menu_screen.dart';
 import 'package:socieaty/features/food_menu/restaurant/view/owner_food_menu_detail_widget.dart';
 import 'package:socieaty/features/food_menu/restaurant/view/owner_food_menu_item_widget.dart';
 import 'package:socieaty/features/restaurant/model/socieaty_restaurant.dart';
+import 'package:socieaty/shared/widgets/custom_empty_widget.dart';
 import 'package:socieaty/shared/widgets/custom_error_widget.dart';
 import 'package:socieaty/shared/widgets/dotted_divider.dart';
 import 'package:socieaty/shared/widgets/loading_indicator_widget.dart';
@@ -81,6 +83,7 @@ class _OwnerFoodMenuScreenState extends ConsumerState<OwnerFoodMenuScreen> {
           builder: (context) => OwnerFoodMenuDetailWidget(
             restaurantId: widget.args.restaurant.restaurantData.id,
             restaurantMenu: menu,
+            onUpdated: refreshMenu,
           ),
         );
       }
@@ -140,6 +143,13 @@ class _OwnerFoodMenuScreenState extends ConsumerState<OwnerFoodMenuScreen> {
       _menuFilterFormState = _menuFilterFormState.copyWith(searchQuery: value);
       setState(() {});
     });
+  }
+
+  void refreshMenu() {
+    ref.invalidate(getFoodMenusProvider(
+      restaurantId: widget.args.restaurant.restaurantData.id,
+      query: _menuFilterFormState,
+    ));
   }
 
   @override
@@ -464,24 +474,33 @@ class _OwnerFoodMenuScreenState extends ConsumerState<OwnerFoodMenuScreen> {
                     ),
                   ),
                   switch (restaurantMenus) {
-                    AsyncData<List<FoodMenu>>(value: final data) => SliverPadding(
-                        padding: const EdgeInsets.symmetric(horizontal: 16.0),
-                        sliver: SliverList.builder(
-                          itemCount: data.length,
-                          itemBuilder: (context, index) {
-                            return Column(
-                              children: [
-                                if (index != 0)
-                                  Divider(color: AppPallete.neutralColor, height: 0.5),
-                                OwnerFoodMenuItemWidget(
-                                  restaurantId: widget.args.restaurant.id,
-                                  restaurantMenu: data[index],
-                                ),
-                              ],
-                            );
-                          },
-                        ),
-                      ),
+                    AsyncData<List<FoodMenu>>(value: final data) => data.isNotEmpty
+                        ? SliverPadding(
+                            padding: const EdgeInsets.symmetric(horizontal: 16.0),
+                            sliver: SliverList.builder(
+                              itemCount: data.length,
+                              itemBuilder: (context, index) {
+                                return Column(
+                                  children: [
+                                    if (index != 0)
+                                      Divider(color: AppPallete.neutralColor, height: 0.5),
+                                    OwnerFoodMenuItemWidget(
+                                      restaurantId: widget.args.restaurant.id,
+                                      restaurantMenu: data[index],
+                                      onUpdated: refreshMenu,
+                                    ),
+                                  ],
+                                );
+                              },
+                            ),
+                          )
+                        : SliverToBoxAdapter(
+                            child: const CustomEmptyWidget(
+                              description: "No menu items found",
+                              title: "Menu items",
+                              icon: Icons.lunch_dining_outlined,
+                            ),
+                          ),
                     AsyncError(:final error) => SliverToBoxAdapter(
                         child: CustomErrorWidget(
                           title: "Menu items",
@@ -494,8 +513,11 @@ class _OwnerFoodMenuScreenState extends ConsumerState<OwnerFoodMenuScreen> {
                           },
                         ),
                       ),
-                    _ => const SliverToBoxAdapter(
-                        child: LoadingIndicatorWidget(size: 36),
+                    _ => const SliverPadding(
+                        padding: EdgeInsets.only(top: 32.0),
+                        sliver: SliverToBoxAdapter(
+                          child: LoadingIndicatorWidget(size: 36),
+                        ),
                       ),
                   },
                   SliverToBoxAdapter(
@@ -544,7 +566,13 @@ class _OwnerFoodMenuScreenState extends ConsumerState<OwnerFoodMenuScreen> {
                       height: 45,
                       child: FilledButton(
                         onPressed: () {
-                          context.push("/restaurant/dashboard/outlet/menu/create");
+                          context.push(
+                            "/restaurant/dashboard/outlet/menu/create",
+                            extra: CreateFoodMenuScreenArgs(
+                              restaurantId: widget.args.restaurant.id,
+                              onCreated: refreshMenu,
+                            ),
+                          );
                           FocusScope.of(context).focusedChild?.unfocus();
                         },
                         child: Padding(

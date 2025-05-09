@@ -22,9 +22,11 @@ import 'package:socieaty/shared/widgets/menu_filter_widget.dart';
 class UpdateFoodMenuScreenArgs {
   final String restaurantId;
   final FoodMenu restaurantMenu;
+  final VoidCallback onUpdated;
   const UpdateFoodMenuScreenArgs({
     required this.restaurantId,
     required this.restaurantMenu,
+    required this.onUpdated,
   });
 }
 
@@ -178,10 +180,7 @@ class UpdateFoodMenuScreenState extends ConsumerState<UpdateFoodMenuScreen> {
     ref.listen(updateFoodMenuViewModelProvider(widget.args.restaurantMenu.id), (_, next) {
       switch (next.updateMenuState) {
         case SuccessState<FoodMenu>(data: final data):
-          ref.invalidate(getFoodMenusProvider(
-            restaurantId: widget.args.restaurantMenu.restaurantId,
-            query: MenuFilterFormState(),
-          ));
+          widget.args.onUpdated();
           context.pop(data);
         case ErrorState(message: final message):
           showSnackbar(context, message, state: SnackbarState.error);

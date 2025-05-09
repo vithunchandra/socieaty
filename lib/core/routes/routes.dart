@@ -340,155 +340,6 @@ GoRouter router(Ref ref) {
           ),
         ],
       ),
-      StatefulShellRoute.indexedStack(
-        builder: (context, state, navigationShell) {
-          return RestaurantScaffoldWithNavbar(
-            navigationShell: navigationShell,
-            showNavbar: true,
-          );
-        },
-        branches: [
-          StatefulShellBranch(
-            routes: [
-              GoRoute(
-                path: '/restaurant/dashboard',
-                pageBuilder: (context, state) => const NoTransitionPage(
-                  child: RestaurantDashboardScreen(),
-                ),
-                routes: [
-                  GoRoute(
-                    path: '/outlet',
-                    parentNavigatorKey: rootNavigatorKey,
-                    pageBuilder: (context, state) {
-                      final userId = ref.watch(authLocalRepositoryProvider).getUserData()?.id ?? '';
-                      return NoTransitionPage(
-                        child: ProfileLoaderScreen(userId: userId),
-                      );
-                    },
-                  ),
-                  GoRoute(
-                    path: "/outlet/menu",
-                    parentNavigatorKey: rootNavigatorKey,
-                    builder: (context, state) => OwnerFoodMenuScreen(
-                      args: state.extra as OwnerFoodMenuScreenArgs,
-                    ),
-                    routes: [
-                      GoRoute(
-                        path: '/create',
-                        parentNavigatorKey: rootNavigatorKey,
-                        builder: (context, state) => const CreateFoodMenuScreen(),
-                      ),
-                      GoRoute(
-                        path: '/update',
-                        parentNavigatorKey: rootNavigatorKey,
-                        builder: (context, state) => UpdateFoodMenuScreen(
-                          args: state.extra as UpdateFoodMenuScreenArgs,
-                        ),
-                      ),
-                    ],
-                  ),
-                  GoRoute(
-                    path: 'reservation',
-                    parentNavigatorKey: rootNavigatorKey,
-                    pageBuilder: (context, state) => const NoTransitionPage(
-                      child: ReservationNavigatorScreen(),
-                    ),
-                    routes: [
-                      GoRoute(
-                          path: 'view',
-                          parentNavigatorKey: rootNavigatorKey,
-                          pageBuilder: (context, state) => NoTransitionPage(
-                                child: ReservationsScheduleScreen(
-                                  reservationConfig: state.extra as ReservationConfig,
-                                ),
-                              ),
-                          routes: [
-                            GoRoute(
-                              path: 'calender',
-                              parentNavigatorKey: rootNavigatorKey,
-                              pageBuilder: (context, state) => NoTransitionPage(
-                                child: ReservationScheduleCalenderScreen(
-                                  reservationConfig: state.extra as ReservationConfig,
-                                ),
-                              ),
-                            ),
-                          ]),
-                      GoRoute(
-                        path: 'manage',
-                        parentNavigatorKey: rootNavigatorKey,
-                        pageBuilder: (context, state) => const NoTransitionPage(
-                          child: ReservationManagementScreen(),
-                        ),
-                        routes: [
-                          GoRoute(
-                            path: 'history',
-                            parentNavigatorKey: rootNavigatorKey,
-                            pageBuilder: (context, state) => const NoTransitionPage(
-                              child: RestaurantReservationHistoryScreen(),
-                            ),
-                          ),
-                        ],
-                      ),
-                      GoRoute(
-                        path: 'config/update',
-                        parentNavigatorKey: rootNavigatorKey,
-                        pageBuilder: (context, state) => NoTransitionPage(
-                          child: UpdateReservationConfigScreen(
-                            reservationConfig: state.extra as ReservationConfig,
-                          ),
-                        ),
-                      ),
-                    ],
-                  ),
-                  GoRoute(
-                    path: 'transaction-report',
-                    parentNavigatorKey: rootNavigatorKey,
-                    pageBuilder: (context, state) => const NoTransitionPage(
-                      child: TransactionReportScreen(),
-                    ),
-                    routes: [
-                      GoRoute(
-                        path: 'history',
-                        pageBuilder: (context, state) => const NoTransitionPage(
-                          child: TransactionListScreen(),
-                        ),
-                      ),
-                    ],
-                  ),
-                ],
-              ),
-            ],
-          ),
-          StatefulShellBranch(
-            routes: [
-              GoRoute(
-                path: '/restaurant/transaksi',
-                pageBuilder: (context, state) => const NoTransitionPage(
-                  child: RestaurantFoodOrderScreen(),
-                ),
-                routes: [
-                  GoRoute(
-                    path: 'history',
-                    pageBuilder: (context, state) => const NoTransitionPage(
-                      child: RestaurantFoodOrderHistoryScreen(),
-                    ),
-                  ),
-                ],
-              ),
-            ],
-          ),
-          StatefulShellBranch(
-            routes: [
-              GoRoute(
-                path: '/restaurant/profile',
-                pageBuilder: (context, state) => const NoTransitionPage(
-                  child: RestaurantAccountScreen(),
-                ),
-              ),
-            ],
-          ),
-        ],
-      ),
       GoRoute(
         path: '/restaurant/unverified',
         pageBuilder: (context, state) => const NoTransitionPage(
@@ -511,6 +362,297 @@ GoRouter router(Ref ref) {
           ),
         ],
       ),
+      GoRoute(
+        path: '/restaurant/dashboard',
+        pageBuilder: (context, state) => const NoTransitionPage(
+          child: RestaurantDashboardScreen(),
+        ),
+        routes: [
+          GoRoute(
+            path: 'update',
+            pageBuilder: (context, state) => NoTransitionPage(
+              child: UpdateRestaurantDataScreen(
+                restaurant: state.extra as SocieatyRestaurant,
+              ),
+            ),
+          ),
+          GoRoute(
+            path: '/outlet',
+            pageBuilder: (context, state) {
+              final userId = ref.watch(authLocalRepositoryProvider).getUserData()?.id ?? '';
+              return NoTransitionPage(
+                child: ProfileLoaderScreen(userId: userId),
+              );
+            },
+          ),
+          GoRoute(
+            path: "/outlet/menu",
+            builder: (context, state) => OwnerFoodMenuScreen(
+              args: state.extra as OwnerFoodMenuScreenArgs,
+            ),
+            routes: [
+              GoRoute(
+                path: '/create',
+                builder: (context, state) => CreateFoodMenuScreen(
+                  args: state.extra as CreateFoodMenuScreenArgs,
+                ),
+              ),
+              GoRoute(
+                path: '/update',
+                builder: (context, state) => UpdateFoodMenuScreen(
+                  args: state.extra as UpdateFoodMenuScreenArgs,
+                ),
+              ),
+            ],
+          ),
+          GoRoute(
+            path: 'food-order',
+            pageBuilder: (context, state) => const NoTransitionPage(
+              child: RestaurantFoodOrderScreen(),
+            ),
+            routes: [
+              GoRoute(
+                path: 'history',
+                pageBuilder: (context, state) => const NoTransitionPage(
+                  child: RestaurantFoodOrderHistoryScreen(),
+                ),
+              ),
+            ],
+          ),
+          GoRoute(
+            path: 'reservation',
+            pageBuilder: (context, state) => const NoTransitionPage(
+              child: ReservationNavigatorScreen(),
+            ),
+            routes: [
+              GoRoute(
+                  path: 'view',
+                  pageBuilder: (context, state) => NoTransitionPage(
+                        child: ReservationsScheduleScreen(
+                          reservationConfig: state.extra as ReservationConfig,
+                        ),
+                      ),
+                  routes: [
+                    GoRoute(
+                      path: 'calender',
+                      pageBuilder: (context, state) => NoTransitionPage(
+                        child: ReservationScheduleCalenderScreen(
+                          reservationConfig: state.extra as ReservationConfig,
+                        ),
+                      ),
+                    ),
+                  ]),
+              GoRoute(
+                path: 'manage',
+                pageBuilder: (context, state) => const NoTransitionPage(
+                  child: ReservationManagementScreen(),
+                ),
+                routes: [
+                  GoRoute(
+                    path: 'history',
+                    pageBuilder: (context, state) => const NoTransitionPage(
+                      child: RestaurantReservationHistoryScreen(),
+                    ),
+                  ),
+                ],
+              ),
+              GoRoute(
+                path: 'config/update',
+                pageBuilder: (context, state) => NoTransitionPage(
+                  child: UpdateReservationConfigScreen(
+                    reservationConfig: state.extra as ReservationConfig,
+                  ),
+                ),
+              ),
+            ],
+          ),
+          GoRoute(
+            path: 'transaction-report',
+            pageBuilder: (context, state) => const NoTransitionPage(
+              child: TransactionReportScreen(),
+            ),
+            routes: [
+              GoRoute(
+                path: 'history',
+                pageBuilder: (context, state) => const NoTransitionPage(
+                  child: TransactionListScreen(),
+                ),
+              ),
+            ],
+          ),
+        ],
+      ),
+      // StatefulShellRoute.indexedStack(
+      //   builder: (context, state, navigationShell) {
+      //     return RestaurantScaffoldWithNavbar(
+      //       navigationShell: navigationShell,
+      //       showNavbar: true,
+      //     );
+      //   },
+      //   branches: [
+      //     StatefulShellBranch(
+      //       routes: [
+      //         GoRoute(
+      //           path: '/restaurant/dashboard',
+      //           pageBuilder: (context, state) => const NoTransitionPage(
+      //             child: RestaurantDashboardScreen(),
+      //           ),
+      //           routes: [
+      //             GoRoute(
+      //               path: '/outlet',
+      //               parentNavigatorKey: rootNavigatorKey,
+      //               pageBuilder: (context, state) {
+      //                 final userId = ref.watch(authLocalRepositoryProvider).getUserData()?.id ?? '';
+      //                 return NoTransitionPage(
+      //                   child: ProfileLoaderScreen(userId: userId),
+      //                 );
+      //               },
+      //             ),
+      //             GoRoute(
+      //               path: "/outlet/menu",
+      //               parentNavigatorKey: rootNavigatorKey,
+      //               builder: (context, state) => OwnerFoodMenuScreen(
+      //                 args: state.extra as OwnerFoodMenuScreenArgs,
+      //               ),
+      //               routes: [
+      //                 GoRoute(
+      //                   path: '/create',
+      //                   parentNavigatorKey: rootNavigatorKey,
+      //                   builder: (context, state) => const CreateFoodMenuScreen(),
+      //                 ),
+      //                 GoRoute(
+      //                   path: '/update',
+      //                   parentNavigatorKey: rootNavigatorKey,
+      //                   builder: (context, state) => UpdateFoodMenuScreen(
+      //                     args: state.extra as UpdateFoodMenuScreenArgs,
+      //                   ),
+      //                 ),
+      //               ],
+      //             ),
+      //             GoRoute(
+      //               path: 'reservation',
+      //               parentNavigatorKey: rootNavigatorKey,
+      //               pageBuilder: (context, state) => const NoTransitionPage(
+      //                 child: ReservationNavigatorScreen(),
+      //               ),
+      //               routes: [
+      //                 GoRoute(
+      //                     path: 'view',
+      //                     parentNavigatorKey: rootNavigatorKey,
+      //                     pageBuilder: (context, state) => NoTransitionPage(
+      //                           child: ReservationsScheduleScreen(
+      //                             reservationConfig: state.extra as ReservationConfig,
+      //                           ),
+      //                         ),
+      //                     routes: [
+      //                       GoRoute(
+      //                         path: 'calender',
+      //                         parentNavigatorKey: rootNavigatorKey,
+      //                         pageBuilder: (context, state) => NoTransitionPage(
+      //                           child: ReservationScheduleCalenderScreen(
+      //                             reservationConfig: state.extra as ReservationConfig,
+      //                           ),
+      //                         ),
+      //                       ),
+      //                     ]),
+      //                 GoRoute(
+      //                   path: 'manage',
+      //                   parentNavigatorKey: rootNavigatorKey,
+      //                   pageBuilder: (context, state) => const NoTransitionPage(
+      //                     child: ReservationManagementScreen(),
+      //                   ),
+      //                   routes: [
+      //                     GoRoute(
+      //                       path: 'history',
+      //                       parentNavigatorKey: rootNavigatorKey,
+      //                       pageBuilder: (context, state) => const NoTransitionPage(
+      //                         child: RestaurantReservationHistoryScreen(),
+      //                       ),
+      //                     ),
+      //                   ],
+      //                 ),
+      //                 GoRoute(
+      //                   path: 'config/update',
+      //                   parentNavigatorKey: rootNavigatorKey,
+      //                   pageBuilder: (context, state) => NoTransitionPage(
+      //                     child: UpdateReservationConfigScreen(
+      //                       reservationConfig: state.extra as ReservationConfig,
+      //                     ),
+      //                   ),
+      //                 ),
+      //               ],
+      //             ),
+      //             GoRoute(
+      //               path: 'transaction-report',
+      //               parentNavigatorKey: rootNavigatorKey,
+      //               pageBuilder: (context, state) => const NoTransitionPage(
+      //                 child: TransactionReportScreen(),
+      //               ),
+      //               routes: [
+      //                 GoRoute(
+      //                   path: 'history',
+      //                   pageBuilder: (context, state) => const NoTransitionPage(
+      //                     child: TransactionListScreen(),
+      //                   ),
+      //                 ),
+      //               ],
+      //             ),
+      //           ],
+      //         ),
+      //       ],
+      //     ),
+      //     StatefulShellBranch(
+      //       routes: [
+      //         GoRoute(
+      //           path: '/restaurant/transaksi',
+      //           pageBuilder: (context, state) => const NoTransitionPage(
+      //             child: RestaurantFoodOrderScreen(),
+      //           ),
+      //           routes: [
+      //             GoRoute(
+      //               path: 'history',
+      //               pageBuilder: (context, state) => const NoTransitionPage(
+      //                 child: RestaurantFoodOrderHistoryScreen(),
+      //               ),
+      //             ),
+      //           ],
+      //         ),
+      //       ],
+      //     ),
+      //     StatefulShellBranch(
+      //       routes: [
+      //         GoRoute(
+      //           path: '/restaurant/profile',
+      //           pageBuilder: (context, state) => const NoTransitionPage(
+      //             child: RestaurantAccountScreen(),
+      //           ),
+      //         ),
+      //       ],
+      //     ),
+      //   ],
+      // ),
+      // GoRoute(
+      //   path: '/restaurant/unverified',
+      //   pageBuilder: (context, state) => const NoTransitionPage(
+      //     child: UnverifiedRestaurantScreen(),
+      //   ),
+      // ),
+      // GoRoute(
+      //   path: '/restaurant/rejected',
+      //   pageBuilder: (context, state) => const NoTransitionPage(
+      //     child: RejectedRestaurantScreen(),
+      //   ),
+      //   routes: [
+      //     GoRoute(
+      //       path: 'update',
+      //       pageBuilder: (context, state) => NoTransitionPage(
+      //         child: UpdateRestaurantDataScreen(
+      //           restaurant: state.extra as SocieatyRestaurant,
+      //         ),
+      //       ),
+      //     ),
+      //   ],
+      // ),
       GoRoute(
         path: '/customer-support',
         pageBuilder: (context, state) => const NoTransitionPage(

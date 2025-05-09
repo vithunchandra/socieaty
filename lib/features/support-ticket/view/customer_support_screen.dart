@@ -45,7 +45,9 @@ class _CustomerSupportScreenState extends ConsumerState<CustomerSupportScreen> {
 
     _userRole = ref.read(authLocalRepositoryProvider).getUserData()?.role;
 
-    _initSocketConnection();
+    if (_userRole == UserRole.admin) {
+      _initSocketConnection();
+    }
   }
 
   void _initSocketConnection() {
@@ -180,13 +182,6 @@ class _CustomerSupportScreenState extends ConsumerState<CustomerSupportScreen> {
     }
   }
 
-  void _applyFilters() {
-    setState(() {
-      _searchQuery = _searchController.text.isEmpty ? null : _searchController.text;
-    });
-    _pagingController.refresh();
-  }
-
   @override
   void dispose() {
     _isDisposed = true;
@@ -209,8 +204,9 @@ class _CustomerSupportScreenState extends ConsumerState<CustomerSupportScreen> {
         actions: [
           if (_userRole != UserRole.admin)
             IconButton(
-              onPressed: () {
-                context.push('/customer-support/create');
+              onPressed: () async {
+                await context.push('/customer-support/create');
+                _pagingController.refresh();
               },
               icon: const Icon(Icons.support_agent),
             ),

@@ -39,7 +39,6 @@ class _OtherOutletScreenState extends ConsumerState<OtherOutletScreen>
 
   @override
   void dispose() {
-    SystemChrome.setSystemUIOverlayStyle(SystemUiOverlayStyle.dark);
     _scrollController.dispose();
     super.dispose();
   }

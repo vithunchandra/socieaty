@@ -18,10 +18,12 @@ import 'package:socieaty/shared/widgets/image_loading_widget.dart';
 class OwnerFoodMenuItemWidget extends ConsumerStatefulWidget {
   final String restaurantId;
   final FoodMenu restaurantMenu;
+  final VoidCallback onUpdated;
   const OwnerFoodMenuItemWidget({
     super.key,
     required this.restaurantId,
     required this.restaurantMenu,
+    required this.onUpdated,
   });
 
   @override
@@ -92,6 +94,7 @@ class _OwnerFoodMenuItemWidgetState extends ConsumerState<OwnerFoodMenuItemWidge
           builder: (context) => OwnerFoodMenuDetailWidget(
             restaurantId: widget.restaurantMenu.restaurantId,
             restaurantMenu: _menu,
+            onUpdated: widget.onUpdated,
           ),
         );
       },
@@ -203,6 +206,7 @@ class _OwnerFoodMenuItemWidgetState extends ConsumerState<OwnerFoodMenuItemWidge
                                     extra: UpdateFoodMenuScreenArgs(
                                       restaurantId: widget.restaurantMenu.restaurantId,
                                       restaurantMenu: widget.restaurantMenu,
+                                      onUpdated: widget.onUpdated,
                                     ),
                                   );
                                 },
