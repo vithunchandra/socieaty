@@ -14,6 +14,7 @@ import 'package:socieaty/features/map/model/my_location_data.dart';
 import 'package:socieaty/features/post/post/model/post.dart';
 import 'package:socieaty/features/post/post/repository/request/create_post_form_state.dart';
 import 'package:socieaty/features/post/post/viewmodel/create_post_view_model.dart';
+import 'package:socieaty/features/user/view/profile_loader_screen.dart';
 import 'package:socieaty/shared/view_state.dart';
 import 'package:socieaty/shared/widgets/custom_text_field.dart';
 import 'package:socieaty/shared/widgets/form_item_widget.dart';
@@ -45,6 +46,7 @@ class _CreatePostScreenState extends ConsumerState<CreatePostScreen> {
       switch (next.createPostState) {
         case SuccessState<Post>():
           ref.invalidate(allPostProvider);
+          ref.invalidate(refreshCurrentUserScreenProvider);
           if (user?.role == UserRole.customer) {
             context.pop();
           } else {

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
+import 'package:riverpod_annotation/riverpod_annotation.dart';
 import 'package:socieaty/core/enums/user_role.enum.dart';
 import 'package:socieaty/core/utils/converter.dart';
 import 'package:socieaty/features/authentication/provider/get_user_data_provider.dart';
@@ -11,6 +12,13 @@ import 'package:socieaty/features/restaurant/view/owner_outlet_screen.dart';
 import 'package:socieaty/features/restaurant/view/other_outlet_screen.dart';
 import 'package:socieaty/shared/widgets/custom_error_widget.dart';
 import 'package:socieaty/shared/widgets/loading_indicator_widget.dart';
+
+part 'profile_loader_screen.g.dart';
+
+@riverpod
+UniqueKey refreshCurrentUserScreen(Ref ref) {
+  return UniqueKey();
+}
 
 class ProfileLoaderScreen extends ConsumerStatefulWidget {
   final String userId;
@@ -41,7 +49,10 @@ class _ProfileLoaderScreenState extends ConsumerState<ProfileLoaderScreen> {
         }
         if (userData.role == UserRole.customer && userData.customerData != null) {
           if (userData.id == currentUser.id) {
-            return CurrentCustomerProfileScreen(user: UserConverter.userToCustomer(userData));
+            return CurrentCustomerProfileScreen(
+              key: ref.watch(refreshCurrentUserScreenProvider),
+              user: UserConverter.userToCustomer(userData),
+            );
           } else {
             return OtherCustomerProfileScreen(user: UserConverter.userToCustomer(userData));
           }
