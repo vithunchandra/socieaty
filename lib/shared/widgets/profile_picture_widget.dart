@@ -40,7 +40,7 @@ class ProfilePictureWidget extends StatelessWidget {
       child: Text(
         user.name.substring(0, 1).toUpperCase(),
         style: TextStyle(
-          fontSize: 32,
+          fontSize: radius,
           color: _getTextColor(backgroundColor),
         ),
       ),

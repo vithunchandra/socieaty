@@ -10,6 +10,8 @@ import 'package:socieaty/core/utils/show_snackbar.dart';
 import 'package:socieaty/features/authentication/viewmodel/signup_restaurant_viewmodel.dart';
 import 'package:socieaty/features/authentication/viewstate/signup_restaurant_form_state.dart';
 import 'package:socieaty/features/map/model/my_location_data.dart';
+import 'package:socieaty/features/restaurant/model/restaurant_theme.dart';
+import 'package:socieaty/features/restaurant/provider/get_all_restaurant_themes_provider.dart';
 import 'package:socieaty/features/user/model/socieaty_user.dart';
 import 'package:socieaty/shared/view_state.dart';
 import 'package:socieaty/shared/widgets/loading_indicator_widget.dart';
@@ -33,24 +35,10 @@ class _SignupRestaurantFinalPageState extends ConsumerState<SignupRestaurantFina
   final _restaurantNameController = TextEditingController();
   final _addressController = TextEditingController();
   LatLng? _restaurantLatLng;
-  final List<int> _selectedThemes = [];
+  final List<RestaurantTheme> _selectedThemes = [];
   Bank? _selectedBank;
   final _openTimeController = TextEditingController(text: "");
   final _closeTimeController = TextEditingController(text: "");
-
-  final List<String> _restaurantThemes = [
-    'Casual',
-    'Fine Dining',
-    'Cafe',
-    'Bistro',
-    'Street Food',
-    'Fusion',
-    'Ethnic',
-    'Modern',
-    'Asian Food',
-    'Fast Food',
-    'Buffet',
-  ];
 
   final List<Bank> _banks = [
     Bank(name: "BNI (Bank Nasionnal Indonesia)", symbol: BankEnum.bni),
@@ -63,80 +51,100 @@ class _SignupRestaurantFinalPageState extends ConsumerState<SignupRestaurantFina
     showDialog(
       context: context,
       builder: (BuildContext context) {
-        return PopScope(
-          onPopInvokedWithResult: (didPop, result) {
-            FocusManager.instance.primaryFocus?.unfocus();
-          },
-          child: AlertDialog(
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(20.0),
-            ),
-            title: Text(
-              'Pilih Tema Resto',
-              style: Theme.of(context).textTheme.headlineSmall,
-            ),
-            content: SizedBox(
-              height: 300,
-              child: Scrollbar(
-                interactive: true,
-                radius: const Radius.circular(10),
-                child: SingleChildScrollView(
-                  child: Column(
-                    children: _restaurantThemes
-                        .asMap()
-                        .entries
-                        .map(
-                          (entry) => ListTile(
-                            dense: true,
-                            splashColor: AppPallete.primaryColor,
-                            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
-                            title: Text(
-                              entry.value,
-                              style: Theme.of(context).textTheme.titleSmall?.copyWith(
-                                    color: _selectedThemes.contains(entry.key)
-                                        ? AppPallete.primaryColor
-                                        : Colors.black87,
-                                    fontWeight: _selectedThemes.contains(entry.key)
-                                        ? FontWeight.bold
-                                        : FontWeight.normal,
-                                  ),
-                            ),
-                            trailing: _selectedThemes.contains(entry.key)
-                                ? Icon(
-                                    Icons.check_circle,
-                                    color: AppPallete.primaryColor,
-                                  )
-                                : null,
-                            onTap: () {
-                              setState(() {
-                                if (_selectedThemes.contains(entry.key)) {
-                                  _selectedThemes.remove(entry.key);
-                                } else {
-                                  _selectedThemes.add(entry.key);
-                                }
-                              });
+        return Consumer(
+          builder: (BuildContext context, WidgetRef ref, child) {
+            final restaurantThemes = ref.watch(getAllRestaurantThemesProvider);
+            return PopScope(
+              onPopInvokedWithResult: (didPop, result) {
+                FocusManager.instance.primaryFocus?.unfocus();
+              },
+              child: AlertDialog(
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(20.0),
+                ),
+                title: Text(
+                  'Pilih Tema Resto',
+                  style: Theme.of(context).textTheme.headlineSmall,
+                ),
+                content: SizedBox(
+                  height: 300,
+                  child: Scrollbar(
+                    interactive: true,
+                    radius: const Radius.circular(10),
+                    child: SingleChildScrollView(
+                      child: restaurantThemes.when(
+                        data: (themes) {
+                          return Column(
+                            children: themes
+                                .map(
+                                  (theme) => ListTile(
+                                    dense: true,
+                                    splashColor: AppPallete.primaryColor,
+                                    shape: RoundedRectangleBorder(
+                                        borderRadius: BorderRadius.circular(10)),
+                                    title: Text(
+                                      theme.name,
+                                      style: Theme.of(context).textTheme.titleSmall?.copyWith(
+                                            color: _selectedThemes.any((t) => t.id == theme.id)
+                                                ? AppPallete.primaryColor
+                                                : Colors.black87,
+                                            fontWeight: _selectedThemes.any((t) => t.id == theme.id)
+                                                ? FontWeight.bold
+                                                : FontWeight.normal,
+                                          ),
+                                    ),
+                                    trailing: _selectedThemes.any((t) => t.id == theme.id)
+                                        ? Icon(
+                                            Icons.check_circle,
+                                            color: AppPallete.primaryColor,
+                                          )
+                                        : null,
+                                    onTap: () {
+                                      setState(() {
+                                        final existingIndex =
+                                            _selectedThemes.indexWhere((t) => t.id == theme.id);
+                                        if (existingIndex >= 0) {
+                                          _selectedThemes.removeAt(existingIndex);
+                                        } else {
+                                          if (_selectedThemes.length < 3) {
+                                            _selectedThemes.add(theme);
+                                          } else {
+                                            showSnackbar(context, "Maksimal 3 tema");
+                                          }
+                                        }
+                                      });
 
-                              context.pop();
-                            },
-                          ),
-                        )
-                        .toList(),
+                                      context.pop();
+                                    },
+                                  ),
+                                )
+                                .toList(),
+                          );
+                        },
+                        loading: () => const Center(
+                          child: LoadingIndicatorWidget(size: 24),
+                        ),
+                        error: (error, stackTrace) => Center(
+                          child: Text('Error: ${error.toString()}'),
+                        ),
+                      ),
+                    ),
                   ),
                 ),
+                actions: [
+                  TextButton(
+                    onPressed: () {
+                      context.pop();
+                    },
+                    child: Text(
+                      'Tutup',
+                      style: TextStyle(color: AppPallete.primaryColor),
+                    ),
+                  ),
+                ],
               ),
-            ),
-            actions: [
-              TextButton(
-                onPressed: () {
-                  context.pop();
-                },
-                child: Text(
-                  'Tutup',
-                  style: TextStyle(color: AppPallete.primaryColor),
-                ),
-              ),
-            ],
-          ),
+            );
+          },
         );
       },
     );
@@ -368,11 +376,12 @@ class _SignupRestaurantFinalPageState extends ConsumerState<SignupRestaurantFina
                                   runSpacing: 4.0,
                                   children: [
                                     ..._selectedThemes.map(
-                                      (key) => Chip(
-                                        label: Text(_restaurantThemes[key]),
+                                      (theme) => Chip(
+                                        label: Text(theme.name),
                                         onDeleted: () {
-                                          _selectedThemes.remove(key);
-                                          setState(() {});
+                                          setState(() {
+                                            _selectedThemes.remove(theme);
+                                          });
                                         },
                                       ),
                                     ),
@@ -595,7 +604,8 @@ class _SignupRestaurantFinalPageState extends ConsumerState<SignupRestaurantFina
                   child: FilledButton(
                     onPressed: () async {
                       if (_formData.openTime > _formData.closeTime) {
-                        return showSnackbar(context, "Waktu buka tidak boleh lebih dari waktu tutup");
+                        return showSnackbar(
+                            context, "Waktu buka tidak boleh lebih dari waktu tutup");
                       }
                       if (_formKey.currentState != null &&
                           _formKey.currentState!.validate() &&
@@ -604,7 +614,8 @@ class _SignupRestaurantFinalPageState extends ConsumerState<SignupRestaurantFina
                           _openTimeController.text.isNotEmpty &&
                           _closeTimeController.text.isNotEmpty) {
                         _formKey.currentState?.save();
-                        _formData = _formData.copyWith(themes: _selectedThemes);
+                        _formData = _formData.copyWith(
+                            themes: _selectedThemes.map((theme) => theme.id).toList());
 
                         ref.read(signupRestaurantViewModelProvider.notifier).signupRestaurant(
                               _formData,

@@ -1,9 +1,11 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:socieaty/core/theme/app_pallete.dart';
 import 'package:socieaty/core/utils/custom_extension.dart';
+import 'package:socieaty/core/utils/location_handler.dart';
 import 'package:socieaty/core/utils/time_utils.dart';
 import 'package:socieaty/features/food_menu/customer/view/outlet_food_menu_screen.dart';
 import 'package:socieaty/features/post/post/view/post_sliver_grid_widget.dart';
@@ -30,10 +32,12 @@ class _OtherOutletScreenState extends ConsumerState<OtherOutletScreen>
   final mainHeaderHeightPercentage = 0.5;
   bool _isCollapsed = false;
   bool _isAlmostCollapsed = false;
+  String _locationName = '';
 
   @override
   void initState() {
     super.initState();
+    getLocationName();
     _scrollController.addListener(_onScroll);
   }
 
@@ -74,6 +78,17 @@ class _OtherOutletScreenState extends ConsumerState<OtherOutletScreen>
           _isCollapsed = false;
         });
       }
+    }
+  }
+
+  void getLocationName() async {
+    var location =
+        await LocationHandler.getAddressFromLatLng(widget.restaurant.restaurantData.location);
+    if (mounted) {
+      setState(() {
+        _locationName = location?.street ?? '';
+      });
+      debugPrint("Location Name: $_locationName");
     }
   }
 
@@ -171,9 +186,17 @@ class _OtherOutletScreenState extends ConsumerState<OtherOutletScreen>
                           Stack(
                             fit: StackFit.expand,
                             children: [
-                              Image.asset(
-                                "assets/images/restaurant_2.jpg",
+                              CachedNetworkImage(
+                                imageUrl: widget.restaurant.restaurantData.restaurantBannerUrl,
                                 fit: BoxFit.cover,
+                                errorWidget: (context, url, error) => Image.asset(
+                                  "assets/images/restaurant_2.jpg",
+                                  fit: BoxFit.cover,
+                                ),
+                                placeholder: (context, url) => Image.asset(
+                                  "assets/images/restaurant_2.jpg",
+                                  fit: BoxFit.cover,
+                                ),
                               ),
                               Container(
                                 decoration: BoxDecoration(
@@ -212,10 +235,11 @@ class _OtherOutletScreenState extends ConsumerState<OtherOutletScreen>
                                       ),
                                       const SizedBox(height: 8),
                                       Text(
-                                        "Jln. Ngagel Jaya Tengah No.158",
+                                        _locationName,
                                         style: Theme.of(context).textTheme.bodyMedium?.copyWith(
                                               color: Colors.white,
                                             ),
+                                        overflow: TextOverflow.ellipsis,
                                       ),
                                       const SizedBox(height: 4),
                                       Container(

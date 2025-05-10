@@ -7,21 +7,18 @@ import 'package:socieaty/core/notifications/local_notification_service.dart';
 import 'package:socieaty/core/theme/app_pallete.dart';
 import 'package:socieaty/core/theme/theme.dart';
 import 'package:socieaty/core/utils/converter.dart';
+import 'package:socieaty/core/utils/location_handler.dart';
 import 'package:socieaty/core/utils/show_snackbar.dart';
-import 'package:socieaty/features/authentication/repository/auth_local_repository.dart';
 import 'package:socieaty/features/food-order/restaurant/provider/order_changes_notification_provider.dart';
-import 'package:socieaty/features/home/restaurant/view/grid_menu_button_widget.dart';
-import 'package:socieaty/features/home/restaurant/view/recent_reservation_widget.dart';
-import 'package:socieaty/features/home/restaurant/view/statistic_summary_widget.dart';
 import 'package:socieaty/features/food-order/restaurant/socket/restaurant_socket_service.dart';
 import 'package:socieaty/features/reservation/restaurant/provider/new_reservation_notification_provider.dart';
 import 'package:socieaty/features/reservation/restaurant/provider/reservation_changes_notification_provider.dart';
 import 'package:socieaty/features/reservation/restaurant/socket/restaurant_reservation_socket_service.dart';
-import 'package:socieaty/features/restaurant/view/restaurant_scaffold_with_navbar.dart';
-import 'package:socieaty/features/food-order/restaurant/view/food_order_item_summary_widget.dart';
 import 'package:socieaty/features/food-order/restaurant/provider/new_order_notification_provider.dart';
+import 'package:socieaty/features/restaurant/model/socieaty_restaurant.dart';
+import 'package:socieaty/features/transaction_review/provider/get_all_restaurant_reviews_provider.dart';
+import 'package:socieaty/shared/provider/get_current_user_data_provider.dart';
 import 'package:socieaty/shared/widgets/create_screen.dart';
-import 'package:socieaty/shared/widgets/profile_picture_widget.dart';
 import 'package:toastification/toastification.dart';
 import 'package:dropdown_button2/dropdown_button2.dart';
 import 'package:socieaty/features/account/customer/viewmodel/account_view_model.dart';
@@ -110,7 +107,7 @@ class _RestaurantDashboardScreenState extends ConsumerState<RestaurantDashboardS
 
   @override
   Widget build(BuildContext context) {
-    final user = ref.watch(authLocalRepositoryProvider).getUserData();
+    final user = ref.watch(getCurrentUserDataProvider);
     bool isLoading = ref.watch(accountViewModelProvider).isSignedOut is LoadingState;
 
     ref.listen(accountViewModelProvider, (_, next) {
@@ -127,12 +124,10 @@ class _RestaurantDashboardScreenState extends ConsumerState<RestaurantDashboardS
     });
 
     if (user == null) {
-      return const Scaffold(
-        body: Center(
-          child: CircularProgressIndicator(),
-        ),
-      );
+      context.go('/signin');
     }
+
+    final restaurant = UserConverter.userToRestaurant(user!);
 
     return Scaffold(
       backgroundColor: AppPallete.neutralColor.shade50,
@@ -154,7 +149,7 @@ class _RestaurantDashboardScreenState extends ConsumerState<RestaurantDashboardS
               customButton: isLoading
                   ? const LoadingIndicatorWidget(size: 24)
                   : Icon(
-                      Icons.more_vert,
+                      Icons.menu,
                       color: AppPallete.neutralColor.shade800,
                     ),
               items: [
@@ -224,7 +219,10 @@ class _RestaurantDashboardScreenState extends ConsumerState<RestaurantDashboardS
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              _buildWelcomeCard(context, user.name),
+              RestaurantWelcomeCard(
+                key: ValueKey(restaurant.restaurantData.id),
+                restaurant: restaurant,
+              ),
               const SizedBox(height: 24),
               Text(
                 'Management Options',
@@ -236,126 +234,6 @@ class _RestaurantDashboardScreenState extends ConsumerState<RestaurantDashboardS
               _buildManagementOptions(context),
             ],
           ),
-        ),
-      ),
-    );
-  }
-
-  Widget _buildWelcomeCard(BuildContext context, String restaurantName) {
-    return GestureDetector(
-      onTap: () {
-        context.push('/restaurant/dashboard/outlet');
-      },
-      child: Container(
-        width: double.infinity,
-        padding: const EdgeInsets.all(24),
-        decoration: BoxDecoration(
-          gradient: LinearGradient(
-            begin: Alignment.topLeft,
-            end: Alignment.bottomRight,
-            colors: [
-              AppPallete.primaryColor,
-              AppPallete.primaryColor.shade500,
-            ],
-          ),
-          borderRadius: BorderRadius.circular(16),
-          boxShadow: [
-            BoxShadow(
-              color: AppPallete.primaryColor.withAlpha(50),
-              blurRadius: 12,
-              offset: const Offset(0, 4),
-            ),
-          ],
-        ),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Row(
-              children: [
-                Icon(
-                  Icons.restaurant,
-                  color: Colors.white.withAlpha(200),
-                  size: 20,
-                ),
-                const SizedBox(width: 8),
-                Text(
-                  'Restaurant Dashboard',
-                  style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                        color: Colors.white.withAlpha(200),
-                      ),
-                ),
-              ],
-            ),
-            const SizedBox(height: 12),
-            Text(
-              'Welcome, $restaurantName',
-              style: Theme.of(context).textTheme.headlineSmall?.copyWith(
-                    color: Colors.white,
-                    fontWeight: FontWeight.bold,
-                  ),
-            ),
-            const SizedBox(height: 8),
-            Text(
-              'Manage your restaurant and monitor activities',
-              style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                    color: Colors.white.withAlpha(220),
-                  ),
-            ),
-            const SizedBox(height: 16),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.start,
-              children: [
-                Container(
-                  padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
-                  decoration: BoxDecoration(
-                    color: Colors.white.withAlpha(30),
-                    borderRadius: BorderRadius.circular(20),
-                  ),
-                  child: Row(
-                    children: [
-                      const Icon(
-                        Icons.star,
-                        color: Colors.amber,
-                        size: 16,
-                      ),
-                      const SizedBox(width: 4),
-                      Text(
-                        '4.5',
-                        style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                              color: Colors.white,
-                              fontWeight: FontWeight.bold,
-                            ),
-                      ),
-                    ],
-                  ),
-                ),
-                const SizedBox(width: 8),
-                Container(
-                  padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
-                  decoration: BoxDecoration(
-                    color: Colors.white.withAlpha(30),
-                    borderRadius: BorderRadius.circular(20),
-                  ),
-                  child: Row(
-                    children: [
-                      const Icon(
-                        Icons.location_on,
-                        color: Colors.white,
-                        size: 16,
-                      ),
-                      const SizedBox(width: 4),
-                      Text(
-                        'Jakarta',
-                        style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                              color: Colors.white,
-                            ),
-                      ),
-                    ],
-                  ),
-                ),
-              ],
-            ),
-          ],
         ),
       ),
     );
@@ -464,187 +342,176 @@ class _RestaurantDashboardScreenState extends ConsumerState<RestaurantDashboardS
       ),
     );
   }
+}
 
-  // Widget _buildRecentTransactions(BuildContext context) {
-  //   return Container(
-  //     width: double.infinity,
-  //     decoration: BoxDecoration(
-  //       color: Colors.white,
-  //       borderRadius: BorderRadius.circular(12),
-  //       boxShadow: [
-  //         BoxShadow(
-  //           color: AppPallete.neutralColor.shade300.withAlpha(30),
-  //           blurRadius: 8,
-  //           offset: const Offset(0, 2),
-  //         ),
-  //       ],
-  //     ),
-  //     child: Column(
-  //       children: [
-  //         FoodOrderItemSummaryWidget(
-  //           customerName: 'John Doe',
-  //           time: '2 hours ago',
-  //           amount: 'Rp 150.000',
-  //           status: 'Completed',
-  //         ),
-  //         const Divider(height: 1),
-  //         FoodOrderItemSummaryWidget(
-  //           customerName: 'Sarah Smith',
-  //           time: '3 hours ago',
-  //           amount: 'Rp 95.000',
-  //           status: 'Completed',
-  //         ),
-  //       ],
-  //     ),
-  //   );
-  // }
+class RestaurantWelcomeCard extends ConsumerStatefulWidget {
+  final SocieatyRestaurant restaurant;
 
-  // Widget _buildUpcomingReservations(BuildContext context) {
-  //   return Container(
-  //     width: double.infinity,
-  //     decoration: BoxDecoration(
-  //       color: Colors.white,
-  //       borderRadius: BorderRadius.circular(12),
-  //       boxShadow: [
-  //         BoxShadow(
-  //           color: AppPallete.neutralColor.shade300.withAlpha(30),
-  //           blurRadius: 8,
-  //           offset: const Offset(0, 2),
-  //         ),
-  //       ],
-  //     ),
-  //     child: RecentReservationWidget(),
-  //   );
-  // }
+  const RestaurantWelcomeCard({
+    super.key,
+    required this.restaurant,
+  });
 
-  // Widget _buildStatistics(BuildContext context) {
-  //   return Row(
-  //     children: [
-  //       Expanded(
-  //         child: Container(
-  //           padding: const EdgeInsets.all(16),
-  //           decoration: BoxDecoration(
-  //             color: Colors.white,
-  //             borderRadius: BorderRadius.circular(12),
-  //             boxShadow: [
-  //               BoxShadow(
-  //                 color: AppPallete.neutralColor.shade300.withAlpha(30),
-  //                 blurRadius: 8,
-  //                 offset: const Offset(0, 2),
-  //               ),
-  //             ],
-  //           ),
-  //           child: StatisticSummaryWidget(
-  //             title: 'Revenue',
-  //             value: 'Rp 2.5M',
-  //             increase: '+15%',
-  //             icon: Icons.trending_up,
-  //             color: AppPallete.successColor,
-  //           ),
-  //         ),
-  //       ),
-  //       const SizedBox(width: 16),
-  //       Expanded(
-  //         child: Container(
-  //           padding: const EdgeInsets.all(16),
-  //           decoration: BoxDecoration(
-  //             color: Colors.white,
-  //             borderRadius: BorderRadius.circular(12),
-  //             boxShadow: [
-  //               BoxShadow(
-  //                 color: AppPallete.neutralColor.shade300.withAlpha(30),
-  //                 blurRadius: 8,
-  //                 offset: const Offset(0, 2),
-  //               ),
-  //             ],
-  //           ),
-  //           child: StatisticSummaryWidget(
-  //             title: 'Orders',
-  //             value: '45',
-  //             increase: '+8%',
-  //             icon: Icons.receipt_long,
-  //             color: AppPallete.infoColor,
-  //           ),
-  //         ),
-  //       ),
-  //     ],
-  //   );
-  // }
+  @override
+  ConsumerState<RestaurantWelcomeCard> createState() => _RestaurantWelcomeCardState();
+}
 
-  // Widget _buildSocialEngagement(BuildContext context) {
-  //   return Container(
-  //     padding: const EdgeInsets.all(20),
-  //     decoration: BoxDecoration(
-  //       color: Colors.white,
-  //       borderRadius: BorderRadius.circular(12),
-  //       boxShadow: [
-  //         BoxShadow(
-  //           color: AppPallete.neutralColor.shade300.withAlpha(30),
-  //           blurRadius: 8,
-  //           offset: const Offset(0, 2),
-  //         ),
-  //       ],
-  //     ),
-  //     child: Row(
-  //       mainAxisAlignment: MainAxisAlignment.spaceAround,
-  //       children: [
-  //         _buildEngagementMetric(
-  //           context,
-  //           icon: Icons.remove_red_eye,
-  //           value: '10.5K',
-  //           label: 'Views',
-  //           color: Colors.purple,
-  //         ),
-  //         _buildEngagementMetric(
-  //           context,
-  //           icon: Icons.favorite,
-  //           value: '2.3K',
-  //           label: 'Likes',
-  //           color: AppPallete.errorColor,
-  //         ),
-  //         _buildEngagementMetric(
-  //           context,
-  //           icon: Icons.comment,
-  //           value: '1.2K',
-  //           label: 'Comments',
-  //           color: AppPallete.infoColor,
-  //         ),
-  //       ],
-  //     ),
-  //   );
-  // }
+class _RestaurantWelcomeCardState extends ConsumerState<RestaurantWelcomeCard> {
+  String _locationName = '';
 
-  // Widget _buildEngagementMetric(
-  //   BuildContext context, {
-  //   required IconData icon,
-  //   required String value,
-  //   required String label,
-  //   required Color color,
-  // }) {
-  //   return Column(
-  //     children: [
-  //       Container(
-  //         padding: const EdgeInsets.all(12),
-  //         decoration: BoxDecoration(
-  //           color: color.withAlpha(30),
-  //           borderRadius: BorderRadius.circular(12),
-  //         ),
-  //         child: Icon(icon, size: 24, color: color),
-  //       ),
-  //       const SizedBox(height: 8),
-  //       Text(
-  //         value,
-  //         style: Theme.of(context).textTheme.titleMedium?.copyWith(
-  //               fontWeight: FontWeight.bold,
-  //             ),
-  //       ),
-  //       Text(
-  //         label,
-  //         style: Theme.of(context).textTheme.bodySmall?.copyWith(
-  //               color: AppPallete.neutralColor.shade600,
-  //             ),
-  //       ),
-  //     ],
-  //   );
-  // }
+  @override
+  void initState() {
+    super.initState();
+    getLocationName();
+  }
+
+  @override
+  void didUpdateWidget(RestaurantWelcomeCard oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    getLocationName();
+  }
+
+  void getLocationName() async {
+    var location =
+        await LocationHandler.getAddressFromLatLng(widget.restaurant.restaurantData.location);
+    if (mounted) {
+      setState(() {
+        _locationName = location?.subLocality ?? '';
+      });
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final reviews =
+        ref.watch(getAllRestaurantReviewsProvider(widget.restaurant.restaurantData.id, null));
+
+    return GestureDetector(
+      onTap: () {
+        context.push('/restaurant/dashboard/outlet');
+      },
+      child: Container(
+        width: double.infinity,
+        padding: const EdgeInsets.all(24),
+        decoration: BoxDecoration(
+          gradient: LinearGradient(
+            begin: Alignment.topLeft,
+            end: Alignment.bottomRight,
+            colors: [
+              AppPallete.primaryColor,
+              AppPallete.primaryColor.shade500,
+            ],
+          ),
+          borderRadius: BorderRadius.circular(16),
+          boxShadow: [
+            BoxShadow(
+              color: AppPallete.primaryColor.withAlpha(50),
+              blurRadius: 12,
+              offset: const Offset(0, 4),
+            ),
+          ],
+        ),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Row(
+              children: [
+                Icon(
+                  Icons.restaurant,
+                  color: Colors.white.withAlpha(200),
+                  size: 20,
+                ),
+                const SizedBox(width: 8),
+                Text(
+                  'Restaurant Dashboard',
+                  style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                        color: Colors.white.withAlpha(200),
+                      ),
+                ),
+              ],
+            ),
+            const SizedBox(height: 12),
+            Text(
+              'Welcome, ${widget.restaurant.name}',
+              style: Theme.of(context).textTheme.headlineSmall?.copyWith(
+                    color: Colors.white,
+                    fontWeight: FontWeight.bold,
+                  ),
+            ),
+            const SizedBox(height: 8),
+            Text(
+              'Manage your restaurant and monitor activities',
+              style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                    color: Colors.white.withAlpha(220),
+                  ),
+            ),
+            const SizedBox(height: 16),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.start,
+              children: [
+                Container(
+                  padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                  decoration: BoxDecoration(
+                    color: Colors.white.withAlpha(30),
+                    borderRadius: BorderRadius.circular(20),
+                  ),
+                  child: Row(
+                    children: [
+                      const Icon(
+                        Icons.star,
+                        color: Colors.amber,
+                        size: 16,
+                      ),
+                      const SizedBox(width: 4),
+                      reviews.when(
+                        data: (data) => Text(
+                          data.rating.toString(),
+                          style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                                color: Colors.white,
+                                fontWeight: FontWeight.bold,
+                              ),
+                        ),
+                        loading: () => const LoadingIndicatorWidget(size: 16),
+                        error: (_, __) => Text(
+                          '-',
+                          style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                                color: Colors.white,
+                                fontWeight: FontWeight.bold,
+                              ),
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+                const SizedBox(width: 8),
+                Container(
+                  padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                  decoration: BoxDecoration(
+                    color: Colors.white.withAlpha(30),
+                    borderRadius: BorderRadius.circular(20),
+                  ),
+                  child: Row(
+                    children: [
+                      const Icon(
+                        Icons.location_on,
+                        color: Colors.white,
+                        size: 16,
+                      ),
+                      const SizedBox(width: 4),
+                      Text(
+                        _locationName.isNotEmpty ? _locationName : 'Jakarta',
+                        style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                              color: Colors.white,
+                            ),
+                      ),
+                    ],
+                  ),
+                ),
+              ],
+            ),
+          ],
+        ),
+      ),
+    );
+  }
 }

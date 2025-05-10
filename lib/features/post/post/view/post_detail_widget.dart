@@ -323,6 +323,15 @@ class _PostDetailWidgetState extends ConsumerState<PostDetailWidget> {
                                     extra: UpdatePostScreenArgs(
                                       post: widget.args.post,
                                       lastTheme: SocieatyAppTheme.darkTheme,
+                                      onUpdate: (updatedPost) {
+                                        if (widget.args.onUpdate != null) {
+                                          widget.args.onUpdate!(updatedPost);
+                                        }
+                                        postMedia = updatedPost.medias;
+                                        if (context.mounted) {
+                                          setState(() {});
+                                        }
+                                      },
                                     ),
                                   );
                                   break;

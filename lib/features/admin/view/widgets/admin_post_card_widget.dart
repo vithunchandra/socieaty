@@ -14,21 +14,21 @@ import 'package:socieaty/shared/view_state.dart';
 import 'package:socieaty/shared/widgets/image_error_widget.dart';
 import 'package:socieaty/shared/widgets/image_loading_widget.dart';
 
-class PostCardWidget extends ConsumerStatefulWidget {
+class AdminPostCardWidget extends ConsumerStatefulWidget {
   final Post post;
   final Function(Post) onDeleteSuccess;
 
-  const PostCardWidget({
+  const AdminPostCardWidget({
     super.key,
     required this.post,
     required this.onDeleteSuccess,
   });
 
   @override
-  ConsumerState<PostCardWidget> createState() => _PostCardWidgetState();
+  ConsumerState<AdminPostCardWidget> createState() => _PostCardWidgetState();
 }
 
-class _PostCardWidgetState extends ConsumerState<PostCardWidget> {
+class _PostCardWidgetState extends ConsumerState<AdminPostCardWidget> {
   bool _isDeleting = false;
 
   @override

@@ -26,7 +26,8 @@ import 'package:socieaty/shared/widgets/video_thumbail_widget.dart';
 class UpdatePostScreenArgs {
   final Post post;
   final ThemeData lastTheme;
-  UpdatePostScreenArgs({required this.post, required this.lastTheme});
+  final void Function(Post) onUpdate;
+  UpdatePostScreenArgs({required this.post, required this.lastTheme, required this.onUpdate});
 }
 
 class UpdatePostScreen extends ConsumerStatefulWidget {
@@ -65,8 +66,9 @@ class _UpdatePostScreenState extends ConsumerState<UpdatePostScreen> {
 
     ref.listen(updatePostViewModelProvider(widget.args.post.id), (_, next) {
       switch (next.updatedPostState) {
-        case SuccessState<Post>():
+        case SuccessState<Post>(data: final updatedPost):
           ref.invalidate(allPostProvider);
+          widget.args.onUpdate(updatedPost);
           context.pop();
         case ErrorState(message: final message):
           showSnackbar(context, message, state: SnackbarState.error);
@@ -148,7 +150,18 @@ class _UpdatePostScreenState extends ConsumerState<UpdatePostScreen> {
                                       if (deleteMediaIds.contains(media.id)) {
                                         deleteMediaIds.remove(media.id);
                                       } else {
-                                        deleteMediaIds.add(media.id);
+                                        if (widget.args.post.medias.length +
+                                                files.length -
+                                                deleteMediaIds.length >
+                                            1) {
+                                          deleteMediaIds.add(media.id);
+                                        } else {
+                                          showSnackbar(
+                                            context,
+                                            "Kamu harus memiliki minimal 1 media",
+                                            state: SnackbarState.error,
+                                          );
+                                        }
                                       }
                                     });
                                   },

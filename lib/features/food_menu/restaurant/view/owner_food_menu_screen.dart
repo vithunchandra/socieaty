@@ -16,6 +16,7 @@ import 'package:socieaty/features/food_menu/restaurant/view/create_food_menu_scr
 import 'package:socieaty/features/food_menu/restaurant/view/owner_food_menu_detail_widget.dart';
 import 'package:socieaty/features/food_menu/restaurant/view/owner_food_menu_item_widget.dart';
 import 'package:socieaty/features/restaurant/model/socieaty_restaurant.dart';
+import 'package:socieaty/features/transaction_review/provider/get_all_restaurant_reviews_provider.dart';
 import 'package:socieaty/shared/widgets/custom_empty_widget.dart';
 import 'package:socieaty/shared/widgets/custom_error_widget.dart';
 import 'package:socieaty/shared/widgets/dotted_divider.dart';
@@ -38,6 +39,7 @@ class OwnerFoodMenuScreen extends ConsumerStatefulWidget {
 
 class _OwnerFoodMenuScreenState extends ConsumerState<OwnerFoodMenuScreen> {
   String _locationName = "";
+
   final ScrollController _scrollController = ScrollController();
   bool _isCollapsed = false;
   bool _isAlmostCollapsed = false;
@@ -159,6 +161,9 @@ class _OwnerFoodMenuScreenState extends ConsumerState<OwnerFoodMenuScreen> {
       query: _menuFilterFormState,
     ));
 
+    final reviewsAsync =
+        ref.watch(getAllRestaurantReviewsProvider(widget.args.restaurant.restaurantData.id, null));
+
     _isOpen = isNowBetween(widget.args.restaurant.restaurantData.openTime.toTimeOfDay(),
         widget.args.restaurant.restaurantData.closeTime.toTimeOfDay());
 
@@ -243,57 +248,128 @@ class _OwnerFoodMenuScreenState extends ConsumerState<OwnerFoodMenuScreen> {
                                   color: AppPallete.neutralColor.shade50,
                                   elevation: 2,
                                   borderRadius: BorderRadius.circular(12),
-                                  child: ClipRRect(
-                                    borderRadius: BorderRadius.circular(12),
-                                    child: SizedBox(
+                                  child: reviewsAsync.when(
+                                    data: (reviews) {
+                                      final reviewCount = reviews.count;
+                                      final averageRating = reviewCount > 0 ? reviews.rating : 0.0;
+
+                                      return ClipRRect(
+                                        borderRadius: BorderRadius.circular(12),
+                                        child: SizedBox(
+                                          width: 68,
+                                          child: Column(
+                                            crossAxisAlignment: CrossAxisAlignment.stretch,
+                                            children: [
+                                              Container(
+                                                padding: const EdgeInsets.all(2),
+                                                color: AppPallete.successColor,
+                                                child: Row(
+                                                  mainAxisAlignment: MainAxisAlignment.center,
+                                                  children: [
+                                                    Text(
+                                                      averageRating > 0
+                                                          ? averageRating.toStringAsFixed(1)
+                                                          : "-",
+                                                      style: Theme.of(context)
+                                                          .textTheme
+                                                          .titleMedium
+                                                          ?.copyWith(
+                                                            color: Colors.white,
+                                                            fontWeight: FontWeight.bold,
+                                                          ),
+                                                    ),
+                                                    const SizedBox(width: 4),
+                                                    Icon(Icons.star, color: Colors.white, size: 20),
+                                                  ],
+                                                ),
+                                              ),
+                                              Container(
+                                                padding: const EdgeInsets.all(2),
+                                                color: Colors.white,
+                                                child: Column(
+                                                  mainAxisAlignment: MainAxisAlignment.center,
+                                                  children: [
+                                                    Text(
+                                                      "$reviewCount",
+                                                      style: Theme.of(context)
+                                                          .textTheme
+                                                          .bodyLarge
+                                                          ?.copyWith(
+                                                            fontWeight: FontWeight.bold,
+                                                          ),
+                                                    ),
+                                                    Text(
+                                                      reviewCount == 1 ? "Review" : "Reviews",
+                                                      style: Theme.of(context).textTheme.bodyMedium,
+                                                    ),
+                                                  ],
+                                                ),
+                                              ),
+                                            ],
+                                          ),
+                                        ),
+                                      );
+                                    },
+                                    loading: () => SizedBox(
                                       width: 68,
-                                      child: Column(
-                                        crossAxisAlignment: CrossAxisAlignment.stretch,
-                                        children: [
-                                          Container(
-                                            padding: const EdgeInsets.all(2),
-                                            color: AppPallete.successColor,
-                                            child: Row(
-                                              mainAxisAlignment: MainAxisAlignment.center,
-                                              children: [
-                                                Text(
-                                                  "4.6",
-                                                  style: Theme.of(context)
-                                                      .textTheme
-                                                      .titleMedium
-                                                      ?.copyWith(
-                                                        color: Colors.white,
-                                                        fontWeight: FontWeight.bold,
-                                                      ),
-                                                ),
-                                                const SizedBox(width: 4),
-                                                Icon(Icons.star, color: Colors.white, size: 20),
-                                              ],
+                                      height: 64,
+                                      child: Center(
+                                        child: SizedBox(
+                                          width: 20,
+                                          height: 20,
+                                          child: const LoadingIndicatorWidget(
+                                              size: 20, color: Colors.white),
+                                        ),
+                                      ),
+                                    ),
+                                    error: (_, __) => ClipRRect(
+                                      borderRadius: BorderRadius.circular(12),
+                                      child: SizedBox(
+                                        width: 68,
+                                        child: Column(
+                                          crossAxisAlignment: CrossAxisAlignment.stretch,
+                                          children: [
+                                            Container(
+                                              padding: const EdgeInsets.all(2),
+                                              color: AppPallete.successColor,
+                                              child: Row(
+                                                mainAxisAlignment: MainAxisAlignment.center,
+                                                children: [
+                                                  Text(
+                                                    "-",
+                                                    style: Theme.of(context)
+                                                        .textTheme
+                                                        .titleMedium
+                                                        ?.copyWith(
+                                                          color: Colors.white,
+                                                          fontWeight: FontWeight.bold,
+                                                        ),
+                                                  ),
+                                                  const SizedBox(width: 4),
+                                                  Icon(Icons.star, color: Colors.white, size: 20),
+                                                ],
+                                              ),
                                             ),
-                                          ),
-                                          Container(
-                                            padding: const EdgeInsets.all(2),
-                                            color: Colors.white,
-                                            child: Column(
-                                              mainAxisAlignment: MainAxisAlignment.center,
-                                              children: [
-                                                Text(
-                                                  "9403",
-                                                  style: Theme.of(context)
-                                                      .textTheme
-                                                      .bodyLarge
-                                                      ?.copyWith(
-                                                        fontWeight: FontWeight.bold,
-                                                      ),
-                                                ),
-                                                Text(
-                                                  "Reviews",
-                                                  style: Theme.of(context).textTheme.bodyMedium,
-                                                ),
-                                              ],
+                                            Container(
+                                              padding: const EdgeInsets.all(2),
+                                              color: Colors.white,
+                                              child: Column(
+                                                mainAxisAlignment: MainAxisAlignment.center,
+                                                children: [
+                                                  Icon(
+                                                    Icons.error_outline,
+                                                    color: AppPallete.errorColor,
+                                                    size: 16,
+                                                  ),
+                                                  Text(
+                                                    "Error",
+                                                    style: Theme.of(context).textTheme.bodySmall,
+                                                  ),
+                                                ],
+                                              ),
                                             ),
-                                          ),
-                                        ],
+                                          ],
+                                        ),
                                       ),
                                     ),
                                   ),

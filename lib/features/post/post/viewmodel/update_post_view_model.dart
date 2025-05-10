@@ -12,17 +12,17 @@ part 'update_post_view_model.g.dart';
 
 @riverpod
 class UpdatePostViewModel extends _$UpdatePostViewModel {
-  late PostRepository postRepository;
+  late PostRepository _postRepository;
 
   @override
   UpdatePostViewState build(String postId) {
-    postRepository = ref.watch(postRepositoryProvider);
+    _postRepository = ref.watch(postRepositoryProvider);
     return UpdatePostViewState(postId: postId, updatedPostState: IdleState());
   }
 
   Future<void> updatePost(UpdatePostRequest data, List<File> medias) async {
     state = state.copyWith(updatedPostState: LoadingState());
-    final result = await postRepository.updatePost(postId, data, medias);
+    final result = await _postRepository.updatePost(postId, data, medias);
     switch (result) {
       case Success<UpdatePostResponse>(data: final data):
         state = state.copyWith(updatedPostState: SuccessState(data: data.post));

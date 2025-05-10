@@ -10,7 +10,7 @@ import 'package:socieaty/features/post/post/repository/request/paginate_post_que
 import 'package:socieaty/shared/models/pagination_query.dart';
 import 'package:socieaty/shared/widgets/custom_error_widget.dart';
 import 'package:socieaty/shared/widgets/custom_loading_widget.dart';
-import 'package:socieaty/features/admin/view/widgets/post_card_widget.dart';
+import 'package:socieaty/features/admin/view/widgets/admin_post_card_widget.dart';
 
 class ConfigureContentScreen extends ConsumerStatefulWidget {
   const ConfigureContentScreen({super.key});
@@ -123,7 +123,7 @@ class _ConfigureContentScreenState extends ConsumerState<ConfigureContentScreen>
                   itemBuilder: (context, post, index) {
                     return Padding(
                       padding: const EdgeInsets.only(bottom: 16),
-                      child: PostCardWidget(
+                      child: AdminPostCardWidget(
                         post: post,
                         onDeleteSuccess: (Post post) {
                           if (_pagingController.itemList != null) {

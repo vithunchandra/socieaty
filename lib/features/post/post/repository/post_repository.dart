@@ -1,7 +1,9 @@
 import 'dart:io';
 
 import 'package:dio/dio.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 import 'package:socieaty/core/constants.dart';
 import 'package:socieaty/core/network/api_client.dart';
@@ -62,9 +64,12 @@ class PostRepository {
 
   Future<ApiResult<UpdatePostResponse>> updatePost(
       String postId, UpdatePostRequest data, List<File> medias) async {
+    debugPrint(data.toJson().toString());
     FormData formData = FormData.fromMap({
-      ...data.toJson(),
-      'hashtags[]': data.hashtags.isEmpty ? [''] : data.hashtags,
+      'title': data.title,
+      'caption': data.caption,
+      'location': data.location == null ? LatLng(0, 0).toJsonMap() : data.location!.toJsonMap(),
+      'hashtags[]': data.hashtags,
       'deleteMediaIds[]': data.deleteMediaIds.isEmpty ? [''] : data.deleteMediaIds,
     });
     for (File media in medias) {

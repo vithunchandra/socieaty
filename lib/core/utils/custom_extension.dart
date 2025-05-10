@@ -1,6 +1,7 @@
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:socieaty/core/theme/app_pallete.dart';
 import 'package:socieaty/features/menu_item/model/menu_item.dart';
 import 'package:socieaty/features/reservation/enum/reservation_status_enum.dart';
@@ -144,5 +145,14 @@ extension SupportTicketStatusExtension on SupportTicketStatus {
       case SupportTicketStatus.closed:
         return AppPallete.neutralColor.shade500;
     }
+  }
+}
+
+extension LatLngExtension on LatLng {
+  Map<String, double> toJsonMap() {
+    return {
+      'latitude': latitude,
+      'longitude': longitude,
+    };
   }
 }

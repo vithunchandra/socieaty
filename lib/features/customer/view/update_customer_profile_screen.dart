@@ -7,6 +7,8 @@ import 'package:socieaty/core/theme/app_pallete.dart';
 import 'package:socieaty/core/utils/converter.dart';
 import 'package:socieaty/core/utils/show_picker_modal.dart';
 import 'package:socieaty/core/utils/show_snackbar.dart';
+import 'package:socieaty/features/authentication/provider/get_user_data_provider.dart';
+import 'package:socieaty/features/authentication/repository/auth_local_repository.dart';
 import 'package:socieaty/features/customer/model/socieaty_customer.dart';
 import 'package:socieaty/features/customer/viewmodel/update_customer_profile_view_model.dart';
 import 'package:socieaty/features/customer/viewstate/update_customer_profile_form_state.dart';
@@ -45,7 +47,15 @@ class _UpdateCustomerProfileScreenState extends ConsumerState<UpdateCustomerProf
     ref.listen(updateCustomerProfileViewModelProvider, (previous, next) {
       switch (next.updateCustomerState) {
         case SuccessState<SocieatyCustomer>(data: final user):
-          context.pop();
+          () async {
+            await ref
+                .read(authLocalRepositoryProvider)
+                .setUserData(UserConverter.customerToUser(user));
+            ref.invalidate(getUserDataProvider(widget.user.id));
+            if (context.mounted) {
+              context.pop();
+            }
+          }();
         case ErrorState(message: final message):
           showSnackbar(context, message, state: SnackbarState.error);
         case LoadingState<SocieatyCustomer>():
@@ -102,10 +112,16 @@ class _UpdateCustomerProfileScreenState extends ConsumerState<UpdateCustomerProf
                               elevation: 2.0,
                               shadowColor: AppPallete.neutralColor,
                               borderRadius: BorderRadius.circular(50),
-                              child: ProfilePictureWidget(
-                                radius: 50,
-                                user: UserConverter.customerToUser(widget.user),
-                              ),
+                              child: _selectedProfilePicture == null
+                                  ? ProfilePictureWidget(
+                                      radius: 50,
+                                      user: UserConverter.customerToUser(widget.user),
+                                    )
+                                  : CircleAvatar(
+                                      radius: 50,
+                                      backgroundColor: AppPallete.neutralColor.shade50,
+                                      foregroundImage: FileImage(_selectedProfilePicture!),
+                                    ),
                             ),
                             Positioned(
                               bottom: 0,

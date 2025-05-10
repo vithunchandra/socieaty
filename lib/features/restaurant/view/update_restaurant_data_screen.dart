@@ -6,14 +6,19 @@ import 'package:go_router/go_router.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:socieaty/core/enums/bank.enum.dart';
 import 'package:socieaty/core/theme/app_pallete.dart';
+import 'package:socieaty/core/utils/converter.dart';
 import 'package:socieaty/core/utils/location_handler.dart';
 import 'package:socieaty/core/utils/show_picker_modal.dart';
 import 'package:socieaty/core/utils/show_snackbar.dart';
+import 'package:socieaty/features/authentication/repository/auth_local_repository.dart';
 import 'package:socieaty/features/map/model/my_location_data.dart';
 import 'package:socieaty/features/restaurant/enum/restaurant_verification_status_enum.dart';
+import 'package:socieaty/features/restaurant/model/restaurant_theme.dart';
 import 'package:socieaty/features/restaurant/model/socieaty_restaurant.dart';
+import 'package:socieaty/features/restaurant/provider/get_all_restaurant_themes_provider.dart';
 import 'package:socieaty/features/restaurant/repository/request/update_restaurant_data_request.dart';
 import 'package:socieaty/features/restaurant/viewmodel/update_restaurant_data_view_model.dart';
+import 'package:socieaty/shared/provider/get_current_user_data_provider.dart';
 import 'package:socieaty/shared/view_state.dart';
 import 'package:socieaty/shared/widgets/custom_underline_text_field.dart';
 import 'package:socieaty/shared/widgets/loading_indicator_widget.dart';
@@ -42,24 +47,10 @@ class _UpdateRestaurantDataScreenState extends ConsumerState<UpdateRestaurantDat
   File? _selectedBannerImage;
   File? _selectedProfileImage;
   LatLng? _restaurantLatLng;
-  final List<int> _selectedThemes = [];
+  final List<RestaurantTheme> _selectedThemes = [];
   Bank? _selectedBank;
   final bool _isLoading = false;
   late UpdateRestaurantDataRequest _formData;
-
-  final List<String> _restaurantThemes = [
-    'Casual',
-    'Fine Dining',
-    'Cafe',
-    'Bistro',
-    'Street Food',
-    'Fusion',
-    'Ethnic',
-    'Modern',
-    'Asian Food',
-    'Fast Food',
-    'Buffet',
-  ];
 
   final List<Bank> _banks = [
     Bank(name: "BNI (Bank Nasionnal Indonesia)", symbol: BankEnum.bni),
@@ -98,13 +89,9 @@ class _UpdateRestaurantDataScreenState extends ConsumerState<UpdateRestaurantDat
 
     // Initialize selected themes
     for (var theme in restaurantData.themes) {
-      final themeIndex =
-          _restaurantThemes.indexWhere((t) => t.toLowerCase() == theme.name.toLowerCase());
-      if (themeIndex != -1) {
-        _selectedThemes.add(themeIndex);
-      }
+      _selectedThemes.add(theme);
     }
-    _formData = _formData.copyWith(themes: _selectedThemes);
+    _formData = _formData.copyWith(themes: _selectedThemes.map((theme) => theme.id).toList());
 
     // Initialize selected bank
     _selectedBank = _banks.firstWhere((bank) => bank.symbol == restaurantData.payoutBank,
@@ -154,85 +141,107 @@ class _UpdateRestaurantDataScreenState extends ConsumerState<UpdateRestaurantDat
     showDialog(
       context: context,
       builder: (BuildContext context) {
-        return PopScope(
-          onPopInvokedWithResult: (didPop, result) {
-            FocusManager.instance.primaryFocus?.unfocus();
-          },
-          child: AlertDialog(
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(20.0),
-            ),
-            title: Text(
-              'Pilih Tema Resto',
-              style: Theme.of(context).textTheme.headlineSmall,
-            ),
-            content: SizedBox(
-              height: 300,
-              child: Scrollbar(
-                interactive: true,
-                radius: const Radius.circular(10),
-                child: SingleChildScrollView(
-                  child: Column(
-                    children: _restaurantThemes
-                        .asMap()
-                        .entries
-                        .map(
-                          (entry) => ListTile(
-                            dense: true,
-                            splashColor: AppPallete.primaryColor,
-                            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
-                            title: Text(
-                              entry.value,
-                              style: Theme.of(context).textTheme.titleSmall?.copyWith(
-                                    color: _selectedThemes.contains(entry.key)
-                                        ? AppPallete.primaryColor
-                                        : Colors.black87,
-                                    fontWeight: _selectedThemes.contains(entry.key)
-                                        ? FontWeight.bold
-                                        : FontWeight.normal,
-                                  ),
-                            ),
-                            trailing: _selectedThemes.contains(entry.key)
-                                ? Icon(
-                                    Icons.check_circle,
-                                    color: AppPallete.primaryColor,
-                                  )
-                                : null,
-                            onTap: () {
-                              setState(() {
-                                if (_selectedThemes.contains(entry.key)) {
-                                  _selectedThemes.remove(entry.key);
-                                } else {
-                                  if (_selectedThemes.length < 3) {
-                                    _selectedThemes.add(entry.key);
-                                  } else {
-                                    showSnackbar(context, "Maksimal 3 tema");
-                                  }
-                                }
-                                _formData = _formData.copyWith(themes: _selectedThemes);
-                              });
+        return StatefulBuilder(
+          builder: (BuildContext context, StateSetter childSetState) {
+            return Consumer(
+              builder: (BuildContext context, WidgetRef ref, child) {
+                final restaurantThemes = ref.watch(getAllRestaurantThemesProvider);
+                return PopScope(
+                  onPopInvokedWithResult: (didPop, result) {
+                    FocusManager.instance.primaryFocus?.unfocus();
+                  },
+                  child: AlertDialog(
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(20.0),
+                    ),
+                    title: Text(
+                      'Pilih Tema Resto',
+                      style: Theme.of(context).textTheme.headlineSmall,
+                    ),
+                    content: SizedBox(
+                      height: 300,
+                      child: Scrollbar(
+                        interactive: true,
+                        radius: const Radius.circular(10),
+                        child: SingleChildScrollView(
+                          child: restaurantThemes.when(
+                            data: (themes) {
+                              return Column(
+                                children: themes
+                                    .map(
+                                      (theme) => ListTile(
+                                        dense: true,
+                                        splashColor: AppPallete.primaryColor,
+                                        shape: RoundedRectangleBorder(
+                                            borderRadius: BorderRadius.circular(10)),
+                                        title: Text(
+                                          theme.name,
+                                          style: Theme.of(context).textTheme.titleSmall?.copyWith(
+                                                color: _selectedThemes.any((t) => t.id == theme.id)
+                                                    ? AppPallete.primaryColor
+                                                    : Colors.black87,
+                                                fontWeight:
+                                                    _selectedThemes.any((t) => t.id == theme.id)
+                                                        ? FontWeight.bold
+                                                        : FontWeight.normal,
+                                              ),
+                                        ),
+                                        trailing: _selectedThemes.any((t) => t.id == theme.id)
+                                            ? Icon(
+                                                Icons.check_circle,
+                                                color: AppPallete.primaryColor,
+                                              )
+                                            : null,
+                                        onTap: () {
+                                          setState(() {
+                                            final existingIndex =
+                                                _selectedThemes.indexWhere((t) => t.id == theme.id);
+                                            if (existingIndex >= 0) {
+                                              _selectedThemes.removeAt(existingIndex);
+                                            } else {
+                                              if (_selectedThemes.length < 3) {
+                                                _selectedThemes.add(theme);
+                                              } else {
+                                                showSnackbar(context, "Maksimal 3 tema");
+                                              }
+                                            }
+                                            _formData = _formData.copyWith(
+                                                themes: _selectedThemes.map((t) => t.id).toList());
+                                          });
 
-                              context.pop();
+                                          context.pop();
+                                        },
+                                      ),
+                                    )
+                                    .toList(),
+                              );
                             },
+                            loading: () => const Center(
+                              child: LoadingIndicatorWidget(size: 24),
+                            ),
+                            error: (error, stackTrace) => Center(
+                              child: Text('Error: ${error.toString()}'),
+                            ),
                           ),
-                        )
-                        .toList(),
+                        ),
+                      ),
+                    ),
+                    actions: [
+                      TextButton(
+                        onPressed: () {
+                          context.pop();
+                        },
+                        child: Text(
+                          'Tutup',
+                          style: TextStyle(color: AppPallete.primaryColor),
+                        ),
+                      ),
+                    ],
                   ),
-                ),
-              ),
-            ),
-            actions: [
-              TextButton(
-                onPressed: () {
-                  context.pop();
-                },
-                child: Text(
-                  'Tutup',
-                  style: TextStyle(color: AppPallete.primaryColor),
-                ),
-              ),
-            ],
-          ),
+                );
+              },
+            );
+          },
         );
       },
     );
@@ -247,7 +256,7 @@ class _UpdateRestaurantDataScreenState extends ConsumerState<UpdateRestaurantDat
         _openTimeController.text.isNotEmpty &&
         _closeTimeController.text.isNotEmpty) {
       _formKey.currentState?.save();
-      _formData = _formData.copyWith(themes: _selectedThemes);
+      _formData = _formData.copyWith(themes: _selectedThemes.map((theme) => theme.id).toList());
 
       ref.read(updateRestaurantDataViewModelProvider.notifier).updateRestaurantData(
             widget.restaurant,
@@ -272,7 +281,15 @@ class _UpdateRestaurantDataScreenState extends ConsumerState<UpdateRestaurantDat
           if (data.restaurantData.verificationStatus == RestaurantVerificationStatus.unverified) {
             context.go("/restaurant/unverified");
           } else {
-            showSnackbar(context, "Status verifikasi masih rejected");
+            () async {
+              await ref
+                  .read(authLocalRepositoryProvider)
+                  .setUserData(UserConverter.restaurantToUser(data));
+              ref.invalidate(getCurrentUserDataProvider);
+              if (context.mounted) {
+                context.pop();
+              }
+            }();
           }
         case ErrorState(message: final message):
           showSnackbar(context, message);
@@ -608,16 +625,17 @@ class _UpdateRestaurantDataScreenState extends ConsumerState<UpdateRestaurantDat
           runSpacing: 4.0,
           children: [
             ..._selectedThemes.map(
-              (key) => Chip(
-                label: Text(_restaurantThemes[key]),
+              (themeObj) => Chip(
+                label: Text(themeObj.name),
                 deleteIcon: const Icon(
                   Icons.close,
                   size: 18,
                 ),
                 onDeleted: () {
                   setState(() {
-                    _selectedThemes.remove(key);
-                    _formData = _formData.copyWith(themes: _selectedThemes);
+                    _selectedThemes.remove(themeObj);
+                    _formData =
+                        _formData.copyWith(themes: _selectedThemes.map((t) => t.id).toList());
                   });
                 },
               ),
