@@ -66,8 +66,8 @@ class _PostDetailWidgetState extends ConsumerState<PostDetailWidget> {
   @override
   void didUpdateWidget(covariant PostDetailWidget oldWidget) {
     super.didUpdateWidget(oldWidget);
-    ref.invalidate(postDetailViewModelProvider(postId: oldWidget.args.post.id));
-    _pageController = PageController();
+    // ref.invalidate(postDetailViewModelProvider(postId: oldWidget.args.post.id));
+    // _pageController = PageController();
     if (widget.args.post.location != null) {
       getLocationName();
     }

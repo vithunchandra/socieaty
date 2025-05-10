@@ -37,6 +37,7 @@ class _PostsWidgetState extends ConsumerState<PostsWidget> {
         _pagingController.itemList = List<Post>.from(itemList);
       }
     }
+    setState(() {});
   }
 
   void _deletePostInPagingController(Post deletedPost) {
@@ -45,6 +46,7 @@ class _PostsWidgetState extends ConsumerState<PostsWidget> {
       itemList.removeWhere((post) => post.id == deletedPost.id);
       _pagingController.itemList = List<Post>.from(itemList);
     }
+    setState(() {});
   }
 
   @override
@@ -111,6 +113,7 @@ class _PostsWidgetState extends ConsumerState<PostsWidget> {
     final builderDelegate = PagedChildBuilderDelegate<Post>(
       itemBuilder: (context, item, index) {
         return PostDetailWidget(
+          key: Key(item.id),
           args: PostDetailWidgetArgs(
             post: item,
             userId: ref.watch(authLocalRepositoryProvider).getUserData()!.id,
