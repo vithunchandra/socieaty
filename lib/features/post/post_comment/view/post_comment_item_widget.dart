@@ -6,7 +6,6 @@ import 'package:socieaty/features/post/post_comment/model/post_comment.dart';
 import 'package:socieaty/features/post/post_comment/repository/response/like_post_comment_response.dart';
 import 'package:socieaty/features/post/post_comment/viewmodel/post_comment_detail_view_model.dart';
 import 'package:socieaty/shared/view_state.dart';
-import 'package:socieaty/shared/widgets/custom_circle_avatar_widget.dart';
 import 'package:socieaty/shared/widgets/profile_picture_widget.dart';
 
 class PostCommentItemWidget extends ConsumerStatefulWidget {

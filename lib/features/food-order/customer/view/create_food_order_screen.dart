@@ -40,6 +40,7 @@ class _CreateFoodOrderScreenState extends ConsumerState<CreateFoodOrderScreen> {
   bool _isCollapsed = false;
   String _additionalNotes = "";
   late CreateFoodOrderFormState _formState;
+  String _locationName = "";
   bool _isLoadingLocation = false;
 
   @override
@@ -55,6 +56,16 @@ class _CreateFoodOrderScreenState extends ConsumerState<CreateFoodOrderScreen> {
       menuItems: [],
       note: "",
     );
+    getLocationName();
+  }
+
+  void getLocationName() async {
+    final location =
+        await LocationHandler.getAddressFromLatLng(widget.restaurant.restaurantData.location);
+    _locationName = "${location?.street}";
+    if (mounted) {
+      setState(() {});
+    }
   }
 
   void getContainerSize() {
@@ -168,7 +179,7 @@ class _CreateFoodOrderScreenState extends ConsumerState<CreateFoodOrderScreen> {
       final LatLng restaurantLocation = widget.restaurant.restaurantData.location;
       final String restaurantName = widget.restaurant.name;
       // Use a more descriptive address based on what's shown in the UI
-      final String restaurantAddress = "Jl. Dummy 123, Jakarta";
+      final String restaurantAddress = _locationName;
 
       // Request location permission and get current location
       final locationData = await LocationHandler.getCurrentPosition();
@@ -343,7 +354,7 @@ class _CreateFoodOrderScreenState extends ConsumerState<CreateFoodOrderScreen> {
                                       const SizedBox(width: 4),
                                       Expanded(
                                         child: Text(
-                                          "Jl. Dummy 123, Jakarta",
+                                          _locationName,
                                           style: Theme.of(context).textTheme.bodySmall?.copyWith(
                                                 color: Colors.grey[600],
                                               ),
@@ -362,85 +373,85 @@ class _CreateFoodOrderScreenState extends ConsumerState<CreateFoodOrderScreen> {
                           padding: EdgeInsets.symmetric(vertical: 12),
                           child: DottedDivider(color: AppPallete.neutralColor),
                         ),
-                        Row(
-                          children: [
-                            Expanded(
-                              child: Row(
-                                children: [
-                                  Container(
-                                    padding: const EdgeInsets.all(6),
-                                    decoration: BoxDecoration(
-                                      color: AppPallete.primaryColor.withAlpha(25),
-                                      shape: BoxShape.circle,
-                                    ),
-                                    child: Icon(
-                                      Icons.access_time,
-                                      color: AppPallete.primaryColor,
-                                      size: 14,
-                                    ),
-                                  ),
-                                  const SizedBox(width: 8),
-                                  Column(
-                                    crossAxisAlignment: CrossAxisAlignment.start,
-                                    children: [
-                                      Text(
-                                        "Waktu Perjalanan",
-                                        style: Theme.of(context).textTheme.labelSmall?.copyWith(
-                                              color: Colors.grey[500],
-                                            ),
-                                      ),
-                                      Text(
-                                        "15 menit",
-                                        style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                                              fontWeight: FontWeight.w600,
-                                              color: Colors.grey[800],
-                                            ),
-                                      ),
-                                    ],
-                                  ),
-                                ],
-                              ),
-                            ),
-                            Expanded(
-                              child: Row(
-                                children: [
-                                  Container(
-                                    padding: const EdgeInsets.all(6),
-                                    decoration: BoxDecoration(
-                                      color: AppPallete.primaryColor.withAlpha(25),
-                                      shape: BoxShape.circle,
-                                    ),
-                                    child: Icon(
-                                      Icons.directions_walk,
-                                      color: AppPallete.primaryColor,
-                                      size: 14,
-                                    ),
-                                  ),
-                                  const SizedBox(width: 8),
-                                  Column(
-                                    crossAxisAlignment: CrossAxisAlignment.start,
-                                    children: [
-                                      Text(
-                                        "Jarak",
-                                        style: Theme.of(context).textTheme.labelSmall?.copyWith(
-                                              color: Colors.grey[500],
-                                            ),
-                                      ),
-                                      Text(
-                                        "2 km",
-                                        style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                                              fontWeight: FontWeight.w600,
-                                              color: Colors.grey[800],
-                                            ),
-                                      ),
-                                    ],
-                                  ),
-                                ],
-                              ),
-                            ),
-                          ],
-                        ),
-                        const SizedBox(height: 12),
+                        // Row(
+                        //   children: [
+                        //     Expanded(
+                        //       child: Row(
+                        //         children: [
+                        //           Container(
+                        //             padding: const EdgeInsets.all(6),
+                        //             decoration: BoxDecoration(
+                        //               color: AppPallete.primaryColor.withAlpha(25),
+                        //               shape: BoxShape.circle,
+                        //             ),
+                        //             child: Icon(
+                        //               Icons.access_time,
+                        //               color: AppPallete.primaryColor,
+                        //               size: 14,
+                        //             ),
+                        //           ),
+                        //           const SizedBox(width: 8),
+                        //           Column(
+                        //             crossAxisAlignment: CrossAxisAlignment.start,
+                        //             children: [
+                        //               Text(
+                        //                 "Waktu Perjalanan",
+                        //                 style: Theme.of(context).textTheme.labelSmall?.copyWith(
+                        //                       color: Colors.grey[500],
+                        //                     ),
+                        //               ),
+                        //               Text(
+                        //                 "15 menit",
+                        //                 style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                        //                       fontWeight: FontWeight.w600,
+                        //                       color: Colors.grey[800],
+                        //                     ),
+                        //               ),
+                        //             ],
+                        //           ),
+                        //         ],
+                        //       ),
+                        //     ),
+                        //     Expanded(
+                        //       child: Row(
+                        //         children: [
+                        //           Container(
+                        //             padding: const EdgeInsets.all(6),
+                        //             decoration: BoxDecoration(
+                        //               color: AppPallete.primaryColor.withAlpha(25),
+                        //               shape: BoxShape.circle,
+                        //             ),
+                        //             child: Icon(
+                        //               Icons.directions_walk,
+                        //               color: AppPallete.primaryColor,
+                        //               size: 14,
+                        //             ),
+                        //           ),
+                        //           const SizedBox(width: 8),
+                        //           Column(
+                        //             crossAxisAlignment: CrossAxisAlignment.start,
+                        //             children: [
+                        //               Text(
+                        //                 "Jarak",
+                        //                 style: Theme.of(context).textTheme.labelSmall?.copyWith(
+                        //                       color: Colors.grey[500],
+                        //                     ),
+                        //               ),
+                        //               Text(
+                        //                 "2 km",
+                        //                 style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                        //                       fontWeight: FontWeight.w600,
+                        //                       color: Colors.grey[800],
+                        //                     ),
+                        //               ),
+                        //             ],
+                        //           ),
+                        //         ],
+                        //       ),
+                        //     ),
+                        //   ],
+                        // ),
+                        // const SizedBox(height: 12),
                         SizedBox(
                           width: double.infinity,
                           child: OutlinedButton.icon(

@@ -10,6 +10,7 @@ import 'package:socieaty/features/customer/view/current_customer_profile_screen.
 import 'package:socieaty/features/customer/view/others_customer_profile_screen.dart';
 import 'package:socieaty/features/restaurant/view/owner_outlet_screen.dart';
 import 'package:socieaty/features/restaurant/view/other_outlet_screen.dart';
+import 'package:socieaty/features/transaction_review/provider/get_all_restaurant_reviews_provider.dart';
 import 'package:socieaty/shared/widgets/custom_error_widget.dart';
 import 'package:socieaty/shared/widgets/loading_indicator_widget.dart';
 

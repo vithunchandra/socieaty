@@ -553,7 +553,7 @@ class _OutletFoodMenuScreenState extends ConsumerState<OutletFoodMenuScreen> {
         ),
       AsyncError(:final error) => SliverToBoxAdapter(
           child: CustomErrorWidget(
-            title: "Menu items",
+            title: "Item Menu",
             error: error.toString(),
             onPressed: () => ref.invalidate(getFoodMenusProvider(
               restaurantId: widget.args.restaurant.restaurantData.id,
@@ -628,7 +628,7 @@ class _OutletFoodMenuScreenState extends ConsumerState<OutletFoodMenuScreen> {
                     ),
                     const SizedBox(width: 4),
                     Text(
-                      "Filters",
+                      "Filter",
                       style: Theme.of(context).textTheme.labelLarge?.copyWith(
                             color: Colors.white,
                           ),

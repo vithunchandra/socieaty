@@ -1,20 +1,23 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:socieaty/core/theme/app_pallete.dart';
 import 'package:socieaty/core/utils/location_handler.dart';
 import 'package:socieaty/features/restaurant/model/socieaty_restaurant.dart';
+import 'package:socieaty/features/transaction_review/provider/get_all_restaurant_reviews_provider.dart';
 import 'package:socieaty/shared/widgets/image_error_widget.dart';
 import 'package:socieaty/shared/widgets/image_loading_widget.dart';
 
-class RestaurantHighlightItemWidget extends StatefulWidget {
+class RestaurantHighlightItemWidget extends ConsumerStatefulWidget {
   final SocieatyRestaurant restaurant;
   const RestaurantHighlightItemWidget({super.key, required this.restaurant});
 
   @override
-  State<RestaurantHighlightItemWidget> createState() => _RestaurantHighlightItemWidgetState();
+  ConsumerState<RestaurantHighlightItemWidget> createState() =>
+      _RestaurantHighlightItemWidgetState();
 }
 
-class _RestaurantHighlightItemWidgetState extends State<RestaurantHighlightItemWidget> {
+class _RestaurantHighlightItemWidgetState extends ConsumerState<RestaurantHighlightItemWidget> {
   String _locationName = "";
 
   @override
@@ -34,6 +37,9 @@ class _RestaurantHighlightItemWidgetState extends State<RestaurantHighlightItemW
 
   @override
   Widget build(BuildContext context) {
+    final reviewsAsync =
+        ref.watch(getAllRestaurantReviewsProvider(widget.restaurant.restaurantData.id, null));
+
     return PhysicalModel(
       color: Colors.transparent,
       borderRadius: BorderRadius.circular(12),
@@ -131,10 +137,14 @@ class _RestaurantHighlightItemWidgetState extends State<RestaurantHighlightItemW
                 ),
                 child: Row(
                   mainAxisSize: MainAxisSize.min,
-                  children: const [
+                  children: [
                     Text(
-                      '4.2',
-                      style: TextStyle(
+                      reviewsAsync.when(
+                        data: (data) => data.rating.toStringAsFixed(1),
+                        error: (error, stacktrace) => '-',
+                        loading: () => '0',
+                      ),
+                      style: const TextStyle(
                         color: Colors.white,
                         fontWeight: FontWeight.bold,
                         fontSize: 12,

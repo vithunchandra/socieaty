@@ -6,6 +6,7 @@ import 'package:socieaty/core/theme/app_pallete.dart';
 import 'package:socieaty/core/utils/show_snackbar.dart';
 import 'package:socieaty/features/transaction/model/transaction.dart';
 import 'package:socieaty/features/transaction_review/model/transaction_review.dart';
+import 'package:socieaty/features/transaction_review/provider/get_all_restaurant_reviews_provider.dart';
 import 'package:socieaty/features/transaction_review/view/widgets/rating_star.dart';
 import 'package:socieaty/features/transaction_review/viewmodel/restaurant_rating_screen_view_model.dart';
 import 'package:socieaty/features/transaction_review/viewstate/create_transaction_review_form_state.dart';
@@ -75,7 +76,8 @@ class _RestaurantRatingScreenState extends ConsumerState<RestaurantRatingScreen>
         (previous, next) {
       switch (next.createReviewState) {
         case SuccessState<TransactionReview>():
-          showSnackbar(context, 'Review submitted successfully');
+          ref.invalidate(getAllRestaurantReviewsProvider(widget.transaction.restaurant.restaurantData.id, null));
+          showSnackbar(context, 'Review berhasil dikirim');
           context.pop();
         case ErrorState(message: final message):
           showSnackbar(context, message, state: SnackbarState.error);
@@ -87,7 +89,7 @@ class _RestaurantRatingScreenState extends ConsumerState<RestaurantRatingScreen>
     return Scaffold(
       appBar: AppBar(
         title: const Text(
-          'Rate Restaurant',
+          'Nilai Restoran',
           style: TextStyle(color: Colors.white),
         ),
         backgroundColor: AppPallete.primaryColor,
@@ -129,7 +131,7 @@ class _RestaurantRatingScreenState extends ConsumerState<RestaurantRatingScreen>
                       child: Column(
                         children: [
                           const Text(
-                            'How was your experience?',
+                            'Bagaimana pengalaman Anda?',
                             style: TextStyle(
                               fontSize: 22,
                               fontWeight: FontWeight.bold,
@@ -161,7 +163,7 @@ class _RestaurantRatingScreenState extends ConsumerState<RestaurantRatingScreen>
                                       child: LoadingIndicatorWidget(size: 20, color: Colors.white),
                                     )
                                   : const Text(
-                                      'Submit Review',
+                                      'Kirim Review',
                                       style: TextStyle(
                                         fontSize: 16,
                                         fontWeight: FontWeight.bold,
@@ -275,7 +277,7 @@ class _RestaurantRatingScreenState extends ConsumerState<RestaurantRatingScreen>
       maxLines: 5,
       maxLength: 200,
       decoration: InputDecoration(
-        hintText: 'Share your experience with this restaurant...',
+        hintText: 'Bagikan pengalaman Anda dengan restoran ini...',
         fillColor: Colors.grey.withAlpha(20),
         filled: true,
         border: OutlineInputBorder(
@@ -286,10 +288,10 @@ class _RestaurantRatingScreenState extends ConsumerState<RestaurantRatingScreen>
       ),
       validator: (value) {
         if (value == null || value.isEmpty) {
-          return 'Please enter your review';
+          return 'Silakan masukkan review Anda';
         }
         if (value.length < 10) {
-          return 'Review should be at least 10 characters';
+          return 'Review harus memiliki setidaknya 10 karakter';
         }
         return null;
       },

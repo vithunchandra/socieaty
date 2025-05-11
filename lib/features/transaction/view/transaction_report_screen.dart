@@ -174,7 +174,7 @@ class _TransactionReportScreenState extends ConsumerState<TransactionReportScree
       backgroundColor: AppPallete.neutralColor.shade50,
       appBar: AppBar(
         title: Text(
-          'Transaction Report',
+          'Laporan Transaksi',
           style: Theme.of(context).textTheme.titleMedium?.copyWith(
                 fontWeight: FontWeight.bold,
               ),
@@ -251,7 +251,7 @@ class _TransactionReportScreenState extends ConsumerState<TransactionReportScree
                     ),
                     const SizedBox(width: 8),
                     Text(
-                      'Income Summary',
+                      'Rangkuman Penghasilan',
                       style: Theme.of(context).textTheme.bodyMedium?.copyWith(
                             color: Colors.white,
                           ),
@@ -268,7 +268,7 @@ class _TransactionReportScreenState extends ConsumerState<TransactionReportScree
                 ),
                 const SizedBox(height: 4),
                 Text(
-                  'Total Transactions: ${data.totalSuccessTransactions + data.totalFailedTransactions}',
+                  'Total Transaksi: ${data.totalSuccessTransactions + data.totalFailedTransactions}',
                   style: Theme.of(context).textTheme.bodyMedium?.copyWith(
                         color: Colors.white.withAlpha(220),
                       ),
@@ -279,7 +279,7 @@ class _TransactionReportScreenState extends ConsumerState<TransactionReportScree
                 Row(
                   children: [
                     Text(
-                      "Click to see the report",
+                      "Klik untuk melihat laporan",
                       style: Theme.of(context).textTheme.bodySmall?.copyWith(
                             color: Colors.white.withAlpha(220),
                           ),
@@ -324,7 +324,7 @@ class _TransactionReportScreenState extends ConsumerState<TransactionReportScree
             ),
             const SizedBox(height: 12),
             Text(
-              'Failed to load income data',
+              'Gagal memuat data penghasilan',
               style: Theme.of(context).textTheme.titleSmall,
             ),
             const SizedBox(height: 4),
@@ -353,7 +353,7 @@ class _TransactionReportScreenState extends ConsumerState<TransactionReportScree
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
-                  'Transaction Distribution',
+                  'Distribusi Transaksi',
                   style: Theme.of(context).textTheme.titleMedium?.copyWith(
                         fontWeight: FontWeight.bold,
                       ),
@@ -427,9 +427,8 @@ class _TransactionReportScreenState extends ConsumerState<TransactionReportScree
             ),
           ),
           error: (error, stack) => const CustomLoadingWidget(
-            title: 'Error Loading Insight Data',
-            subtitle:
-                'There was an error loading the transaction insight data. Please try again later.',
+            title: 'Gagal memuat data insight',
+            subtitle: 'Ada kesalahan saat memuat data insight transaksi. Silakan coba lagi nanti.',
           ),
         );
       },
@@ -441,7 +440,7 @@ class _TransactionReportScreenState extends ConsumerState<TransactionReportScree
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(
-          'Income Trend',
+          'Grafik Penghasilan',
           style: Theme.of(context).textTheme.titleMedium?.copyWith(
                 fontWeight: FontWeight.bold,
               ),
@@ -461,6 +460,7 @@ class _TransactionReportScreenState extends ConsumerState<TransactionReportScree
                 ),
                 child: DropdownButtonHideUnderline(
                   child: DropdownButton2<TimeScale>(
+                    style: Theme.of(context).textTheme.labelLarge,
                     value: selectedTimeScale,
                     buttonStyleData: const ButtonStyleData(
                       padding: EdgeInsets.symmetric(horizontal: 12),
@@ -469,15 +469,15 @@ class _TransactionReportScreenState extends ConsumerState<TransactionReportScree
                     items: const [
                       DropdownMenuItem(
                         value: TimeScale.day,
-                        child: Text('Daily'),
+                        child: Text('Harian'),
                       ),
                       DropdownMenuItem(
                         value: TimeScale.week,
-                        child: Text('Weekly'),
+                        child: Text('Mingguan'),
                       ),
                       DropdownMenuItem(
                         value: TimeScale.month,
-                        child: Text('Monthly'),
+                        child: Text('Bulanan'),
                       ),
                     ],
                     onChanged: (TimeScale? newValue) {
@@ -595,7 +595,7 @@ class _TransactionReportScreenState extends ConsumerState<TransactionReportScree
                 ),
                 const SizedBox(height: 12),
                 Text(
-                  'Failed to load chart data',
+                  'Gagal memuat data chart',
                   style: Theme.of(context).textTheme.titleSmall,
                 ),
                 const SizedBox(height: 4),

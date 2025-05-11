@@ -93,7 +93,7 @@ class _RestaurantDashboardScreenState extends ConsumerState<RestaurantDashboardS
       if (!granted && mounted) {
         showSnackbar(
           context,
-          'Notification permissions are required to receive order alerts.',
+          'Izin pemberitahuan diperlukan untuk menerima pemberitahuan pesanan.',
           state: SnackbarState.success,
           style: ToastificationStyle.fillColored,
         );
@@ -225,7 +225,7 @@ class _RestaurantDashboardScreenState extends ConsumerState<RestaurantDashboardS
               ),
               const SizedBox(height: 24),
               Text(
-                'Management Options',
+                'Opsi Pengelolaan',
                 style: Theme.of(context).textTheme.titleMedium?.copyWith(
                       fontWeight: FontWeight.bold,
                     ),
@@ -251,7 +251,7 @@ class _RestaurantDashboardScreenState extends ConsumerState<RestaurantDashboardS
         _buildOptionCard(
           context,
           Icons.fastfood,
-          'Food Order Management',
+          'Pengelolaan Pesanan',
           AppPallete.infoColor,
           onTap: () {
             context.push('/restaurant/dashboard/food-order');
@@ -260,7 +260,7 @@ class _RestaurantDashboardScreenState extends ConsumerState<RestaurantDashboardS
         _buildOptionCard(
           context,
           Icons.calendar_today,
-          'Reservation Management',
+          'Pengelolaan Reservasi',
           AppPallete.warningColor,
           onTap: () {
             context.push('/restaurant/dashboard/reservation');
@@ -269,7 +269,7 @@ class _RestaurantDashboardScreenState extends ConsumerState<RestaurantDashboardS
         _buildOptionCard(
           context,
           Icons.receipt_long,
-          'Transaction Report',
+          'Laporan Transaksi',
           AppPallete.successColor,
           onTap: () {
             context.push('/restaurant/dashboard/transaction-report');
@@ -278,7 +278,7 @@ class _RestaurantDashboardScreenState extends ConsumerState<RestaurantDashboardS
         _buildOptionCard(
           context,
           Icons.live_tv,
-          'Create Content',
+          'Buat Konten',
           AppPallete.errorColor,
           onTap: () {
             context.push('/create_content', extra: CreateScreenArgs(
@@ -388,6 +388,7 @@ class _RestaurantWelcomeCardState extends ConsumerState<RestaurantWelcomeCard> {
 
     return GestureDetector(
       onTap: () {
+        ref.invalidate(getAllRestaurantReviewsProvider(widget.restaurant.restaurantData.id, null));
         context.push('/restaurant/dashboard/outlet');
       },
       child: Container(
@@ -432,7 +433,7 @@ class _RestaurantWelcomeCardState extends ConsumerState<RestaurantWelcomeCard> {
             ),
             const SizedBox(height: 12),
             Text(
-              'Welcome, ${widget.restaurant.name}',
+              'Selamat datang, ${widget.restaurant.name}',
               style: Theme.of(context).textTheme.headlineSmall?.copyWith(
                     color: Colors.white,
                     fontWeight: FontWeight.bold,
@@ -440,7 +441,7 @@ class _RestaurantWelcomeCardState extends ConsumerState<RestaurantWelcomeCard> {
             ),
             const SizedBox(height: 8),
             Text(
-              'Manage your restaurant and monitor activities',
+              'Kelola restoran Anda dan monitor aktivitas',
               style: Theme.of(context).textTheme.bodyMedium?.copyWith(
                     color: Colors.white.withAlpha(220),
                   ),
@@ -465,7 +466,7 @@ class _RestaurantWelcomeCardState extends ConsumerState<RestaurantWelcomeCard> {
                       const SizedBox(width: 4),
                       reviews.when(
                         data: (data) => Text(
-                          data.rating.toString(),
+                          data.rating.toStringAsFixed(1),
                           style: Theme.of(context).textTheme.bodyMedium?.copyWith(
                                 color: Colors.white,
                                 fontWeight: FontWeight.bold,

@@ -125,7 +125,7 @@ class _OutletReserveScreenState extends ConsumerState<OutletReserveScreen> {
           backgroundColor: Colors.white,
           surfaceTintColor: Colors.transparent,
           title: Text(
-            _isCollapsed ? 'Book a table' : '',
+            _isCollapsed ? 'Booking Meja' : '',
             style: Theme.of(context).textTheme.titleMedium?.copyWith(
                   fontWeight: FontWeight.bold,
                 ),
@@ -275,7 +275,7 @@ class _OutletReserveScreenState extends ConsumerState<OutletReserveScreen> {
                       size: 18,
                     ),
                     label: Text(
-                      _selectedMenuItems.isEmpty ? 'Add Menu Items' : 'Edit Menu Items',
+                      _selectedMenuItems.isEmpty ? 'Tambahkan Menu' : 'Edit Menu',
                       style: TextStyle(color: AppPallete.primaryColor),
                     ),
                     style: OutlinedButton.styleFrom(
@@ -312,7 +312,7 @@ class _OutletReserveScreenState extends ConsumerState<OutletReserveScreen> {
           ),
           const SizedBox(height: 12),
           Text(
-            'No menu items selected',
+            'Tidak ada menu yang dipilih',
             style: Theme.of(context).textTheme.titleSmall?.copyWith(
                   fontWeight: FontWeight.w500,
                   color: AppPallete.neutralColor.shade700,
@@ -321,7 +321,7 @@ class _OutletReserveScreenState extends ConsumerState<OutletReserveScreen> {
           ),
           const SizedBox(height: 4),
           Text(
-            'Pre-order your favorite dishes to save time during your visit',
+            'Pre-order makanan favorit Anda untuk menghemat waktu selama kunjungan Anda',
             style: Theme.of(context).textTheme.bodySmall?.copyWith(
                   color: AppPallete.neutralColor.shade600,
                 ),
@@ -355,7 +355,7 @@ class _OutletReserveScreenState extends ConsumerState<OutletReserveScreen> {
               const SizedBox(width: 8),
               Expanded(
                 child: Text(
-                  'These items will be prepared ahead of your arrival',
+                  'Makanan ini akan disiapkan sebelum Anda datang',
                   style: Theme.of(context).textTheme.bodySmall?.copyWith(
                         color: AppPallete.primaryColor,
                       ),
@@ -439,7 +439,7 @@ class _OutletReserveScreenState extends ConsumerState<OutletReserveScreen> {
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               Text(
-                'Total Menu Price',
+                'Total harga menu',
                 style: Theme.of(context).textTheme.bodyMedium?.copyWith(
                       fontWeight: FontWeight.w500,
                     ),
@@ -467,7 +467,7 @@ class _OutletReserveScreenState extends ConsumerState<OutletReserveScreen> {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Text(
-              'Book a table',
+              'Booking sebuah meja',
               style: Theme.of(context).textTheme.headlineSmall?.copyWith(
                     fontWeight: FontWeight.bold,
                     color: AppPallete.neutralColor.shade800,
@@ -518,7 +518,7 @@ class _OutletReserveScreenState extends ConsumerState<OutletReserveScreen> {
                     Icon(Icons.people, color: AppPallete.primaryColor, size: 20),
                     const SizedBox(width: 8),
                     Text(
-                      'Number of guests',
+                      'Jumlah tamu',
                       style: Theme.of(context).textTheme.titleMedium?.copyWith(
                             fontWeight: FontWeight.w500,
                           ),
@@ -593,7 +593,7 @@ class _OutletReserveScreenState extends ConsumerState<OutletReserveScreen> {
                     Icon(Icons.calendar_today, color: AppPallete.primaryColor, size: 20),
                     const SizedBox(width: 8),
                     Text(
-                      'Select date',
+                      'Pilih tanggal',
                       style: Theme.of(context).textTheme.titleMedium?.copyWith(
                             fontWeight: FontWeight.w500,
                           ),
@@ -634,18 +634,18 @@ class _OutletReserveScreenState extends ConsumerState<OutletReserveScreen> {
 
   String _getMonthString(int month) {
     const months = [
-      'Jan',
-      'Feb',
-      'Mar',
-      'Apr',
-      'May',
-      'Jun',
-      'Jul',
-      'Aug',
-      'Sep',
-      'Oct',
-      'Nov',
-      'Dec'
+      'Januari',
+      'Februari',
+      'Maret',
+      'April',
+      'Mei',
+      'Juni',
+      'Juli',
+      'Agustus',
+      'September',
+      'Oktober',
+      'November',
+      'Desember'
     ];
     return months[month - 1];
   }
@@ -655,13 +655,13 @@ class _OutletReserveScreenState extends ConsumerState<OutletReserveScreen> {
     final today = DateTime(now.year, now.month, now.day);
 
     if (date.year == today.year && date.month == today.month && date.day == today.day) {
-      return 'Today';
+      return 'Hari ini';
     } else if (date.year == today.add(const Duration(days: 1)).year &&
         date.month == today.add(const Duration(days: 1)).month &&
         date.day == today.add(const Duration(days: 1)).day) {
-      return 'Tomorrow';
+      return 'Besok';
     } else {
-      const days = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'];
+      const days = ['Senin', 'Selasa', 'Rabu', 'Kamis', 'Jumat', 'Sabtu', 'Minggu'];
       return days[date.weekday - 1];
     }
   }
@@ -736,7 +736,7 @@ class _OutletReserveScreenState extends ConsumerState<OutletReserveScreen> {
                     Icon(Icons.access_time_filled, color: AppPallete.primaryColor, size: 20),
                     const SizedBox(width: 8),
                     Text(
-                      'Available time slots',
+                      'Slot waktu tersedia',
                       style: Theme.of(context).textTheme.titleMedium?.copyWith(
                             fontWeight: FontWeight.w500,
                           ),
@@ -761,7 +761,7 @@ class _OutletReserveScreenState extends ConsumerState<OutletReserveScreen> {
                   error: (error, stack) => Center(
                     child: Padding(
                       padding: const EdgeInsets.all(24.0),
-                      child: Text('Failed to load reservation times'),
+                      child: Text('Gagal memuat slot waktu reservasi'),
                     ),
                   ),
                 ),
@@ -844,7 +844,7 @@ class _OutletReserveScreenState extends ConsumerState<OutletReserveScreen> {
           ),
           const SizedBox(height: 16),
           Text(
-            'No available time slots',
+            'Tidak ada slot waktu tersedia',
             style: Theme.of(context).textTheme.titleMedium?.copyWith(
                   fontWeight: FontWeight.bold,
                   color: AppPallete.neutralColor.shade700,
@@ -852,7 +852,7 @@ class _OutletReserveScreenState extends ConsumerState<OutletReserveScreen> {
           ),
           const SizedBox(height: 8),
           Text(
-            'Please select another date for your reservation',
+            'Silakan pilih tanggal lain untuk reservasi Anda',
             textAlign: TextAlign.center,
             style: Theme.of(context).textTheme.bodyMedium?.copyWith(
                   color: AppPallete.neutralColor.shade600,

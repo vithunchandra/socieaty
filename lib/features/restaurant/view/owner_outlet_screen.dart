@@ -159,7 +159,7 @@ class _OwnerOutletScreenState extends ConsumerState<OwnerOutletScreen>
                   pinned: true,
                   title: _isCollapsed
                       ? Text(
-                          "Socieaty",
+                          widget.restaurant.name,
                           style: Theme.of(context)
                               .textTheme
                               .titleMedium
@@ -247,7 +247,7 @@ class _OwnerOutletScreenState extends ConsumerState<OwnerOutletScreen>
                                               color: AppPallete.primaryColor, size: 16),
                                           const SizedBox(width: 4),
                                           Text(
-                                            "${isOpen ? "Open Now" : "Closed"} | ${widget.restaurant.restaurantData.openTime} - ${widget.restaurant.restaurantData.closeTime}",
+                                            "${isOpen ? "Buka" : "Tutup"} | ${widget.restaurant.restaurantData.openTime} - ${widget.restaurant.restaurantData.closeTime}",
                                             style: Theme.of(context).textTheme.bodyMedium?.copyWith(
                                                   color: Colors.white,
                                                 ),

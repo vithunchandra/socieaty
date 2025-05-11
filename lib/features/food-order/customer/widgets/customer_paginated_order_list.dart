@@ -224,7 +224,7 @@ class _CustomerPaginatedOrderListState extends ConsumerState<CustomerPaginatedOr
           const LoadingIndicatorWidget(size: 36),
           const SizedBox(height: 16),
           Text(
-            'Loading your orders...',
+            'Memuat pesanan Anda...',
             style: TextStyle(
               color: AppPallete.neutralColor.shade600,
               fontSize: 14,
@@ -251,7 +251,7 @@ class _CustomerPaginatedOrderListState extends ConsumerState<CustomerPaginatedOr
             ),
             const SizedBox(height: 16),
             Text(
-              "Couldn't load your orders",
+              "Tidak dapat memuat pesanan",
               style: textTheme.titleMedium?.copyWith(
                 fontWeight: FontWeight.w600,
                 color: AppPallete.neutralColor.shade800,
@@ -261,7 +261,7 @@ class _CustomerPaginatedOrderListState extends ConsumerState<CustomerPaginatedOr
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 32),
               child: Text(
-                error?.toString() ?? "Unknown error occurred",
+                error?.toString() ?? "Terjadi kesalahan yang tidak diketahui",
                 textAlign: TextAlign.center,
                 style: textTheme.bodyMedium?.copyWith(
                   color: AppPallete.neutralColor.shade600,
@@ -272,7 +272,7 @@ class _CustomerPaginatedOrderListState extends ConsumerState<CustomerPaginatedOr
             ElevatedButton.icon(
               onPressed: onRetry,
               icon: const Icon(Icons.refresh_rounded, size: 16),
-              label: const Text("Try Again"),
+              label: const Text("Coba lagi"),
               style: ElevatedButton.styleFrom(
                 backgroundColor: AppPallete.primaryColor,
                 foregroundColor: Colors.white,

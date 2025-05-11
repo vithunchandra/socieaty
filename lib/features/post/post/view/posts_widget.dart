@@ -138,7 +138,7 @@ class _PostsWidgetState extends ConsumerState<PostsWidget> {
         title: 'Posts',
         onPressed: _pagingController.retryLastFailedRequest,
       ),
-      noItemsFoundIndicatorBuilder: (context) => const Center(child: Text('No posts found')),
+      noItemsFoundIndicatorBuilder: (context) => const Center(child: Text('Tidak ada postingan yang ditemukan')),
     );
 
     return PagedPageView(

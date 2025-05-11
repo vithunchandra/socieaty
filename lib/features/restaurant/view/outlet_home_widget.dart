@@ -129,7 +129,7 @@ class _OutletHomeWidgetState extends ConsumerState<OutletHomeWidget> {
               child: Row(
                 crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
-                  Text("Posts", style: Theme.of(context).textTheme.titleMedium),
+                  Text("Postingan", style: Theme.of(context).textTheme.titleMedium),
                   SizedBox(width: 12),
                   Expanded(
                     child: Divider(

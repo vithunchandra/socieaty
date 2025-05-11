@@ -281,7 +281,7 @@ class _OwnerFoodMenuDetailWidgetState extends ConsumerState<OwnerFoodMenuDetailW
                               ),
                               const SizedBox(width: 8),
                               Text(
-                                "Menu Availability",
+                                "Kesediaan Menu",
                                 style: Theme.of(context).textTheme.titleMedium?.copyWith(
                                       fontWeight: FontWeight.w500,
                                     ),
@@ -350,7 +350,7 @@ class _OwnerFoodMenuDetailWidgetState extends ConsumerState<OwnerFoodMenuDetailW
                         : Row(
                             mainAxisAlignment: MainAxisAlignment.center,
                             children: [
-                              Text("Delete"),
+                              Text("Hapus"),
                               SizedBox(width: 8),
                               Icon(Icons.delete_outline, size: 20),
                             ],

@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
-import 'package:socieaty/features/account/restaurant/view/restaurant_account_screen.dart';
 import 'package:socieaty/features/admin/view/configure_content_screen.dart';
 import 'package:socieaty/features/admin/view/configure_livestreams_screen.dart';
 import 'package:socieaty/features/admin/view/configure_unverified_restaurant_screen.dart';
@@ -56,7 +55,6 @@ import 'package:socieaty/features/reservation/restaurant/view/reservations_sched
 import 'package:socieaty/features/reservation/restaurant/view/restaurant_reservation_history_screen.dart';
 import 'package:socieaty/features/restaurant/model/reservation_config.dart';
 import 'package:socieaty/features/restaurant/model/socieaty_restaurant.dart';
-import 'package:socieaty/features/restaurant/view/restaurant_scaffold_with_navbar.dart';
 import 'package:socieaty/features/food_menu/restaurant/view/create_food_menu_screen.dart';
 import 'package:socieaty/features/food_menu/restaurant/view/owner_food_menu_screen.dart';
 import 'package:socieaty/features/food_menu/restaurant/view/update_food_menu_screen.dart';
@@ -87,6 +85,7 @@ GoRouter router(Ref ref) {
     initialLocation: '/',
     navigatorKey: rootNavigatorKey,
     debugLogDiagnostics: true,
+    
     routes: [
       GoRoute(path: '/', builder: (context, state) => const SplashScreen()),
       GoRoute(path: '/landing', builder: (context, state) => const LandingPage()),

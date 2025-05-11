@@ -318,7 +318,7 @@ class _TransactionFilterBottomSheetState extends State<TransactionFilterBottomSh
       runSpacing: 8,
       children: [
         _buildPresetButton(
-          'Last 7 days',
+          '7 Hari Lalu',
           () {
             final now = DateTime.now();
             setState(() {
@@ -328,7 +328,7 @@ class _TransactionFilterBottomSheetState extends State<TransactionFilterBottomSh
           },
         ),
         _buildPresetButton(
-          'Last 14 days',
+          '14 Hari Lalu',
           () {
             final now = DateTime.now();
             setState(() {
@@ -338,7 +338,7 @@ class _TransactionFilterBottomSheetState extends State<TransactionFilterBottomSh
           },
         ),
         _buildPresetButton(
-          'This month',
+          'Bulan ini',
           () {
             final now = DateTime.now();
             setState(() {
@@ -348,7 +348,7 @@ class _TransactionFilterBottomSheetState extends State<TransactionFilterBottomSh
           },
         ),
         _buildPresetButton(
-          'Last month',
+          'Bulan Lalu',
           () {
             final now = DateTime.now();
             final lastMonth = DateTime(now.year, now.month - 1);
@@ -402,7 +402,7 @@ class _TransactionFilterBottomSheetState extends State<TransactionFilterBottomSh
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               Text(
-                'Filter Transactions',
+                'Filter Transaksi',
                 style: Theme.of(context).textTheme.titleMedium?.copyWith(
                       fontWeight: FontWeight.bold,
                     ),
@@ -419,7 +419,7 @@ class _TransactionFilterBottomSheetState extends State<TransactionFilterBottomSh
               Expanded(
                 child: _buildDateSelector(
                   context,
-                  'Start Date',
+                  'Mulai',
                   _rangeStartDate,
                   (newDate) {
                     setState(() {
@@ -437,7 +437,7 @@ class _TransactionFilterBottomSheetState extends State<TransactionFilterBottomSh
               Expanded(
                 child: _buildDateSelector(
                   context,
-                  'End Date',
+                  'Berakhir',
                   _rangeEndDate,
                   (newDate) {
                     setState(() {
@@ -485,7 +485,7 @@ class _TransactionFilterBottomSheetState extends State<TransactionFilterBottomSh
                       padding: const EdgeInsets.symmetric(vertical: 12),
                     ),
                     child: const Text(
-                      'Apply',
+                      'Terapkan',
                       style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
                     ),
                   ),

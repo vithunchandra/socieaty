@@ -167,7 +167,7 @@ class _OtherOutletScreenState extends ConsumerState<OtherOutletScreen>
                     pinned: true,
                     title: _isCollapsed
                         ? Text(
-                            "Socieaty",
+                            widget.restaurant.name,
                             style: Theme.of(context)
                                 .textTheme
                                 .titleMedium
@@ -255,7 +255,7 @@ class _OtherOutletScreenState extends ConsumerState<OtherOutletScreen>
                                                 color: AppPallete.primaryColor, size: 16),
                                             const SizedBox(width: 4),
                                             Text(
-                                              "${isOpen ? "Open Now" : "Closed"} | ${widget.restaurant.restaurantData.openTime} - ${widget.restaurant.restaurantData.closeTime}",
+                                              "${isOpen ? "Buka" : "Tutup"} | ${widget.restaurant.restaurantData.openTime} - ${widget.restaurant.restaurantData.closeTime}",
                                               style:
                                                   Theme.of(context).textTheme.bodyMedium?.copyWith(
                                                         color: Colors.white,
@@ -426,7 +426,7 @@ class _OtherOutletScreenState extends ConsumerState<OtherOutletScreen>
                                               Icon(Icons.fastfood, size: 20),
                                               const SizedBox(width: 4),
                                               Text(
-                                                "Order Menu",
+                                                "Pesan Makanan",
                                               ),
                                             ],
                                           ),
@@ -436,7 +436,9 @@ class _OtherOutletScreenState extends ConsumerState<OtherOutletScreen>
                                     const SizedBox(width: 8),
                                     reservationConfigAsync.when(
                                       data: (reservationConfig) {
-                                        if (reservationConfig != null) {
+                                        if (reservationConfig != null &&
+                                            widget
+                                                .restaurant.restaurantData.isReservationAvailable) {
                                           return FilledButton(
                                             onPressed: () {
                                               context.push(
@@ -453,7 +455,7 @@ class _OtherOutletScreenState extends ConsumerState<OtherOutletScreen>
                                                   Icon(Icons.calendar_month, size: 20),
                                                   const SizedBox(width: 4),
                                                   Text(
-                                                    "Reserve Table",
+                                                    "Reservasi",
                                                   ),
                                                 ],
                                               ),

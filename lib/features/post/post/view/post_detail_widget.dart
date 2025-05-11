@@ -302,7 +302,7 @@ class _PostDetailWidgetState extends ConsumerState<PostDetailWidget> {
                                         color: AppPallete.neutralColor.shade800),
                                     const SizedBox(width: 10),
                                     Text(
-                                      'Delete',
+                                      'Hapus',
                                       style: Theme.of(context)
                                           .textTheme
                                           .titleSmall

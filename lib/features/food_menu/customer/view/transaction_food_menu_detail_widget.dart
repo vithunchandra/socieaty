@@ -166,7 +166,7 @@ class _TransactionFoodMenuDetailWidgetState extends ConsumerState<TransactionFoo
                     const SizedBox(height: 24),
 
                     Text(
-                      "Description",
+                      "Deskripsi",
                       style: Theme.of(context).textTheme.titleSmall?.copyWith(
                             fontWeight: FontWeight.bold,
                           ),

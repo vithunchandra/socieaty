@@ -3,7 +3,6 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:socieaty/core/theme/app_pallete.dart';
 import 'package:socieaty/features/food-order/customer/provider/get_all_food_order_transactions_provider.dart';
 import 'package:socieaty/features/food-order/customer/widgets/customer_paginated_order_list.dart';
-import 'package:socieaty/features/food-order/customer/widgets/order_list.dart';
 import 'package:socieaty/features/food-order/enum/food_order_status_enum.dart';
 
 class OrderHistoryScreen extends ConsumerStatefulWidget {

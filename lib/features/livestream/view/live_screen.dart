@@ -250,7 +250,7 @@ class _LiveScreenState extends ConsumerState<LiveScreen> {
                   children: [
                     LoadingIndicatorWidget(size: 36),
                     SizedBox(height: 16),
-                    Text('Closing livestream room...'),
+                    Text('Menutup Livestream...'),
                   ],
                 ),
               ),
@@ -289,7 +289,7 @@ class _LiveScreenState extends ConsumerState<LiveScreen> {
                             children: [
                               Icon(Icons.videocam_off_outlined, size: 48, color: Colors.white),
                               Text(
-                                'Camera is disabled',
+                                'Kamera dinonaktifkan',
                                 style: Theme.of(context).textTheme.bodyMedium,
                               ),
                             ],

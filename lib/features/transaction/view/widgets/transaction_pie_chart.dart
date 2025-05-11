@@ -33,7 +33,7 @@ class TransactionPieChart extends StatelessWidget {
                       ),
                       const SizedBox(height: 16),
                       Text(
-                        'No transaction data available',
+                        'Tidak ada data transaksi',
                         style: Theme.of(context).textTheme.bodyMedium?.copyWith(
                               color: AppPallete.neutralColor.shade500,
                             ),
@@ -48,14 +48,14 @@ class TransactionPieChart extends StatelessWidget {
           children: [
             _buildLegendItem(
               context,
-              'Food Orders',
+              'Pesanan Makanan',
               AppPallete.secondaryColor,
               hasData ? data.totalFoodOrderTransactions.toString() : '0',
             ),
             const SizedBox(width: 24),
             _buildLegendItem(
               context,
-              'Reservations',
+              'Reservasi',
               AppPallete.infoColor,
               hasData ? data.totalReservationTransactions.toString() : '0',
             ),
@@ -67,14 +67,14 @@ class TransactionPieChart extends StatelessWidget {
           children: [
             _buildStatItem(
               context,
-              'Success',
+              'Sukses',
               hasData ? data.totalSuccessTransactions.toString() : '0',
               Icons.check_circle,
               AppPallete.successColor,
             ),
             _buildStatItem(
               context,
-              'Failed',
+              'Gagal',
               hasData ? data.totalFailedTransactions.toString() : '0',
               Icons.cancel,
               AppPallete.errorColor,

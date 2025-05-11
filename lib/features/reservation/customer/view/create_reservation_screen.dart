@@ -117,7 +117,7 @@ class _CreateReservationScreenState extends ConsumerState<CreateReservationScree
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Text(
-                "Special Requests",
+                "Permintaan Khusus",
                 style: Theme.of(context).textTheme.titleLarge,
               ),
               const SizedBox(height: 16),
@@ -128,12 +128,12 @@ class _CreateReservationScreenState extends ConsumerState<CreateReservationScree
                 onChanged: _updateNote,
                 decoration: const InputDecoration(
                   hintText:
-                      "Add any special requests or needs (e.g. high chair, birthday celebration, etc.)",
+                      "Tambahkan permintaan khusus atau kebutuhan (e.g. kursi tinggi, pesta ulang tahun, dll.)",
                 ),
               ),
               const SizedBox(height: 8),
               Text(
-                "The restaurant will do their best to accommodate your requests, but cannot guarantee all requests can be fulfilled.",
+                "Restoran akan berusaha untuk memenuhi permintaan Anda, tetapi tidak dapat memastikan bahwa semua permintaan dapat dipenuhi.",
                 style: Theme.of(context)
                     .textTheme
                     .bodySmall
@@ -146,7 +146,7 @@ class _CreateReservationScreenState extends ConsumerState<CreateReservationScree
                   onPressed: () {
                     Navigator.of(context).pop();
                   },
-                  child: const Text("Save Requests"),
+                  child: const Text("Simpan Permintaan"),
                 ),
               ),
               const SizedBox(height: 16),
@@ -166,7 +166,7 @@ class _CreateReservationScreenState extends ConsumerState<CreateReservationScree
     ref.listen(createReservationViewModelProvider, (previous, next) {
       switch (next.createdReservation) {
         case SuccessState(data: final data):
-          showSnackbar(context, 'Reservation created successfully');
+          showSnackbar(context, 'Reservasi berhasil dibuat');
           context.pushReplacement(
             '/${widget.args.restaurant.id}/shop/reserve/track',
             extra: data.reservationId,
@@ -357,7 +357,7 @@ class _CreateReservationScreenState extends ConsumerState<CreateReservationScree
                         const SizedBox(width: 4),
                         Expanded(
                           child: Text(
-                            "Location information",
+                            "Informasi lokasi",
                             style: Theme.of(context).textTheme.bodySmall?.copyWith(
                                   color: Colors.grey[600],
                                 ),
@@ -392,7 +392,7 @@ class _CreateReservationScreenState extends ConsumerState<CreateReservationScree
                 const SizedBox(width: 8),
                 Expanded(
                   child: Text(
-                    'This reservation is subject to the restaurant\'s availability. You\'ll receive a confirmation once the restaurant accepts your reservation.',
+                    'Reservasi ini tergantung pada ketersediaan restoran. Anda akan menerima konfirmasi setelah restoran menerima reservasi Anda.',
                     style: Theme.of(context).textTheme.bodySmall?.copyWith(
                           color: AppPallete.primaryColor,
                         ),
@@ -450,7 +450,7 @@ class _CreateReservationScreenState extends ConsumerState<CreateReservationScree
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
-                    'Date',
+                    'Tanggal',
                     style: Theme.of(context).textTheme.bodySmall?.copyWith(
                           color: AppPallete.neutralColor.shade500,
                         ),
@@ -491,7 +491,7 @@ class _CreateReservationScreenState extends ConsumerState<CreateReservationScree
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
-                    'Time',
+                    'Waktu',
                     style: Theme.of(context).textTheme.bodySmall?.copyWith(
                           color: AppPallete.neutralColor.shade500,
                         ),
@@ -532,13 +532,13 @@ class _CreateReservationScreenState extends ConsumerState<CreateReservationScree
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
-                    'Number of People',
+                    'Jumlah Orang',
                     style: Theme.of(context).textTheme.bodySmall?.copyWith(
                           color: AppPallete.neutralColor.shade500,
                         ),
                   ),
                   Text(
-                    '${_formState.peopleSize} people',
+                    '${_formState.peopleSize} orang',
                     style: Theme.of(context).textTheme.bodyMedium?.copyWith(
                           fontWeight: FontWeight.w600,
                         ),
@@ -572,7 +572,7 @@ class _CreateReservationScreenState extends ConsumerState<CreateReservationScree
       return '$displayHour:$minute $ampm';
     } catch (e) {
       // Ultimate fallback if everything fails
-      return 'Not specified';
+      return 'Tidak ditentukan';
     }
   }
 
@@ -800,7 +800,7 @@ class _CreateReservationScreenState extends ConsumerState<CreateReservationScree
               ),
               const SizedBox(width: 8),
               Text(
-                'Payment Summary',
+                'Ringkasan pembayaran',
                 style: Theme.of(context).textTheme.titleMedium?.copyWith(
                       fontWeight: FontWeight.bold,
                     ),
@@ -830,7 +830,7 @@ class _CreateReservationScreenState extends ConsumerState<CreateReservationScree
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               Text(
-                'Reservation Fee',
+                'Biaya reservasi',
                 style: Theme.of(context).textTheme.bodyMedium,
               ),
               Text(
@@ -852,7 +852,7 @@ class _CreateReservationScreenState extends ConsumerState<CreateReservationScree
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               Text(
-                'Total Payment',
+                'Total pembayaran',
                 style: Theme.of(context).textTheme.titleSmall?.copyWith(
                       fontWeight: FontWeight.bold,
                     ),
@@ -884,7 +884,7 @@ class _CreateReservationScreenState extends ConsumerState<CreateReservationScree
                 const SizedBox(width: 8),
                 Expanded(
                   child: Text(
-                    'Payment will be processed after your reservation is confirmed by the restaurant.',
+                    'Pembayaran akan diproses setelah reservasi Anda disetujui oleh restoran.',
                     style: Theme.of(context).textTheme.bodySmall?.copyWith(
                           color: AppPallete.primaryColor,
                         ),
@@ -977,24 +977,24 @@ class _CreateReservationScreenState extends ConsumerState<CreateReservationScree
   }
 
   String _getDayName(int day) {
-    const days = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'];
+    const days = ['Senin', 'Selasa', 'Rabu', 'Kamis', 'Jumat', 'Sabtu', 'Minggu'];
     return days[day - 1];
   }
 
   String _getMonthName(int month) {
     const months = [
-      'January',
-      'February',
-      'March',
+      'Januari',
+      'Februari',
+      'Maret',
       'April',
-      'May',
-      'June',
-      'July',
-      'August',
+      'Mei',
+      'Juni',
+      'Juli',
+      'Agustus',
       'September',
-      'October',
+      'Oktober',
       'November',
-      'December'
+      'Desember'
     ];
     return months[month - 1];
   }

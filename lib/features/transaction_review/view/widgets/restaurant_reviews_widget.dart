@@ -44,7 +44,7 @@ class _SliverRestaurantReviewsWidgetState extends ConsumerState<SliverRestaurant
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
           Text(
-            'Reviews',
+            'Review',
             style: Theme.of(context).textTheme.titleLarge?.copyWith(
                   fontWeight: FontWeight.w600,
                 ),
@@ -83,9 +83,10 @@ class _SliverRestaurantReviewsWidgetState extends ConsumerState<SliverRestaurant
               if (data.count > 0 && widget.showRatingSummary) {
                 contentWidgets.addAll([
                   _buildRatingSummary(
-                      context,
-                      data.rating / data.count,
-                      data.count),
+                    context,
+                    data.rating,
+                    data.count,
+                  ),
                   const SizedBox(height: 24),
                   _buildRatingDistribution(context, data.reviews),
                   const SizedBox(height: 32),
@@ -96,7 +97,8 @@ class _SliverRestaurantReviewsWidgetState extends ConsumerState<SliverRestaurant
               if (data.count == 0) {
                 contentWidgets.add(_buildEmptyState(context));
               } else {
-                contentWidgets.addAll(data.reviews.map((review) => _buildReviewItem(context, review)));
+                contentWidgets
+                    .addAll(data.reviews.map((review) => _buildReviewItem(context, review)));
               }
 
               return Column(children: contentWidgets);
@@ -104,7 +106,7 @@ class _SliverRestaurantReviewsWidgetState extends ConsumerState<SliverRestaurant
             loading: () => const LoadingIndicatorWidget(size: 36),
             error: (error, stackTrace) => CustomErrorWidget(
               error: error.toString(),
-              title: 'Could not load reviews',
+              title: 'Tidak dapat memuat review',
               onPressed: () =>
                   ref.refresh(getAllRestaurantReviewsProvider(widget.restaurantId, _currentQuery)),
             ),
@@ -136,14 +138,14 @@ class _SliverRestaurantReviewsWidgetState extends ConsumerState<SliverRestaurant
           ),
           const SizedBox(height: 24),
           Text(
-            'No Reviews Yet',
+            'Belum ada review',
             style: Theme.of(context).textTheme.headlineSmall?.copyWith(
                   fontWeight: FontWeight.w600,
                 ),
           ),
           const SizedBox(height: 12),
           Text(
-            'Be the first to share your experience',
+            'Bagikan pengalaman Anda',
             style: Theme.of(context).textTheme.bodyLarge?.copyWith(
                   color: AppPallete.neutralColor.shade600,
                 ),
@@ -198,14 +200,14 @@ class _SliverRestaurantReviewsWidgetState extends ConsumerState<SliverRestaurant
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
-                  'Customer Reviews',
+                  'Review Customer',
                   style: Theme.of(context).textTheme.titleLarge?.copyWith(
                         fontWeight: FontWeight.bold,
                         color: AppPallete.primaryColor,
                       ),
                 ),
                 Text(
-                  'See what others have experienced',
+                  'Lihat pengalaman mereka',
                   style: Theme.of(context).textTheme.bodyMedium?.copyWith(
                         color: AppPallete.neutralColor.shade700,
                       ),
@@ -245,7 +247,7 @@ class _SliverRestaurantReviewsWidgetState extends ConsumerState<SliverRestaurant
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text(
-            'Rating Distribution',
+            'Distribusi Rating',
             style: Theme.of(context).textTheme.titleMedium?.copyWith(
                   fontWeight: FontWeight.w600,
                 ),
@@ -311,7 +313,7 @@ class _SliverRestaurantReviewsWidgetState extends ConsumerState<SliverRestaurant
       scrollDirection: Axis.horizontal,
       child: Row(
         children: [
-          _buildFilterChip(context, 'All', _currentQuery == null, () {
+          _buildFilterChip(context, 'Semua', _currentQuery == null, () {
             setState(() {
               _currentQuery = null;
             });

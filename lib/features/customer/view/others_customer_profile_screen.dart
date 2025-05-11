@@ -150,7 +150,7 @@ class _OtherCustomerProfileScreenState extends ConsumerState<OtherCustomerProfil
           body: TabBarView(
             children: [
               PostGridWidget(authorId: widget.user.id),
-              Center(child: Text("Favorite Content")),
+              Center(child: Text("Konten Favorit")),
             ],
           ),
         ),

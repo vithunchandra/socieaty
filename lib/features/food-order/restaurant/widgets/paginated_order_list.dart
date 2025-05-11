@@ -102,12 +102,12 @@ class _PaginatedOrderListState extends ConsumerState<PaginatedOrderList> {
           newPageProgressIndicatorBuilder: (_) => const LoadingIndicatorWidget(size: 24),
           firstPageErrorIndicatorBuilder: (context) => CustomErrorWidget(
             error: _pagingController.error.toString(),
-            title: 'Orders',
+            title: 'Pesanan',
             onPressed: _pagingController.refresh,
           ),
           newPageErrorIndicatorBuilder: (context) => CustomErrorWidget(
             error: _pagingController.error.toString(),
-            title: 'Orders',
+            title: 'Pesanan',
             onPressed: _pagingController.retryLastFailedRequest,
           ),
           noItemsFoundIndicatorBuilder: (context) => Center(

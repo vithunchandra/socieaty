@@ -80,7 +80,7 @@ class _TransactionLineChartState extends State<TransactionLineChart> {
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
             Text(
-              'Transaction History',
+              'Riwayat Transaksi',
               style: Theme.of(context).textTheme.titleMedium?.copyWith(
                     fontWeight: FontWeight.bold,
                   ),
@@ -112,7 +112,7 @@ class _TransactionLineChartState extends State<TransactionLineChart> {
                       ),
                       const SizedBox(height: 16),
                       Text(
-                        'No transaction data available',
+                        'Tidak ada data transaksi',
                         style: Theme.of(context).textTheme.bodyMedium?.copyWith(
                               color: AppPallete.neutralColor.shade500,
                             ),
@@ -125,7 +125,7 @@ class _TransactionLineChartState extends State<TransactionLineChart> {
           const SizedBox(height: 8),
           Center(
             child: Text(
-              'Pinch to zoom • Pan to move',
+              'Gunakan gesture untuk zoom dan menggeser',
               style: Theme.of(context).textTheme.bodySmall?.copyWith(
                     color: AppPallete.neutralColor.shade500,
                     fontStyle: FontStyle.italic,

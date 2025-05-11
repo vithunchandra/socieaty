@@ -80,7 +80,7 @@ class _TopupBottomSheetState extends ConsumerState<TopupBottomSheet> {
           ),
           const SizedBox(height: 20),
           Text(
-            'Enter Amount',
+            'Masukkan Jumlah',
             style: Theme.of(context).textTheme.titleSmall?.copyWith(
                   fontWeight: FontWeight.w500,
                 ),
@@ -125,7 +125,7 @@ class _TopupBottomSheetState extends ConsumerState<TopupBottomSheet> {
           ),
           const SizedBox(height: 16),
           Text(
-            'Quick Amount',
+            'Jumlah Cepat',
             style: Theme.of(context).textTheme.titleSmall?.copyWith(
                   fontWeight: FontWeight.w500,
                 ),
@@ -172,7 +172,7 @@ class _TopupBottomSheetState extends ConsumerState<TopupBottomSheet> {
                       color: Colors.white,
                     )
                   : Text(
-                      'Next',
+                      'Lanjut',
                       style: Theme.of(context).textTheme.titleSmall?.copyWith(
                             color: Colors.white,
                             fontWeight: FontWeight.bold,

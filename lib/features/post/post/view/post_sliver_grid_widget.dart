@@ -115,7 +115,7 @@ class _PostSliverGridWidgetState extends ConsumerState<PostSliverGridWidget> {
         },
         firstPageProgressIndicatorBuilder: (context) => const LoadingIndicatorWidget(size: 36),
         newPageProgressIndicatorBuilder: (context) => const LoadingIndicatorWidget(size: 36),
-        noItemsFoundIndicatorBuilder: (context) => const Center(child: Text("No posts found")),
+        noItemsFoundIndicatorBuilder: (context) => const Center(child: Text("Tidak ada postingan yang ditemukan")),
       ),
     );
   }

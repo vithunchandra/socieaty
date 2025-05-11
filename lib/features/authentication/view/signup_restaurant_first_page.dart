@@ -22,7 +22,7 @@ class _SignupRestaurantFirstPageState extends State<SignupRestaurantFirstPage> {
   @override
   initState() {
     super.initState();
-    _passwordController.text = "vithun11";
+    _passwordController.text = "";
   }
 
   @override
@@ -104,7 +104,6 @@ class _SignupRestaurantFirstPageState extends State<SignupRestaurantFirstPage> {
                                 CustomUnderlineTextField(
                                   maxLength: 48,
                                   hintText: "cth: usersocieaty@gmail.com",
-                                  initialValue: "vithunchandra@gmail.com",
                                   validator: (value) {
                                     if (value == null || !EmailValidator.validate(value)) {
                                       return "Email tidak valid";
@@ -142,7 +141,6 @@ class _SignupRestaurantFirstPageState extends State<SignupRestaurantFirstPage> {
                                 ObscureUnderlineTextField(
                                   hintText: "Masukan konfirmasi password",
                                   maxLength: 32,
-                                  initialValue: "vithun11",
                                   validator: (value) {
                                     if (value == null || value.trim().isEmpty) {
                                       return "Konfirmasi password tidak boleh kosong";
@@ -164,7 +162,6 @@ class _SignupRestaurantFirstPageState extends State<SignupRestaurantFirstPage> {
                                 CustomUnderlineTextField(
                                   hintText: "cth: 08524390xxxx",
                                   maxLength: 12,
-                                  initialValue: "085243908885",
                                   validator: (value) {
                                     if (value == null || value.trim().isEmpty) {
                                       return "Nomor handphone tidak boleh kosong";

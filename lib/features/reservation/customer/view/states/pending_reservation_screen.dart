@@ -6,6 +6,7 @@ import 'package:socieaty/core/theme/app_pallete.dart';
 import 'package:socieaty/core/utils/converter.dart';
 import 'package:socieaty/core/utils/custom_extension.dart';
 import 'package:socieaty/features/reservation/model/reservation.dart';
+import 'package:socieaty/features/reservation/widgets/reservation_note_widget.dart';
 import 'package:socieaty/shared/widgets/dotted_divider.dart';
 import 'package:socieaty/shared/widgets/loading_indicator_widget.dart';
 import 'package:socieaty/shared/widgets/profile_picture_widget.dart';
@@ -475,10 +476,7 @@ class _PendingReservationScreenState extends ConsumerState<PendingReservationScr
           const SizedBox(height: 12),
           _buildDetailRow('Durasi',
               '${reservation.endTimeEstimation.difference(reservation.reservationTime).inHours} jam'),
-          if (reservation.note.isNotEmpty) ...[
-            const SizedBox(height: 12),
-            _buildDetailRow('Catatan', reservation.note),
-          ],
+          if (reservation.note.isNotEmpty) ReservationNoteWidget(note: reservation.note),
           if (reservation.menuItems.isNotEmpty) ...[
             const SizedBox(height: 20),
             Row(

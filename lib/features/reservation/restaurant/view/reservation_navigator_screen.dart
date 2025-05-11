@@ -40,7 +40,7 @@ class ReservationNavigatorScreen extends ConsumerWidget {
       error: (error, stack) {
         return CustomErrorWidget(
           error: error.toString(),
-          title: "Reservation Config",
+          title: "Konfigurasi Reservasi",
           onPressed: () {
             ref.invalidate(getRestaurantReservationConfigProvider(currentUser.restaurantData!.id));
           },

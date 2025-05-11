@@ -135,7 +135,7 @@ class _ReservationFoodSelectionScreenState extends ConsumerState<ReservationFood
       appBar: AppBar(
         backgroundColor: AppPallete.neutralColor.shade50,
         surfaceTintColor: Colors.transparent,
-        title: Text('Select Menu Items'),
+        title: Text('Pilih Menu'),
         leading: IconButton(
           icon: const Icon(Icons.arrow_back),
           onPressed: () {
@@ -203,10 +203,10 @@ class _ReservationFoodSelectionScreenState extends ConsumerState<ReservationFood
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text("Add items to your reservation", style: Theme.of(context).textTheme.titleLarge),
+            Text("Tambahkan menu ke reservasi Anda", style: Theme.of(context).textTheme.titleLarge),
             const SizedBox(height: 8),
             Text(
-              "Select menu items you'd like to pre-order for your reservation at ${widget.args.restaurant.name.toCapitalized()}",
+              "Pilih menu yang Anda inginkan untuk reservasi di ${widget.args.restaurant.name.toCapitalized()}",
               style: Theme.of(context).textTheme.bodyMedium?.copyWith(
                     color: AppPallete.neutralColor.shade600,
                   ),
@@ -224,7 +224,7 @@ class _ReservationFoodSelectionScreenState extends ConsumerState<ReservationFood
                   const SizedBox(width: 8),
                   Expanded(
                     child: Text(
-                      "Items selected here will be added to your reservation. You can modify them later.",
+                      "Menu yang dipilih akan ditambahkan ke reservasi Anda. Anda dapat mengubahnya nanti.",
                       style: Theme.of(context).textTheme.bodySmall?.copyWith(
                             color: AppPallete.primaryColor,
                           ),
@@ -340,7 +340,7 @@ class _ReservationFoodSelectionScreenState extends ConsumerState<ReservationFood
         ),
       AsyncError(:final error) => SliverToBoxAdapter(
           child: CustomErrorWidget(
-            title: "Menu items",
+            title: "Item menu",
             error: error.toString(),
             onPressed: () => ref.invalidate(getFoodMenusProvider(
               restaurantId: widget.args.restaurant.restaurantData.id,
@@ -383,7 +383,7 @@ class _ReservationFoodSelectionScreenState extends ConsumerState<ReservationFood
                   style: Theme.of(context).textTheme.bodyLarge,
                   decoration: InputDecoration(
                     contentPadding: const EdgeInsets.symmetric(vertical: 0, horizontal: 12.0),
-                    hintText: "Search",
+                    hintText: "Cari",
                     hintStyle: Theme.of(context).textTheme.bodyLarge,
                   ),
                 ),
@@ -415,7 +415,7 @@ class _ReservationFoodSelectionScreenState extends ConsumerState<ReservationFood
                     ),
                     const SizedBox(width: 4),
                     Text(
-                      "Filters",
+                      "Filter",
                       style: Theme.of(context).textTheme.labelLarge?.copyWith(
                             color: Colors.white,
                           ),

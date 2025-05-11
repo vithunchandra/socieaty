@@ -1,8 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_carousel_widget/flutter_carousel_widget.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:geocoding/geocoding.dart';
 import 'package:go_router/go_router.dart';
+import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:socieaty/core/theme/app_pallete.dart';
+import 'package:socieaty/core/utils/location_handler.dart';
 import 'package:socieaty/core/utils/show_snackbar.dart';
 import 'package:socieaty/features/food_menu/customer/view/food_menu_highlight_item_widget.dart';
 import 'package:socieaty/features/food_menu/model/menu_category.dart';
@@ -31,6 +34,26 @@ class _ShopScreenState extends ConsumerState<ShopScreen> {
   final SearchController _searchController = SearchController();
   List<MenuCategory> _menuCategories = [];
   MenuFilterFormState _menuFilterFormState = MenuFilterFormState();
+  Placemark? _currentLocation;
+
+  @override
+  void initState() {
+    super.initState();
+    _getCurrentLocation();
+  }
+
+  void _getCurrentLocation() async {
+    final location = await LocationHandler.getCurrentPosition();
+    if (location != null && location.latitude != null && location.longitude != null) {
+      final placemarks = await LocationHandler.getAddressFromLatLng(
+        LatLng(location.latitude!, location.longitude!),
+      );
+      _currentLocation = placemarks;
+      if (mounted) {
+        setState(() {});
+      }
+    }
+  }
 
   @override
   void dispose() {
@@ -83,7 +106,10 @@ class _ShopScreenState extends ConsumerState<ShopScreen> {
           headerSliverBuilder: (context, innerBoxIsScrolled) {
             return [
               SliverToBoxAdapter(
-                child: _ShopDetailsHeader(),
+                child: _ShopDetailsHeader(
+                  key: UniqueKey(),
+                  currentLocation: _currentLocation,
+                ),
               ),
               SliverAppBar(
                 pinned: true,
@@ -331,6 +357,10 @@ class _ShopScreenState extends ConsumerState<ShopScreen> {
 }
 
 class _ShopDetailsHeader extends StatelessWidget {
+  final Placemark? currentLocation;
+
+  const _ShopDetailsHeader({required this.currentLocation, super.key});
+
   @override
   Widget build(BuildContext context) {
     return Container(
@@ -343,11 +373,11 @@ class _ShopDetailsHeader extends StatelessWidget {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Text(
-                'Vasanth Nagar',
+                currentLocation?.subAdministrativeArea ?? 'Surabaya',
                 style: Theme.of(context).textTheme.titleLarge,
               ),
               Text(
-                'Bengaluru',
+                currentLocation?.subLocality ?? 'Gubeng',
                 style: Theme.of(context).textTheme.bodyMedium?.copyWith(color: Colors.grey[600]),
               ),
             ],

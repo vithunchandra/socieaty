@@ -8,6 +8,7 @@ import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:location/location.dart';
 import 'package:socieaty/core/theme/app_pallete.dart';
 import 'package:socieaty/core/utils/location_handler.dart';
+import 'package:socieaty/core/utils/show_snackbar.dart';
 import 'package:socieaty/features/restaurant/model/socieaty_restaurant.dart';
 import 'package:socieaty/features/restaurant/provider/get_nearest_restaurant_provider.dart';
 import 'package:socieaty/features/restaurant/repository/request/get_nearest_restaurant_request_query.dart';
@@ -185,9 +186,7 @@ class _MapExplorationScreenState extends ConsumerState<MapExplorationScreen> {
           _isError = true;
           _isLoadingRestaurants = false;
         });
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Error loading restaurants: ${error.toString()}')),
-        );
+        showSnackbar(context, "Gagal memuat daftar restoran", state: SnackbarState.error);
       }
     } finally {
       setState(() {
@@ -228,7 +227,7 @@ class _MapExplorationScreenState extends ConsumerState<MapExplorationScreen> {
       markerId: const MarkerId('user_location'),
       position: _userLocation,
       icon: BitmapDescriptor.defaultMarkerWithHue(BitmapDescriptor.hueAzure),
-      infoWindow: const InfoWindow(title: 'Your Location'),
+      infoWindow: const InfoWindow(title: 'Lokasi Anda'),
     ));
 
     // Add restaurant markers

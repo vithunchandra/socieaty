@@ -4,13 +4,11 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:socieaty/app_theme_provider.dart';
 import 'package:socieaty/core/enums/user_role.enum.dart';
-import 'package:socieaty/core/network/api_result.dart';
 import 'package:socieaty/core/theme/app_pallete.dart';
 import 'package:socieaty/core/theme/theme.dart';
 import 'package:socieaty/features/authentication/provider/session_provider.dart';
 import 'package:socieaty/features/authentication/repository/auth_local_repository.dart';
 import 'package:socieaty/features/restaurant/enum/restaurant_verification_status_enum.dart';
-import 'package:socieaty/features/user/model/socieaty_user.dart';
 
 class SplashScreen extends ConsumerStatefulWidget {
   const SplashScreen({super.key});

@@ -265,7 +265,7 @@ class _CurrentCustomerProfileScreenState extends ConsumerState<CurrentCustomerPr
                             widget.user.customerData.bio.isEmpty
                                 ? TextButton(
                                     onPressed: () => _showBioDialog(context),
-                                    child: const Text("+ Add bio"),
+                                    child: const Text("+ Tambahkan bio"),
                                   )
                                 : SizedBox(
                                     width: screenWidth * 0.6,
@@ -299,8 +299,8 @@ class _CurrentCustomerProfileScreenState extends ConsumerState<CurrentCustomerPr
                 body: TabBarView(
                   children: [
                     PostGridWidget(authorId: widget.user.id),
-                    Center(child: Text("Locked Content")),
-                    Center(child: Text("Favorite Content")),
+                    Center(child: Text("Konten Terkunci")),
+                    Center(child: Text("Konten Favorit")),
                   ],
                 ),
               ),

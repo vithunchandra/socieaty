@@ -63,8 +63,8 @@ class _ReservationManagementScreenState extends ConsumerState<ReservationManagem
     final result = await context.push(
       '/qr-code-scanner',
       extra: const QrCodeScannerArgs(
-        title: 'Scan Reservation QR',
-        helperMessage: 'Scan customer QR code to check-in',
+        title: 'Scan QR Reservasi',
+        helperMessage: 'Scan kode QR pelanggan untuk check-in',
       ),
     );
 
@@ -96,7 +96,7 @@ class _ReservationManagementScreenState extends ConsumerState<ReservationManagem
       final reservation = await ref.watch(getReservationProvider(reservationId).future);
       if (reservation.reservationStatus != ReservationStatus.confirmed) {
         if (context.mounted) {
-          showSnackbar(context, 'Invalid reservation status', state: SnackbarState.error);
+          showSnackbar(context, 'Status reservasi tidak valid', state: SnackbarState.error);
         }
         return;
       }
@@ -104,7 +104,7 @@ class _ReservationManagementScreenState extends ConsumerState<ReservationManagem
       return _showReservationDetails(reservation);
     } catch (err) {
       if (context.mounted) {
-        showSnackbar(context, 'Reservation tidak ditemukan', state: SnackbarState.error);
+        showSnackbar(context, 'Reservasi tidak ditemukan', state: SnackbarState.error);
       }
       return;
     } finally {
@@ -149,7 +149,7 @@ class _ReservationManagementScreenState extends ConsumerState<ReservationManagem
           child: const Icon(Icons.arrow_back, color: Colors.white),
         ),
         title: Text(
-          'Reservations',
+          'Reservasi',
           style: Theme.of(context).textTheme.titleLarge?.copyWith(
                 fontWeight: FontWeight.bold,
                 color: Colors.white,
@@ -173,9 +173,9 @@ class _ReservationManagementScreenState extends ConsumerState<ReservationManagem
           labelColor: Colors.white,
           unselectedLabelColor: Colors.white.withAlpha(178),
           tabs: const [
-            Tab(text: 'Pending'),
-            Tab(text: 'Confirmed'),
-            Tab(text: 'Dining'),
+            Tab(text: 'Menunggu'),
+            Tab(text: 'Terkonfirmasi'),
+            Tab(text: 'Makan'),
           ],
         ),
       ),

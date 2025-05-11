@@ -230,7 +230,7 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
                     child: TextField(
                       controller: _messageController,
                       decoration: InputDecoration(
-                        hintText: 'Type a message...',
+                        hintText: 'Ketik pesan...',
                         border: OutlineInputBorder(
                           borderRadius: BorderRadius.circular(24),
                           borderSide: BorderSide.none,
@@ -301,7 +301,7 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
             ),
             const SizedBox(height: 16),
             Text(
-              'Failed to load messages',
+              'Gagal memuat pesan',
               style: TextStyle(
                 color: AppPallete.neutralColor.shade700,
                 fontSize: 16,
@@ -321,7 +321,7 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
             ElevatedButton.icon(
               onPressed: _retryLoadMessages,
               icon: const Icon(Icons.refresh),
-              label: const Text('Retry'),
+              label: const Text('Coba lagi'),
               style: ElevatedButton.styleFrom(
                 backgroundColor: AppPallete.primaryColor,
                 foregroundColor: Colors.white,
@@ -344,7 +344,7 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
             ),
             const SizedBox(height: 16),
             Text(
-              'No messages yet',
+              'Belum ada pesan',
               style: TextStyle(
                 color: AppPallete.neutralColor.shade700,
                 fontSize: 16,
@@ -353,7 +353,7 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
             ),
             const SizedBox(height: 8),
             Text(
-              'Send your first message to the restaurant',
+              'Kirim pesan pertama ke restoran',
               style: TextStyle(
                 color: AppPallete.neutralColor.shade500,
                 fontSize: 14,

@@ -360,7 +360,7 @@ class CreateFoodMenuScreenState extends ConsumerState<CreateFoodMenuScreen> {
                 child: FilledButton(
                   onPressed: () {
                     if (_selectedMenuImage == null) {
-                      showSnackbar(context, "Please upload a photo");
+                      showSnackbar(context, "Tolong upload gambar menu");
                     }
                     if (_formKey.currentState!.validate() && _selectedCategories.isNotEmpty) {
                       _formKey.currentState!.save();

@@ -9,10 +9,10 @@ import 'package:socieaty/core/network/api_client.dart';
 import 'package:socieaty/core/network/api_result.dart';
 import 'package:socieaty/core/utils/execute_request.dart';
 import 'package:socieaty/features/authentication/repository/auth_local_repository.dart';
-import 'package:socieaty/features/restaurant/enum/restaurant_verification_status_enum.dart';
 import 'package:socieaty/features/restaurant/model/socieaty_restaurant.dart';
 import 'package:socieaty/features/restaurant/repository/request/get_all_unverified_restaurant_request_query.dart';
 import 'package:socieaty/features/restaurant/repository/request/get_nearest_restaurant_request_query.dart';
+import 'package:socieaty/features/restaurant/repository/request/toggle_reservation_availability_request.dart';
 import 'package:socieaty/features/restaurant/repository/request/update_restaurant_data_request.dart';
 import 'package:socieaty/features/restaurant/repository/request/update_restaurant_verification_status_request.dart';
 import 'package:socieaty/features/restaurant/repository/response/create_reservation_config_response.dart';
@@ -22,6 +22,7 @@ import 'package:socieaty/features/restaurant/repository/response/get_nearest_res
 import 'package:socieaty/features/restaurant/repository/response/get_reservation_config_response.dart';
 import 'package:socieaty/features/restaurant/repository/response/get_reservation_facilities_suggestion_response.dart';
 import 'package:socieaty/features/restaurant/repository/response/paginate_restaurant_response.dart';
+import 'package:socieaty/features/restaurant/repository/response/toggle_reservation_availability_response.dart';
 import 'package:socieaty/features/restaurant/repository/response/update_reservation_config_response.dart';
 import 'package:socieaty/features/restaurant/repository/response/update_restaurant_data_response.dart';
 import 'package:socieaty/features/restaurant/repository/response/verify_resturant_account_response.dart';
@@ -88,6 +89,14 @@ class RestaurantRespository {
     return executeRequest<UpdateReservationConfigResponse>(
       requestFunction: () => _dio.put('restaurant/reservation-config', data: formState.toJson()),
       successParser: (data) => UpdateReservationConfigResponse.fromJson(data),
+    );
+  }
+
+  Future<ApiResult<ToggleReservationAvailabilityResponse>> toggleReservationAvailability(
+      ToggleReservationAvailabilityRequest request) {
+    return executeRequest<ToggleReservationAvailabilityResponse>(
+      requestFunction: () => _dio.put('restaurant/reservation-availability', data: request.toJson()),
+      successParser: (data) => ToggleReservationAvailabilityResponse.fromJson(data),
     );
   }
 

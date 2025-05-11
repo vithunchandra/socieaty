@@ -134,14 +134,14 @@ class _ActiveOrderViewState extends ConsumerState<ActiveOrderView> {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text(
-                        'Estimasi Pengantaran',
+                        'Estimasi Pesananan',
                         style: TextStyle(
                           color: Colors.grey[600],
                           fontSize: 12,
                         ),
                       ),
                       const Text(
-                        '15-20 menit',
+                        '30-45 menit',
                         style: TextStyle(
                           fontWeight: FontWeight.bold,
                           fontSize: 16,

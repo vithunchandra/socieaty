@@ -178,12 +178,12 @@ class _RestaurantLocationScreenState extends State<RestaurantLocationScreen> {
                             // This functionality can be added if needed
                             ScaffoldMessenger.of(context).showSnackBar(
                               const SnackBar(
-                                content: Text('Directions feature coming soon'),
+                                content: Text('Fitur Arah akan segera hadir'),
                               ),
                             );
                           },
                           icon: const Icon(Icons.directions),
-                          label: const Text('Directions'),
+                          label: const Text('Arah'),
                           style: FilledButton.styleFrom(
                             backgroundColor: AppPallete.primaryColor,
                           ),

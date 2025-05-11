@@ -86,7 +86,7 @@ class _ReservationsScheduleScreenState extends State<ReservationsScheduleScreen>
         backgroundColor: AppPallete.neutralColor.shade50,
         surfaceTintColor: Colors.transparent,
         title: _isAlmostCollapsed
-            ? Text('Reservations',
+            ? Text('Reservasi',
                 style:
                     Theme.of(context).textTheme.titleLarge?.copyWith(fontWeight: FontWeight.bold))
             : null,
@@ -114,7 +114,7 @@ class _ReservationsScheduleScreenState extends State<ReservationsScheduleScreen>
                       child: Row(
                         children: [
                           Text(
-                            'Reservations',
+                            'Reservasi',
                             style: Theme.of(context).textTheme.titleLarge?.copyWith(
                                   fontWeight: FontWeight.bold,
                                 ),

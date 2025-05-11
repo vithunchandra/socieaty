@@ -14,14 +14,14 @@ class LoadingView extends StatelessWidget {
           const LoadingIndicatorWidget(size: 36),
           const SizedBox(height: 24),
           Text(
-            'Loading order details...',
+            'Memuat detail pesanan...',
             style: Theme.of(context).textTheme.titleMedium?.copyWith(
                   color: AppPallete.neutralColor.shade700,
                 ),
           ),
           const SizedBox(height: 12),
           Text(
-            'Please wait while we fetch your order information',
+            'Silahkan tunggu sampai detail pesanan dimuat',
             style: TextStyle(
               fontSize: 14,
               color: AppPallete.neutralColor.shade500,

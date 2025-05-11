@@ -89,7 +89,7 @@ class _RejectedOrderScreenState extends State<RejectedOrderScreen>
             FadeTransition(
               opacity: _fadeAnimation,
               child: Text(
-                'Order Rejected',
+                'Pesanan Ditolak',
                 style: Theme.of(context).textTheme.headlineSmall?.copyWith(
                       fontWeight: FontWeight.bold,
                       color: Colors.red,
@@ -103,7 +103,7 @@ class _RejectedOrderScreenState extends State<RejectedOrderScreen>
               child: Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 16.0),
                 child: Text(
-                  'Your order has been rejected by the restaurant. We apologize for the inconvenience.',
+                  'Pesananmu telah ditolak oleh restoran. Kami minta maaf atas ketidaknyamanan ini.',
                   textAlign: TextAlign.center,
                   style: TextStyle(
                     fontSize: 16,
@@ -159,11 +159,11 @@ class _RejectedOrderScreenState extends State<RejectedOrderScreen>
                         ],
                       ),
                       const SizedBox(height: 16),
-                      _buildOrderDetailRow('Date', DateTime.now().toString().substring(0, 16)),
+                      _buildOrderDetailRow('Tanggal', DateTime.now().toString().substring(0, 16)),
                       const SizedBox(height: 8),
                       _buildOrderDetailRow('Restaurant', widget.order.restaurant.name),
                       const SizedBox(height: 8),
-                      _buildOrderDetailRow('Status', 'Rejected'),
+                      _buildOrderDetailRow('Status', 'Ditolak'),
                     ],
                   ),
                 ),
@@ -296,7 +296,7 @@ class _RejectedOrderScreenState extends State<RejectedOrderScreen>
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
                           Text(
-                            'Service Fee',
+                            'Biaya Layanan',
                             style: Theme.of(context).textTheme.bodyMedium,
                           ),
                           Text(
@@ -318,7 +318,7 @@ class _RejectedOrderScreenState extends State<RejectedOrderScreen>
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
                           Text(
-                            'Total Payment',
+                            'Total Pembayaran',
                             style: Theme.of(context).textTheme.titleSmall?.copyWith(
                                   fontWeight: FontWeight.bold,
                                 ),
@@ -335,7 +335,7 @@ class _RejectedOrderScreenState extends State<RejectedOrderScreen>
                       if (widget.order.note.isNotEmpty) ...[
                         const SizedBox(height: 16),
                         Text(
-                          'Additional Notes',
+                          'Catatan Tambahan',
                           style: Theme.of(context).textTheme.titleSmall?.copyWith(
                                 fontWeight: FontWeight.bold,
                               ),
@@ -401,7 +401,7 @@ class _RejectedOrderScreenState extends State<RejectedOrderScreen>
                           ),
                           const SizedBox(width: 8),
                           const Text(
-                            'Need help?',
+                            'Butuh bantuan?',
                             style: TextStyle(
                               fontWeight: FontWeight.bold,
                               fontSize: 18,
@@ -411,7 +411,7 @@ class _RejectedOrderScreenState extends State<RejectedOrderScreen>
                       ),
                       const SizedBox(height: 12),
                       Text(
-                        'If you have questions about this order, please contact our customer support.',
+                        'Jika Anda memiliki pertanyaan tentang pesanan ini, silakan membuat tiket dukungan.',
                         style: TextStyle(
                           fontSize: 15,
                           height: 1.5,

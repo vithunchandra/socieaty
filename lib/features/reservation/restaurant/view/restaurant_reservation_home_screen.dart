@@ -3,12 +3,17 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:socieaty/core/theme/app_pallete.dart';
 import 'package:socieaty/core/utils/converter.dart';
+import 'package:socieaty/core/utils/show_snackbar.dart';
 import 'package:socieaty/features/authentication/repository/auth_local_repository.dart';
+import 'package:socieaty/features/reservation/restaurant/viewmodel/restaurant_reservation_home_view_model.dart';
 import 'package:socieaty/features/restaurant/model/reservation_config.dart';
+import 'package:socieaty/features/restaurant/model/socieaty_restaurant.dart';
 import 'package:socieaty/features/restaurant/provider/get_restaurant_reservation_config_provider.dart';
 import 'package:socieaty/features/restaurant/view/create_reservation_config_screen.dart';
+import 'package:socieaty/shared/view_state.dart';
 import 'package:socieaty/shared/widgets/custom_error_widget.dart';
 import 'package:socieaty/shared/widgets/loading_indicator_widget.dart';
+import 'dart:async';
 
 class RestaurantReservationHomeScreen extends ConsumerStatefulWidget {
   const RestaurantReservationHomeScreen({super.key});
@@ -19,7 +24,23 @@ class RestaurantReservationHomeScreen extends ConsumerStatefulWidget {
 }
 
 class _RestaurantReservationHomeScreenState extends ConsumerState<RestaurantReservationHomeScreen> {
-  bool _isReservationEnabled = true;
+  Timer? _debounceTimer;
+
+  @override
+  void dispose() {
+    _debounceTimer?.cancel();
+    super.dispose();
+  }
+
+  void _toggleReservationAvailability(bool value) {
+    if (_debounceTimer?.isActive ?? false) return;
+
+    _debounceTimer = Timer(const Duration(milliseconds: 500), () {
+      ref
+          .read(restaurantReservationHomeViewModelProvider.notifier)
+          .toggleReservationAvailability(value);
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -27,6 +48,20 @@ class _RestaurantReservationHomeScreenState extends ConsumerState<RestaurantRese
         UserConverter.userToRestaurant(ref.watch(authLocalRepositoryProvider).getUserData()!);
     final reservationConfig =
         ref.watch(getRestaurantReservationConfigProvider(restaurant.restaurantData.id));
+
+    debugPrint(restaurant.restaurantData.isReservationAvailable.toString());
+
+    ref.listen(restaurantReservationHomeViewModelProvider, (previous, next) {
+      switch (next.toggleReservationState) {
+        case SuccessState():
+          showSnackbar(context, "Berhasil mengubah status reservasi");
+        case ErrorState():
+          showSnackbar(context, "Gagal mengubah status reservasi");
+        default:
+          break;
+      }
+      setState(() {});
+    });
 
     return reservationConfig.when(
       data: (config) {
@@ -37,7 +72,7 @@ class _RestaurantReservationHomeScreenState extends ConsumerState<RestaurantRese
             backgroundColor: AppPallete.neutralColor.shade50,
             appBar: AppBar(
               title: Text(
-                'Reservation',
+                'Reservasi',
                 style: Theme.of(context).textTheme.titleLarge,
               ),
               centerTitle: true,
@@ -57,7 +92,7 @@ class _RestaurantReservationHomeScreenState extends ConsumerState<RestaurantRese
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  _buildReservationToggleCard(),
+                  _buildReservationToggleCard(restaurant),
                   const SizedBox(height: 16),
                   _buildTodayReservationsSection(config),
                   const SizedBox(height: 16),
@@ -81,7 +116,7 @@ class _RestaurantReservationHomeScreenState extends ConsumerState<RestaurantRese
         return Scaffold(
           body: CustomErrorWidget(
             error: error.toString(),
-            title: 'Reservation Config',
+            title: 'Konfigurasi Reservasi',
             onPressed: () {
               ref.invalidate(getRestaurantReservationConfigProvider(restaurant.id));
             },
@@ -94,7 +129,7 @@ class _RestaurantReservationHomeScreenState extends ConsumerState<RestaurantRese
     );
   }
 
-  Widget _buildReservationToggleCard() {
+  Widget _buildReservationToggleCard(SocieatyRestaurant restaurant) {
     return Container(
       margin: const EdgeInsets.all(16),
       padding: const EdgeInsets.all(16),
@@ -116,16 +151,16 @@ class _RestaurantReservationHomeScreenState extends ConsumerState<RestaurantRese
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
-                  'Reservation Service',
+                  'Layanan Reservasi',
                   style: Theme.of(context).textTheme.titleMedium?.copyWith(
                         fontWeight: FontWeight.bold,
                       ),
                 ),
                 const SizedBox(height: 4),
                 Text(
-                  _isReservationEnabled
-                      ? 'Your restaurant is currently accepting reservations'
-                      : 'Your restaurant is not accepting reservations',
+                  restaurant.restaurantData.isReservationAvailable
+                      ? 'Restoran Anda saat ini menerima reservasi'
+                      : 'Restoran Anda saat ini tidak menerima reservasi',
                   style: Theme.of(context).textTheme.bodyMedium?.copyWith(
                         color: AppPallete.neutralColor.shade500,
                       ),
@@ -134,11 +169,9 @@ class _RestaurantReservationHomeScreenState extends ConsumerState<RestaurantRese
             ),
           ),
           Switch(
-            value: _isReservationEnabled,
+            value: restaurant.restaurantData.isReservationAvailable,
             onChanged: (value) {
-              setState(() {
-                _isReservationEnabled = value;
-              });
+              _toggleReservationAvailability(value);
             },
             activeColor: AppPallete.primaryColor,
           ),
@@ -182,7 +215,7 @@ class _RestaurantReservationHomeScreenState extends ConsumerState<RestaurantRese
                 ),
                 const SizedBox(width: 8),
                 Text(
-                  'Today\'s Reservations',
+                  'Reservasi Hari Ini',
                   style: Theme.of(context).textTheme.titleSmall?.copyWith(
                         color: AppPallete.primaryColor,
                         fontWeight: FontWeight.bold,
@@ -221,7 +254,7 @@ class _RestaurantReservationHomeScreenState extends ConsumerState<RestaurantRese
                   context.push('/restaurant/dashboard/reservation/view', extra: reservationConfig);
                 },
                 child: Text(
-                  'View All Reservations',
+                  'Lihat Semua Reservasi',
                   style: TextStyle(
                     color: AppPallete.primaryColor,
                     fontWeight: FontWeight.bold,
@@ -289,7 +322,7 @@ class _RestaurantReservationHomeScreenState extends ConsumerState<RestaurantRese
                 ),
                 const SizedBox(height: 4),
                 Text(
-                  '$peopleCount people',
+                  '$peopleCount orang',
                   style: Theme.of(context).textTheme.bodyMedium?.copyWith(
                         color: AppPallete.neutralColor.shade500,
                       ),
@@ -336,7 +369,7 @@ class _RestaurantReservationHomeScreenState extends ConsumerState<RestaurantRese
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text(
-            'Current Configuration',
+            'Konfigurasi Saat Ini',
             style: Theme.of(context).textTheme.titleMedium?.copyWith(
                   fontWeight: FontWeight.bold,
                 ),
@@ -344,22 +377,22 @@ class _RestaurantReservationHomeScreenState extends ConsumerState<RestaurantRese
           const SizedBox(height: 16),
           _buildConfigItem(
             icon: Icons.people,
-            title: 'Maximum People',
-            value: '${reservationConfig.maxPerson} per reservation',
+            title: 'Maksimum Orang',
+            value: '${reservationConfig.maxPerson} per reservasi',
           ),
           _buildConfigItem(
             icon: Icons.attach_money,
-            title: 'Minimum Cost',
-            value: 'Rp ${reservationConfig.minCostPerPerson} per person',
+            title: 'Minimum Biaya',
+            value: 'Rp ${reservationConfig.minCostPerPerson} per orang',
           ),
           _buildConfigItem(
             icon: Icons.timer,
-            title: 'Time Limit',
-            value: '${reservationConfig.timeLimit} hours',
+            title: 'Batas Waktu',
+            value: '${reservationConfig.timeLimit} jam',
           ),
           _buildConfigItem(
             icon: Icons.category,
-            title: 'Facilities',
+            title: 'Fasilitas',
             value: reservationConfig.facilities.join(', '),
           ),
         ],

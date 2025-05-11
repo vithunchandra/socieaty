@@ -34,7 +34,7 @@ class EmptyChartState extends StatelessWidget {
           ),
           const SizedBox(height: 16),
           Text(
-            'No chart data available',
+            'Tidak ada data chart',
             style: Theme.of(context).textTheme.titleMedium?.copyWith(
                   fontWeight: FontWeight.w500,
                   color: AppPallete.neutralColor.shade700,
@@ -42,7 +42,7 @@ class EmptyChartState extends StatelessWidget {
           ),
           const SizedBox(height: 8),
           Text(
-            'There is no transaction data for the selected time scale',
+            'Tidak ada data transaksi untuk rentang waktu yang dipilih',
             textAlign: TextAlign.center,
             style: Theme.of(context).textTheme.bodyMedium?.copyWith(
                   color: AppPallete.neutralColor.shade600,
@@ -55,7 +55,7 @@ class EmptyChartState extends StatelessWidget {
               backgroundColor: AppPallete.primaryColor,
             ),
             child: const Text(
-              'Refresh Data',
+              'Muat Ulang',
               style: TextStyle(color: Colors.white),
             ),
           ),

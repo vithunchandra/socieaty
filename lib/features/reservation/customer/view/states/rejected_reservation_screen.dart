@@ -97,7 +97,7 @@ class _RejectedReservationScreenState extends State<RejectedReservationScreen>
               child: Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 16.0),
                 child: Text(
-                  'Mohon maaf, reservasi Anda telah ditolak oleh restoran. Silakan hubungi layanan pelanggan untuk informasi lebih lanjut.',
+                  'Mohon maaf, reservasi Anda telah ditolak oleh restoran. Silakan gunakan tiket dukungan untuk informasi lebih lanjut.',
                   textAlign: TextAlign.center,
                   style: TextStyle(
                     fontSize: 16,

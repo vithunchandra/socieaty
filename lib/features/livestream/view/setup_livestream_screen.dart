@@ -211,7 +211,7 @@ class _SetupLiveStreamViewState extends ConsumerState<SetupLiveStreamScreen> {
                               child: TextFormField(
                                 style: Theme.of(context).textTheme.bodyMedium,
                                 decoration: InputDecoration.collapsed(
-                                  hintText: "Your title here...",
+                                  hintText: "Judul Livestream Anda...",
                                   hintStyle: Theme.of(context)
                                       .textTheme
                                       .bodyMedium
@@ -220,7 +220,7 @@ class _SetupLiveStreamViewState extends ConsumerState<SetupLiveStreamScreen> {
                                 ),
                                 validator: (value) {
                                   if (value == null || value.trim().isEmpty) {
-                                    return "Title is required";
+                                    return "Judul diperlukan";
                                   }
                                   return null;
                                 },
@@ -265,7 +265,7 @@ class _SetupLiveStreamViewState extends ConsumerState<SetupLiveStreamScreen> {
                           },
                           child: _isLoading
                               ? const LoadingIndicatorWidget(size: 16, color: Colors.white)
-                              : const Text("Go Live"),
+                              : const Text("Mulai Livestream"),
                         ),
                       ),
                     ],

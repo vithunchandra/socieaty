@@ -11,7 +11,7 @@ class QrCodeScannerArgs {
 
   const QrCodeScannerArgs({
     this.title = 'Scan QR Code',
-    this.helperMessage = 'Align QR code within the frame to scan',
+    this.helperMessage = 'Atur QR Code dalam frame untuk scan',
   });
 }
 
@@ -173,7 +173,7 @@ class _QrCodeScannerScreenState extends ConsumerState<QrCodeScannerScreen>
                   children: [
                     _buildControlButton(
                       icon: _isTorchOn ? Icons.flash_on : Icons.flash_off,
-                      label: _isTorchOn ? 'On' : 'Off',
+                      label: _isTorchOn ? 'Aktif' : 'Nonaktif',
                       onPressed: () {
                         setState(() {
                           _isTorchOn = !_isTorchOn;
@@ -184,7 +184,7 @@ class _QrCodeScannerScreenState extends ConsumerState<QrCodeScannerScreen>
                     const SizedBox(width: 56),
                     _buildControlButton(
                       icon: Icons.flip_camera_android,
-                      label: 'Rotate',
+                      label: 'Putar',
                       onPressed: () {
                         setState(() {
                           _isFrontCamera = !_isFrontCamera;
@@ -220,7 +220,7 @@ class _QrCodeScannerScreenState extends ConsumerState<QrCodeScannerScreen>
                         ),
                         const SizedBox(height: 20),
                         Text(
-                          'Processing...',
+                          'Memproses...',
                           style: TextStyle(
                             fontSize: 18,
                             fontWeight: FontWeight.bold,

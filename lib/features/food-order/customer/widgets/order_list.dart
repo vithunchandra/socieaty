@@ -125,7 +125,7 @@ class OrderList extends ConsumerWidget {
           const LoadingIndicatorWidget(size: 36),
           const SizedBox(height: 16),
           Text(
-            'Loading your orders...',
+            'Memuat pesanan Anda...',
             style: TextStyle(
               color: AppPallete.neutralColor.shade600,
               fontSize: 14,
@@ -152,7 +152,7 @@ class OrderList extends ConsumerWidget {
             ),
             const SizedBox(height: 16),
             Text(
-              "Couldn't load your orders",
+              "Tidak dapat memuat pesanan Anda",
               style: textTheme.titleMedium?.copyWith(
                 fontWeight: FontWeight.w600,
                 color: AppPallete.neutralColor.shade800,
@@ -173,7 +173,7 @@ class OrderList extends ConsumerWidget {
             ElevatedButton.icon(
               onPressed: onRefresh,
               icon: const Icon(Icons.refresh_rounded, size: 16),
-              label: const Text("Try Again"),
+              label: const Text("Coba lagi"),
               style: ElevatedButton.styleFrom(
                 backgroundColor: AppPallete.primaryColor,
                 foregroundColor: Colors.white,

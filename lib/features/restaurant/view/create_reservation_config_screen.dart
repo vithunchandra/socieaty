@@ -100,18 +100,18 @@ class CreateReservationConfigScreenState extends ConsumerState<CreateReservation
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Text("Maximum Person", style: Theme.of(context).textTheme.titleSmall),
+              Text("Maksimal Orang", style: Theme.of(context).textTheme.titleSmall),
               const SizedBox(height: 8.0),
               CustomTextField(
                 keyboardType: TextInputType.number,
                 prefixIcon: const Icon(Icons.people),
-                hintText: "Enter maximum number of people",
+                hintText: "Maksimal orang yang dapat reservasi",
                 validator: (value) {
                   if (value == null || value.isEmpty) {
-                    return 'Maximum person is required';
+                    return 'Maksimal orang dibutuhkan';
                   }
                   if (int.tryParse(value) == null) {
-                    return 'Please enter a valid number';
+                    return 'Masukkan angka yang valid';
                   }
                   return null;
                 },
@@ -120,20 +120,20 @@ class CreateReservationConfigScreenState extends ConsumerState<CreateReservation
                 },
               ),
               const SizedBox(height: 8),
-              const Text("Maximum number of people allowed for reservation"),
+              const Text("Maksimal orang yang diizinkan untuk reservasi"),
               const SizedBox(height: 20),
-              Text("Minimum Cost Per Person", style: Theme.of(context).textTheme.titleSmall),
+              Text("Minimum Biaya Per Orang", style: Theme.of(context).textTheme.titleSmall),
               const SizedBox(height: 8.0),
               CustomTextField(
                 keyboardType: TextInputType.number,
                 prefixIcon: const Icon(Icons.attach_money),
-                hintText: "Enter minimum cost per person",
+                hintText: "Biaya minimum per orang",
                 validator: (value) {
                   if (value == null || value.isEmpty) {
-                    return 'Minimum cost is required';
+                    return 'Biaya minimum dibutuhkan';
                   }
                   if (int.tryParse(value) == null) {
-                    return 'Please enter a valid number';
+                    return 'Masukkan angka yang valid';
                   }
                   return null;
                 },
@@ -142,20 +142,20 @@ class CreateReservationConfigScreenState extends ConsumerState<CreateReservation
                 },
               ),
               const SizedBox(height: 8),
-              const Text("Minimum amount each person must spend"),
+              const Text("Biaya minimum yang harus dihabiskan setiap orang"),
               const SizedBox(height: 20),
-              Text("Time Limit (minutes)", style: Theme.of(context).textTheme.titleSmall),
+              Text("Batas Waktu (menit)", style: Theme.of(context).textTheme.titleSmall),
               const SizedBox(height: 8.0),
               CustomTextField(
                 keyboardType: TextInputType.number,
                 prefixIcon: const Icon(Icons.timer),
-                hintText: "Enter time limit in minutes",
+                hintText: "Batas waktu dalam menit",
                 validator: (value) {
                   if (value == null || value.isEmpty) {
-                    return 'Time limit is required';
+                    return 'Batas waktu dibutuhkan';
                   }
                   if (int.tryParse(value) == null) {
-                    return 'Please enter a valid number';
+                    return 'Masukkan angka yang valid';
                   }
                   return null;
                 },
@@ -164,9 +164,9 @@ class CreateReservationConfigScreenState extends ConsumerState<CreateReservation
                 },
               ),
               const SizedBox(height: 8),
-              const Text("Maximum time allowed for the reservation"),
+              const Text("Maksimal waktu yang diizinkan untuk reservasi"),
               const SizedBox(height: 20),
-              Text("Facilities", style: Theme.of(context).textTheme.titleSmall),
+              Text("Fasilitas", style: Theme.of(context).textTheme.titleSmall),
               const SizedBox(height: 8.0),
               Container(
                 decoration: BoxDecoration(
@@ -199,7 +199,7 @@ class CreateReservationConfigScreenState extends ConsumerState<CreateReservation
                           mainAxisSize: MainAxisSize.min,
                           children: [
                             Text(
-                              "Add Facility",
+                              "Tambah Fasilitas",
                               style: TextStyle(
                                 color: Colors.white,
                                 fontWeight: FontWeight.w500,
@@ -221,7 +221,7 @@ class CreateReservationConfigScreenState extends ConsumerState<CreateReservation
                 ),
               ),
               const SizedBox(height: 8),
-              const Text("List of facilities available for reservations"),
+              const Text("Daftar fasilitas yang tersedia untuk reservasi"),
               const SizedBox(height: 30),
               SizedBox(
                 width: double.infinity,
@@ -243,7 +243,7 @@ class CreateReservationConfigScreenState extends ConsumerState<CreateReservation
                         ? const LoadingIndicatorWidget(
                             size: 16,
                           )
-                        : const Text('Save Configuration'),
+                        : const Text('Simpan Konfigurasi'),
                   ),
                 ),
               ),
@@ -282,7 +282,7 @@ class _FacilitySelectionDialogState extends ConsumerState<FacilitySelectionDialo
   @override
   Widget build(BuildContext context) {
     return AlertDialog(
-      title: const Text('Add Facility'),
+      title: const Text('Tambah Fasilitas'),
       content: SizedBox(
         width: double.maxFinite,
         child: TypeAheadField<String>(
@@ -293,7 +293,7 @@ class _FacilitySelectionDialogState extends ConsumerState<FacilitySelectionDialo
               focusNode: focusNode,
               autofocus: true,
               decoration: InputDecoration(
-                hintText: "Type to search or add new facility",
+                hintText: "Cari atau tambahkan fasilitas baru",
                 border: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(8),
                   borderSide: BorderSide(color: AppPallete.neutralColor.shade200),
@@ -342,7 +342,7 @@ class _FacilitySelectionDialogState extends ConsumerState<FacilitySelectionDialo
           onPressed: () {
             context.pop();
           },
-          child: const Text('Cancel'),
+          child: const Text('Batal'),
         ),
         FilledButton(
           onPressed: () {
@@ -353,7 +353,7 @@ class _FacilitySelectionDialogState extends ConsumerState<FacilitySelectionDialo
             }
             context.pop();
           },
-          child: const Text('Add'),
+          child: const Text('Tambah'),
         ),
       ],
     );

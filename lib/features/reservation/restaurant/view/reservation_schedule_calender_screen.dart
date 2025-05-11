@@ -335,7 +335,7 @@ class _ReservationScheduleCalenderScreenState
                         ),
                         const SizedBox(height: 16),
                         Text(
-                          'Error loading reservations',
+                          'Gagal memuat reservasi',
                           style: Theme.of(context).textTheme.titleMedium?.copyWith(
                                 fontWeight: FontWeight.bold,
                               ),
@@ -353,7 +353,7 @@ class _ReservationScheduleCalenderScreenState
                             });
                             _fetchReservations();
                           },
-                          child: const Text('Retry'),
+                          child: const Text('Coba lagi'),
                         ),
                       ],
                     ),
@@ -416,7 +416,7 @@ class ReservationEventCard extends StatelessWidget {
                     borderRadius: BorderRadius.circular(10),
                   ),
                   child: Text(
-                    '${reservations.length} reservations',
+                    '${reservations.length} reservasi',
                     style: const TextStyle(
                       color: Colors.white,
                       fontWeight: FontWeight.bold,
@@ -479,7 +479,7 @@ class ReservationEventCard extends StatelessWidget {
               Padding(
                 padding: const EdgeInsets.only(top: 2),
                 child: Text(
-                  'Tap to view details',
+                  'Tap untuk melihat detail',
                   style: const TextStyle(
                     color: Colors.white70,
                     fontSize: 9,
@@ -596,7 +596,7 @@ class _ReservationDetailsSheetState extends ConsumerState<_ReservationDetailsShe
                     ),
                     const SizedBox(width: 12),
                     Text(
-                      '${widget.originalReservations.length} Reservations',
+                      '${widget.originalReservations.length} Reservasi',
                       style: Theme.of(context).textTheme.titleMedium?.copyWith(
                             fontWeight: FontWeight.bold,
                           ),
@@ -618,7 +618,7 @@ class _ReservationDetailsSheetState extends ConsumerState<_ReservationDetailsShe
                     return filteredReservations.isEmpty
                         ? const Center(
                             child: Text(
-                              'No reservations found for this time slot',
+                              'Tidak ada reservasi untuk waktu ini',
                               style: TextStyle(color: AppPallete.neutralColor),
                             ),
                           )
@@ -643,7 +643,7 @@ class _ReservationDetailsSheetState extends ConsumerState<_ReservationDetailsShe
                   ),
                   error: (error, stackTrace) => Center(
                     child: Text(
-                      'Failed to load reservations: $error',
+                      'Gagal memuat reservasi: $error',
                       style: const TextStyle(color: Colors.red),
                     ),
                   ),

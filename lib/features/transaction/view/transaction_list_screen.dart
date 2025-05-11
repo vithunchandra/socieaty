@@ -139,7 +139,7 @@ class _TransactionListScreenState extends ConsumerState<TransactionListScreen> {
     return Scaffold(
       appBar: AppBar(
         title: Text(
-          'Transactions',
+          'Transaksi',
           style: textTheme.headlineSmall?.copyWith(
             fontWeight: FontWeight.w600,
           ),
@@ -172,8 +172,8 @@ class _TransactionListScreenState extends ConsumerState<TransactionListScreen> {
                     );
                   },
                   firstPageProgressIndicatorBuilder: (_) => const CustomLoadingWidget(
-                    title: 'Loading transactions',
-                    subtitle: 'Please wait while we load the transactions',
+                    title: 'Memuat transaksi',
+                    subtitle: 'Harap tunggu sampai transaksi dimuat',
                   ),
                   newPageProgressIndicatorBuilder: (_) => Padding(
                     padding: const EdgeInsets.symmetric(vertical: 16),
@@ -189,20 +189,20 @@ class _TransactionListScreenState extends ConsumerState<TransactionListScreen> {
                     ),
                   ),
                   firstPageErrorIndicatorBuilder: (context) => CustomErrorWidget(
-                    title: 'Error loading transactions',
+                    title: 'Gagal memuat transaksi',
                     onPressed: () => _pagingController.retryLastFailedRequest(),
                     error: _pagingController.error.toString(),
                   ),
                   newPageErrorIndicatorBuilder: (context) => CustomErrorWidget(
-                    title: 'Error loading transactions',
+                    title: 'Gagal memuat transaksi',
                     onPressed: () => _pagingController.retryLastFailedRequest(),
                     error: _pagingController.error.toString(),
                   ),
                   noItemsFoundIndicatorBuilder: (context) => CustomEmptyWidget(
                     icon: Icons.receipt_long_outlined,
-                    title: 'No Transactions Found',
+                    title: 'Tidak ada transaksi',
                     description:
-                        'No transactions match your current filters. Try changing your search or filter criteria.',
+                        'Tidak ada transaksi yang sesuai dengan filter Anda. Coba mengubah pencarian atau kriteria filter.',
                   ),
                 ),
               ),
@@ -231,7 +231,7 @@ class _TransactionListScreenState extends ConsumerState<TransactionListScreen> {
           TextField(
             controller: _searchController,
             decoration: InputDecoration(
-              hintText: 'Search by restaurant name, etc',
+              hintText: 'Cari berdasarkan nama restoran, dll',
               prefixIcon: Icon(
                 Icons.search,
                 color: AppPallete.neutralColor.shade500,
@@ -271,7 +271,7 @@ class _TransactionListScreenState extends ConsumerState<TransactionListScreen> {
                     hint: Padding(
                       padding: const EdgeInsets.only(left: 16),
                       child: Text(
-                        'Service Type',
+                        'Jenis Layanan',
                         style: textTheme.bodyMedium?.copyWith(
                           color: AppPallete.neutralColor.shade500,
                         ),
@@ -298,13 +298,13 @@ class _TransactionListScreenState extends ConsumerState<TransactionListScreen> {
                       DropdownMenuItem<TransactionServiceType?>(
                         value: null,
                         child: Text(
-                          'All Types',
+                          'Semua Tipe',
                           style: textTheme.bodyMedium,
                         ),
                       ),
                       ...TransactionServiceType.values.map((type) {
                         final displayName =
-                            type == TransactionServiceType.foodOrder ? 'Food Order' : 'Reservation';
+                            type == TransactionServiceType.foodOrder ? 'Pesanan Makanan' : 'Reservasi';
                         return DropdownMenuItem<TransactionServiceType?>(
                           value: type,
                           child: Text(
@@ -340,7 +340,7 @@ class _TransactionListScreenState extends ConsumerState<TransactionListScreen> {
                   color: Colors.white,
                 ),
                 label: Text(
-                  'Filters',
+                  'Filter',
                   style: textTheme.labelLarge?.copyWith(
                     color: Colors.white,
                   ),
@@ -354,7 +354,7 @@ class _TransactionListScreenState extends ConsumerState<TransactionListScreen> {
               child: Row(
                 children: [
                   Text(
-                    'Active filters:',
+                    'Filter aktif:',
                     style: textTheme.bodySmall?.copyWith(
                       color: AppPallete.neutralColor.shade600,
                     ),
@@ -429,7 +429,7 @@ class _TransactionListScreenState extends ConsumerState<TransactionListScreen> {
           child: Chip(
             backgroundColor: AppPallete.primaryColor.shade50,
             label: Text(
-              'Sort: $sortName ($direction)',
+              'Sortir: $sortName ($direction)',
               style: textTheme.bodySmall?.copyWith(
                 color: AppPallete.primaryColor.shade700,
               ),

@@ -96,7 +96,7 @@ class _ShopSearchScreenState extends ConsumerState<ShopSearchScreen> {
                     width: 1.5,
                   ),
                 ),
-                hintText: 'Search for restaurants...',
+                hintText: 'Cari restaurant...',
                 hintStyle: TextStyle(
                   color: AppPallete.neutralColor.shade400,
                   fontSize: 16,
@@ -173,7 +173,7 @@ class _ShopSearchScreenState extends ConsumerState<ShopSearchScreen> {
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
                   Text(
-                    'Recent Searches',
+                    'Pencarian Terakhir',
                     style: Theme.of(context).textTheme.titleSmall,
                   ),
                   recentSearchesAsync.when(
@@ -184,7 +184,7 @@ class _ShopSearchScreenState extends ConsumerState<ShopSearchScreen> {
                               ref.invalidate(recentSearchesProvider);
                             },
                             child: Text(
-                              'Clear All',
+                              'Hapus Semua',
                               style: TextStyle(
                                 color: AppPallete.primaryColor,
                                 fontSize: 12,
@@ -206,7 +206,7 @@ class _ShopSearchScreenState extends ConsumerState<ShopSearchScreen> {
                   return Padding(
                     padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
                     child: Text(
-                      'No recent searches',
+                      'Tidak ada pencarian terakhir',
                       style: TextStyle(
                         color: AppPallete.neutralColor.shade400,
                         fontSize: 14,
@@ -249,7 +249,7 @@ class _ShopSearchScreenState extends ConsumerState<ShopSearchScreen> {
               error: (_, __) => Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
                 child: Text(
-                  'Could not load recent searches',
+                  'Tidak dapat memuat pencarian terakhir',
                   style: TextStyle(
                     color: AppPallete.neutralColor.shade400,
                     fontSize: 14,
@@ -261,7 +261,7 @@ class _ShopSearchScreenState extends ConsumerState<ShopSearchScreen> {
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 16),
               child: Text(
-                'Popular Categories',
+                'Kategori Populer',
                 style: Theme.of(context).textTheme.titleSmall,
               ),
             ),
@@ -369,7 +369,7 @@ class _ShopSearchScreenState extends ConsumerState<ShopSearchScreen> {
       error: (error, stack) => Padding(
         padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
         child: Text(
-          'Could not load categories',
+          'Tidak dapat memuat kategori',
           style: TextStyle(
             color: AppPallete.neutralColor.shade600,
             fontSize: 14,

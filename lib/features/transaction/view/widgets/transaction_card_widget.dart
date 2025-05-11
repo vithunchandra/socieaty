@@ -227,7 +227,7 @@ class TransactionCardWidget extends StatelessWidget {
           ),
           const SizedBox(width: 4),
           Text(
-            isReservation ? 'Reservation' : 'Food Order',
+            isReservation ? 'Reservasi' : 'Pesanan Makanan',
             style: textTheme.bodySmall?.copyWith(
               color: isReservation ? AppPallete.successColor : AppPallete.secondaryColor,
               fontWeight: FontWeight.w500,

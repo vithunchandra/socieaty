@@ -90,7 +90,7 @@ class _OwnerFoodMenuScreenState extends ConsumerState<OwnerFoodMenuScreen> {
         );
       }
     } catch (e) {
-      showSnackbar(null, "Failed to load menu: $e", state: SnackbarState.error);
+      showSnackbar(null, "Gagal memuat menu: $e", state: SnackbarState.error);
     }
   }
 
@@ -463,7 +463,7 @@ class _OwnerFoodMenuScreenState extends ConsumerState<OwnerFoodMenuScreen> {
                                         ),
                                         const SizedBox(width: 4),
                                         Text(
-                                          "Filters",
+                                          "Filter",
                                           style: Theme.of(context).textTheme.labelMedium?.copyWith(
                                                 color: Colors.white,
                                               ),
@@ -572,14 +572,14 @@ class _OwnerFoodMenuScreenState extends ConsumerState<OwnerFoodMenuScreen> {
                           )
                         : SliverToBoxAdapter(
                             child: const CustomEmptyWidget(
-                              description: "No menu items found",
-                              title: "Menu items",
+                              description: "Menu tidak ditemukan",
+                              title: "Item Menu",
                               icon: Icons.lunch_dining_outlined,
                             ),
                           ),
                     AsyncError(:final error) => SliverToBoxAdapter(
                         child: CustomErrorWidget(
-                          title: "Menu items",
+                          title: "Item Menu",
                           error: error.toString(),
                           onPressed: () {
                             ref.invalidate(getFoodMenusProvider(
@@ -632,7 +632,7 @@ class _OwnerFoodMenuScreenState extends ConsumerState<OwnerFoodMenuScreen> {
                         style: Theme.of(context).textTheme.bodyLarge,
                         decoration: InputDecoration(
                           contentPadding: const EdgeInsets.symmetric(vertical: 0, horizontal: 12.0),
-                          hintText: "Search",
+                          hintText: "Cari menu",
                           hintStyle: Theme.of(context).textTheme.bodyLarge,
                         ),
                       ),
@@ -653,7 +653,7 @@ class _OwnerFoodMenuScreenState extends ConsumerState<OwnerFoodMenuScreen> {
                         },
                         child: Padding(
                           padding: const EdgeInsets.symmetric(horizontal: 12.0),
-                          child: Text("Add Menu"),
+                          child: Text("Tambah Menu"),
                         ),
                       ),
                     ),

@@ -8,9 +8,11 @@ import 'package:socieaty/features/transaction_review/viewstate/get_restaurant_re
 part 'get_all_restaurant_reviews_provider.g.dart';
 
 @riverpod
-Future<GetAllRestaurantTransactionReviewsResponse> getAllRestaurantReviews(Ref ref, String restaurantId, GetRestaurantReviewsQuery? query) async {
+Future<GetAllRestaurantTransactionReviewsResponse> getAllRestaurantReviews(
+    Ref ref, String restaurantId, GetRestaurantReviewsQuery? query) async {
   final transactionReviewRepository = ref.watch(transactionReviewRepositoryProvider);
-  final result = await transactionReviewRepository.getAllRestaurantTransactionReviews(restaurantId, query);
+  final result =
+      await transactionReviewRepository.getAllRestaurantTransactionReviews(restaurantId, query);
   switch (result) {
     case Success(data: final data):
       return data;

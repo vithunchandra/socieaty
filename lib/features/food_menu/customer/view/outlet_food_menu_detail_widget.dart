@@ -188,7 +188,7 @@ class _OutletFoodMenuDetailWidgetState extends ConsumerState<OutletFoodMenuDetai
                     const SizedBox(height: 24),
 
                     Text(
-                      "Description",
+                      "Deskripsi",
                       style: Theme.of(context).textTheme.titleSmall?.copyWith(
                             fontWeight: FontWeight.bold,
                           ),
