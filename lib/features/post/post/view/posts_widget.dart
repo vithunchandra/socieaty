@@ -87,6 +87,7 @@ class _PostsWidgetState extends ConsumerState<PostsWidget> {
       final newPosts = response.posts;
       final isLastPage = !response.pagination.hasNext;
       debugPrint('isLastPage: $isLastPage');
+      debugPrint('newPosts: $newPosts');
 
       if (isLastPage) {
         _pagingController.appendLastPage(newPosts);

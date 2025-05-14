@@ -17,6 +17,7 @@ import 'package:socieaty/features/restaurant/view/outlet_card_widget.dart';
 import 'package:socieaty/features/restaurant/view/restaurant_highlight_item_widget.dart';
 import 'package:socieaty/features/restaurant/viewstate/paginate_restaurant_query_state.dart';
 import 'package:socieaty/shared/models/pagination_query.dart';
+import 'package:socieaty/shared/widgets/custom_empty_widget.dart';
 import 'package:socieaty/shared/widgets/custom_error_widget.dart';
 import 'package:socieaty/shared/widgets/loading_indicator_widget.dart';
 import 'package:socieaty/shared/widgets/menu_filter_widget.dart';
@@ -200,6 +201,17 @@ class _ShopScreenState extends ConsumerState<ShopScreen> {
               SliverToBoxAdapter(
                 child: restaurantHighlights.when(data: (data) {
                   final partialData = data.restaurants;
+                  if (partialData.isEmpty) {
+                    return SizedBox(
+                      height: 250,
+                      child: CustomEmptyWidget(
+                        description: "Tidak ada data restaurant yang tersedia",
+                        title: "Restaurant kosong",
+                        icon: Icons.restaurant,
+                      ),
+                    );
+                  }
+                  
                   return ExpandableCarousel(
                     options: ExpandableCarouselOptions(
                       scrollDirection: Axis.horizontal,
@@ -255,6 +267,16 @@ class _ShopScreenState extends ConsumerState<ShopScreen> {
                 child: restaurantMenus.when(
                   data: (data) {
                     final partialData = data.menus;
+                     if (partialData.isEmpty) {
+                      return SizedBox(
+                        height: 250,
+                        child: CustomEmptyWidget(
+                          description: "Tidak ada data menu yang tersedia",
+                          title: "Menu kosong",
+                          icon: Icons.restaurant,
+                        ),
+                      );
+                  }
                     return ExpandableCarousel(
                       options: ExpandableCarouselOptions(
                         scrollDirection: Axis.horizontal,

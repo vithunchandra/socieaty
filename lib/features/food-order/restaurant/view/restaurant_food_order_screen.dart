@@ -132,7 +132,7 @@ class _RestaurantFoodOrderScreenState extends ConsumerState<RestaurantFoodOrderS
             icon: const Icon(Icons.history),
             tooltip: 'Riwayat Transaksi',
             onPressed: () {
-              context.push('/restaurant/transaksi/history');
+              context.push('/restaurant/dashboard/food-order/history');
             },
           ),
         ],

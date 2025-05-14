@@ -1,6 +1,7 @@
 import 'dart:io';
 
 import 'package:dio/dio.dart';
+import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 import 'package:socieaty/core/constants.dart';
@@ -28,10 +29,13 @@ class CustomerProfileRemoteRepository {
     _dio = dio;
   }
 
-  Future<ApiResult<UpdateCustomerProfileResponse>> updateProfile(UpdateCustomerProfileFormState data, File? profilePicture) {
+  Future<ApiResult<UpdateCustomerProfileResponse>> updateProfile(
+      UpdateCustomerProfileFormState data, File? profilePicture) {
+    debugPrint('profilePicture: ${profilePicture != null}');
     final formData = FormData.fromMap({
       ...data.toJson(),
-      'profilePicture': profilePicture != null ? MultipartFile.fromFileSync(profilePicture.path) : null,
+      'profilePicture':
+          profilePicture != null ? MultipartFile.fromFileSync(profilePicture.path) : null,
     });
     return executeRequest<UpdateCustomerProfileResponse>(
       requestFunction: () => _dio.put('customer/profile', data: formData),

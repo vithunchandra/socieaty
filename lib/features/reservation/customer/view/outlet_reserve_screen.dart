@@ -182,7 +182,7 @@ class _OutletReserveScreenState extends ConsumerState<OutletReserveScreen> {
                           _selectedDate.day,
                           int.parse(_selectedTime!.split(':')[0]),
                           int.parse(_selectedTime!.split(':')[1]),
-                        ),
+                        ).toUtc(),
                         peopleSize: _selectedGuests,
                         note: "",
                         menuItems: menuCartItems,
