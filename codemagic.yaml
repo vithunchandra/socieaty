@@ -4,6 +4,9 @@ workflows:
     instance_type: mac_mini_m2
 
     environment:
+      groups:
+        - socieaty
+
     scripts:
       - name: Get Flutter dependencies and generate code
         script: |
