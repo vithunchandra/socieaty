@@ -68,6 +68,8 @@
 		<key>NSAllowsArbitraryLoads</key>
 		<true/>
 	</dict>
+	<key>GoogleMapsAPIKey</key>
+	<string>AIzaSyDhoRjsVgkE1VHxsznFBJLT2C1Dt80BcYU</string>
 	
 	<!-- Add notification permissions for iOS -->
 	<key>NSUserNotificationsUsageDescription</key>
