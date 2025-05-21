@@ -9,17 +9,22 @@ workflows:
     scripts:
       - name: Clean Flutter project
         script: flutter clean
-      - name: Get Flutter dependencies
+      - name: Install Flutter dependencies
         script: flutter pub get
-      - name: Generate files using build_runner
+      - name: Run build_runner
         script: dart run build_runner build --delete-conflicting-outputs
-      - name: Install CocoaPods dependencies
+      - name: Set iOS deployment target in Podfile
+        script: |
+          sed -i '' 's|# platform :ios, '\''9.0'\''|platform :ios, '\''16.0'\''|g' ios/Podfile || \
+          sed -i '' 's|platform :ios, '\''[0-9.]*'\''|platform :ios, '\''16.0'\''|g' ios/Podfile || \
+          echo "platform :ios, '12.0'" >> ios/Podfile
+      - name: Install iOS Pods
         script: |
           cd ios
           pod install
           cd ..
-      - name: Build unsigned .app for iOS Simulator
-        script: |
+      - name: Build unsigned .app
+        script: |  
           xcodebuild -workspace "ios/Runner.xcworkspace" \
             -scheme "Runner" \
             -sdk iphonesimulator \
