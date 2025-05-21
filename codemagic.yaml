@@ -1,16 +1,28 @@
-scripts:
-  - name: Get Flutter dependencies and generate code
-    script: |
-      flutter pub get # Crucial first step!
-      dart run build_runner build --delete-conflicting-outputs
+workflows:
+  ios-app-build:
+    name: iOS App Build
+    instance_type: mac_mini_m2
 
-  - name: Install iOS Pods
-    script: |
-      # Navigate to the iOS directory where Podfile is located
-      cd ios
-      # Clean CocoaPods cache and force update repositories (good practice for CI)
-      pod deintegrate # Optional, but good for a super clean start
-      rm Podfile.lock # Optional, but good for a super clean start
-      pod install --repo-update # Install the pods
-      # Go back to the root directory for subsequent build commands
-      cd $CM_BUILD_DIR
+    environment:
+    scripts:
+      - name: Get Flutter dependencies and generate code
+        script: |
+          flutter pub get
+          dart run build_runner build --delete-conflicting-outputs
+
+      - name: Install iOS Pods
+        script: |
+          cd ios
+          # Recommended for clean CI builds:
+          pod deintegrate
+          rm -f Podfile.lock # Use -f for force removal without prompt
+          pod install --repo-update
+          cd $CM_BUILD_DIR
+
+      - name: Build iOS App
+        script: |
+          flutter build ios --release # Example: for App Store distribution
+
+    artifacts:
+      - build/ios/ipa/*.ipa
+      - /tmp/xcodebuild_logs/*.log
