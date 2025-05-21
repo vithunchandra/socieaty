@@ -7,24 +7,15 @@ workflows:
       flutter: 3.27.3
       xcode: 16.2
     scripts:
-      - name: Clean Flutter project
-        script: flutter clean
-      - name: Install Flutter dependencies
-        script: flutter pub get
-      - name: Run build_runner
-        script: dart run build_runner build --delete-conflicting-outputs
-      - name: Clean and Reinstall iOS Pods
+      - name: Clean and install dependencies
         script: |
-          # Navigate to the iOS directory
+          flutter clean
+          flutter pub get
+          dart run build_runner build --delete-conflicting-outputs
           cd ios
-          # Remove existing Pods directory and Podfile.lock for a clean install
-          rm -rf Pods
-          rm -f Podfile.lock
-          # Install Pods
           pod install
-          # Navigate back to the root directory
           cd ..
-      - name: Build unsigned .app
+      - name: Build unsigned .app for iOS Simulator
         script: |
           xcodebuild -workspace "ios/Runner.xcworkspace" \
             -scheme "Runner" \
@@ -34,8 +25,6 @@ workflows:
             CODE_SIGN_IDENTITY="" \
             CODE_SIGNING_REQUIRED=NO \
             CODE_SIGNING_ALLOWED=NO \
-            SWIFT_OPTIMIZATION_LEVEL=-Onone \
-            SWIFT_COMPILATION_MODE=wholemodule \
             -derivedDataPath ios/output
     artifacts:
       - ios/output/Build/Products/Debug-iphonesimulator/Runner.app
