@@ -1,0 +1,16 @@
+scripts:
+  - name: Get Flutter dependencies and generate code
+    script: |
+      flutter pub get # Crucial first step!
+      dart run build_runner build --delete-conflicting-outputs
+
+  - name: Install iOS Pods
+    script: |
+      # Navigate to the iOS directory where Podfile is located
+      cd ios
+      # Clean CocoaPods cache and force update repositories (good practice for CI)
+      pod deintegrate # Optional, but good for a super clean start
+      rm Podfile.lock # Optional, but good for a super clean start
+      pod install --repo-update # Install the pods
+      # Go back to the root directory for subsequent build commands
+      cd $CM_BUILD_DIR
