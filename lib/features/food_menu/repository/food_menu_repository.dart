@@ -68,6 +68,7 @@ class FoodMenuRepository {
   ) async {
     FormData formData = FormData.fromMap({
       ...data.toJson(),
+      'categories[]': List.generate(data.categories.length, (index) => data.categories[index]),
     });
 
     if (menuPicture != null) {

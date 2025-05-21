@@ -285,6 +285,11 @@ class _CreatePostScreenState extends ConsumerState<CreatePostScreen> {
                   height: 45,
                   child: FilledButton(
                     onPressed: () {
+                      if (files.isEmpty) {
+                        showSnackbar(context, "Harap unggah gambar atau video",
+                            state: SnackbarState.error);
+                        return;
+                      }
                       if (_formKey.currentState != null && _formKey.currentState!.validate()) {
                         _formKey.currentState?.save();
                         ref.read(createPostViewModelProvider.notifier).createPost(formData, files);

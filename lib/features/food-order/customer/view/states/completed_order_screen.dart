@@ -156,7 +156,7 @@ class _CompletedOrderScreenState extends State<CompletedOrderScreen>
                             ),
                           ),
                           Text(
-                            (widget.order.grossAmount + widget.order.serviceFee).toIDRFormat(),
+                            widget.order.grossAmount.toIDRFormat(),
                             style: TextStyle(
                               fontWeight: FontWeight.bold,
                               fontSize: 18,
@@ -291,7 +291,7 @@ class _CompletedOrderScreenState extends State<CompletedOrderScreen>
                             style: Theme.of(context).textTheme.bodyMedium,
                           ),
                           Text(
-                            widget.order.grossAmount.toIDRFormat(),
+                            widget.order.netAmount.toIDRFormat(),
                             style: Theme.of(context).textTheme.bodyMedium?.copyWith(
                                   fontWeight: FontWeight.w500,
                                 ),
@@ -331,7 +331,7 @@ class _CompletedOrderScreenState extends State<CompletedOrderScreen>
                                 ),
                           ),
                           Text(
-                            (widget.order.grossAmount + widget.order.serviceFee).toIDRFormat(),
+                            widget.order.grossAmount.toIDRFormat(),
                             style: Theme.of(context).textTheme.titleSmall?.copyWith(
                                   fontWeight: FontWeight.bold,
                                   color: AppPallete.primaryColor,

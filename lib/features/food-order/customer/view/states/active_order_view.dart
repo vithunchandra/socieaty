@@ -488,7 +488,7 @@ class _ActiveOrderViewState extends ConsumerState<ActiveOrderView> {
                 style: Theme.of(context).textTheme.bodyMedium,
               ),
               Text(
-                order.grossAmount.toIDRFormat(),
+                order.netAmount.toIDRFormat(),
                 style: Theme.of(context).textTheme.bodyMedium?.copyWith(
                       fontWeight: FontWeight.w500,
                     ),
@@ -528,7 +528,7 @@ class _ActiveOrderViewState extends ConsumerState<ActiveOrderView> {
                     ),
               ),
               Text(
-                (order.grossAmount + order.serviceFee).toIDRFormat(),
+                order.grossAmount.toIDRFormat(),
                 style: Theme.of(context).textTheme.titleSmall?.copyWith(
                       fontWeight: FontWeight.bold,
                       color: AppPallete.primaryColor,

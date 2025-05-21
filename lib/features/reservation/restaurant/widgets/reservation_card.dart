@@ -358,7 +358,7 @@ class PendingReservationCardActions extends StatelessWidget {
                     color: AppPallete.errorColor,
                   ),
             label: const Text(
-              'Decline',
+              'Tolak',
               style: TextStyle(
                 color: AppPallete.errorColor,
                 fontWeight: FontWeight.bold,
@@ -381,7 +381,7 @@ class PendingReservationCardActions extends StatelessWidget {
                     color: Colors.white,
                   ),
             label: const Text(
-              'Accept',
+              'Konfirmasi',
               style: TextStyle(
                 color: Colors.white,
                 fontWeight: FontWeight.bold,
@@ -418,7 +418,7 @@ class ConfirmedReservationCardActions extends StatelessWidget {
               // Empty function for "See Schedule"
             },
             icon: const Icon(Icons.calendar_month),
-            label: const Text('See Schedule'),
+            label: const Text('Lihat Jadwal'),
           ),
         ),
         const SizedBox(width: 16),
@@ -492,7 +492,7 @@ class DiningReservationCardActions extends StatelessWidget {
                     color: Colors.white,
                   ),
             label: const Text(
-              'Complete',
+              'Selesai',
               style: TextStyle(
                 fontWeight: FontWeight.bold,
               ),

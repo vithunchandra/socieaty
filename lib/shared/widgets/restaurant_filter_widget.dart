@@ -40,9 +40,9 @@ class _RestaurantFilterWidgetState extends ConsumerState<RestaurantFilterWidget>
   final List<Map<String, dynamic>> _priceRanges = [
     {'id': 'CONDITION_1', 'label': 'Kurang dari Rp10.000'},
     {'id': 'CONDITION_2', 'label': 'Rp10.000 sampai Rp25.000'},
-    {'id': 'CONDITION_3', 'label': 'Rp25.000 sampai Rp70.000'},
-    {'id': 'CONDITION_4', 'label': 'Rp70.000 sampai Rp150.000'},
-    {'id': 'CONDITION_5', 'label': 'Lebih dari Rp150.000'},
+    {'id': 'CONDITION_3', 'label': 'Rp25.000 sampai Rp50.000'},
+    {'id': 'CONDITION_4', 'label': 'Rp50.000 sampai Rp100.000'},
+    {'id': 'CONDITION_5', 'label': 'Lebih dari Rp100.000'},
   ];
   late PaginateRestaurantQueryState? _restaurantFilterFormState;
 

@@ -265,7 +265,7 @@ class _SetupLiveStreamViewState extends ConsumerState<SetupLiveStreamScreen> {
                           },
                           child: _isLoading
                               ? const LoadingIndicatorWidget(size: 16, color: Colors.white)
-                              : const Text("Mulai Livestream"),
+                              : const Text("Mulai"),
                         ),
                       ),
                     ],

@@ -5,6 +5,7 @@ import 'package:go_router/go_router.dart';
 import 'package:socieaty/core/theme/app_pallete.dart';
 import 'package:socieaty/core/theme/custom_themes/button_theme.dart';
 import 'package:socieaty/core/utils/custom_extension.dart';
+import 'package:socieaty/core/utils/show_snackbar.dart';
 import 'package:socieaty/features/food_menu/model/menu_cart.dart';
 import 'package:socieaty/features/food_menu/provider/menu_cart_view_model.dart';
 import 'package:socieaty/features/menu_item/model/menu_cart_item.dart';
@@ -155,13 +156,13 @@ class _OutletReserveScreenState extends ConsumerState<OutletReserveScreen> {
                   child: FilledButton(
                     onPressed: () {
                       if (_selectedTime == null) {
-                        // Show error for time not selected
-                        ScaffoldMessenger.of(context).showSnackBar(
-                          SnackBar(
-                            content: Text("Please select a time slot"),
-                            backgroundColor: AppPallete.errorColor,
-                          ),
-                        );
+                        showSnackbar(context, "Waktu reservasi wajib diisi",
+                            state: SnackbarState.error);
+                        return;
+                      }
+
+                      if (_selectedMenuItems.isEmpty) {
+                        showSnackbar(context, "Menu wajib diisi", state: SnackbarState.error);
                         return;
                       }
 
@@ -755,7 +756,7 @@ class _OutletReserveScreenState extends ConsumerState<OutletReserveScreen> {
                   loading: () => const Center(
                     child: Padding(
                       padding: EdgeInsets.all(24.0),
-                      child: const LoadingIndicatorWidget(size: 36),
+                      child: LoadingIndicatorWidget(size: 36),
                     ),
                   ),
                   error: (error, stack) => Center(

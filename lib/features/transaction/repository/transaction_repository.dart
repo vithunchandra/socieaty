@@ -38,8 +38,8 @@ class TransactionRepository {
       'searchQuery': requestQuery.searchQuery,
       'customerId': requestQuery.customerId,
       'restaurantId': requestQuery.restaurantId,
-      'createdAt': requestQuery.rangeStartDate,
-      'finishedAt': requestQuery.rangeEndDate,
+      'rangeStartDate': requestQuery.rangeStartDate,
+      'rangeEndDate': requestQuery.rangeEndDate,
       'serviceType': requestQuery.serviceType?.name,
       'status[]':
           List.generate(requestQuery.status.length, (index) => requestQuery.status[index].name),

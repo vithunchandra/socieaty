@@ -319,7 +319,7 @@ class _ReservationDetailsSheetState extends ConsumerState<ReservationDetailsShee
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
                     const Text('Subtotal'),
-                    Text('Rp ${widget.reservation.grossAmount.toIDRFormat()}'),
+                    Text('Rp ${widget.reservation.netAmount.toIDRFormat()}'),
                   ],
                 ),
                 const SizedBox(height: 8),
@@ -463,14 +463,14 @@ class _PendingReservationActionsState extends ConsumerState<PendingReservationAc
                   ? null
                   : () {
                       setState(() {
-                        _lastUpdatedStatus = ReservationStatus.canceled;
+                        _lastUpdatedStatus = ReservationStatus.rejected;
                       });
-                      widget.onUpdateReservationStatus(ReservationStatus.canceled);
+                      widget.onUpdateReservationStatus(ReservationStatus.rejected);
                     },
-              icon: isLoading && _lastUpdatedStatus == ReservationStatus.canceled
+              icon: isLoading && _lastUpdatedStatus == ReservationStatus.rejected
                   ? const LoadingIndicatorWidget(size: 16, color: Colors.white)
                   : const Icon(Icons.close_outlined, size: 18),
-              label: const Text('Tolak Reservasi'),
+              label: const Text('Tolak'),
             ),
           ),
           const SizedBox(width: 16),
@@ -487,7 +487,7 @@ class _PendingReservationActionsState extends ConsumerState<PendingReservationAc
               icon: isLoading && _lastUpdatedStatus == ReservationStatus.confirmed
                   ? const LoadingIndicatorWidget(size: 16, color: Colors.white)
                   : const Icon(Icons.check_circle_outline, size: 18),
-              label: const Text('Terima Reservasi'),
+              label: const Text('Terima'),
             ),
           ),
         ],

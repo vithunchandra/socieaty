@@ -398,11 +398,14 @@ class UpdateFoodMenuScreenState extends ConsumerState<UpdateFoodMenuScreen> {
                         _formData = _formData.copyWith(
                             categories:
                                 _selectedCategories.map((category) => category.id).toList());
+                        ref
+                            .read(updateFoodMenuViewModelProvider(widget.args.restaurantMenu.id)
+                                .notifier)
+                            .updateFoodMenu(_formData, _selectedMenuImage);
+                      } else {
+                        showSnackbar(context, "Field tidak boleh kosong",
+                            state: SnackbarState.error);
                       }
-                      ref
-                          .read(updateFoodMenuViewModelProvider(widget.args.restaurantMenu.id)
-                              .notifier)
-                          .updateFoodMenu(_formData, _selectedMenuImage);
                     },
                     child: Padding(
                       padding: EdgeInsets.symmetric(vertical: 8),
