@@ -34,11 +34,11 @@ workflows:
           # Navigate back to the root directory
           cd ..
       - name: Build unsigned .app
-        script: |  
+        script: |
           xcodebuild -workspace "ios/Runner.xcworkspace" \
             -scheme "Runner" \
             -sdk iphonesimulator \
-            -destination 'platform=iOS Simulator,name=iPhone 15 Pro,OS=17.5' \
+            -destination 'platform=iOS Simulator,name=iPhone 16, OS=18.2' \
             -configuration Debug \
             CODE_SIGN_IDENTITY="" \
             CODE_SIGNING_REQUIRED=NO \
