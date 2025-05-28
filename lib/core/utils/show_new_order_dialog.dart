@@ -7,7 +7,7 @@ import 'package:socieaty/core/utils/color_extension.dart';
 void showNewOrderDialog(FoodOrderTransaction order) {
   HapticFeedback.mediumImpact();
 
-  final int total = order.grossAmount + order.serviceFee;
+  final int total = order.grossAmount;
 
   if (rootNavigatorKey.currentState != null && rootNavigatorKey.currentContext != null) {
     showDialog(

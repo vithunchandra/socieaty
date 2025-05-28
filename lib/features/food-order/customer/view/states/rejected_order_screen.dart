@@ -149,7 +149,7 @@ class _RejectedOrderScreenState extends State<RejectedOrderScreen>
                             ),
                           ),
                           Text(
-                            (widget.order.grossAmount + widget.order.serviceFee).toIDRFormat(),
+                            widget.order.grossAmount.toIDRFormat(),
                             style: TextStyle(
                               fontWeight: FontWeight.bold,
                               fontSize: 18,
@@ -284,7 +284,7 @@ class _RejectedOrderScreenState extends State<RejectedOrderScreen>
                             style: Theme.of(context).textTheme.bodyMedium,
                           ),
                           Text(
-                            widget.order.grossAmount.toIDRFormat(),
+                            widget.order.netAmount.toIDRFormat(),
                             style: Theme.of(context).textTheme.bodyMedium?.copyWith(
                                   fontWeight: FontWeight.w500,
                                 ),
@@ -324,7 +324,7 @@ class _RejectedOrderScreenState extends State<RejectedOrderScreen>
                                 ),
                           ),
                           Text(
-                            (widget.order.grossAmount + widget.order.serviceFee).toIDRFormat(),
+                            widget.order.grossAmount.toIDRFormat(),
                             style: Theme.of(context).textTheme.titleSmall?.copyWith(
                                   fontWeight: FontWeight.bold,
                                   color: Colors.red.shade700,

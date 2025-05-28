@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:socieaty/app_theme_provider.dart';
+import 'package:socieaty/core/network/websocket_client.dart';
 import 'package:socieaty/core/notifications/local_notification_service.dart';
 import 'package:socieaty/core/theme/app_pallete.dart';
 import 'package:socieaty/core/theme/theme.dart';
@@ -34,6 +35,8 @@ class RestaurantDashboardScreen extends ConsumerStatefulWidget {
 }
 
 class _RestaurantDashboardScreenState extends ConsumerState<RestaurantDashboardScreen> {
+  late RestaurantSocketService _orderSocketService;
+  late RestaurantReservationSocketService _reservationSocketService;
   @override
   void initState() {
     super.initState();
@@ -41,9 +44,16 @@ class _RestaurantDashboardScreenState extends ConsumerState<RestaurantDashboardS
     requestNotificationPermissions();
   }
 
+  @override
+  void dispose() {
+    super.dispose();
+    _orderSocketService.disconnect();
+    _reservationSocketService.disconnect();
+  }
+
   void initializeSocketConnection() {
-    final orderSocketService = ref.read(restaurantSocketServiceProvider);
-    orderSocketService.initConnection(
+    _orderSocketService = ref.read(restaurantSocketServiceProvider);
+    _orderSocketService.initConnection(
       onNewOrderCallback: (order) {
         ref.read(newOrderNotificationProvider.notifier).setNewOrder(order);
       },
@@ -58,8 +68,8 @@ class _RestaurantDashboardScreenState extends ConsumerState<RestaurantDashboardS
       },
     );
 
-    final reservationSocketService = ref.read(restaurantReservationSocketServiceProvider);
-    reservationSocketService.initConnection(
+    _reservationSocketService = ref.read(restaurantReservationSocketServiceProvider);
+    _reservationSocketService.initConnection(
       onNewReservationCallback: (reservation) {
         ref.read(newReservationNotificationProvider.notifier).setNewReservation(reservation);
       },
@@ -114,6 +124,9 @@ class _RestaurantDashboardScreenState extends ConsumerState<RestaurantDashboardS
       switch (next.isSignedOut) {
         case SuccessState<bool>():
           ref.invalidate(getSessionDataProvider);
+          ref.invalidate(restaurantSocketServiceProvider);
+          ref.invalidate(restaurantReservationSocketServiceProvider);
+          ref.invalidate(websocketClientProvider);
           context.go('/signin');
         case ErrorState():
           ref.invalidate(getSessionDataProvider);

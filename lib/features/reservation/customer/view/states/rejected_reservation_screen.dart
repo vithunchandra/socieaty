@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:socieaty/core/theme/app_pallete.dart';
+import 'package:socieaty/core/utils/custom_extension.dart';
 import 'package:socieaty/features/menu_item/model/menu_item.dart';
 import 'package:socieaty/features/reservation/model/reservation.dart';
 
@@ -257,11 +258,7 @@ class _RejectedReservationScreenState extends State<RejectedReservationScreen>
                 ),
               ),
               Text(
-                NumberFormat.currency(
-                  locale: 'id',
-                  symbol: 'Rp ',
-                  decimalDigits: 0,
-                ).format(reservation.grossAmount),
+                reservation.grossAmount.toIDRFormat(),
                 style: TextStyle(
                   fontWeight: FontWeight.bold,
                   fontSize: 16,

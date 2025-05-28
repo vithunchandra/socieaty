@@ -8,7 +8,7 @@ import 'package:socket_io_client/socket_io_client.dart';
 
 part 'customer_reservation_socket_service.g.dart';
 
-@Riverpod(keepAlive: true)
+@riverpod
 CustomerReservationSocketService customerReservationSocketService(Ref ref) {
   final AuthLocalRepository authLocalRepository = ref.watch(authLocalRepositoryProvider);
   final token = authLocalRepository.getToken();

@@ -108,7 +108,7 @@ class _OtherCustomerProfileScreenState extends ConsumerState<OtherCustomerProfil
                         ),
                       ),
                       const SizedBox(height: 8),
-                      Text("@${widget.user.email}", style: Theme.of(context).textTheme.titleMedium),
+                      Text(widget.user.email, style: Theme.of(context).textTheme.titleMedium),
                       const SizedBox(height: 20),
                       Row(
                         mainAxisAlignment: MainAxisAlignment.spaceEvenly,

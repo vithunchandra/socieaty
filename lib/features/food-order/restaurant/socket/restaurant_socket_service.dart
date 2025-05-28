@@ -11,7 +11,7 @@ import 'package:socket_io_client/socket_io_client.dart';
 
 part 'restaurant_socket_service.g.dart';
 
-@Riverpod(keepAlive: true)
+@riverpod
 RestaurantSocketService restaurantSocketService(Ref ref) {
   final AuthLocalRepository authLocalRepository = ref.watch(authLocalRepositoryProvider);
   final token = authLocalRepository.getToken();
@@ -21,10 +21,6 @@ RestaurantSocketService restaurantSocketService(Ref ref) {
         ref.watch(websocketClientProvider('${AppConstants.socieatyBackendUrl}food-order', token)),
     notificationService: ref.watch(localNotificationServiceProvider),
   );
-
-  ref.onDispose(() {
-    service.disconnect();
-  });
 
   return service;
 }
@@ -96,7 +92,7 @@ class RestaurantSocketService {
     socket.on('new-order', (data) {
       try {
         final FoodOrderTransaction orderData = FoodOrderTransaction.fromJson(data);
-        final formattedTotal = (orderData.grossAmount + orderData.serviceFee).toIDRFormat();
+        final formattedTotal = orderData.grossAmount.toIDRFormat();
 
         final customerName = orderData.customer.name;
 
@@ -136,7 +132,7 @@ class RestaurantSocketService {
     socket.on('order-changes', (data) {
       try {
         final FoodOrderTransaction orderData = FoodOrderTransaction.fromJson(data);
-        final formattedTotal = (orderData.grossAmount + orderData.serviceFee).toIDRFormat();
+        final formattedTotal = orderData.grossAmount.toIDRFormat();
 
         final customerName = orderData.customer.name;
 

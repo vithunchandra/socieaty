@@ -266,7 +266,7 @@ class _OrderDetailsSheetState extends ConsumerState<OrderDetailsSheet> {
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
                     const Text('Subtotal'),
-                    Text('Rp ${widget.order.grossAmount.toIDRFormat()}'),
+                    Text('Rp ${widget.order.netAmount.toIDRFormat()}'),
                   ],
                 ),
                 const SizedBox(height: 8),

@@ -193,7 +193,7 @@ class _OrderCardState extends ConsumerState<OrderCard> {
                                     style: TextStyle(color: Colors.grey[600], fontSize: 13),
                                   ),
                                   Text(
-                                    'Rp ${(widget.order.grossAmount + widget.order.serviceFee).toIDRFormat()}',
+                                    'Rp ${widget.order.grossAmount.toIDRFormat()}',
                                     style: const TextStyle(
                                       fontWeight: FontWeight.bold,
                                       fontSize: 16,

@@ -3,6 +3,7 @@ import 'package:intl/intl.dart';
 import 'package:socieaty/core/enums/transaction.enum.dart';
 import 'package:socieaty/core/theme/app_pallete.dart';
 import 'package:socieaty/core/utils/converter.dart';
+import 'package:socieaty/core/utils/custom_extension.dart';
 import 'package:socieaty/features/transaction/model/transaction_data.dart';
 import 'package:socieaty/shared/widgets/profile_picture_widget.dart';
 import 'package:socieaty/features/reservation/restaurant/widgets/reservation_details_sheet.dart';
@@ -18,11 +19,6 @@ class TransactionCardWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final currencyFormatter = NumberFormat.currency(
-      locale: 'id',
-      symbol: 'Rp',
-      decimalDigits: 0,
-    );
     final dateFormatter = DateFormat('dd MMM yyyy, HH:mm');
     final textTheme = Theme.of(context).textTheme;
 
@@ -90,7 +86,7 @@ class TransactionCardWidget extends StatelessWidget {
                     crossAxisAlignment: CrossAxisAlignment.end,
                     children: [
                       Text(
-                        currencyFormatter.format(transaction.grossAmount),
+                        transaction.grossAmount.toIDRFormat(),
                         style: textTheme.titleMedium?.copyWith(
                           fontWeight: FontWeight.w600,
                           color: AppPallete.primaryColor,

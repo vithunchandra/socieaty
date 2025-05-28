@@ -9,7 +9,7 @@ import 'package:socket_io_client/socket_io_client.dart';
 
 part 'support_ticket_socket_service.g.dart';
 
-@Riverpod(keepAlive: true)
+@riverpod
 SupportTicketSocketService supportTicketSocketService(Ref ref) {
   final AuthLocalRepository authLocalRepository = ref.watch(authLocalRepositoryProvider);
   final token = authLocalRepository.getToken();
@@ -18,10 +18,6 @@ SupportTicketSocketService supportTicketSocketService(Ref ref) {
     socket: ref
         .watch(websocketClientProvider('${AppConstants.socieatyBackendUrl}support-ticket', token)),
   );
-
-  ref.onDispose(() {
-    service.disconnect();
-  });
 
   return service;
 }

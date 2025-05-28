@@ -9,7 +9,7 @@ import 'package:socket_io_client/socket_io_client.dart';
 
 part 'transaction_messages_socket_service.g.dart';
 
-@Riverpod(keepAlive: true)
+@riverpod
 TransactionMessagesSocketService transactionMessagesSocketService(Ref ref) {
   final AuthLocalRepository authLocalRepository = ref.watch(authLocalRepositoryProvider);
   final token = authLocalRepository.getToken();

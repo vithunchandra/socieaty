@@ -9,7 +9,7 @@ import 'package:socket_io_client/socket_io_client.dart';
 
 part 'support_chat_socket_service.g.dart';
 
-@Riverpod(keepAlive: true)
+@riverpod
 SupportChatSocketService supportChatSocketService(Ref ref) {
   final AuthLocalRepository authLocalRepository = ref.watch(authLocalRepositoryProvider);
   final token = authLocalRepository.getToken();
