@@ -110,15 +110,6 @@ class _OtherCustomerProfileScreenState extends ConsumerState<OtherCustomerProfil
                       const SizedBox(height: 8),
                       Text(widget.user.email, style: Theme.of(context).textTheme.titleMedium),
                       const SizedBox(height: 20),
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                        children: [
-                          _buildStatColumn("Following", "1"),
-                          _buildStatColumn("Followers", "0"),
-                          _buildStatColumn("Likes", "0"),
-                        ],
-                      ),
-                      const SizedBox(height: 20),
                       SizedBox(
                         width: screenWidth * 0.6,
                         child: Text(

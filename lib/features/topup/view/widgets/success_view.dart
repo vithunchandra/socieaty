@@ -81,8 +81,6 @@ class TopupSuccessView extends StatelessWidget {
                 _buildTransactionDetail('Jumlah', currencyFormatter.format(topup.amount)),
                 _buildTransactionDetail('Metode Pembayaran', topup.paymentMethod ?? 'Unknown'),
                 _buildTransactionDetail('Waktu Transaksi', dateFormatter.format(settledDate)),
-                if (topup.transactionId != null)
-                  _buildTransactionDetail('ID Pembayaran', topup.transactionId!),
               ],
             ),
           ),

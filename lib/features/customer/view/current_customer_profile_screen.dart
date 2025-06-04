@@ -235,15 +235,6 @@ class _CurrentCustomerProfileScreenState extends ConsumerState<CurrentCustomerPr
                             const SizedBox(height: 8),
                             Text(widget.user.email, style: Theme.of(context).textTheme.titleMedium),
                             const SizedBox(height: 20),
-                            Row(
-                              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                              children: [
-                                _buildStatColumn("Following", "1"),
-                                _buildStatColumn("Followers", "0"),
-                                _buildStatColumn("Likes", "0"),
-                              ],
-                            ),
-                            const SizedBox(height: 20),
                             Padding(
                               padding: const EdgeInsets.symmetric(horizontal: 20),
                               child: Row(
