@@ -7,6 +7,7 @@ import 'package:socieaty/core/network/api_result.dart';
 import 'package:socieaty/core/utils/execute_request.dart';
 import 'package:socieaty/features/authentication/repository/auth_local_repository.dart';
 import 'package:socieaty/features/post/post_comment/repository/response/create_post_comment_response.dart';
+import 'package:socieaty/features/post/post_comment/repository/response/delete_post_comment_response.dart';
 import 'package:socieaty/features/post/post_comment/repository/response/get_is_liked_response.dart';
 import 'package:socieaty/features/post/post_comment/repository/response/get_post_comments_response.dart';
 import 'package:socieaty/features/post/post_comment/repository/response/like_post_comment_response.dart';
@@ -54,6 +55,13 @@ class PostCommentRepository {
     return executeRequest<GetIsLikedResponse>(
       requestFunction: () => _dio.get('post/$postId/comment/$commentId/is-liked'),
       successParser: (data) => GetIsLikedResponse.fromJson(data),
+    );
+  }
+
+  Future<ApiResult<DeletePostCommentResponse>> deletePostComment(String postId, String commentId) {
+    return executeRequest<DeletePostCommentResponse>(
+      requestFunction: () => _dio.delete('post/$postId/comment/$commentId'),
+      successParser: (data) => DeletePostCommentResponse.fromJson(data),
     );
   }
 }

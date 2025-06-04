@@ -1,5 +1,6 @@
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 import 'package:socieaty/core/network/api_result.dart';
+import 'package:socieaty/features/post/post_comment/repository/response/delete_post_comment_response.dart';
 import 'package:socieaty/features/post/post_comment/repository/response/like_post_comment_response.dart';
 import 'package:socieaty/features/post/post_comment/repository/post_comment_repository.dart';
 import 'package:socieaty/features/post/post_comment/viewstate/post_comment_detail_view_state.dart';
@@ -18,16 +19,29 @@ class PostCommentDetailViewModel extends _$PostCommentDetailViewModel {
       postId: postId,
       commentId: commentId,
       likePostCommentState: IdleState(),
+      deletePostCommentState: IdleState(),
     );
   }
 
   Future<void> likePostComment(bool isLiked) async {
-    final result = await _postCommentRepository.likePostComment(state.postId, state.commentId, isLiked);
+    final result =
+        await _postCommentRepository.likePostComment(state.postId, state.commentId, isLiked);
     switch (result) {
       case Success<LikePostCommentResponse>(data: final data):
         state = state.copyWith(likePostCommentState: SuccessState(data: data));
       case Error(error: final error):
         state = state.copyWith(likePostCommentState: ErrorState(message: error.message));
+    }
+  }
+
+  Future<void> deletePostComment() async {
+    state = state.copyWith(deletePostCommentState: LoadingState());
+    final result = await _postCommentRepository.deletePostComment(state.postId, state.commentId);
+    switch (result) {
+      case Success<DeletePostCommentResponse>(data: final data):
+        state = state.copyWith(deletePostCommentState: SuccessState(data: data));
+      case Error(error: final error):
+        state = state.copyWith(deletePostCommentState: ErrorState(message: error.message));
     }
   }
 }

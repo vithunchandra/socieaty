@@ -94,7 +94,7 @@ class _PostCommentsWidgetState extends ConsumerState<PostCommentsWidget> {
                         child: PostCommentItemWidget(
                             postComment: comment,
                             postId: widget.postId,
-                            userId: ref.read(authLocalRepositoryProvider).getUserData()!.id),
+                            user: user!),
                       );
                     },
                   );

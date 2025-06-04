@@ -1,19 +1,24 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:socieaty/core/enums/user_role.enum.dart';
 import 'package:socieaty/core/utils/show_snackbar.dart';
 import 'package:socieaty/features/post/post_comment/model/post_comment.dart';
+import 'package:socieaty/features/post/post_comment/repository/response/delete_post_comment_response.dart';
 import 'package:socieaty/features/post/post_comment/repository/response/like_post_comment_response.dart';
 import 'package:socieaty/features/post/post_comment/viewmodel/post_comment_detail_view_model.dart';
+import 'package:socieaty/features/post/post_comment/viewmodel/post_comments_view_model.dart';
+import 'package:socieaty/features/user/model/socieaty_user.dart';
 import 'package:socieaty/shared/view_state.dart';
+import 'package:socieaty/shared/widgets/loading_indicator_widget.dart';
 import 'package:socieaty/shared/widgets/profile_picture_widget.dart';
 
 class PostCommentItemWidget extends ConsumerStatefulWidget {
   final PostComment postComment;
   final String postId;
-  final String userId;
+  final SocieatyUser user;
   const PostCommentItemWidget(
-      {super.key, required this.postComment, required this.postId, required this.userId});
+      {super.key, required this.postComment, required this.postId, required this.user});
 
   @override
   ConsumerState<PostCommentItemWidget> createState() => _PostCommentItemWidgetState();
@@ -28,8 +33,7 @@ class _PostCommentItemWidgetState extends ConsumerState<PostCommentItemWidget> {
   @override
   void initState() {
     super.initState();
-    isLiked = widget.postComment.likes
-        .any((user) => user.id == widget.userId);
+    isLiked = widget.postComment.likes.any((user) => user.id == widget.user.id);
     likeCount = widget.postComment.likes.length;
   }
 
@@ -52,6 +56,14 @@ class _PostCommentItemWidgetState extends ConsumerState<PostCommentItemWidget> {
     });
   }
 
+  _onDelete() {
+    ref
+        .read(postCommentDetailViewModelProvider(
+                postId: widget.postId, commentId: widget.postComment.id)
+            .notifier)
+        .deletePostComment();
+  }
+
   @override
   Widget build(BuildContext context) {
     ref.listen(
@@ -68,9 +80,20 @@ class _PostCommentItemWidgetState extends ConsumerState<PostCommentItemWidget> {
         case LoadingState():
         case IdleState():
       }
+
+      switch (next.deletePostCommentState) {
+        case SuccessState<DeletePostCommentResponse>(data: final data):
+          showSnackbar(context, data.message);
+          ref.invalidate(postCommentsProvider(widget.postId));
+        case ErrorState(message: final message):
+          showSnackbar(context, message);
+        default:
+      }
     });
 
-    
+    final isDeleting = ref.watch(
+        postCommentDetailViewModelProvider(postId: widget.postId, commentId: widget.postComment.id)
+            .select((value) => value.deletePostCommentState)) is LoadingState;
 
     return SizedBox(
       width: double.infinity,
@@ -125,7 +148,25 @@ class _PostCommentItemWidgetState extends ConsumerState<PostCommentItemWidget> {
                 ),
               ],
             ),
-          )
+          ),
+          if (widget.user.role == UserRole.admin)
+            Padding(
+              padding: const EdgeInsets.only(left: 12.0),
+              child: GestureDetector(
+                onTap: () {
+                  _onDelete();
+                },
+                child: Column(
+                  children: [
+                    isDeleting
+                        ? LoadingIndicatorWidget(
+                            size: 16,
+                          )
+                        : Icon(Icons.delete),
+                  ],
+                ),
+              ),
+            )
         ],
       ),
     );
